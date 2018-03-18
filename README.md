@@ -51,7 +51,7 @@ Based on Flask and Python
 
 ## Algemen Features
 Notifications voor aparte users genereren
-Dismiss
-Goto
-Oude notifications zijn gearchiveerd en altijd terug te kijken
+ - Dismiss
+ - Goto
+ - Oude notifications zijn gearchiveerd en altijd terug te kijken
 
