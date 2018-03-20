@@ -1,0 +1,9 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>An unexpected error has occurred</h1>
+        <h2>The administrator has been notified. Sorry for the inconvenience!</h2>
+        <p>Click <a href="{{ url_for('main.index') }}">here</a> to go to the main page</p>
+    </div>
+{% endblock %}
