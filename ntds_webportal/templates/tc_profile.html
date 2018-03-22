@@ -1,0 +1,11 @@
+{% extends "profile.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block treasurer_form %}
+    <h2> Add Treasurer</h2>
+    <p>You can add the treasurer of your organization as a separate user to the xTDS WebPortal,
+        so that he/she can handle the payments required for the tournament.</p>
+    <p>To do so, please fill out the the form below, and the treasurer will receive his/her credentials
+    through the e-mail address provided.</p>
+    {{ wtf.quick_form(treasurer_form) }}
+{% endblock %}
