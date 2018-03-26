@@ -17,21 +17,24 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS Webportal</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('main.index') }}">Home</a></li>
-                </ul>
+                {% if not current_user.is_anonymous %}
+                    <ul class="nav navbar-nav">
+                        <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
+                    </ul>
+                {% endif %}
                 {% if current_user.is_anonymous %}
-                    {% if form %}
+                    {% if login_form %}
                         <ul class="nav navbar-nav navbar-right">
                             <form class="navbar-form navbar-right" method="POST" enctype="multipart/form-data">
-                                {{ form.hidden_tag() }}
-                                {{ form.csrf_token }}
-                                {{ form.username(class_='form-control', placeholder='Username') }}
-                                {{ form.password(class_='form-control', placeholder='Password') }}
-                                {{ form.submit(class_='btn btn-default') }}
+                                {{ login_form.hidden_tag() }}
+                                {{ login_form.csrf_token }}
+                                {{ login_form.username(class_='form-control', placeholder='Username') }}
+                                {{ login_form.password(class_='form-control', placeholder='Password') }}
+                                {{ login_form.submit(class_='btn btn-default') }}
+                                <small><a href="{{url_for('auth.reset_password_request')}}" >Forgot password?</a></small>
                             </form>
                         </ul>
                     {% endif %}

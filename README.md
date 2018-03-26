@@ -9,13 +9,13 @@ Based on Flask and Python
 
 ## Geplande paginas
 - Publiekelijk
-  - [ ] Home
-  - [ ] Login rechts bovenin
-  - [ ] Algemene info die volledig publiekelijk toegankelijk is
+  - [x] Home
+  - [x] Login rechts bovenin
+  - [x] Algemene info die volledig publiekelijk toegankelijk is
 
 
 - Ingelogd - Teamcaptains
-  - [ ] Welkom
+  - [x] Welkom
   - [ ] Actuele info (communicatie van organisatie naar teamcaptains EN van admins naar rest)
   - [ ] Links naar andere pagina’s
   - [ ] Registratie
@@ -49,7 +49,7 @@ Based on Flask and Python
   - [ ] Overzicht van beschikbare blind daters (naam, team, id, categorie) - heeft extra wachtwoord nodig
 
 
-## Algemen Features
+## Algemene Features
 Notifications voor aparte users genereren
  - Dismiss
  - Goto
