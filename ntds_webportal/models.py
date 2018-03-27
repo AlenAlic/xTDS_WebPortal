@@ -87,3 +87,13 @@ class Team(db.Model):
 class Contestant(db.Model):
     __tablename__ = 'contestants'
     contestant_id = db.Column(db.Integer, primary_key=True)
+
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+    notification_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    unread = db.Column(db.Boolean, index=True, default=True)
+    archived = db.Column(db.Boolean, index=True, default=False)
+    title = db.Column(db.String(128))
+    text = db.Column(db.Text())

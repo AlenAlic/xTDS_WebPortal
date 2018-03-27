@@ -1,1 +1,5 @@
-__author__ = 'timb'
+from flask import Blueprint
+
+bp = Blueprint('notifications', __name__)
+
+
