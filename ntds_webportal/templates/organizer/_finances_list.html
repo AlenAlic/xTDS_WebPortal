@@ -29,13 +29,13 @@
                     {{ dancer.contestant_info[0].team }}
                 </td>
                 <td style="text-align:right">
-                    {{data.euros(data.PRICES['entry_fee'][dancer.contestant_info[0].student])}}
+                    {{data.euros(data.PRICES['student'][dancer.contestant_info[0].student])}}
                 </td>
                 <td style="text-align:right">
                     {{data.euros(data.PRICES['t-shirt'][dancer.additional_info[0].t_shirt])}}
                 </td>
                 <td style="text-align:right">
-                    {{data.euros(data.PRICES['t-shirt'][dancer.additional_info[0].t_shirt] + data.PRICES['entry_fee'][dancer.contestant_info[0].student])}}
+                    {{data.euros(data.PRICES['t-shirt'][dancer.additional_info[0].t_shirt] + data.PRICES['student'][dancer.contestant_info[0].student])}}
                 </td>
             </tr>
         {% endfor %}

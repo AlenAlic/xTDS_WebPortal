@@ -1,6 +1,7 @@
 from ntds_webportal import db, login
-from flask import current_app
-from flask_login import UserMixin
+from functools import wraps
+from flask import current_app, url_for, redirect
+from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from time import time
 import jwt
@@ -10,6 +11,17 @@ import ntds_webportal.data as data
 @login.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+def requires_access_level(access_levels):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if current_user.access not in access_levels:
+                return redirect(url_for('main.index'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 
 class User(UserMixin, db.Model):
@@ -45,7 +57,7 @@ class User(UserMixin, db.Model):
         return self.access == data.ACCESS['blind_date_organizer']
 
     def allowed(self, access_level):
-        return self.access <= access_level
+        return self.access == access_level
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -153,6 +165,18 @@ class DancingInfo(db.Model):
         self.latin_role = data.NO
         self.latin_blind_date = False
         self.latin_partner = None
+
+    def set_ballroom_partner(self, contestant_id):
+        self.ballroom_partner = contestant_id
+        partner = db.session.query(DancingInfo).filter_by(contestant_id=contestant_id).first()
+        partner.ballroom_partner = self.contestant_id
+        db.session.commit()
+
+    def set_latin_partner(self, contestant_id):
+        self.latin_partner = contestant_id
+        partner = db.session.query(DancingInfo).filter_by(contestant_id=contestant_id).first()
+        partner.latin_partner = self.contestant_id
+        db.session.commit()
 
 
 class VolunteerInfo(db.Model):

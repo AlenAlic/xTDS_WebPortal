@@ -3,8 +3,8 @@ from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
 from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm
-from ntds_webportal.models import User, Team, Contestant, ContestantInfo, DancingInfo, VolunteerInfo, AdditionalInfo, \
-    StatusInfo
+from ntds_webportal.models import User, requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
+    VolunteerInfo, AdditionalInfo, StatusInfo
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 import ntds_webportal.data as data
@@ -16,8 +16,8 @@ from sqlalchemy import and_, or_
 
 def contestant_validate_dancing(form):
     if form.ballroom_partner.data is not None:
-        dancing_partner = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo) \
-            .filter(ContestantInfo.number == form.ballroom_partner.data.contestant_info[0].number).first()
+        dancing_partner = db.session.query(Contestant).join(DancingInfo) \
+            .filter(Contestant.contestant_id == form.ballroom_partner.data.contestant_id).first()
         if form.ballroom_role.data == dancing_partner.dancing_info[0].ballroom_role:
             if form.ballroom_role.data == data.LEAD:
                 form.ballroom_role.data = 'same_role_lead'
@@ -29,8 +29,8 @@ def contestant_validate_dancing(form):
             elif form.ballroom_level.data != data.CHOOSE:
                 form.ballroom_level.data = 'diff_levels'
     if form.latin_partner.data is not None:
-        dancing_partner = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo) \
-            .filter(ContestantInfo.number == form.latin_partner.data.contestant_info[0].number).first()
+        dancing_partner = db.session.query(Contestant).join(DancingInfo) \
+            .filter(Contestant.contestant_id == form.latin_partner.data.contestant_id).first()
         if form.latin_role.data == dancing_partner.dancing_info[0].latin_role:
             if form.latin_role.data == data.LEAD:
                 form.latin_role.data = 'same_role_lead'
@@ -78,10 +78,10 @@ def submit_contestant(f, contestant=None):
         if f.ballroom_partner.data is None:
             di.ballroom_partner = f.ballroom_partner.data
         else:
-            di.ballroom_partner = f.ballroom_partner.data.contestant_info[0].number
-            ballroom_partner = db.session.query(Contestant).join(ContestantInfo)\
-                .filter(ContestantInfo.number == di.ballroom_partner).first()
-            ballroom_partner.dancing_info[0].ballroom_partner = ci.number
+            di.ballroom_partner = f.ballroom_partner.data.contestant_id
+            ballroom_partner = db.session.query(Contestant)\
+                .filter(Contestant.contestant_id == di.ballroom_partner).first()
+            ballroom_partner.dancing_info[0].ballroom_partner = contestant.contestant_id
     if f.latin_level.data is None:
         di.not_dancing_latin()
     else:
@@ -91,10 +91,10 @@ def submit_contestant(f, contestant=None):
         if f.latin_partner.data is None:
             di.latin_partner = f.latin_partner.data
         else:
-            di.latin_partner = f.latin_partner.data.contestant_info[0].number
-            latin_partner = db.session.query(Contestant).join(ContestantInfo)\
-                .filter(ContestantInfo.number == di.latin_partner).first()
-            latin_partner.dancing_info[0].latin_partner = ci.number
+            di.latin_partner = f.latin_partner.data.contestant_id
+            latin_partner = db.session.query(Contestant)\
+                .filter(Contestant.contestant_id == di.latin_partner).first()
+            latin_partner.dancing_info[0].latin_partner = contestant.contestant_id
     di.contestant = contestant
     if f.volunteer.data == data.NO:
         vi.not_volunteering()
@@ -117,6 +117,7 @@ def submit_contestant(f, contestant=None):
 
 @bp.route('/add_treasurer', methods=['GET', 'POST'])
 @login_required
+@requires_access_level([data.ACCESS['team_captain']])
 def add_treasurer():
     form = ChangePasswordForm()
     treasurer_form = TreasurerForm()
@@ -137,6 +138,7 @@ def add_treasurer():
 
 @bp.route('/register_dancers', methods=['GET', 'POST'])
 @login_required
+@requires_access_level([data.ACCESS['team_captain']])
 def register_dancers():
     form = RegisterContestantForm()
     new_id = db.session.query().filter(ContestantInfo.team == current_user.team)\
@@ -164,6 +166,7 @@ def register_dancers():
 
 @bp.route('/edit_dancers', methods=['GET', 'POST'])
 @login_required
+@requires_access_level([data.ACCESS['team_captain']])
 def edit_dancers():
     wide = request.args.get('wide', 0, type=int)
     dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
@@ -175,6 +178,7 @@ def edit_dancers():
 
 @bp.route('/edit_dancer/<number>', methods=['GET', 'POST'])
 @login_required
+@requires_access_level([data.ACCESS['team_captain']])
 def edit_dancer(number):
     dancer = db.session.query(Contestant).join(ContestantInfo)\
         .filter(ContestantInfo.team == current_user.team, ContestantInfo.number == number)\
@@ -224,6 +228,7 @@ def edit_dancer(number):
 
 @bp.route('/register_dancer/<number>', methods=['GET', 'POST'])
 @login_required
+@requires_access_level([data.ACCESS['team_captain']])
 def register_dancer(number):
     register = request.args.get('register', None, type=int)
     changed_dancer = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -241,6 +246,7 @@ def register_dancer(number):
 
 @bp.route('/set_teamcaptains', methods=['GET', 'POST'])
 @login_required
+@requires_access_level([data.ACCESS['team_captain']])
 def set_teamcaptains():
     form = TeamCaptainForm()
     form.number.query = Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == current_user.team)
@@ -263,6 +269,7 @@ def set_teamcaptains():
 
 @bp.route('/couples_list')
 @login_required
+@requires_access_level([data.ACCESS['team_captain']])
 def couples_list():
     confirmed = request.args.get('confirmed', 0, type=int)
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
@@ -304,6 +311,7 @@ def couples_list():
 
 @bp.route('/edit_finances', methods=['GET', 'POST'])
 @login_required
+@requires_access_level([data.ACCESS['team_captain'], data.ACCESS['treasurer']])
 def edit_finances():
     # TODO Stan zeurt, wil het graag exporteerbaar naar CSV (naam, bedrag, omschrijving), lage prio
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
