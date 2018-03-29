@@ -6,28 +6,24 @@
 
 {% block app_content %}
 {% if tournament_settings.main_raffle_result_visible is sameas false %}
-
-<div class="row">
-    <h3>The raffle has not taken place yet.</h3>
-</div>
-
+<h2>The raffle has not taken place yet.</h2>
 {% else %}
 
 {% if selected_dancers|length > 0 %}
 <div class="no-print">
-    <form method="POST" enctype="multipart/form-data" novalidate>
+    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
         {% with status='Selected dancers', dancers=selected_dancers %}
             {% include 'teamcaptains/_raffle_list_selected.html' %}
         {% endwith %}
-        <button type="submit" id="submit-confirm" name="confirm" class="btn btn-info">Confirm selected dancers</button>
-        <button type="submit" id="submit-confirm_all" name="confirm_all" class="btn btn-info">Confirm ALL</button>
+        <button type="submit" id="submit-confirm" name="confirm" class="btn btn-primary">Confirm selected dancers</button>
         <div style="height:10px;"></div>
     </form>
 </div>
 {% endif %}
 
+<h2 class="no-print">Confirmed dancers</h2>
 {% if confirmed_dancers|length > 0 %}
-<button class="btn btn-info no-print" onclick="printPage()">Print lists of confirmed dancers</button>
+<button class="btn btn-default no-print" onclick="printPage()">Print lists of confirmed dancers</button>
 {% with category='Ballroom', couples=confirmed_ballroom_couples %}
     {% include 'teamcaptains/_couples_list.html' %}
 {% endwith %}
@@ -49,15 +45,28 @@
 {% block scripts %}
 {{ super() }}
 <script>
-    $(document).ready(function($) {
-    $(".checkbox").change(function() {
-        $(this).parents("tr:first").toggleClass('success ');
-    });
+function printPage() {
+    window.print();
+}
+function checkAll(ele) {
+     var checkboxes = document.getElementsByTagName('input');
+     if (ele.checked) {
+         for (var i = 0; i < checkboxes.length; i++) {
+             if (checkboxes[i].type == 'checkbox') {
+                 checkboxes[i].checked = true;
+                 <!--checkboxes[i].parents("tr:first").toggleClass('success ');-->
+             }
+         }
+     } else {
+         for (var i = 0; i < checkboxes.length; i++) {
+             if (checkboxes[i].type == 'checkbox') {
+                 checkboxes[i].checked = false;
+             }
+         }
+     }
+ }
+$('#select_all').change(function() {
+    $('.dancer').trigger('click');
 });
-</script>
-<script>
-    function printPage() {
-        window.print();
-    }
 </script>
 {% endblock %}

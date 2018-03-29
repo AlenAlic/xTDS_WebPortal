@@ -8,18 +8,15 @@ import ntds_webportal.data as data
 from ntds_webportal.data import *
 
 
-@bp.route('/message_list')
+@bp.route('/messages')
 @login_required
-def message_list():
-    show_archived = request.args.get('show_archived', False, type=bool)
-    if show_archived:
-        notifications_query = Notification.query.filter_by(user=current_user)
-    else:
-        notifications_query = Notification.query.filter_by(user=current_user, archived=False)
-    notifications = notifications_query.order_by(Notification.notification_id.desc()) \
-        .order_by(Notification.unread.desc()).all()
-    return render_template('notifications/message_list.html', title="Notifications", notifications=notifications,
-                           show_archived=show_archived)
+def messages():
+    inbox_messages = Notification.query.filter_by(user=current_user, archived=False)\
+        .order_by(Notification.notification_id.desc(), Notification.unread.desc()).all()
+    archived_messages = Notification.query.filter_by(user=current_user, archived=True) \
+        .order_by(Notification.notification_id.desc(), Notification.unread.desc()).all()
+    return render_template('notifications/messages.html', title="Notifications",
+                           inbox_messages=inbox_messages, archived_messages=archived_messages)
 
 
 @bp.route('/read/<notification>', methods=['GET'])
@@ -29,10 +26,10 @@ def read(notification):
     if n:
         n.unread = False
         db.session.commit()
-        return redirect(url_for('notifications.message_list'))
+        return redirect(url_for('notifications.messages'))
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.message_list'))
+        return redirect(url_for('notifications.messages'))
 
 
 @bp.route('/unread/<notification>', methods=['GET'])
@@ -42,10 +39,10 @@ def unread(notification):
     if n:
         n.unread = True
         db.session.commit()
-        return redirect(url_for('notifications.message_list'))
+        return redirect(url_for('notifications.messages'))
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.message_list'))
+        return redirect(url_for('notifications.messages'))
 
 
 @bp.route('/archive/<notification>', methods=['GET'])
@@ -56,10 +53,10 @@ def archive(notification):
         n.archived = True
         n.unread = False
         db.session.commit()
-        return redirect(url_for('notifications.message_list'))
+        return redirect(url_for('notifications.messages'))
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.message_list'))
+        return redirect(url_for('notifications.messages'))
 
 
 @bp.route('/unarchive/<notification>', methods=['GET'])
@@ -69,10 +66,10 @@ def unarchive(notification):
     if n:
         n.archived = False
         db.session.commit()
-        return redirect(url_for('notifications.message_list'))
+        return redirect(url_for('notifications.messages'))
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.message_list'))
+        return redirect(url_for('notifications.messages'))
 
 
 @bp.route('/goto/<notification>', methods=['GET'])
@@ -85,7 +82,7 @@ def goto(notification):
         return redirect(n.destination)
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.message_list'))
+        return redirect(url_for('notifications.messages'))
 
 
 @bp.route('/create', methods=['GET', 'POST'])

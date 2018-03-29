@@ -7,24 +7,27 @@
 {% block app_content %}
 <ul class="nav nav-tabs" id=myTabs role=tablist>
 	<li role=presentation class=active>
-		<a href=#overview id=overview-tab role=tab data-toggle=tab aria-controls=overview aria-expanded=true>Overview</a>
+		<a href=#system id=system-tab role=tab data-toggle=tab aria-controls=system aria-expanded=true>System</a>
 	</li>
+    <li role=presentation {% if state.main_raffle_result_visible is sameas false %}class="disabled"{% endif %}>
+        <a {% if state.main_raffle_result_visible is sameas true %} href=#overview class=dropdown-toggle id=overview-tab data-toggle=tab aria-controls=overview-contents {% endif %}>Overview Dancers</a>
+    </li>
     <li role=presentation>
         <a href=#config class=dropdown-toggle id=config-tab data-toggle=tab aria-controls=config-contents>Config</a>
     </li>
 </ul>
 <div class=tab-content id=myTabContent>
-	<div class="tab-pane fade in active" role=tabpanel id=overview aria-labelledby=overview-tab>
+	<div class="tab-pane fade in active" role=tabpanel id=system aria-labelledby=system-tab>
         {% if state.main_raffle_taken_place is sameas false %}
             <h2>Raffle</h2>
             <p>Select any dancers you want to be guaranteed entry into the tournament from the lists below.</p>
             <form class="form" method="POST" enctype="multipart/form-data" novalidate>
                 <button type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success loading-btn">Start Raffle</button>
                 <!--<button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-danger btn-lg"><strong>DEBUG RAFFLE - FOR TESTING PURPOSES ONLY</strong></button>-->
+                {% with list_id='guaranteed', type='guaranteed', title='Lists of all eligible dancers', teams=teams %}
+                    {% include 'organizer/_raffle_dancers_lists.html' %}
+                {% endwith %}
             </form>
-            {% with title='Lists of all eligible dancers', teams=teams %}
-                {% include 'organizer/_raffle_dancers_list_collapsible.html' %}
-            {% endwith %}
         {% endif %}
 
         {% if state.main_raffle_taken_place is sameas true and state.main_raffle_result_visible is sameas false %}
@@ -32,30 +35,54 @@
         <p>If you are happy with the selected roster, click the button below to confirm it. This will make the results visible to the teamcaptains.</p>
         <p>Otherwise, you can redo the raffle, or cancel it.</p>
         <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-            <button type="submit" id="submit-confirm_raffle" name="confirm_raffle" class="btn btn-success">Confirm Raffle</button>
-            <button type="submit" id="submit-redo_raffle" name="redo_raffle" class="btn btn-info">Redo Raffle</button>
+            <button type="submit" id="submit-confirm_raffle" name="confirm_raffle" class="btn btn-success loading-btn">Confirm Raffle</button>
+            <button type="submit" id="submit-redo_raffle" name="redo_raffle" class="btn btn-info loading-btn">Redo Raffle</button>
             <button type="submit" id="submit-cancel_raffle" name="cancel_raffle" class="btn btn-warning loading-btn">Cancel Raffle</button>
         </form>
         {% with title='Summary', desc='This will be the statistics if all the selected dancers are confirmed.', stats=stats_selected %}
             {% include 'organizer/_raffle_stats.html' %}
         {% endwith %}
-        {% with title='Lists of selected dancers', teams=teams %}
-            {% include 'organizer/_raffle_dancers_list_selected_collapsible.html' %}
+        {% with list_id='selected', type='selected', title='Selected dancers', teams=teams %}
+            {% include 'organizer/_raffle_dancers_lists.html' %}
         {% endwith %}
         {% endif %}
 
         {% if state.main_raffle_taken_place is sameas true and state.main_raffle_result_visible is sameas true %}
-        {% with title='Summary selected dancers', stats=stats_selected %}
-            {% include 'organizer/_raffle_stats.html' %}
-        {% endwith %}
-        {% with title='Summary confirmed dancers', stats=stats_confirmed %}
-            {% include 'organizer/_raffle_stats.html' %}
-        {% endwith %}
-        {% with title='Lists of selected and confirmed dancers', teams=teams %}
-            {% include 'organizer/_raffle_dancers_list_confirmed_collapsible.html' %}
+        <table style="width:100%">
+            <colgroup>
+                <col span="1" style="width: 50%;">
+                <col span="1" style="width: 50%;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        {% with subtitle='Selected', stats=stats_selected %}
+                            {% include 'organizer/_raffle_stats.html' %}
+                        {% endwith %}
+                    </td>
+                    <td>
+                        {% with subtitle='Confirmed', stats=stats_confirmed %}
+                            {% include 'organizer/_raffle_stats.html' %}
+                        {% endwith %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>TODO Controls to update raffle</h2>
+        <h2>TODO Selected dancers</h2>
+        {% with list_id='available', type='available', title='Available dancers', teams=teams %}
+            {% include 'organizer/_raffle_dancers_lists.html' %}
         {% endwith %}
         {% endif %}
 	</div>
+
+    {% if state.main_raffle_taken_place is sameas true and state.main_raffle_result_visible is sameas true %}
+    <div class="tab-pane fade" role=tabpanel id=overview aria-labelledby=overview-tab>
+        {% with list_id='completed', type='completed_raffle', title='Lists of selected and confirmed dancers', teams=teams %}
+            {% include 'organizer/_raffle_dancers_lists.html' %}
+        {% endwith %}
+    </div>
+    {% endif %}
 
     <div class="tab-pane fade" role=tabpanel id=config aria-labelledby=config-tab>
         <h2>Tournament config</h2>
@@ -74,7 +101,7 @@
         <h2>Reset raffle</h2>
         <p><strong>Warning!</strong> Doing this will redo the raffle entirely, without any way of getting this configuration back.</p>
         <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-            <button type="submit" id="submit-reset_raffle" name="reset_raffle" class="btn btn-danger">RESET Raffle</button>
+            <button type="submit" id="submit-reset_raffle" name="reset_raffle" class="btn btn-danger loading-btn">RESET Raffle</button>
         </form>
         {% endif %}
     </div>
@@ -86,21 +113,6 @@
 {% block scripts %}
 {{ super() }}
 <script>
-$(document).ready(function() {
-    $('.table-clickable-checkbox tr').click(function(event) {
-        if (event.target.type !== 'checkbox') {
-            $(':checkbox', this).trigger('click');
-        }
-    });
-});
-$(document).ready(function($) {
-    $(".clickable-row").css("cursor", "pointer")
-    $(".checkbox").css("cursor", "pointer")
-});
-$(document).ready(function($) {
-    $(".checkbox").change(function() {
-        $(this).parents("tr:first").toggleClass('success ');
-    });
-});
+
 </script>
 {% endblock %}

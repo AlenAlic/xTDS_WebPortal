@@ -1,6 +1,5 @@
 
 const showLoadingSpinner = (element) => {
-    console.log('hi')
     const root = document.querySelector(':root')
     const backdrop = document.createElement('div')
     const spinnerContainer = document.createElement('div')
@@ -29,8 +28,8 @@ const showLoadingSpinner = (element) => {
 
     backdrop.appendChild(spinnerContainer)
 
-    spinner.src = '/static/lemon.svg'
-    spinner.width = 320
+    spinner.src = '/static/spinner_couple01.svg'
+    spinner.width = 480
     spinner.height = spinner.width
 
     label.innerHTML = 'Loading...'
@@ -41,7 +40,7 @@ const showLoadingSpinner = (element) => {
 
     let start = null
     let progress = null
-    let speed = 25000
+    let speed = 20000
 
     const toDegrees = angle => 180 / Math.PI * angle
 
@@ -57,7 +56,6 @@ const showLoadingSpinner = (element) => {
 }
 
 const addLoadingListener = () => {
-    console.log('hello')
     document.querySelectorAll('.loading-btn').forEach(button => button.addEventListener('click', showLoadingSpinner))
 //    showLoadingSpinner()
 }

@@ -28,26 +28,28 @@ def rearrange_numbers():
     db.session.commit()
 
 
-class DancerLists:
+class RaffleSystem:
     NO_PARTNER = 'no_partner'
 
     def __init__(self):
-        all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-            .filter(StatusInfo.raffle_status != data.CANCELLED).all()
-        self.registered_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].raffle_status == data.REGISTERED]
-        self.selected_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].raffle_status == data.SELECTED]
-        self.confirmed_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].raffle_status == data.CONFIRMED]
+        self.all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+            .filter(StatusInfo.raffle_status != CANCELLED).order_by(ContestantInfo.team_id, Contestant.first_name).all()
+        self.registered_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+            .filter(StatusInfo.raffle_status == REGISTERED).order_by(ContestantInfo.team_id, Contestant.first_name)\
+            .all()
+        self.selected_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+            .filter(StatusInfo.raffle_status == SELECTED).order_by(ContestantInfo.team_id, Contestant.first_name).all()
+        self.confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+            .filter(StatusInfo.raffle_status == CONFIRMED).order_by(ContestantInfo.team_id, Contestant.first_name).all()
         self.no_partner_list = []
-        # self.dancer_lists = {REGISTERED: self.registered_dancers, SELECTED: self.selected_dancers,
-        #                      CONFIRMED: self.confirmed_dancers}
         self.dancer_lists = {REGISTERED: self.registered_dancers, SELECTED: self.selected_dancers,
                              CONFIRMED: self.confirmed_dancers, self.NO_PARTNER: self.no_partner_list}
         state = TournamentState.query.first()
         self.tournament_config = state.get_tournament_config()
         self.raffle_config = state.get_raffle_config()
 
-    def list(self, status):
-        return self.dancer_lists[status]
+    # def list(self, status):
+    #     return self.dancer_lists[status]
 
     def teamcaptains(self):
         return [dancer for dancer in self.registered_dancers if dancer.contestant_info[0].team_captain]
@@ -206,9 +208,6 @@ def find_partners(dancers_list, dancer, target_team=None):
 
     # Check for 2 man balanced groups by iterating over the remaining dancers in random order
     dancer_team = dancer.contestant_info[0].team
-    # dancing_categories = get_dancing_categories(dancer.dancing_info)
-    # dancer_ballroom_partner = dancing_categories[BALLROOM].partner
-    # dancer_latin_partner = dancing_categories[LATIN].partner
     if target_team is None:
         dancers_list = [d for d in dancers_list if d.contestant_info[0].team != dancer_team]
     else:
@@ -231,6 +230,10 @@ def find_partners(dancers_list, dancer, target_team=None):
     # if len(possible_partners) > 0:
     #     group.add(random.choice(possible_partners))
     #     return group
+
+    # dancing_categories = get_dancing_categories(dancer.dancing_info)
+    # dancer_ballroom_partner = dancing_categories[BALLROOM].partner
+    # dancer_latin_partner = dancing_categories[LATIN].partner
 
     return group
 

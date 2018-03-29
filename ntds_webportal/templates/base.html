@@ -1,5 +1,6 @@
 {% extends 'bootstrap/base.html' %}
-{% import 'bootstrap/wtf.html' as wtf %}
+{# import 'bootstrap/wtf.html' as wtf #}
+{% import 'my_wtf.html' as wtf %}
 
 
 {% block title %}
@@ -40,7 +41,7 @@ xTDS WebPortal
             {% if not current_user.is_anonymous %}
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
-                    <li><a href="{{ url_for('notifications.message_list') }}">Messages <span class="badge">{{current_user.unread_notifications()}}</span></a></li>
+                    <li><a href="{{ url_for('notifications.messages') }}">Messages <span class="badge">{{current_user.unread_notifications()}}</span></a></li>
                 </ul>
             {% endif %}
             <div class="nav navbar-nav navbar-right" style="margin-right:0px">
@@ -69,18 +70,19 @@ xTDS WebPortal
 {% block content %}
 <div class="container" style="padding-bottom:20px">
     {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-        <div class="alert {% if category=='message' %}alert-info{% else %}{{ category }}{% endif %} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            {{ message }}
-        </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
+        {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {% if category=='message' %}alert-info{% else %}{{ category }}{% endif %} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
     {% block app_content %}
     {% endblock %}
+
 </div>
 <!--<nav class="navbar-defaul navbar-fixed-bottom" style="padding-top:60px;">-->
     <!--<div class="container">-->
@@ -93,4 +95,22 @@ xTDS WebPortal
 {{ super() }}
 {{ moment.include_moment() }}
 <script src="/static/loading.js"></script>
+<script>
+$(document).ready(function() {
+    $('.table-clickable-checkbox tr').click(function(event) {
+        if (event.target.type !== 'checkbox') {
+            $(':checkbox', this).trigger('click');
+        }
+    });
+});
+$(document).ready(function($) {
+    $(".checkbox-row").css("cursor", "pointer")
+    $(".checkbox").css("cursor", "pointer")
+});
+$(document).ready(function($) {
+    $(".checkbox").change(function() {
+        $(this).parents("tr:first").toggleClass('success ');
+    });
+});
+</script>
 {% endblock %}

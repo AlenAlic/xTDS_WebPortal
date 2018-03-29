@@ -2,7 +2,7 @@
 {% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
-<a href="{{url_for('teamcaptains.partner_request')}}" class="btn btn-default navbar-btn no-print">Create new request</a>
+<a href="{{url_for('teamcaptains.partner_request')}}" class="btn btn-primary navbar-btn no-print">Create new request</a>
 <h2>Partner requests</h2>
 {% if other_requests %}
 <table class="table table-striped table-responsive">

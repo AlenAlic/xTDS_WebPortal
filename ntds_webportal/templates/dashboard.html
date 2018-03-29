@@ -5,52 +5,85 @@
 onload="onStart()"
 {% endblock %}
 
+{% block styles %}
+{{ super() }}
+<style>
+.inaccessible {
+    display: block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.25);
+    z-index: -100;
+    cursor: not-allowed;
+}
+.opaque {
+    opacity: .5;
+}
+</style>
+{% endblock %}
+
 {% block app_content %}
 <div class="row" style="visibility:hidden">
+
     {% if current_user.is_admin() %}
         {% with url='admin.index', title='Admin Page', text='Gives direct access to the database.', image='admin.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}
+
     {% if current_user.is_organizer() %}
-        {% with url='organizer.registration_overview', title='Registrered dancers', text='List of all registered dancers', image='contestants.png' %}
+        {% with loading_screen=true, url='organizer.registration_overview', title='Registrered dancers', text='List of all registered dancers', image='contestants.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with count=current_user.open_name_change_requests(), url='organizer.name_change_list', title='Name change requests', text='Requests for name changes of dancers', image='name_change.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with url='organizer.raffle_system', title='Raffle system', text='Raffle system.', image='raffle.png' %}
+        {% with loading_screen=true, url='organizer.raffle_system', title='Raffle system', text='Raffle system.', image='raffle.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}
-    {% if current_user.is_tc() %}
-        {% with url='teamcaptains.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
-            {% include '_dashboard_page.html' %}
-        {% endwith %}
-        {% with url='teamcaptains.edit_dancers', title='Edit Dancers', text='Edit information of registered dancers.', image='edit_contestant.png' %}
-            {% include '_dashboard_page.html' %}
-        {% endwith %}
-        {% with url='teamcaptains.couples_list', title='View Couples', text='List of all registered couples, and a list of blind daters for the tournament.', image='view_couples.png' %}
-            {% include '_dashboard_page.html' %}
-        {% endwith %}
-        {% with count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dancing Partner Request', text='Request a couple with another team', image='partner_request.png' %}
-            {% include '_dashboard_page.html' %}
-        {% endwith %}
-        {% with count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title='Set Teamcaptain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
-            {% include '_dashboard_page.html' %}
-        {% endwith %}
-        {% with url='teamcaptains.raffle_result', title='Raffle results', text='Manage the dancers after the raffle has taken place.', image='raffle_results.png' %}
-            {% include '_dashboard_page.html' %}
-        {% endwith %}
-    {% endif %}
+
     {% if current_user.is_tc() or current_user.is_treasurer() %}
-        {% with url='teamcaptains.edit_finances', title='Finances', text='Manage payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
-            {% include '_dashboard_page.html' %}
-        {% endwith %}
+        {% if current_user.is_tc() %}
+            {% with url='teamcaptains.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
+                {% include '_dashboard_page.html' %}
+            {% endwith %}
+            {% with url='teamcaptains.edit_dancers', title='Edit Dancers', text='View and edit information of registered dancers.', image='edit_contestant.png' %}
+                {% include '_dashboard_page.html' %}
+            {% endwith %}
+            {% with url='teamcaptains.couples_list', title='Couples', text='View all registered couples, and create new couples.', image='view_couples.png' %}
+                {% include '_dashboard_page.html' %}
+            {% endwith %}
+            {% with count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dancing Partner Request', text='Create couples with dancers from another team', image='partner_request.png' %}
+                {% include '_dashboard_page.html' %}
+            {% endwith %}
+            {% if max_tc > 1 %}
+                {% with count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title='Set Teamcaptains', text='Set who the team captains are.', image='captain.png' %}
+                    {% include '_dashboard_page.html' %}
+                {% endwith %}
+            {% else %}
+                {% with count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title='Set Teamcaptain', text='Set who the team captain is.', image='captain.png' %}
+                    {% include '_dashboard_page.html' %}
+                {% endwith %}
+            {% endif %}
+            {% with accessible=state.main_raffle_result_visible, url='teamcaptains.raffle_result', title='Raffle results', text='Manage dancers that have been selected or confirmed for the tournament.', image='raffle_results.png' %}
+                {% include '_dashboard_page.html' %}
+            {% endwith %}
+        {% endif %}
+        {% if current_user.is_tc() or current_user.is_treasurer() %}
+            {% with accessible=state.main_raffle_result_visible, url='teamcaptains.edit_finances', title='Finances', text='Manage payment information dancers that have been confirmed for the tournament.', image='euro.png' %}
+                {% include '_dashboard_page.html' %}
+            {% endwith %}
+        {% endif %}
     {% endif %}
+
 </div>
 {% endblock %}
 
@@ -59,10 +92,10 @@ onload="onStart()"
 <script>
 function onStart() {
     var maxHeight = 0;
-    $(".thumbnail").each(function(){
+    $(".thumbnail-same-height").each(function(){
        if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
     });
-    $(".thumbnail").height(maxHeight);
+    $(".thumbnail-same-height").height(maxHeight);
     $(".row").css('visibility', 'visible');
 }
 </script>

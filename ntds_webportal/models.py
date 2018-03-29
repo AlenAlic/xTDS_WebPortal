@@ -274,7 +274,7 @@ class StatusInfo(db.Model):
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
     raffle_status = db.Column(db.String(16), index=True, default=data.REGISTERED)
-    raffle_result_visible = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    guaranteed_entry = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
@@ -311,9 +311,9 @@ class Notification(db.Model):
 
     def get_sender(self):
         if not self.sender:
-            return 'automated message'
+            return 'xTDS - automated message'
         else:
-            return 'from: {}'.format(self.sender)
+            return self.sender
 
 
 class PartnerRequest(db.Model):

@@ -1,7 +1,5 @@
-<h2>{{ title }}</h2>
-{% if desc %}
-<p>{{ desc }}</p>
-{% endif %}
+{% if title %}<h2>{{ title }}</h2>{% endif %}
+{% if desc %}<p>{{ desc }}</p>{% endif %}
 <table class="table table-striped table-responsive">
     <colgroup>
         <col span="1" style="width: 30%;">
@@ -12,7 +10,7 @@
     </colgroup>
     <thead>
         <tr>
-            <th></th>
+            <th rowspan="2"><b style="font-size: x-large">{% if subtitle %}{{ subtitle }}{% endif %}</b></th>
             <th></th>
             <th><b>Leaders</b></th>
             <th><b>Followers</b></th>

@@ -6,18 +6,16 @@
 
 {% block app_content %}
 
+{% if ts.main_raffle_result_visible is sameas true %}
 {% with finances=finances %}
     {% include 'organizer/_finances_summary.html' %}
 {% endwith %}
 
-<div class="row">
-    <h3>Amount recieved by organization: {{ data.euros(team_finances.paid) }}</h3>
-    <div style="height:30px;"></div>
-</div>
+<h2>Amount recieved by organization:</h2>
+<div style="font-size:x-large">{{ data.euros(team_finances.paid) }}</div>
+<div style="height:20px;"></div>
 
 <form method="POST" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
-
     {% with status='Confirmed dancers', dancers=confirmed_dancers %}
         {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
@@ -25,8 +23,11 @@
     {% with status='Cancelled dancers', dancers=cancelled_dancers %}
         {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
-
+    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
 </form>
+{% else %}
+<h2>The raffle has not taken place yet.</h2>
+{% endif %}
 
 {% endblock %}
 

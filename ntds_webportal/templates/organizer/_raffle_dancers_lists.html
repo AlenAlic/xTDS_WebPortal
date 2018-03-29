@@ -1,0 +1,95 @@
+<h2>{{title}}</h2>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+{% for team in teams %}
+    <div class="panel panel-default">
+        <div class="panel-heading" role="button" id="{{ team['id_title'] }}-{{ list_id }}" data-toggle="collapse" data-parent="#accordion" href="#{{ team['id'] }}-{{ list_id }}" aria-expanded="false" aria-controls="{{ team['id'] }}-{{ list_id }}">
+            <h4 class="panel-title">{{ team['team'].country }} - {{ team['team'].name }}
+                {% if type == 'selected' %}
+                <span class="badge">{{ team['selected_dancers']|length }}</span>
+                {% elif type == 'completed_raffle' %}
+                <span class="badge">{{ team['confirmed_dancers']|length }}/{{ team['selected_dancers']|length + team['confirmed_dancers']|length }}</span>
+                {% elif type == 'available' %}
+                <span class="badge">{{ team['available_dancers']|length }}</span>
+                {% endif %}
+            </h4>
+        </div>
+        <div id="{{ team['id'] }}-{{ list_id }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ team['id_title'] }}-{{ list_id }}">
+
+            {% if type == 'selected' %}
+            <table class="table table-responsive list-group">
+                <tbody>
+                {% for dancer in team['selected_dancers'] %}
+                    <tr>
+                        <td>
+                            {{ dancer.get_full_name() }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            {% elif type == 'guaranteed' %}
+            <table class="table table-responsive table-clickable-checkbox list-group">
+                <colgroup>
+                    <col span="1" style="width: 90%;">
+                    <col span="1" style="width: 10%;">
+                </colgroup>
+                <tbody>
+                {% for dancer in team['dancers'] %}
+                    <tr class="clickable-row {% if dancer.status_info[0].guaranteed_entry == true %}success{% endif %}">
+                        <td>
+                            {{ dancer.get_full_name() }}
+                        </td>
+                        <td align="right">
+                            <input class="checkbox" type="checkbox" value="y" style="display:none" id="{{ dancer.contestant_id }}" name="{{ dancer.contestant_id }}" {% if dancer.status_info[0].guaranteed_entry == true %}checked{% endif %}>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            {% elif type == 'completed_raffle' %}
+            <table class="table table-responsive list-group">
+                <tbody>
+                {% if team['confirmed_dancers']|length > 0 %}
+                <tr><td><b style="font-size: x-large">{{ data.STATUS[data.CONFIRMED] }}</b></td></tr>
+                {% for dancer in team['confirmed_dancers'] %}
+                <tr>
+                    <td>
+                        {{ dancer.get_full_name() }}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+                {% if team['selected_dancers']|length > 0 %}
+                <tr><td><b style="font-size: x-large">{{ data.STATUS[data.SELECTED] }}</b></td></tr>
+                {% for dancer in team['selected_dancers'] %}
+                <tr>
+                    <td>
+                        {{ dancer.get_full_name() }}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+
+            {% elif type == 'available' %}
+            <table class="table table-responsive list-group">
+                <tbody>
+                {% for dancer in team['available_dancers'] %}
+                    <tr>
+                        <td>
+                            {{ dancer.get_full_name() }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+
+            <div class=panel-footer><small style="visibility: hidden">Footer</small></div>
+        </div>
+    </div>
+{% endfor %}
+</div>

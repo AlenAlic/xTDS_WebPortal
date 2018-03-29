@@ -2,18 +2,16 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <div class="row">
-        {% if current_tc != None %}
-            <h2>Current team captain</h2>
-            <p>The current team captain is: {{current_tc.get_full_name()}}</p>
-        {% endif %}
-        <h2>Set team captain</h2>
-        <p>You can change who the team captain is below.</p>
-        <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-            {{ form.hidden_tag() }}
-            {{ form.csrf_token }}
-            {{ wtf.form_field(form.number) }}
-            {{ wtf.form_field(form.submit) }}
-        </form>
-    </div>
+    {% if current_tc != None %}
+        <h2>Current team captain</h2>
+        <p>The current team captain is: {{current_tc.get_full_name()}}</p>
+    {% endif %}
+    <h2>Set team captain</h2>
+    <p>You can change who the team captain is below.</p>
+    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+        {{ wtf.form_field(form.number) }}
+        {{ wtf.form_field(form.submit) }}
+    </form>
 {% endblock %}

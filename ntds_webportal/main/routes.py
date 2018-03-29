@@ -2,7 +2,7 @@ from flask import render_template, url_for, redirect, flash
 from flask_login import current_user, login_user, login_required, logout_user
 from ntds_webportal import db
 from ntds_webportal.main import bp
-from ntds_webportal.models import User
+from ntds_webportal.models import User, TournamentState
 from ntds_webportal.auth.forms import LoginForm, ChangePasswordForm
 
 
@@ -31,7 +31,9 @@ def logout():
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', title='Dashboard')
+    state = TournamentState.query.first()
+    raffle_config = state.get_raffle_config()
+    return render_template('dashboard.html', state=state, max_tc=raffle_config['max_teamcaptains'])
 
 
 @bp.route('/todo')
@@ -54,6 +56,6 @@ def profile():
         flash('Your password has been changed.', 'alert-success')
         return redirect(url_for('main.index'))
     if current_user.is_tc():
-        return redirect(url_for('teamcaptains.add_treasurer'))
+        return redirect(url_for('teamcaptains.teamcaptain_profile'))
     else:
         return render_template('profile.html', form=form)

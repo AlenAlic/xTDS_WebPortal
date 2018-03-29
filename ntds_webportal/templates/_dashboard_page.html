@@ -1,15 +1,16 @@
-<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-    <a href="{{url_for( url )}}">
-        <div class="thumbnail" >
+{% set accessible = true %}
+<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 {% if accessible is sameas false %}opaque{% endif %}">
+    <a href="{% if accessible is sameas false %}{% else %}{{url_for( url )}}{% endif %}" style="text-decoration:none">
+        <div class="thumbnail thumbnail-same-height {% if accessible is sameas false %}inaccessible{% endif %} {% if loading_screen %}loading-btn{% endif %}" >
             {% if count is defined %}
                 {% if count%}
-            <div style="margin-bottom:-4em;height:4em">
-                <span style="float:center;width:5em" class="badge badge-pill badge-danger"><h3>{{count}}</h3></span>
-            </div>
+                    <div style="margin-bottom:-4em;height:4em">
+                        <span style="float:center;width:2em;font-size:xx-large" class="badge badge-pill badge-danger" >{{count}}</span>
+                    </div>
                 {% endif %}
-                {% endif %}
+            {% endif %}
             <img src="{{url_for('static', filename=image)}}" class="img-rounded" width="128">
-            <div class="caption text-center">
+            <div class="caption text-center" >
                 <h3>{{ title }}</h3>
                 {% if text is defined %}
                     <p>{{ text }}</p>

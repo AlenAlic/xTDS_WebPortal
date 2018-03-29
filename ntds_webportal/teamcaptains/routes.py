@@ -16,10 +16,10 @@ import itertools
 from sqlalchemy import and_, or_
 
 
-@bp.route('/add_treasurer', methods=['GET', 'POST'])
+@bp.route('/teamcaptain_profile', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([data.ACCESS['team_captain']])
-def add_treasurer():
+def teamcaptain_profile():
     form = ChangePasswordForm()
     treasurer_form = TreasurerForm()
     treasurer = db.session.query(User).filter_by(team=current_user.team, access=data.ACCESS['treasurer']).first()
@@ -82,6 +82,7 @@ def edit_dancers():
 @login_required
 @requires_access_level([data.ACCESS['team_captain']])
 def edit_dancer(number):
+    wide = int(request.values['wide'])
     dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number) \
         .order_by(Contestant.contestant_id).first_or_404()
@@ -91,19 +92,19 @@ def edit_dancer(number):
     form.team.data = dancer.contestant_info[0].team.name
     form.number.data = dancer.contestant_info[0].number
     form.ballroom_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(and_(ContestantInfo.team == current_user.team,
-                     DancingInfo.competition == data.BALLROOM,
-                     Contestant.contestant_id != dancer.contestant_id,
-                     or_(and_(DancingInfo.blind_date.is_(False), DancingInfo.partner.is_(None),
-                              DancingInfo.level != data.NO), and_(DancingInfo.competition == data.BALLROOM,
-                                                                  DancingInfo.partner == dancer.contestant_id))))
+        .filter(and_(ContestantInfo.team == current_user.team, Contestant.contestant_id != dancer.contestant_id,
+                     or_(StatusInfo.status == REGISTERED,
+                         and_(DancingInfo.blind_date.is_(False), DancingInfo.partner.is_(None),
+                              DancingInfo.level != data.NO),
+                         and_(DancingInfo.competition == data.BALLROOM,
+                              DancingInfo.partner == dancer.contestant_id))))
     form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(and_(ContestantInfo.team == current_user.team,
-                     DancingInfo.competition == data.LATIN,
-                     Contestant.contestant_id != dancer.contestant_id,
-                     or_(and_(DancingInfo.blind_date.is_(False), DancingInfo.partner.is_(None),
-                              DancingInfo.level != data.NO), and_(DancingInfo.competition == data.LATIN,
-                                                                  DancingInfo.partner == dancer.contestant_id))))
+        .filter(and_(ContestantInfo.team == current_user.team, Contestant.contestant_id != dancer.contestant_id,
+                     or_(StatusInfo.status == REGISTERED,
+                         and_(DancingInfo.blind_date.is_(False), DancingInfo.partner.is_(None),
+                              DancingInfo.level != data.NO),
+                         and_(DancingInfo.competition == data.LATIN,
+                              DancingInfo.partner == dancer.contestant_id))))
     if request.method == 'POST':
         # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
@@ -152,8 +153,8 @@ def edit_dancer(number):
     if form.validate_on_submit():
         flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
               'alert-success')
-        return redirect(url_for('teamcaptains.edit_dancers', wide=int(request.values['wide'])))
-    return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, data=data, state=state)
+        return redirect(url_for('teamcaptains.edit_dancers', wide=wide))
+    return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, data=data, state=state, wide=wide)
 
 
 @bp.route('/register_dancer/<number>', methods=['GET', 'POST'])
@@ -174,27 +175,27 @@ def register_dancer(number):
     return redirect(url_for('teamcaptains.edit_dancers', wide=int(request.values['wide'])))
 
 
-@bp.route('/set_teamcaptains', methods=['GET', 'POST'])
+@bp.route('/name_change_request/<contestant>', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([data.ACCESS['team_captain']])
-def set_teamcaptains():
-    form = TeamCaptainForm()
-    form.number.query = Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == current_user.team)
-    current_tc = db.session.query(Contestant).join(ContestantInfo) \
-        .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).first()
+def name_change_request(contestant):
+    wide = int(request.values['wide'])
+    contestant = Contestant.query.filter_by(contestant_id=contestant).first()
+    if not contestant or not contestant.contestant_info[0].team == current_user.team:
+        return redirect('errors/404.html')
+    form = NameChangeRequestForm()
     if form.validate_on_submit():
-        if form.number.data is not None:
-            new_tc = db.session.query(Contestant) \
-                .filter(Contestant.contestant_id == form.number.data.contestant_id).first()
-            new_tc.contestant_info[0].set_teamcaptain()
-            flash('Set {} as team captain.'.format(new_tc.get_full_name()), 'alert-success')
-            return redirect(url_for('teamcaptains.set_teamcaptains'))
-        else:
-            current_tc.contestant_info[0].team_captain = False
-            db.session.commit()
-            flash('Removed {} as team captain.'.format(current_tc.get_full_name()))
-            return redirect(url_for('teamcaptains.set_teamcaptains'))
-    return render_template('teamcaptains/set_teamcaptains.html', form=form, current_tc=current_tc)
+        flash('Name change request sent.')
+        ncr = NameChangeRequest(first_name=form.first_name.data, last_name=form.last_name.data,
+                                prefixes=form.prefixes.data, contestant=contestant)
+        db.session.add(ncr)
+        db.session.commit()
+        return redirect(url_for('teamcaptains.edit_dancer', number=contestant.contestant_id, wide=wide))
+    form.first_name.data = contestant.first_name
+    form.prefixes.data = contestant.prefixes
+    form.last_name.data = contestant.last_name
+    return render_template('teamcaptains/name_change_request.html', title="Name change request", contestant=contestant,
+                           form=form, wide=wide)
 
 
 @bp.route('/couples_list')
@@ -247,50 +248,19 @@ def couples_list():
                            ballroom_couples=ballroom_couples, latin_couples=latin_couples)
 
 
-@bp.route('/edit_finances', methods=['GET', 'POST'])
-@login_required
-@requires_access_level([data.ACCESS['team_captain'], data.ACCESS['treasurer']])
-def edit_finances():
-    # TODO Stan zeurt, wil het graag exporteerbaar naar CSV (naam, bedrag, omschrijving), lage prio
-    all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required.is_(True)) \
-        .order_by(ContestantInfo.number).all()
-    confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
-    cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
-    finances = data.finances_overview(all_dancers)
-    team_finances = TeamFinances.query.filter_by(team=current_user.team).first()
-    if request.method == 'POST':
-        changes = False
-        for dancer in all_dancers:
-            if request.form.get(str(dancer.contestant_info[0].number)) is not None:
-                if not dancer.status_info[0].paid:
-                    changes = True
-                dancer.status_info[0].paid = True
-            else:
-                if dancer.status_info[0].paid:
-                    changes = True
-                dancer.status_info[0].paid = False
-        if changes:
-            db.session.commit()
-            flash('Changes saved successfully.', 'alert-success')
-        else:
-            flash('No changes were made to submit.', 'alert-warning')
-        return redirect(url_for('teamcaptains.edit_finances'))
-    return render_template('teamcaptains/edit_finances.html', finances=finances, team_finances=team_finances,
-                           confirmed_dancers=confirmed_dancers, cancelled_dancers=cancelled_dancers, data=data)
-
-
 @bp.route('/partner_request', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([data.ACCESS['team_captain']])
 def partner_request():
     form = PartnerRequestForm()
     dancer_choices = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo)\
-        .filter(ContestantInfo.team == current_user.team).all()
-    dancer_choices = [d for d in dancer_choices if dancing_level(BREITENSPORT, d) and partnerless(d)]
+        .filter(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None))\
+        .order_by(Contestant.first_name).all()
+    # dancer_choices = [d for d in dancer_choices if dancing_level(BREITENSPORT, d) and partnerless(d)]
     other_choices = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo)\
-        .filter(ContestantInfo.team != current_user.team).all()
-    other_choices = [d for d in other_choices if dancing_level(BREITENSPORT, d) and partnerless(d)]
+        .filter(ContestantInfo.team != current_user.team, DancingInfo.partner.is_(None))\
+        .order_by(ContestantInfo.team_id, Contestant.first_name).all()
+    # other_choices = [d for d in other_choices if dancing_level(BREITENSPORT, d) and partnerless(d)]
     form.dancer.choices = map(lambda c: (c.contestant_id, c.get_full_name()), dancer_choices)
     form.other.choices = map(lambda c: (c.contestant_id, "{} - {}"
                                         .format(c.contestant_info[0].team, c.get_full_name())), other_choices)
@@ -367,26 +337,27 @@ def request_respond(req):
                            req=req)
 
 
-@bp.route('/name_change_request/<contestant>', methods=['GET', 'POST'])
+@bp.route('/set_teamcaptains', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([data.ACCESS['team_captain']])
-def name_change_request(contestant):
-    contestant = Contestant.query.filter_by(contestant_id=contestant).first()
-    if not contestant or not contestant.contestant_info[0].team == current_user.team:
-        return redirect('errors/404.html')
-    form = NameChangeRequestForm()
+def set_teamcaptains():
+    form = TeamCaptainForm()
+    form.number.query = Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == current_user.team)
+    current_tc = db.session.query(Contestant).join(ContestantInfo) \
+        .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).first()
     if form.validate_on_submit():
-        flash('Name change request send')
-        ncr = NameChangeRequest(first_name=form.first_name.data, last_name=form.last_name.data,
-                                prefixes=form.prefixes.data, contestant=contestant)
-        db.session.add(ncr)
-        db.session.commit()
-        return redirect(url_for('teamcaptains.edit_dancer', number=contestant.contestant_id))
-    form.first_name.data = contestant.first_name
-    form.prefixes.data = contestant.prefixes
-    form.last_name.data = contestant.last_name
-    return render_template('teamcaptains/name_change_request.html', title="Name change request", contestant=contestant,
-                           form=form)
+        if form.number.data is not None:
+            new_tc = db.session.query(Contestant) \
+                .filter(Contestant.contestant_id == form.number.data.contestant_id).first()
+            new_tc.contestant_info[0].set_teamcaptain()
+            flash('Set {} as team captain.'.format(new_tc.get_full_name()), 'alert-success')
+            return redirect(url_for('teamcaptains.set_teamcaptains'))
+        else:
+            current_tc.contestant_info[0].team_captain = False
+            db.session.commit()
+            flash('Removed {} as team captain.'.format(current_tc.get_full_name()))
+            return redirect(url_for('teamcaptains.set_teamcaptains'))
+    return render_template('teamcaptains/set_teamcaptains.html', form=form, current_tc=current_tc)
 
 
 @bp.route('/raffle_result', methods=['GET', 'POST'])
@@ -453,9 +424,9 @@ def raffle_result():
                                       get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is None and
                                       dancer.status_info[0].status == data.CONFIRMED]
         ballroom_follow_blind_daters = [dancer for dancer in all_follows if
-                                        get_dancing_categories(dancer.dancing_info)[data.BALLROOM].role == data.FOLLOW and
-                                        get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is None and
-                                        dancer.status_info[0].status == data.CONFIRMED]
+                                        get_dancing_categories(dancer.dancing_info)[data.BALLROOM].role == data.FOLLOW
+                                        and get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is None
+                                        and dancer.status_info[0].status == data.CONFIRMED]
         latin_lead_blind_daters = [dancer for dancer in all_leads if
                                    get_dancing_categories(dancer.dancing_info)[data.LATIN].role == data.LEAD and
                                    get_dancing_categories(dancer.dancing_info)[data.LATIN].partner is None and
@@ -466,16 +437,14 @@ def raffle_result():
                                      dancer.status_info[0].status == data.CONFIRMED]
         if request.method == 'POST':
             form = request.form
-            if 'confirm' in form or 'confirm_all' in form:
-                confirmed_dancers = [d for d in selected_dancers if str(d.contestant_id) in form] if 'confirm' in form \
-                    else selected_dancers
+            if 'confirm' in form:
+                confirmed_dancers = [d for d in selected_dancers if str(d.contestant_id) in form]
                 for dancer in confirmed_dancers:
                     dancer.status_info[0].set_status(data.CONFIRMED)
                 db.session.commit()
-                flash('Confirmed selected dancer(s).', 'alert-success') if 'confirm' in form \
-                    else flash('Confirmed all dancer.', 'alert-success')
+                flash('Confirmed selected dancer(s).', 'alert-success')
                 return redirect(url_for('teamcaptains.raffle_result'))
-        return render_template('teamcaptains/raffle_results.html', data=data, tournament_settings= ts,
+        return render_template('teamcaptains/raffle_results.html', data=data, tournament_settings=ts,
                                selected_dancers=selected_dancers, confirmed_dancers=confirmed_dancers,
                                confirmed_ballroom_couples=confirmed_ballroom_couples,
                                confirmed_latin_couples=confirmed_latin_couples,
@@ -484,3 +453,40 @@ def raffle_result():
                                latin_lead_blind_daters=latin_lead_blind_daters,
                                latin_follow_blind_daters=latin_follow_blind_daters)
     return render_template('teamcaptains/raffle_results.html', tournament_settings=ts)
+
+
+@bp.route('/edit_finances', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['team_captain'], data.ACCESS['treasurer']])
+def edit_finances():
+    # TODO Stan zeurt, wil het graag exporteerbaar naar CSV (naam, bedrag, omschrijving), lage prio
+    ts = TournamentState.query.first()
+    if ts.main_raffle_result_visible:
+        all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+            .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required.is_(True)) \
+            .order_by(ContestantInfo.number).all()
+        confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
+        cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
+        finances = data.finances_overview(all_dancers)
+        team_finances = TeamFinances.query.filter_by(team=current_user.team).first()
+        if request.method == 'POST':
+            changes = False
+            for dancer in all_dancers:
+                if request.form.get(str(dancer.contestant_info[0].number)) is not None:
+                    if not dancer.status_info[0].paid:
+                        changes = True
+                    dancer.status_info[0].paid = True
+                else:
+                    if dancer.status_info[0].paid:
+                        changes = True
+                    dancer.status_info[0].paid = False
+            if changes:
+                db.session.commit()
+                flash('Changes saved successfully.', 'alert-success')
+            else:
+                flash('No changes were made to submit.', 'alert-warning')
+            return redirect(url_for('teamcaptains.edit_finances'))
+    else:
+        finances, team_finances, confirmed_dancers, cancelled_dancers = None, None, None, None
+    return render_template('teamcaptains/edit_finances.html', ts=ts, finances=finances, team_finances=team_finances,
+                           confirmed_dancers=confirmed_dancers, cancelled_dancers=cancelled_dancers, data=data)
