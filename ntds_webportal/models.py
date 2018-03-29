@@ -2,13 +2,13 @@ from ntds_webportal import db, login
 from flask import current_app, url_for, redirect, render_template
 from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-import jwt
-from functools import wraps
-from time import time
-from datetime import datetime
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.raffle_config import *
+from functools import wraps
+from time import time
+from datetime import datetime
+import jwt
 import json
 
 
@@ -24,18 +24,14 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-
-def requires_access_level(*access_levels):
+def requires_access_level(access_levels):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            ral = map(lambda x: data.ACCESS[x], access_levels)
-            if current_user.access not in ral:
+            if current_user.access not in access_levels:
                 return redirect(url_for('main.index'))
             return f(*args, **kwargs)
-
         return decorated_function
-
     return decorator
 
 
