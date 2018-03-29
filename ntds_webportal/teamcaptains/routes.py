@@ -12,8 +12,9 @@ from ntds_webportal.functions import get_dancing_categories, contestant_validate
 import ntds_webportal.functions as func
 import ntds_webportal.data as data
 from ntds_webportal.data import *
-import itertools
 from sqlalchemy import and_, or_
+import itertools
+import datetime
 
 
 @bp.route('/teamcaptain_profile', methods=['GET', 'POST'])
@@ -73,7 +74,8 @@ def register_dancers():
     else:
         if form.is_submitted():
             flash('Not all fields of the form have been filled in (correctly).', 'alert-danger')
-    return render_template('teamcaptains/register_dancers.html', form=form, data=data)
+    return render_template('teamcaptains/register_dancers.html', form=form, data=data,
+                           timestamp=datetime.datetime.now().timestamp())
 
 
 @bp.route('/edit_dancers', methods=['GET', 'POST'])
@@ -136,6 +138,8 @@ def edit_dancer(number):
             form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
                 .filter(ContestantInfo.team == current_user.team,
                         Contestant.contestant_id == dancing_categories[data.LATIN].partner).first()
+        if datetime.datetime.now().timestamp() > data.tournament_settings['merchandise_closing_date']:
+            form.t_shirt.data = dancer.additional_info[0].t_shirt
     else:
         form.email.data = dancer.email
         form.student.data = str(dancer.contestant_info[0].student)
@@ -168,7 +172,8 @@ def edit_dancer(number):
         flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
               'alert-success')
         return redirect(url_for('teamcaptains.edit_dancers', wide=wide))
-    return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, data=data, state=state, wide=wide)
+    return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, data=data, state=state, wide=wide,
+                           timestamp=datetime.datetime.now().timestamp())
 
 
 @bp.route('/register_dancer/<number>', methods=['GET', 'POST'])

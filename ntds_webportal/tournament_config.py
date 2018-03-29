@@ -31,5 +31,5 @@ tournament_settings = {
     'levels': PARTICIPATING_LEVELS,
     'blind_date_levels': BLIND_DATE_LEVELS,
     'tournament': ETDS,
-    'merchandise_closing_Date': datetime.datetime(2018, 9, 1, 0, 0, 0, 0).timestamp()
+    'merchandise_closing_date': int(datetime.datetime(2018, 9, 1, 3, 0, 0, 0).timestamp())
 }

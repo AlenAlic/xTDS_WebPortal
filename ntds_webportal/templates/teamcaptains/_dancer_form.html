@@ -30,6 +30,7 @@
     {{ reg_wtf.form_field(form.email, placeholder='E-mail address') }}
     {{ reg_wtf.form_field(form.student) }}
     {{ reg_wtf.form_field(form.first_time) }}
+    {{ reg_wtf.form_field(form.sleeping_arrangements) }}
     <!--{{ reg_wtf.form_field(form.diet_allergies, placeholder='Please fill in any special dietary requirements and/or allergies.') }}-->
 
     <h3>Ballroom</h3>
@@ -63,10 +64,8 @@
     {{ reg_wtf.form_field(form.license_jury_latin) }}
     {{ reg_wtf.form_field(form.jury_salsa) }}
     {{ reg_wtf.form_field(form.jury_polka) }}
-
-    <h3>Additional information</h3>
-    {{ reg_wtf.form_field(form.sleeping_arrangements) }}
-    {{ reg_wtf.form_field(form.t_shirt) }}
+    <h3>Merchandise</h3>
+    {{ reg_wtf.form_field(form.t_shirt, disabled=(timestamp > data.tournament_settings['merchandise_closing_date']) ) }}
     {% if mode == 'register' %}
     <div class="form-group required">
         <div class="col-xs-offset-2 col-xs-10">
