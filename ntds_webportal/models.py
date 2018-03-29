@@ -246,16 +246,17 @@ class StatusInfo(db.Model):
         if status == data.CONFIRMED:
             self.payment_required = True
 
-class Notification(db.Model):
-     __tablename__ = 'notifications'
-     notification_id = db.Column(db.Integer, primary_key=True)
-     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-     unread = db.Column(db.Boolean, index=True, default=True)
-     archived = db.Column(db.Boolean, index=True, default=False)
-     title = db.Column(db.String(128))
-     text = db.Column(db.Text())
-     destination = db.Column(db.String(256))
-     user = db.relationship('User', backref=db.backref('notifications', lazy=True))
 
-     def __repr__(self):
-         return 'message to: {} \ntitle: {} \nlink: {}\n'.format(self.user.username, self.title, self.destination, self.text)
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+    notification_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    unread = db.Column(db.Boolean, index=True, default=True)
+    archived = db.Column(db.Boolean, index=True, default=False)
+    title = db.Column(db.String(128))
+    text = db.Column(db.Text())
+    destination = db.Column(db.String(256))
+    user = db.relationship('User', backref=db.backref('notifications', lazy=True))
+
+    def __repr__(self):
+        return 'message to: {} \ntitle: {} \nlink: {}\n'.format(self.user.username, self.title, self.destination, self.text)
