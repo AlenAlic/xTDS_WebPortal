@@ -93,7 +93,7 @@ def goto(notification):
 def create():
     form = NotificationForm()
     choices = [('tc', 'All Teamcaptains'), ('tr', 'All Treasurers')]
-    for user in User.query.all():
+    for user in User.query.filter(User.is_active.is_(True)).all():
         choices.append(('{}'.format(user.user_id), user.username))
     form.recipients.choices = choices
     if form.validate_on_submit():

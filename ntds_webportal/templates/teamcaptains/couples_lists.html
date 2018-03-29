@@ -6,10 +6,10 @@
 
 {% block app_content %}
 <a href="{{ url_for('teamcaptains.create_couple') }}" class="btn btn-primary">Create new couple</a>
-{% with category='Ballroom', couples=ballroom_couples %}
+{% with category=data.BALLROOM, couples=ballroom_couples %}
     {% include 'teamcaptains/_couples_list.html' %}
 {% endwith %}
-{% with category='Latin', couples=latin_couples %}
+{% with category=data.LATIN, couples=latin_couples %}
     {% include 'teamcaptains/_couples_list.html' %}
 {% endwith %}
 {% endblock %}

@@ -1,24 +1,3 @@
-{% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
-
-{% block body_attribs %}
-onload="onStart()"
-{% endblock %}
-
-{% block app_content %}
-{% with title='Edit dancer information', mode='edit' %}
-    {% include 'teamcaptains/_dancer_form.html' %}
-{% endwith %}
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-function onStart() {
-    document.getElementById('ballroom_level').onchange();
-    document.getElementById('latin_level').onchange();
-    <!--document.getElementById('volunteer').onchange();-->
-}
 function dancingLevelGreyOut(level, role, partner, bd) {
     var div_level = document.getElementById(level);
     var div_role = document.getElementById(role);
@@ -51,5 +30,3 @@ function dancingBDGreyOut(bd, partner) {
         div_partner.removeAttribute('disabled');
     }
 }
-</script>
-{% endblock %}

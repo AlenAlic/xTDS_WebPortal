@@ -69,7 +69,7 @@ def register_dancers():
             return redirect(url_for('teamcaptains.register_dancers'))
         else:
             flash('You can not register without accepting the pricacy statement', 'alert-danger')
-    return render_template('teamcaptains/register_dancers.html', form=form)
+    return render_template('teamcaptains/register_dancers.html', form=form, data=data)
 
 
 @bp.route('/edit_dancers', methods=['GET', 'POST'])
@@ -301,6 +301,19 @@ def create_couple():
                   'alert-success')
             return redirect(url_for('teamcaptains.couples_list'))
     return render_template('teamcaptains/create_couple.html', form=form)
+
+
+@bp.route('/break_up_couple/<competition>,<lead_id>,<follow_id>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['team_captain']])
+def break_up_couple(competition, lead_id, follow_id):
+    lead = DancingInfo.query.filter(DancingInfo.competition == competition, DancingInfo.contestant_id == lead_id,
+                                    DancingInfo.partner == follow_id).first()
+    follow = Contestant.query.filter(Contestant.contestant_id == follow_id).first()
+    lead.set_partner(None)
+    db.session.commit()
+    flash(f'{lead.contestant} and {follow} are not a couple anymore in {competition}.')
+    return redirect(url_for('teamcaptains.couples_list'))
 
 
 @bp.route('/partner_request_list', methods=['GET', 'POST'])

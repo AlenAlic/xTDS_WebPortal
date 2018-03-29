@@ -25,13 +25,15 @@ class BaseContestantForm(FlaskForm):
     ballroom_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
     ballroom_role = SelectField('Role', validators=[Role('ballroom_level')],
                                 choices=[(k, v) for k, v in ROLES.items()])
-    ballroom_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date')
+    ballroom_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
+                                       render_kw={'onclick': "dancingBDGreyOut(id, 'ballroom_partner')"})
     ballroom_partner = QuerySelectField('Ballroom partner', validators=[Role('ballroom_level'), Level()],
                                         allow_blank=True, blank_text=PARTNER_TEXT)
 
     latin_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
     latin_role = SelectField('Role', validators=[Role('latin_level')], choices=[(k, v) for k, v in ROLES.items()])
-    latin_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date')
+    latin_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
+                                    render_kw={'onclick': "dancingBDGreyOut(id, 'latin_partner')"})
     latin_partner = QuerySelectField('Latin partner', validators=[Role('latin_level'), Level()], allow_blank=True,
                                      blank_text=PARTNER_TEXT)
 
