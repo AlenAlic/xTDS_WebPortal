@@ -63,7 +63,7 @@ Messagin system for users
   - [x] Send to specific (group of) users
   - [x] Read/Unread status
   - [x] Archive
-  - [] Soft delete
+  - [ ] Soft delete
 
 
 [CHANGELOG]: ./CHANGELOG.md
