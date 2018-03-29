@@ -4,27 +4,40 @@
 {% block app_content %}
 <a href="{{url_for('teamcaptains.partner_request')}}" class="btn btn-default navbar-btn no-print">Create new request</a>
 <h2>Partner requests</h2>
-{% if otherrequests %}
+{% if other_requests %}
 <table class="table table-striped table-responsive">
+    <colgroup>
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 10%;">
+    </colgroup>
     <thead>
-    <td> My dancer</td>
-    <td> Other dancer</td>
-    <td> Status</td>
-    <td> Respond</td>
+    <tr>
+        <td><b>My dancer</b></td>
+        <td><b>Category</b></td>
+        <td><b>Other dancer</b></td>
+        <td><b>Team</b></td>
+        <td><b>Status</b></td>
+        <td><b>Respond</b></td>
+    </tr>
     </thead>
     <tbody>
+    {% for req in other_requests %}
     <tr>
-        {% for req in otherrequests %}
-        <td> {{req.other}}</td>
-        <td> {{req.dancer}}</td>
-        <td> {{req.state_name()}}</td>
+        <td>{{req.other.get_full_name()}}</td>
+        <td>{{req.competition}}</td>
+        <td>{{req.dancer.get_full_name()}}</td>
+        <td>{{req.dancer.contestant_info[0].team.name}}</td>
+        <td>{{req.state_name()}}</td>
         <td>
-            <a href="{{url_for('teamcaptains.request_respond',request=req.id)}}">
+            <a href="{{url_for('teamcaptains.request_respond',req=req.id)}}">
                 <span class="glyphicon glyphicon-edit"></span>
             </a>
         </td>
     </tr>
-</div>
     {% endfor %}
     </tbody>
 </table>
@@ -33,27 +46,45 @@ There are no open partner requests.
 {% endif %}
 
 <h2>My requests</h2>
-{% if myrequests%}
+{% if my_requests%}
 <table class="table table-striped table-responsive">
+    <colgroup>
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 10%;">
+    </colgroup>
     <thead>
-    <td> My dancer</td>
-    <td> Other dancer</td>
-    <td> Status</td>
-    <td> More</td>
+    <tr>
+        <td><b>My dancer</b></td>
+        <td><b>Category</b></td>
+        <td><b>Other dancer</b></td>
+        <td><b>Team</b></td>
+        <td><b>Status</b></td>
+        <td><b>View</b></td>
+    </tr>
     </thead>
     <tbody>
-    {% for req in myrequests %}
-    <td> {{req.dancer}}</td>
-    <td> {{req.other}}</td>
-    <td> {{req.state_name()}}</td>
-    <td>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#req{{req.id}}-modal">
-            <span class="glyphicon glyphicon-search"></span>
-        </button>
-    </td>
+    {% for req in my_requests %}
+    <tr>
+        <td>{{req.dancer.get_full_name()}}</td>
+        <td>{{req.competition}}</td>
+        <td>{{req.other.get_full_name()}}</td>
+        <td>{{req.other.contestant_info[0].team.name}}</td>
+        <td>{{req.state_name()}}</td>
+        <td>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#req{{req.id}}-modal">
+                <span class="glyphicon glyphicon-search"></span>
+            </button>
+        </td>
     </tr>
-    <div class="modal fade" id="req{{req.id}}-modal" tabindex="-1" role="dialog"
-     aria-labelledby="myLargeModalLabel">
+    {% endfor %}
+    </tbody>
+</table>
+{% for req in my_requests %}
+<div class="modal fade" id="req{{req.id}}-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -71,7 +102,7 @@ There are no open partner requests.
                 Remark:<br/>
                 <p>{{req.remark}}</p>
                 {% endif %}
-                {% if req.response%}}
+                {% if req.response %}}
                 Response:<br/>
                 <p>{{req.response}}</p>
                 {% endif %}
@@ -82,9 +113,7 @@ There are no open partner requests.
         </div>
     </div>
 </div>
-    {% endfor %}
-    </tbody>
-</table>
+{% endfor %}
 {% else %}
 There are no requests made by you.
 {% endif %}

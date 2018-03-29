@@ -83,6 +83,7 @@ class PartnerRespondForm(FlaskForm):
     accept = SubmitField(label='Accept')
     reject = SubmitField(label='Reject')
 
+
 class NameChangeRequestForm(FlaskForm):
     first_name = StringField('First name', validators=[DataRequired()])
     prefixes = StringField('Prefixes')

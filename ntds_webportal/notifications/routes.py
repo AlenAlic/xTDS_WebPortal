@@ -5,6 +5,7 @@ from ntds_webportal.notifications import bp
 from ntds_webportal.models import Notification, User, requires_access_level
 from ntds_webportal.notifications.forms import NotificationForm
 import ntds_webportal.data as data
+from ntds_webportal.data import *
 
 
 @bp.route('/message_list')
@@ -89,9 +90,8 @@ def goto(notification):
 
 @bp.route('/create', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['admin'], data.ACCESS['organizer']])
+@requires_access_level([ACCESS['admin'], ACCESS['organizer'], ACCESS['team_captain'], ACCESS['treasurer']])
 def create():
-    print("Processing Form")
     form = NotificationForm()
     choices = [('tc', 'All Teamcaptains'), ('tr', 'All Treasurers')]
     for user in User.query.all():
@@ -114,7 +114,7 @@ def create():
                     n = Notification(title=form.title.data, text=form.body.data,
                                      user=u, sender=current_user)
                     db.session.add(n)
-
         db.session.commit()
         flash('Message(s) submitted')
+        return redirect(url_for('notifications.create'))
     return render_template('notifications/create.html', title="Send message", form=form)

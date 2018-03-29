@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
+## [0.7.0] - 2018-05-11
+### Added
+- Name change requests
+- Partner requests between teams
+- Framework for raffle system
+
+### Changed
+- Messages now available to everyone
+- Shell option added to reset database
+
+### Fixed
+- Competitions not hardcoded any more (DancingInfo)
+
+
 ## [0.6.0] - 2018-05-02
 ### Added
 - Messaging system within portal
@@ -67,7 +81,8 @@ For treasurers
 - Password change when logged in now requires old password
 
 
-[Unreleased]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.7.0...v0.6.0
 [0.6.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.4.0...v0.5.0

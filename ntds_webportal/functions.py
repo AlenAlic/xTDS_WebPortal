@@ -11,12 +11,23 @@ def get_dancing_categories(dancing_info):
 
 
 def get_partners_ids(dancer):
-    dancing_info = dancer.dancing_info
-    return [cat.partner for cat in dancing_info if cat.partner is not None]
+    return [cat.partner for cat in dancer.dancing_info if cat.partner is not None]
 
 
 def has_partners(dancer):
     return get_partners_ids(dancer) != []
+
+
+def dancing_only(level, dancer):
+    return [cat.level for cat in dancer.dancing_info] == [level for _ in dancer.dancing_info]
+
+
+def dancing_level(level, dancer):
+    return level in [cat.level for cat in dancer.dancing_info]
+
+
+def partnerless(dancer):
+    return None in [cat.partner for cat in dancer.dancing_info]
 
 
 def uniquify(seq):
@@ -79,8 +90,6 @@ def submit_contestant(f, contestant=None):
     if contestant is None:
         contestant = Contestant()
         ci = ContestantInfo()
-        di = DancingInfo()
-        # dancing_categories = {cat: DancingInfo(competition=cat) for cat in data.ALL_CATEGORIES}
         dancing_categories = get_dancing_categories(None)
         vi = VolunteerInfo()
         ai = AdditionalInfo()

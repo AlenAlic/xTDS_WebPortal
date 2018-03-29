@@ -5,23 +5,32 @@
 <h2>Name change requests</h2>
 {% if list %}
 <table class="table table-striped table-responsive">
+    <colgroup>
+        <col span="1" style="width: 25%;">
+        <col span="1" style="width: 30%;">
+        <col span="1" style="width: 30%;">
+        <col span="1" style="width: 15%;">
+    </colgroup>
     <thead>
-    <td> From</td>
-    <td> To</td>
-    <td> Respond</td>
+    <tr>
+        <td><b>Team</b></td>
+        <td><b>Name</b></td>
+        <td><b>Requested change</b></td>
+        <td><b>Respond</b></td>
+    </tr>
     </thead>
     <tbody>
     <tr>
         {% for req in list %}
-        <td> {{req.contestant.get_full_name()}}</td>
-        <td> {{req.get_full_name()}}</td>
+        <td>{{req.contestant.contestant_info[0].team.name}}</td>
+        <td>{{req.contestant.get_full_name()}}</td>
+        <td>{{req.get_full_name()}}</td>
         <td>
-            <a href="{{url_for('organizer.name_change_respond',request=req.id)}}">
+            <a href="{{url_for('organizer.name_change_respond',req=req.id)}}">
                 <span class="glyphicon glyphicon-edit"></span>
             </a>
         </td>
     </tr>
-</div>
     {% endfor %}
     </tbody>
 </table>

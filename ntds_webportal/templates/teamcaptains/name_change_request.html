@@ -7,14 +7,13 @@
 
 {% block app_content %}
     <h2>Name change request for: {{contestant.get_full_name()}}</h2>
-    <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
+    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
-
     {{ wtf.form_field(form.first_name)}}
-      {{ wtf.form_field(form.prefixes)}}
-         {{ wtf.form_field(form.last_name)}}
-         {{ wtf.form_field(form.submit)}}
+    {{ wtf.form_field(form.prefixes)}}
+    {{ wtf.form_field(form.last_name)}}
+    {{ wtf.form_field(form.submit)}}
 </form>
 
 {% endblock %}

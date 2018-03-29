@@ -7,11 +7,6 @@ onload="onStart()"
 
 {% block app_content %}
 <div class="row" style="visibility:hidden">
-    {% if current_user.is_admin() or current_user.is_organizer() %}
-        {% with url='notifications.create', title='Send message', text='Send a message to a user.', image='messages.png' %}
-            {% include '_dashboard_page.html' %}
-        {% endwith %}
-    {% endif %}
     {% if current_user.is_admin() %}
         {% with url='admin.index', title='Admin Page', text='Gives direct access to the database.', image='admin.png' %}
             {% include '_dashboard_page.html' %}
@@ -24,10 +19,10 @@ onload="onStart()"
         {% with count=current_user.open_name_change_requests(), url='organizer.name_change_list', title='Name change requests', text='Requests for name changes of dancers', image='name_change.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+        {% with url='organizer.raffle_system', title='Raffle system', text='Raffle system.', image='raffle.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with url='organizer.raffle_system', title='Raffle system', text='Raffle system.', image='raffle.png' %}
+        {% with url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}
@@ -38,13 +33,13 @@ onload="onStart()"
         {% with url='teamcaptains.edit_dancers', title='Edit Dancers', text='Edit information of registered dancers.', image='edit_contestant.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dance partner request', text='Request a couple with another team', image='dummy.png' %}
+        {% with count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dancing Partner Request', text='Request a couple with another team', image='partner_request.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with url='teamcaptains.set_teamcaptains', title='Set team captain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
+        {% with url='teamcaptains.couples_list', title='View Couples', text='List of all registered couples, and a list of blind daters for the tournament.', image='view_couples.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with url='teamcaptains.couples_list', title='Couples lists', text='List of all registered couples, and a list of blind daters for the tournament.', image='couple.png' %}
+        {% with count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title='Set Teamcaptain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with url='main.todo', title='Raffle results', text='Manage the dancers after the raffle has taken place.', image='raffle_results.png' %}

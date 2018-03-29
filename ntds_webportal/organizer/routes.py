@@ -2,7 +2,8 @@ from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required
 from ntds_webportal import db
 from ntds_webportal.organizer import bp
-from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, StatusInfo, NameChangeRequest
+from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, StatusInfo, \
+    NameChangeRequest
 import ntds_webportal.data as data
 from raffle_system.system import test_raffle
 from ntds_webportal.organizer.forms import NameChangeResponse
@@ -68,21 +69,22 @@ def finances_overview():
     return render_template('organizer/finances_overview.html', teams=teams, data=data,
                            dutch_teams=dutch_teams, german_teams=german_teams, other_teams=other_teams)
 
+
 @bp.route('/name_change_list', methods=['GET'])
 @login_required
 @requires_access_level([data.ACCESS['organizer']])
 def name_change_list():
     nml = NameChangeRequest.query.filter_by(state=NameChangeRequest.STATE['Open']).all()
-    return render_template('organizer/name_change_list.html', list = nml)
+    return render_template('organizer/name_change_list.html', list=nml)
 
-@bp.route('/name_change_respond/<request>', methods=['GET', 'POST'])
+
+@bp.route('/name_change_respond/<req>', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([data.ACCESS['organizer']])
-def name_change_respond(request):
-    req = NameChangeRequest.query.filter_by(id=request).first()
+def name_change_respond(req):
+    req = NameChangeRequest.query.filter_by(id=req).first()
     if not req:
         return redirect('error.404')
-
     form = NameChangeResponse()
     if form.validate_on_submit():
         accepted = form.accept.data
@@ -95,9 +97,7 @@ def name_change_respond(request):
             req.reject()
         db.session.commit()
         return redirect(url_for('organizer.name_change_list'))
-
-    return render_template('organizer/name_change_respond.html', request=req, form=form)
-
+    return render_template('organizer/name_change_respond.html', req=req, form=form)
 
 
 @bp.route('/raffle_system', methods=['GET', 'POST'])
@@ -109,9 +109,12 @@ def raffle_system():
         dancer_ids = list(range(0, max_id+1))
         selected = {did: 0 for did in dancer_ids}
         runs = 100
-        for i in range(0, runs):
-            print(f'Performing run {i+1} of {runs}...')
-            selected = test_raffle(selected)
-            with open('stats.txt', 'a', encoding='utf-8') as f1:
-                f1.write(str(selected))
+        if False:
+            for i in range(0, runs):
+                print(f'Performing run {i+1} of {runs}...')
+                selected = test_raffle(selected)
+                with open('stats.txt', 'a', encoding='utf-8') as f1:
+                    f1.write(str(selected))
+        else:
+            test_raffle(selected)
     return render_template('organizer/raffle_system.html')

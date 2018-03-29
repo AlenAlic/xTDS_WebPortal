@@ -22,15 +22,15 @@ ALL_COMPETITIONS = [BALLROOM, LATIN]
 
 # All available levels
 LEVEL = 'level'
-BEGINNERS = 'beginners'
-BREITENSPORT = 'breitensport'
-CLOSED = 'closed'
-OPEN_CLASS = 'open_class'
+BEGINNERS = 'Beginners'
+BREITENSPORT = 'Breitensport'
+CLOSED = 'CloseD'
+OPEN_CLASS = 'Open Class'
 ALL_LEVELS = {
-    BEGINNERS: 'Beginners',
-    BREITENSPORT: 'Breitensport',
-    CLOSED: 'CloseD',
-    OPEN_CLASS: 'Open Class'
+    BEGINNERS: BEGINNERS,
+    BREITENSPORT: BREITENSPORT,
+    CLOSED: CLOSED,
+    OPEN_CLASS: OPEN_CLASS
 }
 
 # Dancing roles

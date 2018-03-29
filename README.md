@@ -1,5 +1,5 @@
 # NTDS_webportal
-Version [0.6.0][CHANGELOG]
+Version [0.7.0][CHANGELOG]
 
 A web portal for registration and selection for the NTDS.
 
@@ -23,13 +23,14 @@ Based on Flask and Python
   - [x] Dashboard
   - [x] Enable treasurer in profile page
   - [x] Finances overview
-  - [ ] Registration period
+  - [x] Registration period
     - [x] Register dancers
     - [x] Change dancer data (except name)
-      - [ ] Name change can be requested
+      - [x] Name change can be requested
       - [x] Cancel registration/Re-register
     - [x] Overview of couples
     - [x] Select who is the teamcaptain
+    - [x] Request couples between teams
   - [ ] Raffle period
     - [ ] Overview of dancers with their status
       - [ ] Request for selected and confirmed dancers to de-register
@@ -43,7 +44,7 @@ Based on Flask and Python
 - Logged in - Organisation
   - [x] Dashboard
   - [x] Registration overview (total and per team)
-  - [ ] Name change requests
+  - [x] Name change requests
   - [x] Payments overview (per team and total)
   - [ ] Raffle pages
     - [ ] Raffle system

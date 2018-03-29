@@ -7,6 +7,7 @@ from functools import wraps
 from time import time
 from datetime import datetime
 import ntds_webportal.data as data
+from raffle_system.raffle_config import *
 
 
 @login.user_loader
@@ -75,9 +76,10 @@ class User(UserMixin, db.Model):
     def unread_notifications(self):
         return Notification.query.filter_by(user=self, unread=True).count()
 
-    def open_partner_requests(self):
-        return len(list(r for r in PartnerRequest.query.filter_by(state=PartnerRequest.STATE['Open']).all() if
-                        r.other.contestant_info[0].team == current_user.team))
+    @staticmethod
+    def open_partner_requests():
+        return len([r for r in PartnerRequest.query.filter_by(state=PartnerRequest.STATE['Open']).all() if
+                    r.other.contestant_info[0].team == current_user.team])
 
     def open_name_change_requests(self):
         if self.is_organizer():
@@ -91,6 +93,12 @@ class User(UserMixin, db.Model):
         except jwt.exceptions.InvalidTokenError:
             return 'error'
         return User.query.get(user_id)
+
+    @staticmethod
+    def teamcaptains_selected():
+        return raffle_settings[MAX_TEAMCAPTAINS] - len([d for d in db.session.query(Contestant).join(ContestantInfo)
+                                                       .filter(ContestantInfo.team == current_user.team,
+                                                               ContestantInfo.team_captain)])
 
 
 class Team(db.Model):
@@ -191,6 +199,10 @@ class DancingInfo(db.Model):
             errors.append("The dancers are not in the same level.")
         if self.role == other.role:
             errors.append("The dancers are not a valid Lead/Follow pair.")
+        if self.partner is not None:
+            errors.append(f"{self.contestant.get_full_name()} already has a partner.")
+        if other.partner is not None:
+            errors.append(f"{other.contestant.get_full_name()} already has a partner.")
         return not errors, errors
 
     def set_partner(self, contestant_id):
@@ -290,15 +302,15 @@ class Notification(db.Model):
 
 class PartnerRequest(db.Model):
     STATE = {'Open': 1, 'Accepted': 2, 'Rejected': 3}
-    STATENAMES = {v: k for k, v in STATE.items()}
+    STATE_NAMES = {v: k for k, v in STATE.items()}
 
-    __tablename__ = 'partnerrequest'
+    __tablename__ = 'partner_request'
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     remark = db.Column(db.Text())
     response = db.Column(db.Text())
     level = db.Column(db.String(128), nullable=False, default=data.NO)
-    competition = db.Column(db.String(128), nullable=False)
+    competition = db.Column(db.String(128), nullable=False, default=data.BREITENSPORT)
     dancer_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     other_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     state = db.Column(db.Integer, default=STATE['Open'])
@@ -318,21 +330,22 @@ class PartnerRequest(db.Model):
         recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team)
         for u in recipients:
             n = Notification()
-            n.title = "Partner request {}".format(self.state_name())
+            n.title = f"{self.state_name()} - Partner request: {self.dancer.get_full_name()} with " \
+                      f"{self.other.get_full_name()} in {self.competition}"
             n.user = u
             n.text = render_template('notifications/partner_request.html', request=self)
             db.session.add(n)
         db.session.commit()
 
     def state_name(self):
-        return self.STATENAMES[self.state]
+        return self.STATE_NAMES[self.state]
 
 
 class NameChangeRequest(db.Model):
     STATE = {'Open': 1, 'Accepted': 2, 'Rejected': 3}
-    STATENAMES = {v: k for k, v in STATE.items()}
+    STATE_NAMES = {v: k for k, v in STATE.items()}
 
-    __tablename__ = 'namechangerequests'
+    __tablename__ = 'name_change_requests'
     id = db.Column(db.Integer, primary_key=True)
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     contestant = db.relationship('Contestant', foreign_keys=[contestant_id])
@@ -357,7 +370,8 @@ class NameChangeRequest(db.Model):
         recipients = User.query.filter_by(team=self.contestant.contestant_info[0].team)
         for u in recipients:
             n = Notification()
-            n.title = "Name change request {}".format(self.state_name())
+            n.title = f"{self.state_name()} - Name change request: " \
+                      f"{self.contestant.get_full_name()} to {self.get_full_name()}"
             n.user = u
             n.text = render_template('notifications/name_change_request.html', request=self)
             db.session.add(n)
@@ -370,7 +384,7 @@ class NameChangeRequest(db.Model):
             return ' '.join((self.first_name, self.prefixes, self.last_name))
 
     def state_name(self):
-        return self.STATENAMES[self.state]
+        return self.STATE_NAMES[self.state]
 
     @staticmethod
     def open_requests():

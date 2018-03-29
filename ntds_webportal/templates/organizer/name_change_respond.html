@@ -3,16 +3,15 @@
 
 {% block app_content %}
 <h2>Name change request</h2>
-The teamcaptain of {{request.contestant.contestant_info[0].team}} want to change the name of:
-<p>{{request.contestant.get_full_name()}} to: <br>{{request.get_full_name()}}</p>
+The teamcaptain of {{req.contestant.contestant_info[0].team}} want to make the following changes:
+<p>{{req.contestant.get_full_name()}} <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> {{req.get_full_name()}}</p>
 
-<div class="container">
-<form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
 
     <div class="form-group ">
-        <label class="control-label" for="remark">remark</label>
+        <label class="control-label" for="remark">Remarks for the teamcaptain (optional)</label>
         <textarea class="form-control" id="remark" name="remark"></textarea>
     </div>
     <div class="btn-group" role="group" aria-label="Basic example">
@@ -20,5 +19,5 @@ The teamcaptain of {{request.contestant.contestant_info[0].team}} want to change
         <input type="submit" id="reject" name="reject" value="Reject" class="btn btn-danger"/>
     </div>
 </form>
-    </div>
+
 {% endblock %}
