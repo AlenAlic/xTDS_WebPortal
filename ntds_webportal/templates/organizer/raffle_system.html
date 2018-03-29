@@ -24,11 +24,11 @@
             <form class="form" method="POST" enctype="multipart/form-data" novalidate>
                 <button type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success loading-btn">Start Raffle</button>
                 <button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-danger btn-lg"><strong>DEBUG RAFFLE - FOR TESTING PURPOSES ONLY</strong></button>
-            <!--</form>-->
+            </form>
             {% with subtitle='Registered', counter='available', stats=stats_registered %}
                 {% include 'organizer/_raffle_stats.html' %}
             {% endwith %}
-            <!--<form class="form" method="POST" enctype="multipart/form-data" novalidate>-->
+            <form class="form" method="POST" enctype="multipart/form-data" novalidate>
                 {% with list_id='guaranteed', type='guaranteed', title='Guaranteed dancers', teams=teams %}
                     {% include 'organizer/_raffle_dancers_lists.html' %}
                 {% endwith %}
@@ -43,7 +43,6 @@
                 <p>Click the button below to confirm the raffle, and make the results visible to the teamcaptains.</p>
                 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
                     <button type="submit" id="submit-confirm_raffle" name="confirm_raffle" class="btn btn-success loading-btn">Confirm Raffle</button>
-                    <!--<button type="submit" id="submit-redo_raffle" name="redo_raffle" class="btn btn-info loading-btn">Redo Raffle</button>-->
                     <button type="submit" id="submit-cancel_raffle" name="cancel_raffle" class="btn btn-warning loading-btn">Cancel Raffle</button>
                 </form>
                 {% with subtitle='Selected', counter='selected', stats=stats_selected %}

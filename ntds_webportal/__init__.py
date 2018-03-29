@@ -43,7 +43,7 @@ def create_app():
     Create instance of website.
     """
     from ntds_webportal.models import User, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo, VolunteerInfo,\
-        AdditionalInfo, StatusInfo, Notification
+        AdditionalInfo, StatusInfo, Notification, PartnerRequest, NameChangeRequest, TournamentState
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('config')
@@ -67,6 +67,9 @@ def create_app():
     admin.add_view(BaseView(AdditionalInfo, db.session))
     admin.add_view(BaseView(StatusInfo, db.session))
     admin.add_view(BaseView(Notification, db.session))
+    admin.add_view(BaseView(PartnerRequest, db.session))
+    admin.add_view(BaseView(NameChangeRequest, db.session))
+    admin.add_view(BaseView(TournamentState, db.session))
 
     from ntds_webportal.main import bp as main_bp
     app.register_blueprint(main_bp)

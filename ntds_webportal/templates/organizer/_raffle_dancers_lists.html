@@ -1,5 +1,5 @@
 <h2>{{title}}
-    <span id="{{ list_id }}-total-badge" class="badge" style="font-size:large">{% if type == 'selected' %}{{ selected_dancers|length }}{% elif type == 'available' %}{{ available_dancers|length }}{% elif type == 'completed_raffle' %}{{ confirmed_dancers|length }} / {{ selected_dancers|length }}{% endif %}</span>
+    <span id="{{ list_id }}-total-badge" class="badge" style="font-size:large">{% if type == 'selected' %}{{ selected_dancers|length }}{% elif type == 'available' %}{{ available_dancers|length }}{% elif type == 'completed_raffle' %}{{ confirmed_dancers|length }} / {{ selected_dancers|length + confirmed_dancers|length }}{% endif %}</span>
 </h2>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 {% for team in teams %}

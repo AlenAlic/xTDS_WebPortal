@@ -22,18 +22,6 @@ def has_partners(dancer):
     return get_partners_ids(dancer) != []
 
 
-def dancing_only(level, dancer):
-    return [cat.level for cat in dancer.dancing_info] == [level for _ in dancer.dancing_info]
-
-
-def dancing_level(level, dancer):
-    return level in [cat.level for cat in dancer.dancing_info]
-
-
-def partnerless(dancer):
-    return None in [cat.partner for cat in dancer.dancing_info]
-
-
 def uniquify(seq):
     s = set(seq)
     s = list(s)

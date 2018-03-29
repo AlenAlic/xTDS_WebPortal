@@ -1,8 +1,8 @@
 # noinspection PyProtectedMember
 from wtforms.validators import ValidationError
-from ntds_webportal.data import LEAD, FOLLOW
 from ntds_webportal import db
 from ntds_webportal.models import Contestant
+from ntds_webportal.data import LEAD, FOLLOW
 
 REQUIRED = 'This field is required.'
 SAME_ROLE = 'You can not dance as a {role} with that partner, the selected partner already is a {role}. ' \
@@ -14,9 +14,7 @@ MUST_BLIND_DATE = 'You cannot have a partner at this level.'
 
 
 class Level(object):
-    """
-    Checks if a dancing level is selected.
-    """
+    """Checks if a dancing level is selected."""
     def __call__(self, form, field):
         if field.data == 'choose':
             raise ValidationError(field.gettext('Please choose a level to dance at for this category.'))
@@ -29,12 +27,7 @@ class Level(object):
 
 
 class Role(object):
-    """
-    Compares the values of two fields.
-
-    :param field_name:
-        The name of the other field to compare to.
-    """
+    """Validates if the chosen role is valid."""
     def __init__(self, field_name):
         self.field_name = field_name
 
@@ -56,30 +49,21 @@ class Role(object):
 
 
 class ChoiceMade(object):
-    """
-    Checks if a choice is selected from a list.
-    """
+    """Checks if a choice is selected from a list."""
     def __call__(self, form, field):
         if field.data == 'choose':
             raise ValidationError(field.gettext(REQUIRED))
 
 
 class IsBoolean(object):
-    """
-    Checks if the value is a Boolean.
-    """
+    """Checks if the value is a Boolean."""
     def __call__(self, form, field):
         if not (field.data == str(True) or field.data == str(False)):
             raise ValidationError(field.gettext(REQUIRED))
 
 
 class SpecificVolunteer(object):
-    """
-    Compares the values of two fields.
-
-    :param fieldname:
-        The name of the other field to compare to.
-    """
+    """Checks if the volunteering fields are valid."""
     def __init__(self, fieldname):
         self.fieldname = fieldname
 
@@ -94,9 +78,7 @@ class SpecificVolunteer(object):
 
 
 class UniqueEmail(object):
-    """
-    Checks if an e-mail address is unique.
-    """
+    """Checks if an e-mail address is unique."""
     def __call__(self, form, field):
         email_list = [i[0] for i in db.session.query(Contestant.email).all()]
         if field.data in email_list:

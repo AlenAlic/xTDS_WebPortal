@@ -3,16 +3,16 @@ from flask_login import login_required
 from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
-    StatusInfo, NameChangeRequest
-import ntds_webportal.data as data
+    StatusInfo, AdditionalInfo, NameChangeRequest
 from ntds_webportal.functions import uniquify, check_combination, get_combinations_list
+from ntds_webportal.organizer.forms import NameChangeResponse
+import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.system import raffle, finish_raffle, raffle_add_neutral_group, test_raffle
 from raffle_system.functions import RaffleSystem, get_combinations
-from ntds_webportal.organizer.forms import NameChangeResponse
+from sqlalchemy import or_
 import time
 import random
-from sqlalchemy import and_, or_
 
 
 @bp.route('/registration_overview')
@@ -44,8 +44,12 @@ def registration_overview():
 def finances_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .filter(StatusInfo.payment_required.is_(True)).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
-    all_confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == CONFIRMED]
-    all_cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == CANCELLED]
+    all_confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(StatusInfo.payment_required.is_(True), StatusInfo.status == CONFIRMED)\
+        .order_by(ContestantInfo.team_id, ContestantInfo.number).all()
+    all_cancelled_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(StatusInfo.payment_required.is_(True), StatusInfo.status == CANCELLED) \
+        .order_by(ContestantInfo.team_id, ContestantInfo.number).all()
     all_teams = db.session.query(Team).join(TeamFinances).all()
     teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
               'confirmed_dancers': [dancer for dancer in all_confirmed_dancers if
@@ -55,7 +59,7 @@ def finances_overview():
               'finances': data.finances_overview([dancer for dancer in all_dancers if
                                                   dancer.contestant_info[0].team.name == team.name])}
              for team in all_teams]
-    teams = [team for team in teams if (len(team['confirmed_dancers'])+len(team['cancelled_dancers'])) > 0]
+    teams = [team for team in teams if (len(team['confirmed_dancers']) + len(team['cancelled_dancers'])) > 0]
     dutch_teams = [team for team in teams if team['team'].country == data.NETHERLANDS]
     german_teams = [team for team in teams if team['team'].country == data.GERMANY]
     other_teams = [team for team in teams if
@@ -118,7 +122,7 @@ def raffle_system():
     raffle_config = raffle_sys.raffle_config
     tournament_config = raffle_sys.tournament_config
 
-    newly_selected = None
+    newly_selected, sleeping_spots = None, None
     stats_registered, stats_selected, stats_confirmed = None, None, None
     stats_registered = raffle_sys.get_stats(REGISTERED)
     if state.main_raffle_taken_place:
@@ -162,6 +166,9 @@ def raffle_system():
             t['selected_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
                 .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == SELECTED)\
                 .order_by(Contestant.first_name).all()
+        sleeping_spots = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
+            .filter(or_(StatusInfo.raffle_status == SELECTED, StatusInfo.raffle_status == CONFIRMED),
+                    AdditionalInfo.sleeping_arrangements.is_(True)).count()
     if state.main_raffle_taken_place and state.main_raffle_result_visible:
         for t in teams:
             t['available_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -173,6 +180,9 @@ def raffle_system():
         newly_selected = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(StatusInfo.raffle_status == SELECTED, StatusInfo.status == REGISTERED)\
             .order_by(Contestant.contestant_id).all()
+        sleeping_spots = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
+            .filter(or_(StatusInfo.raffle_status == SELECTED, StatusInfo.raffle_status == CONFIRMED),
+                    AdditionalInfo.sleeping_arrangements.is_(True)).count()
 
     if request.method == 'POST':
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -255,4 +265,5 @@ def raffle_system():
                            stats_registered=stats_registered, stats_selected=stats_selected,
                            stats_confirmed=stats_confirmed, selected_dancers=selected_dancers,
                            confirmed_dancers=confirmed_dancers, available_dancers=available_dancers,
-                           available_combinations=available_combinations, newly_selected=newly_selected)
+                           available_combinations=available_combinations, newly_selected=newly_selected,
+                           sleeping_spots=sleeping_spots)

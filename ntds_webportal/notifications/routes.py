@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, flash, request
+from flask import render_template, url_for, redirect, flash
 from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.notifications import bp

@@ -6,4 +6,3 @@ class NameChangeResponse(FlaskForm):
     remark = TextAreaField(label='remark')
     accept = SubmitField(label='Accept')
     reject = SubmitField(label='Reject')
-

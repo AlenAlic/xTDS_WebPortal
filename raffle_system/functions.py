@@ -1,10 +1,8 @@
-from raffle_system.raffle_config import *
 from ntds_webportal import db
-from ntds_webportal.tournament_config import *
-from ntds_webportal.functions import get_dancing_categories, get_partners_ids, uniquify, has_partners
 from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, TournamentState
+from ntds_webportal.functions import get_dancing_categories, get_partners_ids, uniquify, has_partners
 from ntds_webportal.strings import *
-from ntds_webportal.data import REGISTERED, SELECTED, CONFIRMED, NO
+from ntds_webportal.data import *
 from random import shuffle
 
 
@@ -13,8 +11,6 @@ def get_combinations(dancer):
     for di in dancer.dancing_info:
         if di.level != NO:
             strings.append(f"{di.competition}, {di.level}, {di.role}")
-        # else:
-        #     strings.append(f"Not dancing {di.competition}")
     return ' / '.join(strings)
 
 
@@ -24,11 +20,6 @@ def get_balance_sum(balance):
         for lvl in levels:
             s += abs(balance[comp][lvl])
     return s
-
-
-def get_competition_sum(balance):
-    values = [abs(v) for v in [val for comp, level in balance.items() for lvl, val in level.items()]]
-    return (i < 2 for i in values)
 
 
 def rearrange_numbers():
@@ -52,9 +43,6 @@ class RaffleSystem:
         self.registered_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(StatusInfo.raffle_status == REGISTERED).order_by(ContestantInfo.team_id, Contestant.first_name)\
             .all()
-        # self.registered_dancers += db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-        #     .filter(StatusInfo.raffle_status == REGISTERED, ContestantInfo.first_time.is_(True))\
-        #     .order_by(ContestantInfo.team_id, Contestant.first_name).all()
         self.selected_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(StatusInfo.raffle_status == SELECTED).order_by(ContestantInfo.team_id, Contestant.first_name).all()
         self.confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -156,19 +144,19 @@ class RaffleSystem:
                 balance[di.competition][di.level] += self.measure[di.role]
         return balance
 
-    def update_balance(self, group):
-        for dancer in group.dancers:
-            for di in dancer.dancing_info:
-                self.balance[di.competition][di.level] += self.measure[di.role]
+    # def update_balance(self, group):
+    #     for dancer in group.dancers:
+    #         for di in dancer.dancing_info:
+    #             self.balance[di.competition][di.level] += self.measure[di.role]
 
-    @staticmethod
-    def join_balances(b1, b2):
-        b = {comp: {lvl: 0 for lvl in PARTICIPATING_LEVELS + [NO]} for comp in ALL_COMPETITIONS}
-        for comp, levels in b1.items():
-            for lvl in levels:
-                b[comp][lvl] += b1[comp][lvl]
-                b[comp][lvl] += b2[comp][lvl]
-        return b
+    # @staticmethod
+    # def join_balances(b1, b2):
+    #     b = {comp: {lvl: 0 for lvl in PARTICIPATING_LEVELS + [NO]} for comp in ALL_COMPETITIONS}
+    #     for comp, levels in b1.items():
+    #         for lvl in levels:
+    #             b[comp][lvl] += b1[comp][lvl]
+    #             b[comp][lvl] += b2[comp][lvl]
+    #     return b
 
 
 class DancingGroup:
@@ -206,19 +194,19 @@ class DancingGroup:
             balance.extend([m for _, m in groups.items()])
         return True if [number for number in balance if number == 0] == balance else False
 
-    def get_criteria(self):
-        criteria = {cat: {} for cat in ALL_COMPETITIONS}
-        for comp, levels in self.group.items():
-            criteria[comp].update({lvl: self.search_criteria[val] for lvl, val in levels.items() if val != 0})
-        return criteria
+    # def get_criteria(self):
+    #     criteria = {cat: {} for cat in ALL_COMPETITIONS}
+    #     for comp, levels in self.group.items():
+    #         criteria[comp].update({lvl: self.search_criteria[val] for lvl, val in levels.items() if val != 0})
+    #     return criteria
 
-    @staticmethod
-    def get_profile(dancer):
-        profile = {cat: {} for cat in ALL_COMPETITIONS}
-        for di in dancer.dancing_info:
-            if di.role != NO:
-                profile[di.competition].update({di.level: di.role})
-        return profile
+    # @staticmethod
+    # def get_profile(dancer):
+    #     profile = {cat: {} for cat in ALL_COMPETITIONS}
+    #     for di in dancer.dancing_info:
+    #         if di.role != NO:
+    #             profile[di.competition].update({di.level: di.role})
+    #     return profile
 
     @staticmethod
     def check_chain(dancer, list_of_dancers):
@@ -238,8 +226,8 @@ class DancingGroup:
         else:
             return []
 
-    def find_dancers(self, criteria, list_of_dancers):
-        return [d for d in list_of_dancers if self.get_profile(d) == criteria]
+    # def find_dancers(self, criteria, list_of_dancers):
+    #     return [d for d in list_of_dancers if self.get_profile(d) == criteria]
 
     def get_balance(self):
         balance = {comp: {lvl: 0 for lvl in PARTICIPATING_LEVELS + [NO]} for comp in ALL_COMPETITIONS}
@@ -261,11 +249,12 @@ class DancingGroup:
         dancers.append(last_dancer)
         return ', '.join(dancers)
 
-    @staticmethod
-    def get_dancer_types():
-        combinations = [(c, l, r) for c in ALL_COMPETITIONS for l in PARTICIPATING_LEVELS for r in ALL_ROLES]+[(c, NO, NO) for c in ALL_COMPETITIONS]
-        combinations = [(b, l) for b in combinations for l in combinations if b[0] != l[0]]
-        combinations = ''
+    # @staticmethod
+    # def get_dancer_types():
+    #     combinations = [(c, l, r) for c in ALL_COMPETITIONS for l in PARTICIPATING_LEVELS for r in ALL_ROLES] + \
+    #                    [(c, NO, NO) for c in ALL_COMPETITIONS]
+    #     combinations = [(b, l) for b in combinations for l in combinations if b[0] != l[0]]
+    #     combinations = ''
 
 
 def find_partners(dancers_list, dancer, target_team=None):
