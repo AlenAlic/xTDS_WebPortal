@@ -126,11 +126,12 @@
                 {% elif type == 'completed_raffle' %}
                 <table class="table list-group">
                     <colgroup>
-                        <col span="1" style="width: 40%;">
-                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 30%;">
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 10%;">
+                        <col span="1" style="width: 15%;">
                         <col span="1" style="width: 10%;">
                         <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 10%;">
                     </colgroup>
                     <thead>
                         <tr style="vertical-align:bottom">
@@ -141,13 +142,14 @@
                             <th colspan="2">
                                 Latin
                             </th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                     {% if team['confirmed_dancers']|length > 0 %}
                         <tr><td><b style="font-size: x-large">{{ data.STATUS[data.CONFIRMED] }}</b></td></tr>
                         {% for dancer in team['confirmed_dancers'] %}
-                        <tr>
+                        <tr class="{% if dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
                             <td>
                                 {{ dancer.get_full_name() }}
                             </td>
@@ -171,6 +173,7 @@
                                 {{ dancer.get_dancing_info(data.LATIN).role }}
                                 {% else %}-{% endif %}
                             </td>
+                            <td align="right"></td>
                         </tr>
                         {% endfor %}
                     {% else %}
@@ -187,9 +190,10 @@
                             <th colspan="2">
                                 Latin
                             </th>
+                            <th></th>
                         </tr>
                         {% for dancer in team['selected_dancers'] %}
-                        <tr>
+                        <tr class="{% if dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
                             <td>
                                 {{ dancer.get_full_name() }}
                             </td>
@@ -212,6 +216,9 @@
                                 {% if dancer.get_dancing_info(data.LATIN).role != data.NO %}
                                 {{ dancer.get_dancing_info(data.LATIN).role }}
                                 {% else %}-{% endif %}
+                            </td>
+                            <td align="right">
+                                <a role="button" class="btn btn-danger" href="{{ url_for('organizer.cancel_dancer', number=dancer.contestant_id, send_message=true) }}">Cancel registration</a>
                             </td>
                         </tr>
                         {% endfor %}

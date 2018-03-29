@@ -1,9 +1,9 @@
 from flask import render_template, request, flash, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
-    StatusInfo, AdditionalInfo, NameChangeRequest
+    StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification
 from ntds_webportal.functions import uniquify, check_combination, get_combinations_list
 from ntds_webportal.organizer.forms import NameChangeResponse
 import ntds_webportal.data as data
@@ -151,7 +151,8 @@ def raffle_system():
         teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
                   'id_title': team.name.replace(' ', '-').replace('`', '') + '-title',
                   'teamcaptains_selected': len(Contestant.query.join(ContestantInfo)
-                      .filter(ContestantInfo.team == team, ContestantInfo.team_captain.is_(True)).all())}
+                                               .filter(ContestantInfo.team == team,
+                                                       ContestantInfo.team_captain.is_(True)).all())}
                  for team in all_teams]
         if not state.main_raffle_taken_place:
             for t in teams:
@@ -270,3 +271,22 @@ def raffle_system():
                            confirmed_dancers=confirmed_dancers, available_dancers=available_dancers,
                            available_combinations=available_combinations, newly_selected=newly_selected,
                            sleeping_spots=sleeping_spots)
+
+
+@bp.route('/cancel_dancer/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['organizer']])
+def cancel_dancer(number):
+    send_message = request.args.get('send_message', False, type=bool)
+    changed_dancer = db.session.query(Contestant).join(ContestantInfo)\
+        .filter(Contestant.contestant_id == number).first()
+    changed_dancer.cancel_registration()
+    db.session.commit()
+    flash('The registration of {} has been cancelled.'.format(changed_dancer.get_full_name()), 'alert-info')
+    if send_message:
+        text = f"{changed_dancer.get_full_name()}' registration has been cancelled by the organization.\n"
+        n = Notification(title=f"Cancelled registration of {changed_dancer.get_full_name()}", text=text,
+                         user=User.query.filter(User.team == changed_dancer.contestant_info[0].team).first())
+        db.session.add(n)
+        db.session.commit()
+    return redirect(url_for('organizer.raffle_system'))
