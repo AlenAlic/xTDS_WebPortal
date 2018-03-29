@@ -15,13 +15,13 @@ function dropDownGreyOut(parent_id, id) {
         blindDateGreyOut('latin_p', 'latin_blind_date')
     }
 }
-<!--function blindDateGreyOut(partner_id, check_id) {-->
-    <!--var bdcb = document.getElementById(check_id);-->
-    <!--var checkDiv = document.getElementById(partner_id);-->
-    <!--var selectedValue = bdcb.checked;-->
-    <!--if (selectedValue == true || bdcb.disabled == true) {-->
-        <!--$(checkDiv).find('*').attr('disabled', true);-->
-    <!--} else {-->
-        <!--$(checkDiv).find('*').attr('disabled', false);-->
-    <!--}-->
-<!--}-->
+//function blindDateGreyOut(partner_id, check_id) {
+//    var bdcb = document.getElementById(check_id);
+//    var checkDiv = document.getElementById(partner_id);
+//    var selectedValue = bdcb.checked;
+//    if (selectedValue == true || bdcb.disabled == true) {
+//        $(checkDiv).find('*').attr('disabled', true);
+//    } else {
+//        $(checkDiv).find('*').attr('disabled', false);
+//    }
+//}

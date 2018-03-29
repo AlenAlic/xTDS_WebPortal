@@ -8,7 +8,7 @@ import ntds_webportal.data as data
 
 @bp.route('/registration_overview')
 @login_required
-@requires_access_level('organizer')
+@requires_access_level(data.ACCESS['organizer'])
 def registration_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .order_by(ContestantInfo.team_id, ContestantInfo.number).all()
@@ -28,28 +28,26 @@ def registration_overview():
 
 @bp.route('/finances_overview', methods=['GET', 'POST'])
 @login_required
-@requires_access_level('organizer')
+@requires_access_level([data.ACCESS['organizer']])
 def finances_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .filter(StatusInfo.payment_required.is_(True)).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
     all_confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
     all_cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
     all_teams = db.session.query(Team).join(TeamFinances).all()
-    # all_finances = data.finances_overview(all_dancers)
-    dancers = [{'team_id': team.team_id, 'country': team.country, 'name': team.name,
-                'id': team.name.replace(' ', '-').replace('`', ''), 'amount_sent': team.finances[0].paid,
-                'confirmed_dancers': [dancer for dancer in all_confirmed_dancers if
-                                      dancer.contestant_info[0].team.name == team.name],
-                'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if
-                                      dancer.contestant_info[0].team.name == team.name],
-                'finances': data.finances_overview([dancer for dancer in all_dancers if
-                                                    dancer.contestant_info[0].team.name == team.name])}
-               for team in all_teams]
-    dancers = [team for team in dancers if (len(team['confirmed_dancers'])+len(team['cancelled_dancers'])) > 0]
-    dutch_dancers = [team for team in dancers if team['country'] == data.NETHERLANDS]
-    german_dancers = [team for team in dancers if team['country'] == data.GERMANY]
-    other_dancers = [team for team in dancers if team['country'] != data.NETHERLANDS and
-                     team['country'] != data.GERMANY]
+    teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
+              'confirmed_dancers': [dancer for dancer in all_confirmed_dancers if
+                                    dancer.contestant_info[0].team.name == team.name],
+              'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if
+                                    dancer.contestant_info[0].team.name == team.name],
+              'finances': data.finances_overview([dancer for dancer in all_dancers if
+                                                  dancer.contestant_info[0].team.name == team.name])}
+             for team in all_teams]
+    teams = [team for team in teams if (len(team['confirmed_dancers'])+len(team['cancelled_dancers'])) > 0]
+    dutch_teams = [team for team in teams if team['team'].country == data.NETHERLANDS]
+    german_teams = [team for team in teams if team['team'].country == data.GERMANY]
+    other_teams = [team for team in teams if
+                   team['team'].country != data.NETHERLANDS and team['team'].country != data.GERMANY]
     if request.method == 'POST':
         changes = False
         for team in all_teams:
@@ -65,7 +63,5 @@ def finances_overview():
         else:
             flash('No changes were made to submit.', 'alert-warning')
         return redirect(url_for('organizer.finances_overview'))
-    return render_template('organizer/finances_overview.html', dancers=dancers,
-                           all_confirmed_dancers=all_confirmed_dancers, all_cancelled_dancers=all_cancelled_dancers,
-                           dutch_dancers=dutch_dancers, german_dancers=german_dancers, other_dancers=other_dancers,
-                           data=data)
+    return render_template('organizer/finances_overview.html', teams=teams, data=data,
+                           dutch_teams=dutch_teams, german_teams=german_teams, other_teams=other_teams)

@@ -1,5 +1,5 @@
 # NTDS_webportal
-Version [0.5.1][CHANGELOG]
+Version [0.6.0][CHANGELOG]
 
 A web portal for registration and selection for the NTDS.
 
@@ -21,7 +21,6 @@ Based on Flask and Python
 
 - Logged in - Teamcaptains
   - [x] Dashboard
-  - [ ] Messages (Messages from organisation and admin)
   - [x] Enable treasurer in profile page
   - [x] Finances overview
   - [ ] Registration period
@@ -38,14 +37,11 @@ Based on Flask and Python
 
 - Logged in - Treasurer
   - [x] Dashboard
-  - [ ] Messages (Messages from organisation and admin)
   - [x] Finances overview (see Logged in - Teamcaptains)
 
 
 - Logged in - Organisation
   - [x] Dashboard
-  - [ ] Messages (Messages from admin)
-  - [ ] Send messages to teamcaptains (and admin?)
   - [x] Registration overview (total and per team)
   - [ ] Name change requests
   - [x] Payments overview (per team and total)
@@ -64,9 +60,10 @@ Based on Flask and Python
 
 ## General features
 Messagin system for users
-  - Send to specific (group of) users
-  - Read/Unread status
-  - Archive
+  - [x] Send to specific (group of) users
+  - [x] Read/Unread status
+  - [x] Archive
+  - [x] Soft delte
 
 
 [CHANGELOG]: ./CHANGELOG.md

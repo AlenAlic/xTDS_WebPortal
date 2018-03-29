@@ -5,11 +5,11 @@
 <h2>Current messages </h2>
 <div>
     {% if show_archived %}
-    <a href="{{url_for('notifications.list')}}">
+    <a href="{{url_for('notifications.message_list')}}">
         <button type="button" class="btn btn-default navbar-btn">Hide archived</button>
     </a>
     {% else %}
-    <a href="{{url_for('notifications.list',show_archived=1)}}">
+    <a href="{{url_for('notifications.message_list',show_archived=1)}}">
         <button type="button" class="btn btn-default navbar-btn">Show archived</button>
     </a>
     {% endif %}

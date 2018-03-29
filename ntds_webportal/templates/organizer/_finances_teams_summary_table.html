@@ -25,12 +25,12 @@
         <tbody>
             {% for team in teams %}
                 <tr class="
-                {% if team['amount_sent'] == team['finances']['price_total'] and team['finances']['price_total'] > 0 %}success
-                {% elif team['amount_sent'] < team['finances']['price_total'] %}danger
-                {% elif team['amount_sent'] > team['finances']['price_total'] %}warning
+                {% if team['team'].finances[0].paid == team['finances']['price_total'] and team['finances']['price_total'] > 0 %}success
+                {% elif team['team'].finances[0].paid < team['finances']['price_total'] %}danger
+                {% elif team['team'].finances[0].paid > team['finances']['price_total'] %}warning
                 {% endif %}">
                     <td>
-                        {{ team['name'] }}
+                        {{ team['team'].name }}
                     </td>
                     <td style="text-align:right">
                         {{ team['finances']['number_of_students'] }}
@@ -45,11 +45,11 @@
                         {{ data.euros(team['finances']['price_total']) }}
                     </td>
                     <td style="text-align:right">
-                        <input class="form-fontrol" type="text" id="{{ team['team_id'] }}" name="{{ team['team_id'] }}"
-                               placeholder="{{ data.euros(team['amount_sent']) }}" style="text-align:right;">
+                        <input class="form-fontrol" type="text" id="{{ team['team'].team_id }}" name="{{ team['team'].team_id }}"
+                               placeholder="{{ data.euros(team['team'].finances[0].paid) }}" style="text-align:right;">
                     </td>
                     <td style="text-align:right">
-                        {{ data.euros(team['amount_sent']-team['finances']['price_total']) }}
+                        {{ data.euros(team['team'].finances[0].paid-team['finances']['price_total']) }}
                     </td>
                 </tr>
             {% endfor %}

@@ -14,13 +14,11 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-def requires_access_level(*args):
+def requires_access_level(access_levels):
     def decorator(f):
-        ral = map(lambda x: data.ACCESS[x], args)
-
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if current_user.access not in ral:
+            if current_user.access not in access_levels:
                 return redirect(url_for('main.index'))
             return f(*args, **kwargs)
         return decorated_function

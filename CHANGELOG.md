@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
+## [0.6.0] - 2018-05-02
+### Added
+- Messaging system within portal
+
+### Changed
+- General refactoring
+
+For organizers
+- Finances summary now editable
+
+
 ## [0.5.1] - 2018-05-01
 ### Changed
 - Dancer Registration and Edit forms merged for easier use
@@ -56,7 +67,8 @@ For treasurers
 - Password change when logged in now requires old password
 
 
-[Unreleased]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.3.0...v0.4.0
