@@ -122,67 +122,68 @@ def raffle_system():
     raffle_config = raffle_sys.raffle_config
     tournament_config = raffle_sys.tournament_config
 
-    newly_selected, sleeping_spots = None, None
-    stats_registered, stats_selected, stats_confirmed = None, None, None
-    stats_registered = raffle_sys.get_stats(REGISTERED)
-    if state.main_raffle_taken_place:
-        stats_selected = raffle_sys.get_stats(SELECTED)
-        stats_confirmed = raffle_sys.get_stats(CONFIRMED)
-
     selected_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-        .filter(StatusInfo.raffle_status == SELECTED)\
+        .filter(StatusInfo.raffle_status == SELECTED) \
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
     confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-        .filter(StatusInfo.raffle_status == CONFIRMED)\
+        .filter(StatusInfo.raffle_status == CONFIRMED) \
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
     available_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-        .filter(StatusInfo.raffle_status == REGISTERED)\
+        .filter(StatusInfo.raffle_status == REGISTERED) \
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
 
-    combination_dancers = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(StatusInfo.raffle_status == REGISTERED, DancingInfo.partner.is_(None)) \
-        .order_by(ContestantInfo.team_id, Contestant.first_name).all()
-    available_combinations_list = [get_combinations(d) for d in combination_dancers]
-    available_combinations = {comb: 0 for comb in uniquify(available_combinations_list)}
-    for comb in available_combinations_list:
-        available_combinations[comb] += 1
+    if request.method == 'GET':
+        newly_selected, sleeping_spots = None, None
+        stats_registered, stats_selected, stats_confirmed = None, None, None
+        stats_registered = raffle_sys.get_stats(REGISTERED)
+        if state.main_raffle_taken_place:
+            stats_selected = raffle_sys.get_stats(SELECTED)
+            stats_confirmed = raffle_sys.get_stats(CONFIRMED)
 
-    all_teams = db.session.query(Team).all()
-    teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
-              'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
-    if not state.main_raffle_taken_place:
-        for t in teams:
-            t['guaranteed_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
-                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status != CANCELLED,
-                        StatusInfo.guaranteed_entry.is_(True)).order_by(Contestant.first_name).all()
-            t['available_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == REGISTERED) \
-                .order_by(Contestant.first_name).all()
-    if state.main_raffle_taken_place and not state.main_raffle_result_visible:
-        for t in teams:
-            t['available_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == REGISTERED) \
-                .order_by(Contestant.first_name).all()
-            t['selected_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
-                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == SELECTED)\
-                .order_by(Contestant.first_name).all()
-        sleeping_spots = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
-            .filter(or_(StatusInfo.raffle_status == SELECTED, StatusInfo.raffle_status == CONFIRMED),
-                    AdditionalInfo.sleeping_arrangements.is_(True)).count()
-    if state.main_raffle_taken_place and state.main_raffle_result_visible:
-        for t in teams:
-            t['available_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == REGISTERED).all()
-            t['selected_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == SELECTED).all()
-            t['confirmed_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == CONFIRMED).all()
-        newly_selected = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-            .filter(StatusInfo.raffle_status == SELECTED, StatusInfo.status == REGISTERED)\
-            .order_by(Contestant.contestant_id).all()
-        sleeping_spots = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
-            .filter(or_(StatusInfo.raffle_status == SELECTED, StatusInfo.raffle_status == CONFIRMED),
-                    AdditionalInfo.sleeping_arrangements.is_(True)).count()
+        combination_dancers = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+            .filter(StatusInfo.raffle_status == REGISTERED, DancingInfo.partner.is_(None)) \
+            .order_by(ContestantInfo.team_id, Contestant.first_name).all()
+        available_combinations_list = [get_combinations(d) for d in combination_dancers]
+        available_combinations = {comb: 0 for comb in uniquify(available_combinations_list)}
+        for comb in available_combinations_list:
+            available_combinations[comb] += 1
+
+        all_teams = db.session.query(Team).all()
+        teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
+                  'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
+        if not state.main_raffle_taken_place:
+            for t in teams:
+                t['guaranteed_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
+                    .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status != CANCELLED,
+                            StatusInfo.guaranteed_entry.is_(True)).order_by(Contestant.first_name).all()
+                t['available_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                    .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == REGISTERED) \
+                    .order_by(Contestant.first_name).all()
+        if state.main_raffle_taken_place and not state.main_raffle_result_visible:
+            for t in teams:
+                t['available_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                    .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == REGISTERED) \
+                    .order_by(Contestant.first_name).all()
+                t['selected_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
+                    .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == SELECTED)\
+                    .order_by(Contestant.first_name).all()
+            sleeping_spots = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
+                .filter(or_(StatusInfo.raffle_status == SELECTED, StatusInfo.raffle_status == CONFIRMED),
+                        AdditionalInfo.sleeping_arrangements.is_(True)).count()
+        if state.main_raffle_taken_place and state.main_raffle_result_visible:
+            for t in teams:
+                t['available_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                    .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == REGISTERED).all()
+                t['selected_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                    .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == SELECTED).all()
+                t['confirmed_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                    .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == CONFIRMED).all()
+            newly_selected = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                .filter(StatusInfo.raffle_status == SELECTED, StatusInfo.status == REGISTERED)\
+                .order_by(Contestant.contestant_id).all()
+            sleeping_spots = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
+                .filter(or_(StatusInfo.raffle_status == SELECTED, StatusInfo.raffle_status == CONFIRMED),
+                        AdditionalInfo.sleeping_arrangements.is_(True)).count()
 
     if request.method == 'POST':
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -213,12 +214,6 @@ def raffle_system():
                 dancer.status_info[0].set_status(SELECTED)
             state.main_raffle_result_visible = True
             flash('Raffle confirmed. The results are now visible to the teamcaptains.', 'alert-success')
-        elif 'reset_raffle' in form:
-            for dancer in all_dancers:
-                dancer.status_info[0].set_status(REGISTERED)
-            state.main_raffle_taken_place = False
-            state.main_raffle_result_visible = False
-            flash('Raffle results cleared.', 'alert-info')
         elif 'finish_raffle' in form:
             finish_raffle(raffle_sys)
         elif 'select_random_group' in form:

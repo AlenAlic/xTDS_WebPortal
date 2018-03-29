@@ -76,7 +76,7 @@ def raffle_add_neutral_group(raffle_sys):
                     group = find_partners(raffle_sys.registered_dancers, dancer)
                     if group.check():
                         raffle_sys.add_group(group)
-                        raffle_sys.update_states()
+                        group.select_dancers()
                         return 'Selected {}.'.format(group.get_dancers_summary())
         return 'Could not find a neutral group.'
     else:

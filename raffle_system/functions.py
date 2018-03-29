@@ -99,13 +99,14 @@ class RaffleSystem:
         return len(self.selected_dancers) >= (self.raffle_config[MAX_DANCERS] - self.raffle_config[SELECTION_BUFFER])
 
     def exceed_max(self, group):
-        return (len(self.selected_dancers) + len(group.dancers)) > (self.raffle_config[MAX_DANCERS])
+        return (len(self.selected_dancers) + len(self.confirmed_dancers) + len(group.dancers)) > \
+               (self.raffle_config[MAX_DANCERS])
 
     def full(self):
-        return (len(self.selected_dancers)) == (self.raffle_config[MAX_DANCERS])
+        return (len(self.selected_dancers) + len(self.confirmed_dancers)) == (self.raffle_config[MAX_DANCERS])
 
     def almost_full(self):
-        return (len(self.selected_dancers)) > (self.raffle_config[MAX_DANCERS] - 2)
+        return (len(self.selected_dancers) + len(self.confirmed_dancers)) > (self.raffle_config[MAX_DANCERS] - 2)
 
     def update_states(self):
         for dancer in self.registered_dancers:
@@ -256,6 +257,11 @@ class DancingGroup:
     #                    [(c, NO, NO) for c in ALL_COMPETITIONS]
     #     combinations = [(b, l) for b in combinations for l in combinations if b[0] != l[0]]
     #     combinations = ''
+
+    def select_dancers(self):
+        for dancer in self.dancers:
+            dancer.status_info[0].raffle_status = SELECTED
+        db.session.commit()
 
 
 def find_partners(dancers_list, dancer, target_team=None):

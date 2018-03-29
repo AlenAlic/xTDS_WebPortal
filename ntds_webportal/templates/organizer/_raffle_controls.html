@@ -116,43 +116,46 @@
 {% endif %}
 
 <!--<h2>Available dancers <span id="{{ list_id }}-total-badge" class="badge" style="font-size:large">{{ available_dancers|length }}</span></h2>-->
+
 <h2>Add dancers to tournament</h2>
-<table class="table">
-    <colgroup>
-        <col span="1" style="width: 80%;">
-        <col span="1" style="width: 20%;">
-    </colgroup>
-    <tbody>
-        <tr>
-            <th>
-                Fill tournament spots
-            </th>
-            <th></th>
-        </tr>
-        <tr>
-            <td>
-                Add random dancers until all the tournament spots are taken. Adding dancers through here will not change the differences indicted above.
-            </td>
-            <td align="right">
-                <button type="submit" id="submit-finish_raffle" name="finish_raffle" class="btn btn-primary loading-btn">Fill raffle</button>
-            </td>
-        </tr>
-        <tr>
-            <th>
-                Add group of dancers
-            </th>
-            <th></th>
-        </tr>
-        <tr>
-            <td>
-                If more than one dancers needs to be added, you can add a group of dancers. The added group will not change the differences indicated above.
-            </td>
-            <td align="right">
-                <button type="submit" id="submit-select_random_group" name="select_random_group" class="btn btn-primary loading-btn">Add random group</button>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <table class="table">
+        <colgroup>
+            <col span="1" style="width: 80%;">
+            <col span="1" style="width: 20%;">
+        </colgroup>
+        <tbody>
+            <tr>
+                <th>
+                    Fill tournament spots
+                </th>
+                <th></th>
+            </tr>
+            <tr>
+                <td>
+                    Add random dancers until all the tournament spots are taken. Adding dancers through here will not change the differences indicted above.
+                </td>
+                <td align="right">
+                    <button type="submit" id="submit-finish_raffle" name="finish_raffle" class="btn btn-primary loading-btn">Fill raffle</button>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Add group of dancers
+                </th>
+                <th></th>
+            </tr>
+            <tr>
+                <td>
+                    If more than one dancers needs to be added, you can add a group of dancers. The added group will not change the differences indicated above.
+                </td>
+                <td align="right">
+                    <button type="submit" id="submit-select_random_group" name="select_random_group" class="btn btn-primary loading-btn">Add random group</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
 <!--<div class="row">-->
     <!--<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">-->
         <!--<h3>Fill tournament spots</h3>-->
