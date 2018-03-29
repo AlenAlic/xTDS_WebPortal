@@ -3,18 +3,18 @@
 
 {% block app_content %}
 
-    {% block treasurer_form %}
-    {% endblock %}
+{% block treasurer_form %}
+{% endblock %}
 
-    <h2>Change Password</h2>
-    <p>You can change your own password below.</p>
-    <form action="{{ url_for('main.profile') }}" class="form" method="POST" enctype="multipart/form-data" novalidate>
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        {{ wtf.form_field(form.current_password) }}
-        {{ wtf.form_field(form.password) }}
-        {{ wtf.form_field(form.password2) }}
-        {{ wtf.form_field(form.submit) }}
-    </form>
+<h2>Change Password</h2>
+<p>You can change your own password below.</p>
+<form action="{{ url_for('main.profile') }}" class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    {{ wtf.form_field(form.current_password) }}
+    {{ wtf.form_field(form.password) }}
+    {{ wtf.form_field(form.password2) }}
+    {{ wtf.form_field(form.submit) }}
+</form>
 {% endblock %}
 

@@ -1,5 +1,5 @@
 # NTDS_webportal
-Version [0.4.0][CHANGELOG]
+Version [0.5.0][CHANGELOG]
 
 A web portal for registration and selection for the NTDS.
 
@@ -48,7 +48,7 @@ Based on Flask and Python
   - [ ] Send messages to teamcaptains (and admin?)
   - [x] Registration overview (total and per team)
   - [ ] Name change requests
-  - [ ] Payments overview (per team and total)
+  - [x] Payments overview (per team and total)
   - [ ] Raffle pages
     - [ ] Raffle system
       - [ ] Export to BAD

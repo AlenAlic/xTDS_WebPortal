@@ -118,7 +118,8 @@ class ContestantInfo(db.Model):
         return '{id}: {name}'.format(id=self.number, name=self.contestant)
 
     def set_teamcaptain(self):
-        current_tc = db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team_captain == True).first()
+        current_tc = db.session.query(Contestant).join(ContestantInfo)\
+            .filter(ContestantInfo.team_captain.is_(True)).first()
         if current_tc is not None:
             current_tc.contestant_info[0].team_captain = False
         self.team_captain = True

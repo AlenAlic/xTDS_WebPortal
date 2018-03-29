@@ -1,6 +1,7 @@
 from ntds_webportal import create_app, db
 from sqlalchemy_utils import database_exists, create_database
 import sqlalchemy as alchemy
+# noinspection PyPackageRequirements
 from instance.populate import populate_db
 
 

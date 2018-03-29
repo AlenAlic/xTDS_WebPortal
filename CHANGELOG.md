@@ -7,13 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
-<!-- ## [0.5.0] - 2018- -->
-<!-- ### Added -->
-<!-- For teamcaptains -->
-<!-- - Cancel registration/Re-register during signup period -->
+## [0.5.0] - 2018-04-18
+### Added
+For teamcaptains
+- Cancel registration/Re-register during signup period
 
-<!-- ### Changed -->
-<!-- Teamcaptain pages refactored as Blueprints -->
+For organizers
+- Registration overview
+- Finances overview
+
+### Changed
+- Teamcaptain pages refactored as Blueprints
+- Randomly generated password for treasurers is longer
 
 
 ## [0.4.0] - 2018-04-13
@@ -23,6 +28,7 @@ For teamcaptains
 - Couples lists
 - Finances overview
 - Set contestants as teamcaptain
+
 For treasurers
 - Finances overview
 
@@ -36,5 +42,6 @@ For treasurers
 - Password change when logged in now requires old password
 
 
-[Unreleased]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.3.0...v0.4.0

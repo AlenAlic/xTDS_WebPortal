@@ -32,6 +32,7 @@ class UserView(BaseView):
     form_excluded_columns = ['password_hash', ]
     form_extra_fields = {'password2': PasswordField('Password')}
 
+    # noinspection PyPep8Naming
     def on_model_change(self, form, User, is_created):
         if form.password2.data is not None:
             User.set_password(form.password2.data)

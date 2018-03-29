@@ -10,6 +10,7 @@ Username: {{ username }}
 Password: {{ password }}
 
 You can click the link below to visit the site.
+
 {{ url_for('main.index', _external=True) }}
 
 Sincerely,

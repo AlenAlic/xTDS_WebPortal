@@ -149,11 +149,12 @@ def register_dancers():
     form.team.data = current_user.team.name
     form.ballroom_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo)\
         .filter(ContestantInfo.team == current_user.team,
-                DancingInfo.ballroom_partner == None, DancingInfo.ballroom_blind_date == False)
+                DancingInfo.ballroom_partner.is_(None), DancingInfo.ballroom_blind_date.is_(False))
     form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo)\
         .filter(ContestantInfo.team == current_user.team,
-                DancingInfo.latin_partner == None, DancingInfo.latin_blind_date == False)
+                DancingInfo.latin_partner.is_(None), DancingInfo.latin_blind_date.is_(False))
     if request.method == 'POST':
+        # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
     if form.validate_on_submit():
         flash('{} has been registered successfully.'.format(submit_contestant(form)), 'alert-success')
@@ -183,13 +184,14 @@ def edit_dancer(number):
     form.ballroom_partner.\
         query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
         .filter(and_(ContestantInfo.team == current_user.team,
-                     or_(and_(DancingInfo.ballroom_partner == None, DancingInfo.ballroom_blind_date == False),
+                     or_(and_(DancingInfo.ballroom_partner.is_(None), DancingInfo.ballroom_blind_date.is_(False)),
                          ContestantInfo.number == dancer.dancing_info[0].ballroom_partner)))
     form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
         .filter(and_(ContestantInfo.team == current_user.team,
-                     or_(and_(DancingInfo.latin_partner == None, DancingInfo.latin_blind_date == False),
+                     or_(and_(DancingInfo.latin_partner.is_(None), DancingInfo.latin_blind_date.is_(False)),
                          ContestantInfo.number == dancer.dancing_info[0].latin_partner)))
     if request.method == 'POST':
+        # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
     else:
         form.email.data = dancer.email
@@ -236,13 +238,14 @@ def register_dancer(number):
         flash('{} has been re-registered successfully.'.format(changed_dancer.get_full_name()), 'alert-success')
     return redirect(url_for('teamcaptains.edit_dancers', wide=int(request.values['wide'])))
 
+
 @bp.route('/set_teamcaptains', methods=['GET', 'POST'])
 @login_required
 def set_teamcaptains():
     form = TeamCaptainForm()
     form.number.query = Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == current_user.team)
     current_tc = db.session.query(Contestant).join(ContestantInfo)\
-        .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain == True).first()
+        .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).first()
     if form.validate_on_submit():
         if form.number.data is not None:
             new_tc = db.session.query(Contestant)\
@@ -258,7 +261,7 @@ def set_teamcaptains():
     return render_template('teamcaptains/set_teamcaptains.html', form=form, current_tc=current_tc)
 
 
-@bp.route('/couples_list', methods=['GET', 'POST'])
+@bp.route('/couples_list')
 @login_required
 def couples_list():
     confirmed = request.args.get('confirmed', 0, type=int)
@@ -270,9 +273,9 @@ def couples_list():
     ballroom_couples_follows = [dancer for dancer in all_dancers if dancer.dancing_info[0].ballroom_partner in 
                                 [lead.contestant_info[0].number for lead in ballroom_couples_leads]]
     latin_couples_leads = [dancer for dancer in all_dancers if dancer.dancing_info[0].latin_role == data.LEAD and
-                              dancer.dancing_info[0].latin_partner is not None]
+                           dancer.dancing_info[0].latin_partner is not None]
     latin_couples_follows = [dancer for dancer in all_dancers if dancer.dancing_info[0].latin_partner in
-                                [lead.contestant_info[0].number for lead in latin_couples_leads]]
+                             [lead.contestant_info[0].number for lead in latin_couples_leads]]
     ballroom_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                         list(itertools.product(ballroom_couples_leads, ballroom_couples_follows)) if
                         couple[0].contestant_info[0].number == couple[1].dancing_info[0].ballroom_partner]
@@ -302,9 +305,9 @@ def couples_list():
 @bp.route('/edit_finances', methods=['GET', 'POST'])
 @login_required
 def edit_finances():
-    # TODO Stan zeurt, wil het graag exporteerbaar naar CSV (naam, bedrag, omschrijving)
+    # TODO Stan zeurt, wil het graag exporteerbaar naar CSV (naam, bedrag, omschrijving), lage prio
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required == True)\
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required.is_(True))\
         .order_by(ContestantInfo.number).all()
     confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
     cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
@@ -325,5 +328,6 @@ def edit_finances():
             flash('Changes saved successfully.', 'alert-success')
         else:
             flash('No changes were made to submit.', 'alert-warning')
+        return redirect(url_for('teamcaptains.edit_finances'))
     return render_template('teamcaptains/edit_finances.html', finances=finances, confirmed_dancers=confirmed_dancers,
                            cancelled_dancers=cancelled_dancers, data=data)
