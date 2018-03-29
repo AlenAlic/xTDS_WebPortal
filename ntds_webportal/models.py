@@ -21,9 +21,7 @@ def requires_access_level(access_levels):
             if current_user.access not in access_levels:
                 return redirect(url_for('main.index'))
             return f(*args, **kwargs)
-
         return decorated_function
-
     return decorator
 
 
@@ -87,15 +85,23 @@ class User(UserMixin, db.Model):
 class Team(db.Model):
     __tablename__ = 'teams'
     team_id = db.Column(db.Integer, primary_key=True)
+    country = db.Column(db.String(128), nullable=False)
     city = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128), nullable=False, unique=True)
+    finances = db.relationship('TeamFinances', back_populates='team')
 
     def __repr__(self):
         return '{}'.format(self.name)
 
 
-# class TeamFinances(db.Model):
-#     __tablename__ = 'team_finances'
+class TeamFinances(db.Model):
+    __tablename__ = 'team_finances'
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), primary_key=True)
+    team = db.relationship('Team', back_populates='finances')
+    paid = db.Column(db.Integer, nullable=False, default=0)
+
+    def __repr__(self):
+        return '{}'.format(self.team)
 
 
 class Contestant(db.Model):
@@ -239,7 +245,6 @@ class StatusInfo(db.Model):
     first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
-
     # name_change_request = db.Column(db.String(384), nullable=True, default=None)
 
     def __repr__(self):

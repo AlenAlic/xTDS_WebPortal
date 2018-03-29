@@ -1,8 +1,8 @@
-from flask import render_template
+from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required
 from ntds_webportal import db
 from ntds_webportal.organizer import bp
-from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, requires_access_level
+from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, StatusInfo
 import ntds_webportal.data as data
 
 
@@ -26,7 +26,7 @@ def registration_overview():
                            dutch_dancers=dutch_dancers, german_dancers=german_dancers, other_dancers=other_dancers)
 
 
-@bp.route('/finances_overview')
+@bp.route('/finances_overview', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([data.ACCESS['organizer']])
 def finances_overview():
@@ -34,19 +34,37 @@ def finances_overview():
         .filter(StatusInfo.payment_required.is_(True)).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
     all_confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
     all_cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
-    all_finances = data.finances_overview(all_dancers)
-    dancers = [{'country': team['country'], 'name': team['name'], 'id': team['name'].replace(' ', '-').replace('`', ''),
+    all_teams = db.session.query(Team).join(TeamFinances).all()
+    # all_finances = data.finances_overview(all_dancers)
+    dancers = [{'team_id': team.team_id, 'country': team.country, 'name': team.name,
+                'id': team.name.replace(' ', '-').replace('`', ''), 'amount_sent': team.finances[0].paid,
                 'confirmed_dancers': [dancer for dancer in all_confirmed_dancers if
-                                      dancer.contestant_info[0].team.name == team['name']],
+                                      dancer.contestant_info[0].team.name == team.name],
                 'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if
-                                      dancer.contestant_info[0].team.name == team['name']],
+                                      dancer.contestant_info[0].team.name == team.name],
                 'finances': data.finances_overview([dancer for dancer in all_dancers if
-                                                    dancer.contestant_info[0].team.name == team['name']])}
-               for team in data.TEAMS]
+                                                    dancer.contestant_info[0].team.name == team.name])}
+               for team in all_teams]
+    dancers = [team for team in dancers if (len(team['confirmed_dancers'])+len(team['cancelled_dancers'])) > 0]
     dutch_dancers = [team for team in dancers if team['country'] == data.NETHERLANDS]
     german_dancers = [team for team in dancers if team['country'] == data.GERMANY]
     other_dancers = [team for team in dancers if team['country'] != data.NETHERLANDS and
                      team['country'] != data.GERMANY]
+    if request.method == 'POST':
+        changes = False
+        for team in all_teams:
+            amount_paid = request.form.get(str(team.team_id))
+            if amount_paid != '' and amount_paid is not None:
+                amount_paid = int(float(amount_paid)*100)
+                if team.finances[0].paid != amount_paid:
+                    team.finances[0].paid = amount_paid
+                    changes = True
+        if changes:
+            db.session.commit()
+            flash('Changes saved successfully.', 'alert-success')
+        else:
+            flash('No changes were made to submit.', 'alert-warning')
+        return redirect(url_for('organizer.finances_overview'))
     return render_template('organizer/finances_overview.html', dancers=dancers,
                            all_confirmed_dancers=all_confirmed_dancers, all_cancelled_dancers=all_cancelled_dancers,
                            dutch_dancers=dutch_dancers, german_dancers=german_dancers, other_dancers=other_dancers,

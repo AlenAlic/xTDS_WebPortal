@@ -1,53 +1,58 @@
-<table class="table table-responsive">
-    <colgroup>
-        <col span="1" style="width: 25%;">
-        <col span="1" style="width: 10%;">
-        <col span="1" style="width: 10%;">
-        <col span="1" style="width: 10%;">
-        <col span="1" style="width: 15%;">
-        <col span="1" style="width: 15%;">
-        <col span="1" style="width: 15%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th><b>Team</b></th>
-            <th style="text-align:right"><b># Students</b></th>
-            <th style="text-align:right"><b># Non-students</b></th>
-            <th style="text-align:right"><b># T-shirts</b></th>
-            <th style="text-align:right"><b>Total amount owed</b></th>
-            <th style="text-align:right"><b>Total amount paid</b></th>
-            <th style="text-align:right"><b>Difference</b></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for team in teams %}
-            <tr class="
-            {% if team['finances']['price_total'] == team['finances']['price_total_paid'] and team['finances']['price_total'] > 0 %}success
-            {% elif team['finances']['price_total'] > team['finances']['price_total_paid'] %}danger
-            {% elif team['finances']['price_total'] < team['finances']['price_total_paid'] %}warning
-            {% endif %}">
-                <td>
-                    {{ team['name'] }}
-                </td>
-                <td style="text-align:right">
-                    {{ team['finances']['number_of_students'] }}
-                </td>
-                <td style="text-align:right">
-                    {{ team['finances']['number_of_non_students'] }}
-                </td>
-                <td style="text-align:right">
-                    {{ team['finances']['t-shirts'] }}
-                </td>
-                <td style="text-align:right">
-                    {{ data.euros(team['finances']['price_total']) }}
-                </td>
-                <td style="text-align:right">
-                    {{ data.euros(team['finances']['price_total_paid']) }}
-                </td>
-                <td style="text-align:right">
-                    {{ data.euros(team['finances']['price_total_paid']-team['finances']['price_total']) }}
-                </td>
+<form method="POST" enctype="multipart/form-data" novalidate>
+    <div style="height:10px;"></div>
+    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
+    <table class="table table-responsive">
+        <colgroup>
+            <col span="1" style="width: 25%;">
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 15%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th><b>Team</b></th>
+                <th style="text-align:right"><b># Students</b></th>
+                <th style="text-align:right"><b># Non-students</b></th>
+                <th style="text-align:right"><b># T-shirts</b></th>
+                <th style="text-align:right"><b>Total amount owed</b></th>
+                <th style="text-align:right"><b>Total amount recieved</b></th>
+                <th style="text-align:right"><b>Difference</b></th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for team in teams %}
+                <tr class="
+                {% if team['amount_sent'] == team['finances']['price_total'] and team['finances']['price_total'] > 0 %}success
+                {% elif team['amount_sent'] < team['finances']['price_total'] %}danger
+                {% elif team['amount_sent'] > team['finances']['price_total'] %}warning
+                {% endif %}">
+                    <td>
+                        {{ team['name'] }}
+                    </td>
+                    <td style="text-align:right">
+                        {{ team['finances']['number_of_students'] }}
+                    </td>
+                    <td style="text-align:right">
+                        {{ team['finances']['number_of_non_students'] }}
+                    </td>
+                    <td style="text-align:right">
+                        {{ team['finances']['t-shirts'] }}
+                    </td>
+                    <td style="text-align:right">
+                        {{ data.euros(team['finances']['price_total']) }}
+                    </td>
+                    <td style="text-align:right">
+                        <input class="form-fontrol" type="text" id="{{ team['team_id'] }}" name="{{ team['team_id'] }}"
+                               placeholder="{{ data.euros(team['amount_sent']) }}" style="text-align:right;">
+                    </td>
+                    <td style="text-align:right">
+                        {{ data.euros(team['amount_sent']-team['finances']['price_total']) }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>

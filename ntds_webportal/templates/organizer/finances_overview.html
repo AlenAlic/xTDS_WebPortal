@@ -24,9 +24,9 @@
 </ul>
 <div class=tab-content id=myTabContent>
 	<div class="tab-pane fade in active" role=tabpanel id=all_teams aria-labelledby=all_teams-tab>
-    {% with teams=dancers %}
-        {% include 'organizer/_finances_teams_summary_table.html' %}
-    {% endwith %}
+        {% with teams=dancers %}
+            {% include 'organizer/_finances_teams_summary_table.html' %}
+        {% endwith %}
 	</div>
     {% with teams=dutch_dancers %}
         {% include 'organizer/_finances_teams_dropdown_table.html' %}
