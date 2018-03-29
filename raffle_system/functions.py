@@ -182,14 +182,16 @@ class DancingGroup:
             for _, di in dancing_categories.items():
                 self.group[di.competition][di.level] += self.measure[di.role]
 
-    def add_chain(self, list_of_ids, list_of_dancers):
-        chain_dancers = [d for d in list_of_dancers if d.contestant_id in list_of_ids]
-        for dancer in chain_dancers:
+    def add_dancers(self, dancers):
+        for dancer in dancers:
             self.add(dancer)
 
+    def add_chain(self, list_of_ids, list_of_dancers):
+        chain_dancers = [d for d in list_of_dancers if d.contestant_id in list_of_ids]
+        self.add_dancers(chain_dancers)
+
     def add_group(self, group):
-        for dancer in group.dancers:
-            self.add(dancer)
+        self.add_dancers(group.dancers)
 
     def check(self):
         balance = []
@@ -268,7 +270,7 @@ def find_partners(dancers_list, dancer, target_team=None):
     else:
         dancers_list = [d for d in dancers_list if d.contestant_info[0].team == target_team]
     partner_list = [d for d in dancers_list if [di.partner for di in d.dancing_info] != [None, None]]
-    dancers_list = [d for d in dancers_list if [di.partner for di in d.dancing_info] == [None, None]]
+    # dancers_list = [d for d in dancers_list if [di.partner for di in d.dancing_info] == [None, None]]
 
     # See if a balanced group can be formed with 1 or 2 random additional dancers, iterated over in random order
     random_order_list = list(range(0, len(dancers_list)))
@@ -279,18 +281,22 @@ def find_partners(dancers_list, dancer, target_team=None):
             verification_group = DancingGroup()
             verification_group.add_group(group)
             for c in comb:
-                verification_group.add(dancers_list[c])
+                test_dancer = dancers_list[c]
+                if has_partners(test_dancer):
+                    verification_group.add_chain(group.check_chain(test_dancer, partner_list), partner_list)
+                else:
+                    verification_group.add(test_dancer)
             if verification_group.check():
                 group.add_group(verification_group)
                 return group
 
-    partner_groups = []
-    for dancer in partner_list:
-        partners = group.check_chain(dancer, partner_list)
-        partners.sort()
-        partners = [d for d in partner_list if d.contestant_id in partners]
-        if partners not in partner_groups:
-            partner_groups.append(partners)
+    # partner_groups = []
+    # for dancer in partner_list:
+    #     partners = group.check_chain(dancer, partner_list)
+    #     partners.sort()
+    #     partners = [d for d in partner_list if d.contestant_id in partners]
+    #     if partners not in partner_groups:
+    #         partner_groups.append(partners)
 
     # random_order_list = list(range(0, len(partner_groups)))
     # shuffle(random_order_list)
@@ -306,13 +312,18 @@ def find_partners(dancers_list, dancer, target_team=None):
     #         return group
 
 
-    # Search for 2 man balanced groups (on average slower than random iterations)
-    # partner_criteria = group.get_criteria()
-    # possible_partners = group.find_dancers(partner_criteria, dancers_list)
-    # if len(possible_partners) > 0:
-    #     group.add(random.choice(possible_partners))
-    #     return group
-
+    # random_order_list = list(range(0, len(dancers_list)))
+    # shuffle(random_order_list)
+    # for i in range(1, 3):
+    #     combinations = list(itertools.combinations(random_order_list, i))
+    #     for comb in combinations:
+    #         verification_group = DancingGroup()
+    #         verification_group.add_group(group)
+    #         for c in comb:
+    #             verification_group.add(dancers_list[c])
+    #         if verification_group.check():
+    #             group.add_group(verification_group)
+    #             return group
 
     return group
 

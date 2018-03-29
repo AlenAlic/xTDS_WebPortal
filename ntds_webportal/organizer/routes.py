@@ -193,20 +193,22 @@ def raffle_system():
             state.main_raffle_result_visible = False
             flash('Raffle results cleared.', 'alert-info')
         else:
-            max_id = db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar()
-            dancer_ids = list(range(0, max_id+1))
-            selected = {did: 0 for did in dancer_ids}
+            # max_id = db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar()
+            # dancer_ids = list(range(0, max_id+1))
+            # selected = {did: 0 for did in dancer_ids}
             runs = 100
             if True:
                 start_time = time.time()
                 for i in range(0, runs):
                     print(f'Performing run {i+1} of {runs}...')
-                    selected = test_raffle(selected)
+                    start_time2 = time.time()
+                    selected = test_raffle()
                     with open('stats.txt', 'a', encoding='utf-8') as f1:
                         f1.write(str(selected) + '\n')
-                print("--- Done in %.3f seconds ---" % (time.time() - start_time))
+                    print(f"--- Run {i+1} done in %.3f seconds ---" % (time.time() - start_time2))
+                print("--- Test raffle done in %.3f seconds ---" % (time.time() - start_time))
             else:
-                test_raffle(selected)
+                test_raffle()
         db.session.commit()
         return redirect(url_for('organizer.raffle_system'))
     return render_template('organizer/raffle_system.html', state=state, data=data,

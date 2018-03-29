@@ -56,7 +56,7 @@ def raffle(raffle_sys, guaranteed_dancers=None):
     return raffle_sys
 
 
-def test_raffle(selected):
+def test_raffle():
     print('Starting test raffle.')
     raffle_sys = RaffleSystem()
 
@@ -69,6 +69,9 @@ def test_raffle(selected):
     print('Done with test raffle')
 
     selected_dancers = raffle_sys.selected_dancers
+    max_id = db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar()
+    dancer_ids = list(range(0, max_id + 1))
+    selected = {did: 0 for did in dancer_ids}
     selected[0] = len(selected_dancers)
     for dancer in selected_dancers:
         selected[dancer.contestant_id] += 1
