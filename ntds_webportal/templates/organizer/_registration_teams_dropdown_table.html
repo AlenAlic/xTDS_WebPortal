@@ -36,10 +36,14 @@
                         {{ data.TF[dancer.contestant_info[0].student] }}
                     </td>
                     <td>
-                        {{ data.LEVELS[dancer.dancing_info[0].ballroom_level] }}
+                        {% if dancer.dancing_info[0].level != data.NO %}
+                        {{ data.LEVELS[dancer.dancing_info[0].level] }}
+                        {% else %} - {% endif %}
                     </td>
                     <td>
-                        {{ data.LEVELS[dancer.dancing_info[0].latin_level] }}
+                        {% if dancer.dancing_info[1].level != data.NO %}
+                        {{ data.LEVELS[dancer.dancing_info[1].level] }}
+                        {% else %} - {% endif %}
                     </td>
                 </tr>
             {% endfor %}

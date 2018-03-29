@@ -1,17 +1,15 @@
 from ntds_webportal import create_app, db
-from sqlalchemy_utils import database_exists, create_database
 import sqlalchemy as alchemy
 # noinspection PyPackageRequirements
-from instance.populate import populate_db
+from instance.populate import populate_test_db, create_users
 from ntds_webportal.models import User, Notification
-from raffle_system.functions import test_func
 
 app = create_app()
 
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'populate': populate(), 'User': User, 'Notification':Notification}
+    return {'db': db, 'dev': DevShell, 'User': User, 'Notification': Notification}
 
 
 def database_is_empty():
@@ -21,17 +19,34 @@ def database_is_empty():
     return is_empty
 
 
-def populate():
-    with app.app_context():
-        if not database_exists(db.engine.url):
-            create_database(db.engine.url)
-        if database_is_empty():
-            db.create_all()
-            populate_db()
+class DevShell:
+    @staticmethod
+    def create():
+        with app.app_context():
+            print('Creating Users.')
+            create_users()
+
+    @staticmethod
+    def populate_test():
+        with app.app_context():
+            print('Populating with test data.')
+            populate_test_db()
+
+    @staticmethod
+    def clear():
+        with app.app_context():
+            meta = db.metadata
+            for table in reversed(meta.sorted_tables):
+                print('Cleared table {}.'.format(table))
+                db.session.execute(table.delete())
             db.session.commit()
+
+    @staticmethod
+    def reset(self):
+        self.clear()
+        self.create()
+        self.populate_test()
 
 
 if __name__ == '__main__':
-    populate()
-
     app.run()
