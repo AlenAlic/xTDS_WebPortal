@@ -4,6 +4,7 @@ Your teamcaptain has activated an account for you at the xTDS WebPortal.
 {% if message is defined %}
 A personal message from the teamcaptain was included:
 "{{ message }}"
+
 {% endif %}
 Use the following credentials to log in:
 Username: {{ username }}
@@ -15,4 +16,4 @@ You can click the link below to visit the site.
 
 Sincerely,
 
-The xTDS WebPortal Team
+The xTDS WebPortal Admin

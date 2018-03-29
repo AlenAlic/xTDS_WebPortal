@@ -53,12 +53,12 @@ def register_dancers():
         .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
                 DancingInfo.partner.is_(None), DancingInfo.competition == data.BALLROOM,
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                    DancingInfo.level == BEGINNERS))
+                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     latin_dancers = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
                 DancingInfo.partner.is_(None), DancingInfo.competition == data.LATIN,
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                    DancingInfo.level == BEGINNERS))
+                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     form.ballroom_partner.query = ballroom_dancers
     form.latin_partner.query = latin_dancers
     if request.method == 'POST':
@@ -69,7 +69,10 @@ def register_dancers():
             flash('{} has been registered successfully.'.format(submit_contestant(form)), 'alert-success')
             return redirect(url_for('teamcaptains.register_dancers'))
         else:
-            flash('You can not register without accepting the pricacy statement', 'alert-danger')
+            flash('You can not register without accepting the privacy statement.', 'alert-danger')
+    else:
+        if form.is_submitted():
+            flash('Not all fields of the form have been filled in (correctly).', 'alert-danger')
     return render_template('teamcaptains/register_dancers.html', form=form, data=data)
 
 
@@ -98,20 +101,19 @@ def edit_dancer(number):
     ballroom_partners = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
                 or_(and_(DancingInfo.competition == data.BALLROOM, DancingInfo.partner == dancer.contestant_id),
-                    DancingInfo.partner.is_(None)),
+                    and_(DancingInfo.competition == data.BALLROOM, DancingInfo.partner.is_(None))),
                 DancingInfo.competition == data.BALLROOM,
                 Contestant.contestant_id != dancer.contestant_id,
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                    DancingInfo.level == BEGINNERS))
+                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     latin_partners = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
                 or_(and_(DancingInfo.competition == data.LATIN, DancingInfo.partner == dancer.contestant_id),
-                    DancingInfo.partner.is_(None)),
+                    and_(DancingInfo.competition == data.LATIN, DancingInfo.partner.is_(None))),
                 DancingInfo.competition == data.LATIN,
                 Contestant.contestant_id != dancer.contestant_id,
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                    DancingInfo.level == BEGINNERS,
-                    and_(DancingInfo.competition == data.LATIN, DancingInfo.partner == dancer.contestant_id)))
+                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     form.full_name.data = dancer.get_full_name()
     form.team.data = dancer.contestant_info[0].team.name
     form.number.data = dancer.contestant_info[0].number
@@ -225,7 +227,7 @@ def name_change_request(contestant):
 def couples_list():
     all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team, DancingInfo.role == data.LEAD) \
-        .order_by(DancingInfo.level, ContestantInfo.number).all()
+        .order_by(DancingInfo.level, Contestant.first_name).all()
     all_follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team, DancingInfo.role == data.FOLLOW) \
         .order_by(DancingInfo.level, ContestantInfo.number).all()
@@ -282,6 +284,10 @@ def create_couple():
                 DancingInfo.role == FOLLOW, DancingInfo.partner.is_(None),
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
+    if len(leads.all()) == 0 or len(follows.all()) == 0:
+        flash(f"There are currently {len(leads.all())} available Leads and {len(follows.all())} available Follows "
+              f"registered. Cannot create new couples.", 'alert-warning')
+        return redirect(url_for('teamcaptains.couples_list'))
     form.lead.query = leads
     form.follow.query = follows
     if form.validate_on_submit():
@@ -325,15 +331,6 @@ def partner_request_list():
     my_requests = [req for req in requests if req.dancer.contestant_info[0].team == current_user.team]
     other_requests = list(req for req in requests if req.other.contestant_info[0].team == current_user.team and
                           req.state == PartnerRequest.STATE['Open'])
-    if request.method == 'POST':
-        form = request.form
-        for r in form:
-            req = PartnerRequest.query.filter(PartnerRequest.id == r).first()
-            req.cancel()
-            flash(f'Partner request for {req.dancer} with {req.other} in {req.competition} cancelled.')
-        db.session.commit()
-
-        return redirect(url_for('teamcaptains.partner_request_list'))
     return render_template('teamcaptains/partner_list.html', my_requests=my_requests, other_requests=other_requests,
                            title='partner requests')
 
@@ -349,6 +346,9 @@ def partner_request():
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                     DancingInfo.level == BEGINNERS))\
         .order_by(Contestant.first_name).all()
+    if len(dancer_choices) == 0:
+        flash(f"There are currently no dancers registered that require a partner.", 'alert-warning')
+        return redirect(url_for('teamcaptains.partner_request_list'))
     other_choices = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team != current_user.team, StatusInfo.status == REGISTERED,
                 DancingInfo.partner.is_(None),
@@ -361,6 +361,11 @@ def partner_request():
     form.level.data = BREITENSPORT
     if form.validate_on_submit():
         di1 = DancingInfo.query.filter_by(contestant_id=form.dancer.data, competition=form.competition.data).first()
+        if len(PartnerRequest.query.filter(PartnerRequest.dancer_id == form.dancer.data,
+                                           PartnerRequest.state == PartnerRequest.STATE['Open']).all()) > 0:
+            flash(f"There is already an active request out for {di1.contestant} in {form.competition.data}. "
+                  f"Please cancel that request first, before sending out another one.", 'alert-danger')
+            return redirect(url_for('teamcaptains.partner_request_list'))
         di2 = DancingInfo.query.filter_by(contestant_id=form.other.data, competition=form.competition.data).first()
         match, errors = di1.valid_match(di2)
         if not match:
@@ -378,6 +383,17 @@ def partner_request():
             flash('Partner request sent. Please wait until the other teamcaptain has handled the request.')
             return redirect(url_for('teamcaptains.partner_request_list'))
     return render_template('teamcaptains/partner_request.html', form=form, title='partner_request')
+
+
+@bp.route('/partner_cancel/<req>/', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['team_captain']])
+def partner_cancel(req):
+    req = PartnerRequest.query.filter(PartnerRequest.id == req).first()
+    req.cancel()
+    flash(f'Partner request for {req.dancer} with {req.other} in {req.competition} cancelled.')
+    db.session.commit()
+    return redirect(url_for('teamcaptains.partner_request_list'))
 
 
 @bp.route('/partner_request/<req>/', methods=['GET', 'POST'])

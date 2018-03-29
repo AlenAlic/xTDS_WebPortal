@@ -82,11 +82,7 @@ There are no open partner requests.
             </button>
         </td>
         <td align="right">
-            <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-                <button id="{{req.id}}" name="{{req.id}}" type="submit" class="btn btn-danger {% if req.state == 4 %}disabled{% endif %}">
-                    <span class="glyphicon glyphicon-remove"></span>
-                </button>
-            </form>
+            <a class="btn btn-danger {% if req.state != 1 %}disabled{% endif %}" href="{{ url_for('teamcaptains.partner_cancel', req=req.id) }}"><span class="glyphicon glyphicon-remove"></span></a>
         </td>
     </tr>
     {% endfor %}

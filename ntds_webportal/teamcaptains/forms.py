@@ -27,22 +27,24 @@ class BaseContestantForm(FlaskForm):
                                 choices=[(k, v) for k, v in ROLES.items()])
     ballroom_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
                                        render_kw={'onclick': "dancingBDGreyOut(id, 'ballroom_partner')"})
-    ballroom_partner = QuerySelectField('Ballroom partner', validators=[Role('ballroom_level'), Level()],
+    ballroom_partner = QuerySelectField(f"Ballroom partner for {tournament_settings['tournament']}",
+                                        validators=[Role('ballroom_level'), Level()],
                                         allow_blank=True, blank_text=PARTNER_TEXT)
 
     latin_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
     latin_role = SelectField('Role', validators=[Role('latin_level')], choices=[(k, v) for k, v in ROLES.items()])
     latin_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
                                     render_kw={'onclick': "dancingBDGreyOut(id, 'latin_partner')"})
-    latin_partner = QuerySelectField('Latin partner', validators=[Role('latin_level'), Level()], allow_blank=True,
-                                     blank_text=PARTNER_TEXT)
+    latin_partner = QuerySelectField(f"Latin partner for {tournament_settings['tournament']}",
+                                     validators=[Role('latin_level'), Level()],
+                                     allow_blank=True, blank_text=PARTNER_TEXT)
 
     volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in VOLUNTEER.items()])
     first_aid = SelectField('First Aid', validators=[SpecificVolunteer('volunteer')],
                             choices=[(k, v) for k, v in FIRST_AID.items()])
-    jury_ballroom = SelectField('Adjudicator Ballroom', validators=[SpecificVolunteer('volunteer')],
+    jury_ballroom = SelectField('Adjudicator Ballroom', validators=[SpecificVolunteer('volunteer'), ChoiceMade()],
                                 choices=[(k, v) for k, v in JURY_BALLROOM.items()])
-    jury_latin = SelectField('Adjudicator Latin', validators=[SpecificVolunteer('volunteer')],
+    jury_latin = SelectField('Adjudicator Latin', validators=[SpecificVolunteer('volunteer'), ChoiceMade()],
                              choices=[(k, v) for k, v in JURY_LATIN.items()])
     license_jury_ballroom = SelectField('Adjudicator license Ballroom', validators=[DataRequired()],
                                         choices=[(k, v) for k, v in LICENSE_BALLROOM.items()])

@@ -3,18 +3,27 @@
     <table class="table">
         <colgroup>
             {% if show_break_up_button is sameas true %}
+            <!--<col span="1" style="width: 5%;">-->
+            <!--<col span="1" style="width: 30%;">-->
+            <!--<col span="1" style="width: 5%;">-->
+            <!--<col span="1" style="width: 30%;">-->
+            <!--<col span="1" style="width: 20%;">-->
+            <!--<col span="1" style="width: 10%;">-->
             <col span="1" style="width: 5%;">
-            <col span="1" style="width: 30%;">
+            <col span="1" style="width: 35%;">
             <col span="1" style="width: 5%;">
-            <col span="1" style="width: 30%;">
+            <col span="1" style="width: 35%;">
             <col span="1" style="width: 20%;">
-            <col span="1" style="width: 10%;">
             {% else %}
+            <!--<col span="1" style="width: 5%;">-->
+            <!--<col span="1" style="width: 35%;">-->
+            <!--<col span="1" style="width: 5%;">-->
+            <!--<col span="1" style="width: 35%;">-->
+            <!--<col span="1" style="width: 20%;">-->
             <col span="1" style="width: 5%;">
-            <col span="1" style="width: 35%;">
+            <col span="1" style="width: 45%;">
             <col span="1" style="width: 5%;">
-            <col span="1" style="width: 35%;">
-            <col span="1" style="width: 20%;">
+            <col span="1" style="width: 45%;">
             {% endif %}
         </colgroup>
         <thead>
@@ -28,7 +37,7 @@
                 <th><b>Name</b></th>
                 <th><b>ID</b></th>
                 <th><b>Name</b></th>
-                <th><b>Level</b></th>
+                <!--<th><b>Level</b></th>-->
                 {% if show_break_up_button is sameas true %}<th></th>{% endif %}
             </tr>
         </thead>
@@ -47,11 +56,11 @@
                     <td class="{% if couple['follow'].contestant_info[0].team.name != current_user.team.name %}active{% endif %}">
                         {{ couple['follow'].get_full_name() }}{% if couple['follow'].contestant_info[0].team.name != current_user.team.name %} - {{ couple['follow'].contestant_info[0].team.name }}{% endif %}
                     </td>
-                    <td>
-                        {{ func.get_discipline(couple['lead'], category).level }}
-                    </td>
+                    <!--<td>-->
+                        <!--{{ func.get_discipline(couple['lead'], category).level }}-->
+                    <!--</td>-->
                     {% if show_break_up_button is sameas true %}
-                    <td>
+                    <td align="right">
                         <a class="btn btn-warning" href="{{ url_for('teamcaptains.break_up_couple', competition=category, lead_id=couple['lead'].contestant_id, follow_id=couple['follow'].contestant_id ) }}">Break up couple</a>
                     </td>
                     {% endif %}

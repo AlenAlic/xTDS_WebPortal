@@ -51,7 +51,7 @@ class Role(object):
 class ChoiceMade(object):
     """Checks if a choice is selected from a list."""
     def __call__(self, form, field):
-        if field.data == 'choose':
+        if field.data == 'choose' or field.data == str(None):
             raise ValidationError(field.gettext(REQUIRED))
 
 

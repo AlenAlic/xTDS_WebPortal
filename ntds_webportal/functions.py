@@ -50,6 +50,11 @@ def get_combinations_list(s):
 
 
 def contestant_validate_dancing(form):
+    try:
+        form.first_name.data = form.first_name.data.capitalize()
+        form.last_name.data = form.last_name.data.capitalize()
+    except AttributeError:
+        pass
     if form.ballroom_partner.data is not None:
         if form.ballroom_level.data in data.BLIND_DATE_LEVELS:
             form.ballroom_partner.data = 'must_blind_date'

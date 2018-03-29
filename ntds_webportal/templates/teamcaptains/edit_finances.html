@@ -12,7 +12,7 @@
 {% endwith %}
 
 <h2>Received by organization:</h2>
-<div style="font-size:x-large">{{ data.euros(team_finances.paid) }} / {{ data.euros(finances['price_total'] - team_finances.paid) }}</div>
+<div style="font-size:x-large">{{ data.euros(team_finances.paid) }} / {{ data.euros(finances['price_total']) }}</div>
 
 <form method="POST" enctype="multipart/form-data" novalidate>
     {% with status='Confirmed dancers', dancers=confirmed_dancers %}

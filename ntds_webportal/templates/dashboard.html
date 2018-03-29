@@ -62,16 +62,16 @@ onload="onStart()"
             {% with url='teamcaptains.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
                 {% include '_dashboard_page.html' %}
             {% endwith %}
-            {% with url='teamcaptains.edit_dancers', title='Edit Dancers', text='View and edit information of registered dancers.', image='edit_contestant.png' %}
+            {% with accessible=dancers_registered, url='teamcaptains.edit_dancers', title='Edit Dancers', text='View and edit information of registered dancers.', image='edit_contestant.png' %}
                 {% include '_dashboard_page.html' %}
             {% endwith %}
-            {% with url='teamcaptains.couples_list', title='Couples', text='View all registered couples, and create new couples.', image='view_couples.png' %}
+            {% with accessible=dancers_registered, url='teamcaptains.couples_list', title='Couples', text='View all registered couples, and create new couples.', image='view_couples.png' %}
                 {% include '_dashboard_page.html' %}
             {% endwith %}
-            {% with count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dancing Partner Request', text='Create couples with dancers from another team', image='partner_request.png' %}
+            {% with accessible=dancers_registered, count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dancing Partner Request', text='Create couples with dancers from another team', image='partner_request.png' %}
                 {% include '_dashboard_page.html' %}
             {% endwith %}
-            {% with accessible=teamcaptain_page_accessible, count=num_teamcaptains, url='teamcaptains.set_teamcaptains', title=tc_title, text=tc_text, image='captain.png' %}
+            {% with accessible=dancers_registered, count=num_teamcaptains, url='teamcaptains.set_teamcaptains', title=tc_title, text=tc_text, image='captain.png' %}
                 {% include '_dashboard_page.html' %}
             {% endwith %}
             {% with accessible=state.main_raffle_result_visible, url='teamcaptains.raffle_result', title='Raffle results', text='Manage dancers that have been selected or confirmed for the tournament.', image='raffle_results.png' %}

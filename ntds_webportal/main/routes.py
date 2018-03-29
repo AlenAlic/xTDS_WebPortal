@@ -34,10 +34,10 @@ def dashboard():
     if current_user.is_tc():
         state = TournamentState.query.first()
         raffle_config = state.get_raffle_config()
-        teamcaptain_page_accessible = current_user.has_dancers_registered()
+        dancers_registered = current_user.has_dancers_registered()
         num_teamcaptains = current_user.teamcaptains_selected()
         return render_template('dashboard.html', state=state, max_tc=raffle_config['max_teamcaptains'],
-                               teamcaptain_page_accessible=teamcaptain_page_accessible,
+                               dancers_registered=dancers_registered,
                                num_teamcaptains=num_teamcaptains)
     return render_template('dashboard.html')
 
