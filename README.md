@@ -1,4 +1,6 @@
 # NTDS_webportal
+Version [0.4.0][CHANGELOG]
+
 A web portal for registration and selection for the NTDS.
 
 Based on Flask and Python
@@ -65,3 +67,6 @@ Messagin system for users
   - Send to specific (group of) users
   - Read/Unread status
   - Archive
+
+
+[CHANGELOG]: ./CHANGELOG.md
