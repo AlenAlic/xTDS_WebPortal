@@ -31,7 +31,7 @@ def registration_overview():
 @requires_access_level([data.ACCESS['organizer']])
 def finances_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
-        .filter(StatusInfo.payment_required == True).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
+        .filter(StatusInfo.payment_required.is_(True)).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
     all_confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
     all_cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
     all_finances = data.finances_overview(all_dancers)

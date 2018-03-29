@@ -61,6 +61,16 @@ LEVELS = {
     NO: 'I am not dancing in this category',
 }
 LEVELS.update({pl: ALL_LEVELS[pl] for pl in PARTICIPATING_LEVELS})
+ROLES = {NONE: 'What role are you dancing?'}
+ROLES.update(ALL_ROLES)
+VOLUNTEER = {CHOOSE: 'Would you like to volunteer at the tournament?'}
+VOLUNTEER.update(YMN)
+FIRST_AID = {NONE: 'Are you a qualified First Aid Officer and would you like to volunteer as one?'}
+FIRST_AID.update(YMN)
+JURY_BALLROOM = {NONE: 'Would you like to volunteer as a Ballroom jury?'}
+JURY_BALLROOM.update(YMN)
+JURY_LATIN = {NONE: 'Would you like to volunteer as a Latin jury?'}
+JURY_LATIN.update(YMN)
 SHIRTS = {'': 'Would you like to buy a t-shirt from this tournament?', NO: 'No'}
 SHIRTS.update(SHIRT_SIZES)
 

@@ -1,0 +1,53 @@
+<h2>{{title}}</h2>
+
+<form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <h3>Personal Info</h3>
+    {% if mode == 'register' %}
+        {{ my_wtf.form_field(form.number) }}
+        {{ my_wtf.form_field(form.first_name, placeholder='First name') }}
+        {{ my_wtf.form_field(form.prefixes, placeholder='Prefixes') }}
+        {{ my_wtf.form_field(form.last_name, placeholder='Last name') }}
+    {% elif mode == 'edit' %}
+        {{ my_wtf.form_field(form.full_name, placeholder='Full name') }}
+    {% endif %}
+    {{ my_wtf.form_field(form.email, placeholder='E-mail address') }}
+    {{ my_wtf.form_field(form.student) }}
+    {{ my_wtf.form_field(form.first_time) }}
+    {{ my_wtf.form_field(form.diet_allergies, placeholder='Please fill in any special dietary requirements and/or allergies.') }}
+    <!--{{ my_wtf.form_field(form.team) }}-->
+    <h3>Ballroom</h3>
+    {{ my_wtf.form_field(form.ballroom_level, onchange="dropDownGreyOut('ballroom', id)") }}
+    <div id="ballroom">
+        {{ my_wtf.form_field(form.ballroom_role) }}
+        <!--<div id="ballroom_bd" onclick="blindDateGreyOut('ballroom_p', 'ballroom_blind_date')">-->
+            <!--{{ my_wtf.form_field(form.ballroom_blind_date) }}-->
+        <!--</div>-->
+        <div id="ballroom_p">
+            {{ my_wtf.form_field(form.ballroom_partner) }}
+        </div>
+    </div>
+    <h3>Latin</h3>
+    {{ my_wtf.form_field(form.latin_level, onchange="dropDownGreyOut('latin', id)") }}
+    <div id="latin">
+        {{ my_wtf.form_field(form.latin_role) }}
+        <!--<div id="latin_bd" onclick="blindDateGreyOut('latin_p', 'latin_blind_date')">-->
+            <!--{{ my_wtf.form_field(form.latin_blind_date) }}-->
+        <!--</div>-->
+        <div id="latin_p">
+            {{ my_wtf.form_field(form.latin_partner) }}
+        </div>
+    </div>
+    <h3>Volunteering</h3>
+    {{ my_wtf.form_field(form.volunteer, onchange="dropDownGreyOut('volunteering', id)") }}
+    <div id="volunteering">
+    {{ my_wtf.form_field(form.first_aid) }}
+    {{ my_wtf.form_field(form.jury_ballroom) }}
+    {{ my_wtf.form_field(form.jury_latin) }}
+    </div>
+    <h3>Additional info</h3>
+    {{ my_wtf.form_field(form.sleeping_arrangements) }}
+    {{ my_wtf.form_field(form.t_shirt) }}
+    {{ my_wtf.form_field(form.submit) }}
+</form>

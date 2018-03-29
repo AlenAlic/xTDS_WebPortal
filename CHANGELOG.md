@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
+## [0.5.1] - 2018-05-01
+### Changed
+- Dancer Registration and Edit forms merged for easier use
+- Split data into multiple files for easier configuration
+
+## Fixed
+- Partners were not updated two-ways
+- Couples list now correctly shows confirmed couples
+
+## Security
+- Users can no longer enter different user pages by guessing URL's
+
+
+
 ## [0.5.0] - 2018-04-18
 ### Added
 For teamcaptains
@@ -42,6 +56,7 @@ For treasurers
 - Password change when logged in now requires old password
 
 
-[Unreleased]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/AlenAlic/NTDS_webportal/compare/v0.3.0...v0.4.0

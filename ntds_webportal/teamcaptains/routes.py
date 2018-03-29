@@ -16,30 +16,40 @@ from sqlalchemy import and_, or_
 
 def contestant_validate_dancing(form):
     if form.ballroom_partner.data is not None:
+        # noinspection PyUnresolvedReferences
         dancing_partner = db.session.query(Contestant).join(DancingInfo) \
             .filter(Contestant.contestant_id == form.ballroom_partner.data.contestant_id).first()
-        if form.ballroom_role.data == dancing_partner.dancing_info[0].ballroom_role:
-            if form.ballroom_role.data == data.LEAD:
-                form.ballroom_role.data = 'same_role_lead'
-            elif form.ballroom_role.data == data.FOLLOW:
-                form.ballroom_role.data = 'same_role_follow'
         if form.ballroom_level.data != dancing_partner.dancing_info[0].ballroom_level:
             if dancing_partner.dancing_info[0].ballroom_level is None:
+                form.ballroom_partner.data = 'diff_levels_no_level'
                 form.ballroom_level.data = 'diff_levels_no_level'
             elif form.ballroom_level.data != data.CHOOSE:
+                form.ballroom_partner.data = 'diff_levels'
                 form.ballroom_level.data = 'diff_levels'
+        if form.ballroom_role.data == dancing_partner.dancing_info[0].ballroom_role:
+            if form.ballroom_role.data == data.LEAD:
+                form.ballroom_partner.data = 'same_role_lead'
+                form.ballroom_role.data = 'same_role_lead'
+            elif form.ballroom_role.data == data.FOLLOW:
+                form.ballroom_partner.data = 'same_role_follow'
+                form.ballroom_role.data = 'same_role_follow'
     if form.latin_partner.data is not None:
+        # noinspection PyUnresolvedReferences
         dancing_partner = db.session.query(Contestant).join(DancingInfo) \
             .filter(Contestant.contestant_id == form.latin_partner.data.contestant_id).first()
         if form.latin_role.data == dancing_partner.dancing_info[0].latin_role:
             if form.latin_role.data == data.LEAD:
+                form.latin_partner.data = 'same_role_lead'
                 form.latin_role.data = 'same_role_lead'
             elif form.latin_role.data == data.FOLLOW:
+                form.latin_partner.data = 'same_role_follow'
                 form.latin_role.data = 'same_role_follow'
         if form.latin_level.data != dancing_partner.dancing_info[0].latin_level:
             if dancing_partner.dancing_info[0].latin_level is None:
+                form.latin_partner.data = 'diff_levels_no_level'
                 form.latin_level.data = 'diff_levels_no_level'
             elif form.latin_level.data != data.CHOOSE:
+                form.latin_partner.data = 'diff_levels'
                 form.latin_level.data = 'diff_levels'
     return form
 
@@ -66,36 +76,33 @@ def submit_contestant(f, contestant=None):
         si = contestant.status_info[0]
         new_dancer = False
     contestant.email = f.email.data
+    ci.contestant = contestant
     ci.student = f.student.data
     ci.diet_allergies = f.diet_allergies.data
-    ci.contestant = contestant
+    di.contestant = contestant
     if f.ballroom_level.data is None:
         di.not_dancing_ballroom()
     else:
         di.ballroom_level = f.ballroom_level.data
         di.ballroom_role = f.ballroom_role.data
         di.ballroom_blind_date = f.ballroom_blind_date.data
-        if f.ballroom_partner.data is None:
-            di.ballroom_partner = f.ballroom_partner.data
+        db.session.flush()
+        if f.ballroom_partner.data is not None:
+            di.set_ballroom_partner(f.ballroom_partner.data.contestant_id)
         else:
-            di.ballroom_partner = f.ballroom_partner.data.contestant_id
-            ballroom_partner = db.session.query(Contestant)\
-                .filter(Contestant.contestant_id == di.ballroom_partner).first()
-            ballroom_partner.dancing_info[0].ballroom_partner = contestant.contestant_id
+            di.set_ballroom_partner(None)
     if f.latin_level.data is None:
         di.not_dancing_latin()
     else:
         di.latin_level = f.latin_level.data
         di.latin_role = f.latin_role.data
         di.latin_blind_date = f.latin_blind_date.data
-        if f.latin_partner.data is None:
-            di.latin_partner = f.latin_partner.data
+        db.session.flush()
+        if f.latin_partner.data is not None:
+            di.set_latin_partner(f.latin_partner.data.contestant_id)
         else:
-            di.latin_partner = f.latin_partner.data.contestant_id
-            latin_partner = db.session.query(Contestant)\
-                .filter(Contestant.contestant_id == di.latin_partner).first()
-            latin_partner.dancing_info[0].latin_partner = contestant.contestant_id
-    di.contestant = contestant
+            di.set_latin_partner(None)
+    vi.contestant = contestant
     if f.volunteer.data == data.NO:
         vi.not_volunteering()
     else:
@@ -103,12 +110,11 @@ def submit_contestant(f, contestant=None):
         vi.first_aid = f.first_aid.data
         vi.jury_ballroom = f.jury_ballroom.data
         vi.jury_latin = f.jury_latin.data
-    vi.contestant = contestant
+    ai.contestant = contestant
     ai.sleeping_arrangements = f.sleeping_arrangements.data
     ai.t_shirt = f.t_shirt.data
-    ai.contestant = contestant
-    si.first_time = f.first_time.data
     si.contestant = contestant
+    si.first_time = f.first_time.data
     if new_dancer:
         db.session.add(contestant)
     db.session.commit()
@@ -181,19 +187,21 @@ def edit_dancers():
 @requires_access_level([data.ACCESS['team_captain']])
 def edit_dancer(number):
     dancer = db.session.query(Contestant).join(ContestantInfo)\
-        .filter(ContestantInfo.team == current_user.team, ContestantInfo.number == number)\
-        .order_by(ContestantInfo.number).first_or_404()
+        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number)\
+        .order_by(Contestant.contestant_id).first_or_404()
     form = EditContestantForm()
     form.full_name.data = dancer.get_full_name()
+    form.team.data = dancer.contestant_info[0].team.name
+    form.number.data = dancer.contestant_info[0].number
     form.ballroom_partner.\
         query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
-        .filter(and_(ContestantInfo.team == current_user.team,
+        .filter(and_(ContestantInfo.team == current_user.team, Contestant.contestant_id != number,
                      or_(and_(DancingInfo.ballroom_partner.is_(None), DancingInfo.ballroom_blind_date.is_(False)),
-                         ContestantInfo.number == dancer.dancing_info[0].ballroom_partner)))
+                         Contestant.contestant_id == dancer.dancing_info[0].ballroom_partner)))
     form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
-        .filter(and_(ContestantInfo.team == current_user.team,
+        .filter(and_(ContestantInfo.team == current_user.team, Contestant.contestant_id != number,
                      or_(and_(DancingInfo.latin_partner.is_(None), DancingInfo.latin_blind_date.is_(False)),
-                         ContestantInfo.number == dancer.dancing_info[0].latin_partner)))
+                         Contestant.contestant_id == dancer.dancing_info[0].latin_partner)))
     if request.method == 'POST':
         # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
@@ -272,37 +280,58 @@ def set_teamcaptains():
 @requires_access_level([data.ACCESS['team_captain']])
 def couples_list():
     confirmed = request.args.get('confirmed', 0, type=int)
-    all_dancers = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == data.CONFIRMED)\
+    all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
+        .filter(ContestantInfo.team == current_user.team, DancingInfo.ballroom_role == data.LEAD)\
         .order_by(DancingInfo.ballroom_level, ContestantInfo.number).all()
-    ballroom_couples_leads = [dancer for dancer in all_dancers if dancer.dancing_info[0].ballroom_role == data.LEAD and
+    all_follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, DancingInfo.ballroom_role == data.FOLLOW) \
+        .order_by(DancingInfo.ballroom_level, ContestantInfo.number).all()
+    ballroom_couples_leads = [dancer for dancer in all_leads if dancer.dancing_info[0].ballroom_role == data.LEAD and
                               dancer.dancing_info[0].ballroom_partner is not None]
-    ballroom_couples_follows = [dancer for dancer in all_dancers if dancer.dancing_info[0].ballroom_partner in 
-                                [lead.contestant_info[0].number for lead in ballroom_couples_leads]]
-    latin_couples_leads = [dancer for dancer in all_dancers if dancer.dancing_info[0].latin_role == data.LEAD and
+    ballroom_couples_follows = [dancer for dancer in all_follows if dancer.dancing_info[0].ballroom_partner in
+                                [lead.contestant_id for lead in ballroom_couples_leads]]
+    latin_couples_leads = [dancer for dancer in all_leads if dancer.dancing_info[0].latin_role == data.LEAD and
                            dancer.dancing_info[0].latin_partner is not None]
-    latin_couples_follows = [dancer for dancer in all_dancers if dancer.dancing_info[0].latin_partner in
-                             [lead.contestant_info[0].number for lead in latin_couples_leads]]
+    latin_couples_follows = [dancer for dancer in all_follows if dancer.dancing_info[0].latin_partner in
+                             [lead.contestant_id for lead in latin_couples_leads]]
     ballroom_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                         list(itertools.product(ballroom_couples_leads, ballroom_couples_follows)) if
                         couple[0].contestant_info[0].number == couple[1].dancing_info[0].ballroom_partner]
     latin_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                      list(itertools.product(latin_couples_leads, latin_couples_follows)) if
                      couple[0].contestant_info[0].number == couple[1].dancing_info[0].latin_partner]
-    ballroom_lead_blind_daters = [dancer for dancer in all_dancers if
+    confirmed_ballroom_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
+                                  list(itertools.product([dancer for dancer in ballroom_couples_leads if
+                                                          dancer.status_info[0].status == data.CONFIRMED],
+                                                         [dancer for dancer in ballroom_couples_follows if
+                                                          dancer.status_info[0].status == data.CONFIRMED])) if
+                                  couple[0].contestant_id == couple[1].dancing_info[0].ballroom_partner]
+    confirmed_latin_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
+                               list(itertools.product([dancer for dancer in latin_couples_leads
+                                                       if dancer.status_info[0].status == data.CONFIRMED],
+                                                      [dancer for dancer in latin_couples_follows
+                                                       if dancer.status_info[0].status == data.CONFIRMED])) if
+                               couple[0].contestant_id == couple[1].dancing_info[0].latin_partner]
+    ballroom_lead_blind_daters = [dancer for dancer in all_leads if
                                   dancer.dancing_info[0].ballroom_role == data.LEAD and
-                                  dancer.dancing_info[0].ballroom_partner is None]
-    ballroom_follow_blind_daters = [dancer for dancer in all_dancers if
+                                  dancer.dancing_info[0].ballroom_partner is None and
+                                  dancer.status_info[0].status == data.CONFIRMED]
+    ballroom_follow_blind_daters = [dancer for dancer in all_follows if
                                     dancer.dancing_info[0].ballroom_role == data.FOLLOW and
-                                    dancer.dancing_info[0].ballroom_partner is None]
-    latin_lead_blind_daters = [dancer for dancer in all_dancers if
+                                    dancer.dancing_info[0].ballroom_partner is None and
+                                    dancer.status_info[0].status == data.CONFIRMED]
+    latin_lead_blind_daters = [dancer for dancer in all_leads if
                                dancer.dancing_info[0].latin_role == data.LEAD and
-                               dancer.dancing_info[0].latin_partner is None]
-    latin_follow_blind_daters = [dancer for dancer in all_dancers if
+                               dancer.dancing_info[0].latin_partner is None and
+                               dancer.status_info[0].status == data.CONFIRMED]
+    latin_follow_blind_daters = [dancer for dancer in all_follows if
                                  dancer.dancing_info[0].latin_role == data.FOLLOW and
-                                 dancer.dancing_info[0].latin_partner is None]
+                                 dancer.dancing_info[0].latin_partner is None and
+                                 dancer.status_info[0].status == data.CONFIRMED]
     return render_template('teamcaptains/couples_lists.html', data=data, confirmed=confirmed,
                            ballroom_couples=ballroom_couples, latin_couples=latin_couples,
+                           confirmed_ballroom_couples=confirmed_ballroom_couples,
+                           confirmed_latin_couples=confirmed_latin_couples,
                            ballroom_lead_blind_daters=ballroom_lead_blind_daters,
                            ballroom_follow_blind_daters=ballroom_follow_blind_daters,
                            latin_lead_blind_daters=latin_lead_blind_daters,
