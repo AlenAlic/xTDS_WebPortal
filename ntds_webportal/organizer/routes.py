@@ -214,6 +214,12 @@ def raffle_system():
                 dancer.status_info[0].set_status(SELECTED)
             state.main_raffle_result_visible = True
             flash('Raffle confirmed. The results are now visible to the teamcaptains.', 'alert-success')
+        elif 'reset_raffle' in form:
+            for dancer in all_dancers:
+                dancer.status_info[0].set_status(REGISTERED)
+            state.main_raffle_taken_place = False
+            state.main_raffle_result_visible = False
+            flash('Raffle results cleared.', 'alert-info')
         elif 'finish_raffle' in form:
             finish_raffle(raffle_sys)
         elif 'select_random_group' in form:
