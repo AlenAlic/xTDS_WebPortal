@@ -47,7 +47,7 @@ def finances_overview():
     german_dancers = [team for team in dancers if team['country'] == data.GERMANY]
     other_dancers = [team for team in dancers if team['country'] != data.NETHERLANDS and
                      team['country'] != data.GERMANY]
-    return render_template('organizer/finances_overview.html', all_finances=all_finances,
+    return render_template('organizer/finances_overview.html', dancers=dancers,
                            all_confirmed_dancers=all_confirmed_dancers, all_cancelled_dancers=all_cancelled_dancers,
                            dutch_dancers=dutch_dancers, german_dancers=german_dancers, other_dancers=other_dancers,
                            data=data)

@@ -88,6 +88,10 @@ class Team(db.Model):
         return '{}'.format(self.name)
 
 
+# class TeamFinances(db.Model):
+#     __tablename__ = 'team_finances'
+
+
 class Contestant(db.Model):
     __tablename__ = 'contestants'
     contestant_id = db.Column(db.Integer, primary_key=True)
