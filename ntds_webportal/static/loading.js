@@ -1,4 +1,3 @@
-
 const showLoadingSpinner = (element) => {
     const root = document.querySelector(':root')
     const backdrop = document.createElement('div')
@@ -29,7 +28,7 @@ const showLoadingSpinner = (element) => {
     backdrop.appendChild(spinnerContainer)
 
     spinner.src = '/static/spinner_couple01.svg'
-    spinner.width = 480
+    spinner.width = 240
     spinner.height = spinner.width
 
     label.innerHTML = 'Loading...'
@@ -57,15 +56,14 @@ const showLoadingSpinner = (element) => {
 
 const addLoadingListener = () => {
     document.querySelectorAll('.loading-btn').forEach(button => button.addEventListener('click', showLoadingSpinner))
-//    showLoadingSpinner()
 }
 
 function ready(fn) {
-  if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
-    fn();
-  } else {
-    document.addEventListener('DOMContentLoaded', fn);
-  }
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
+        fn();
+        } else {
+        document.addEventListener('DOMContentLoaded', fn);
+    }
 }
 
 ready(addLoadingListener)

@@ -7,6 +7,7 @@ from functools import wraps
 from time import time
 from datetime import datetime
 import ntds_webportal.data as data
+from ntds_webportal.data import *
 from raffle_system.raffle_config import *
 import json
 
@@ -155,6 +156,9 @@ class Contestant(db.Model):
 
     def competition(self, competition):
         return DancingInfo.query.filter_by(contestant_id=self.contestant_id, competition=competition).first()
+
+    def cancel_registration(self):
+        self.status_info[0].set_status(CANCELLED)
 
 
 class ContestantInfo(db.Model):

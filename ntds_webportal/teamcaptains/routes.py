@@ -8,8 +8,7 @@ from ntds_webportal.models import User, requires_access_level, TeamFinances, Con
     StatusInfo, PartnerRequest, NameChangeRequest, TournamentState
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
-from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant, \
-    dancing_level, partnerless
+from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 import itertools
@@ -162,10 +161,10 @@ def edit_dancer(number):
 @requires_access_level([data.ACCESS['team_captain']])
 def register_dancer(number):
     register = request.args.get('register', None, type=int)
-    changed_dancer = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, ContestantInfo.number == number).first()
+    changed_dancer = db.session.query(Contestant).join(ContestantInfo) \
+        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number).first()
     if register == 0:
-        changed_dancer.status_info[0].status = data.CANCELLED
+        changed_dancer.cancel_registration()
         db.session.commit()
         flash('The registration of {} has been cancelled.'.format(changed_dancer.get_full_name()), 'alert-info')
     elif register == 1:

@@ -3,11 +3,15 @@ import random
 
 
 def select_groups(raffle_sys, list_of_dancers, guaranteed=False):
-    r = range(0, len(list_of_dancers))
-    for _ in r:
+    r = list(range(0, len(list_of_dancers)))
+    shuffle(r)
+    for i in r:
         if not raffle_sys.complete():
             try:
-                dancer = random.choice(list_of_dancers)
+                if not guaranteed:
+                    dancer = random.choice(list_of_dancers)
+                else:
+                    dancer = list_of_dancers[i]
             except IndexError:
                 pass
             else:

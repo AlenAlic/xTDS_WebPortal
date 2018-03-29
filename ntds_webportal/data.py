@@ -53,7 +53,8 @@ TEAMS = [
     {'country': GERMANY, 'name': 'Unitanz Wuppertal', 'city': 'Wuppertal'},
     {'country': BELGIUM, 'name': 'Gent', 'city': 'Gent'},
     {'country': CZECH, 'name': 'Brno', 'city': 'Brno'},
-    {'country': NORWAY, 'name': 'Oslo', 'city': 'Oslo'}
+    {'country': NORWAY, 'name': 'Oslo', 'city': 'Oslo'},
+    {'country': UNITED_KINGDOM, 'name': 'Hull', 'city': 'Hull'}
 ]
 
 # Registration form lists

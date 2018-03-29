@@ -23,8 +23,8 @@
             <p>Select any dancers you want to be guaranteed entry into the tournament from the lists below.</p>
             <form class="form" method="POST" enctype="multipart/form-data" novalidate>
                 <button type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success loading-btn">Start Raffle</button>
-                <!--<button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-danger btn-lg"><strong>DEBUG RAFFLE - FOR TESTING PURPOSES ONLY</strong></button>-->
-                {% with list_id='guaranteed', type='guaranteed', title='Lists of all eligible dancers', teams=teams %}
+                <button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-danger btn-lg"><strong>DEBUG RAFFLE - FOR TESTING PURPOSES ONLY</strong></button>
+                {% with list_id='guaranteed', type='guaranteed', title='Eligible dancers', teams=teams %}
                     {% include 'organizer/_raffle_dancers_lists.html' %}
                 {% endwith %}
             </form>
@@ -36,15 +36,25 @@
         <p>Otherwise, you can redo the raffle, or cancel it.</p>
         <form class="form" method="POST" enctype="multipart/form-data" novalidate>
             <button type="submit" id="submit-confirm_raffle" name="confirm_raffle" class="btn btn-success loading-btn">Confirm Raffle</button>
-            <button type="submit" id="submit-redo_raffle" name="redo_raffle" class="btn btn-info loading-btn">Redo Raffle</button>
+            <!--<button type="submit" id="submit-redo_raffle" name="redo_raffle" class="btn btn-info loading-btn">Redo Raffle</button>-->
             <button type="submit" id="submit-cancel_raffle" name="cancel_raffle" class="btn btn-warning loading-btn">Cancel Raffle</button>
         </form>
         {% with title='Summary', desc='This will be the statistics if all the selected dancers are confirmed.', stats=stats_selected %}
             {% include 'organizer/_raffle_stats.html' %}
         {% endwith %}
-        {% with list_id='selected', type='selected', title='Selected dancers', teams=teams %}
-            {% include 'organizer/_raffle_dancers_lists.html' %}
-        {% endwith %}
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                {% with list_id='selected', type='selected', title='Selected dancers', teams=teams %}
+                    {% include 'organizer/_raffle_dancers_lists.html' %}
+                {% endwith %}
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                {% with list_id='available', type='available', title='Available dancers', teams=teams %}
+                    {% include 'organizer/_raffle_dancers_lists.html' %}
+                {% endwith %}
+            </div>
+        </div>
+
         {% endif %}
 
         {% if state.main_raffle_taken_place is sameas true and state.main_raffle_result_visible is sameas true %}
@@ -78,7 +88,7 @@
 
     {% if state.main_raffle_taken_place is sameas true and state.main_raffle_result_visible is sameas true %}
     <div class="tab-pane fade" role=tabpanel id=overview aria-labelledby=overview-tab>
-        {% with list_id='completed', type='completed_raffle', title='Lists of selected and confirmed dancers', teams=teams %}
+        {% with list_id='completed', type='completed_raffle', title='Selected and confirmed dancers', teams=teams %}
             {% include 'organizer/_raffle_dancers_lists.html' %}
         {% endwith %}
     </div>

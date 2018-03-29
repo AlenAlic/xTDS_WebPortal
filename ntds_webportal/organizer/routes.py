@@ -22,12 +22,10 @@ def registration_overview():
     order = [data.CONFIRMED, data.SELECTED, data.REGISTERED, data.CANCELLED]
     all_dancers = sorted(all_dancers, key=lambda o: (o.contestant_info[0].team_id,
                                                      order.index(o.status_info[0].status)))
-    start_time = time.time()
-    print("Order done in %.3f seconds ---" % (time.time() - start_time))
     dancers = [{'country': team.country, 'name': team.name, 'id': team.name.replace(' ', '-').replace('`', ''),
                 'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team).all()}
                for team in all_teams]
-    dancers = [d for d in dancers if len(d['dancers']) > 0]
+    # dancers = [d for d in dancers if len(d['dancers']) > 0]
     dutch_dancers = [team for team in dancers if team['country'] == data.NETHERLANDS]
     german_dancers = [team for team in dancers if team['country'] == data.GERMANY]
     other_dancers = [team for team in dancers if team['country'] != data.NETHERLANDS and
@@ -116,17 +114,30 @@ def raffle_system():
     raffle_config = state.get_raffle_config()
     all_teams = db.session.query(Team).all()
     teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
-              'id_title': team.name.replace(' ', '-').replace('`', '') + '-title',
-              'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team)
-             .order_by(Contestant.first_name).all(),
-              'selected_dancers': db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)
-             .filter(ContestantInfo.team == team, StatusInfo.raffle_status == data.SELECTED).all(),
-              'confirmed_dancers': db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)
-             .filter(ContestantInfo.team == team, StatusInfo.raffle_status == data.CONFIRMED).all(),
-              'available_dancers': db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)
-             .filter(ContestantInfo.team == team, StatusInfo.raffle_status == data.REGISTERED).all()
-              } for team in all_teams]
-    teams = [team for team in teams if (len(team['dancers'])) > 0]
+              'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
+    if not state.main_raffle_taken_place:
+        for t in teams:
+            t['guaranteed_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
+                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status != data.CANCELLED)\
+                .order_by(Contestant.first_name).all()
+    if state.main_raffle_taken_place and not state.main_raffle_result_visible:
+        for t in teams:
+            t['available_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == data.REGISTERED) \
+                .order_by(Contestant.first_name).all()
+            t['selected_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
+                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == data.SELECTED)\
+                .order_by(Contestant.first_name).all()
+    if state.main_raffle_taken_place and state.main_raffle_result_visible:
+        for t in teams:
+            t['available_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == data.REGISTERED).all()
+            t['selected_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == data.SELECTED).all()
+            t['confirmed_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+                .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == data.CONFIRMED).all()
+
+    # teams = [team for team in teams if team['visible'] or team['confirmed_visible'] or team['available_visible']]
     # for i in range(2):
     #     start_time = time.time()
     #     dancer_lists = DancerLists()
@@ -185,7 +196,7 @@ def raffle_system():
             dancer_ids = list(range(0, max_id+1))
             selected = {did: 0 for did in dancer_ids}
             runs = 100
-            if False:
+            if True:
                 start_time = time.time()
                 for i in range(0, runs):
                     print(f'Performing run {i+1} of {runs}...')

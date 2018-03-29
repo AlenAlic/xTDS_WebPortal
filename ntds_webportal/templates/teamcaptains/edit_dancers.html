@@ -74,8 +74,9 @@
                 <td align="right">
                     {% if dancer.status_info[0].status == data.REGISTERED or dancer.status_info[0].status == data.CANCELLED %}
                         <a id="{{ dancer.contestant_info[0].number }}" name="{{ dancer.contestant_info[0].number }}" role="button"
-                        {% if dancer.status_info[0].status == data.REGISTERED %} class="btn btn-warning" href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_info[0].number, register=0, wide=wide) }}">Cancel registration
-                        {% elif dancer.status_info[0].status == data.CANCELLED %} class="btn btn-info" href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_info[0].number, register=1, wide=wide) }}">Re-register</a>
+                        {% if dancer.status_info[0].status == data.REGISTERED %} class="btn btn-warning" href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}">Cancel registration
+                        {% elif dancer.status_info[0].status == data.CANCELLED %} class="btn btn-info" href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">Re-register
+                        </a>
                         {% endif %}
                     {% endif %}
 
