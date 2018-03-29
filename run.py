@@ -49,6 +49,14 @@ class DevShell:
             db.session.commit()
 
     @staticmethod
+    def full_clear():
+        with app.app_context():
+            meta = db.metadata
+            for table in reversed(meta.sorted_tables):
+                print('Cleared table {}.'.format(table))
+                db.session.execute(table.delete())
+            db.session.commit()
+
     def reset_test_data(self):
         with app.app_context():
             meta = db.metadata

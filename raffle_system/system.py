@@ -7,7 +7,7 @@ def select_groups(raffle_sys, list_of_dancers, guaranteed=False):
     r = list(range(0, len(list_of_dancers)))
     shuffle(r)
     for i in r:
-        if not raffle_sys.raffle_complete():
+        if not raffle_sys.raffle_complete() and not raffle_sys.almost_full():
             try:
                 if not guaranteed:
                     dancer = list_of_dancers[r[i]]
