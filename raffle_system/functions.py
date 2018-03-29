@@ -2,7 +2,7 @@ from raffle_system.raffle_config import *
 from ntds_webportal import db
 from ntds_webportal.tournament_config import *
 from ntds_webportal.functions import get_dancing_categories, get_partners_ids, uniquify, has_partners
-from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo
+from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, TournamentState
 from ntds_webportal.strings import *
 import ntds_webportal.data as data
 from ntds_webportal.data import REGISTERED, SELECTED, CONFIRMED
@@ -29,19 +29,22 @@ def rearrange_numbers():
 
 
 class DancerLists:
-    # NO_PARTNER = 'no_partner'
+    NO_PARTNER = 'no_partner'
 
     def __init__(self):
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-            .filter(StatusInfo.status != data.CANCELLED).all()
-        self.registered_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].status == data.REGISTERED]
-        self.selected_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].status == data.SELECTED]
-        self.confirmed_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].status == data.CONFIRMED]
+            .filter(StatusInfo.raffle_status != data.CANCELLED).all()
+        self.registered_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].raffle_status == data.REGISTERED]
+        self.selected_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].raffle_status == data.SELECTED]
+        self.confirmed_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].raffle_status == data.CONFIRMED]
         self.no_partner_list = []
         # self.dancer_lists = {REGISTERED: self.registered_dancers, SELECTED: self.selected_dancers,
-        #                      CONFIRMED: self.confirmed_dancers, self.NO_PARTNER: self.no_partner_list}
+        #                      CONFIRMED: self.confirmed_dancers}
         self.dancer_lists = {REGISTERED: self.registered_dancers, SELECTED: self.selected_dancers,
-                             CONFIRMED: self.confirmed_dancers}
+                             CONFIRMED: self.confirmed_dancers, self.NO_PARTNER: self.no_partner_list}
+        state = TournamentState.query.first()
+        self.tournament_config = state.get_tournament_config()
+        self.raffle_config = state.get_raffle_config()
 
     def list(self, status):
         return self.dancer_lists[status]
@@ -65,8 +68,8 @@ class DancerLists:
     def select_dancer(self, dancer):
         self.move_dancer_to_list(dancer, SELECTED)
 
-    # def no_partner_found(self, dancer):
-    #     self.move_dancer_to_list(dancer, self.NO_PARTNER)
+    def no_partner_found(self, dancer):
+        self.move_dancer_to_list(dancer, self.NO_PARTNER)
 
     def add_group(self, group, guaranteed=False):
         if group.check() or guaranteed:
@@ -78,20 +81,42 @@ class DancerLists:
                 self.select_dancer(dancer)
         else:
             print(string_group_no_partner(group.dancers))
-            # for dancer in group.dancers:
-            #     self.no_partner_found(dancer)
+            for dancer in group.dancers:
+                self.no_partner_found(dancer)
 
     def complete(self):
-        return len(self.selected_dancers) >= (raffle_settings[MAX_DANCERS] - raffle_settings[SELECTION_BUFFER])
+        return len(self.selected_dancers) >= (self.raffle_config[MAX_DANCERS] - self.raffle_config[SELECTION_BUFFER])
 
     def update_states(self):
         for dancer in self.registered_dancers:
-            dancer.status_info[0].set_status(REGISTERED)
+            dancer.status_info[0].raffle_status = REGISTERED
         for dancer in self.selected_dancers:
-            dancer.status_info[0].set_status(SELECTED)
+            dancer.status_info[0].raffle_status = SELECTED
         for dancer in self.confirmed_dancers:
-            dancer.status_info[0].set_status(CONFIRMED)
-        # db.session.commit()
+            dancer.status_info[0].raffle_status = CONFIRMED
+        db.session.commit()
+
+    @staticmethod
+    def update_stats(stats, source_list):
+        for d in source_list:
+            di = get_dancing_categories(d.dancing_info)
+            for cat, info in di.items():
+                if info.level != NO:
+                    stats[info.level][info.competition][info.role] += 1
+        for _, cat in stats.items():
+            for _, comp in cat.items():
+                comp[DIFF] = comp[LEAD] - comp[FOLLOW]
+        return stats
+
+    def get_stats(self):
+        selected_stats = {lvl: {cat: {LEAD: 0, FOLLOW: 0, DIFF: 0}
+                                for cat in ALL_COMPETITIONS} for lvl in PARTICIPATING_LEVELS}
+        selected_stats = self.update_stats(selected_stats, self.selected_dancers)
+        selected_stats = self.update_stats(selected_stats, self.confirmed_dancers)
+        confirmed_stats = {lvl: {cat: {LEAD: 0, FOLLOW: 0, DIFF: 0}
+                                 for cat in ALL_COMPETITIONS} for lvl in PARTICIPATING_LEVELS}
+        confirmed_stats = self.update_stats(confirmed_stats, self.confirmed_dancers)
+        return selected_stats, confirmed_stats
 
 
 class DancingGroup:

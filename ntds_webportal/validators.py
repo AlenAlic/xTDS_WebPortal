@@ -55,12 +55,21 @@ class Role(object):
                 raise ValidationError(field.gettext(SAME_ROLE.format(role=FOLLOW)))
 
 
-class Volunteer(object):
+class ChoiceMade(object):
     """
-    Checks if a dancing level is selected.
+    Checks if a choice is selected from a list.
     """
     def __call__(self, form, field):
         if field.data == 'choose':
+            raise ValidationError(field.gettext(REQUIRED))
+
+
+class IsBoolean(object):
+    """
+    Checks if the value is a Boolean.
+    """
+    def __call__(self, form, field):
+        if not (field.data == str(True) or field.data == str(False)):
             raise ValidationError(field.gettext(REQUIRED))
 
 

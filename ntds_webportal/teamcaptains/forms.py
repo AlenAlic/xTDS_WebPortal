@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, BooleanField, SubmitField, IntegerField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Email
 import ntds_webportal.data as data
-from ntds_webportal.validators import Level, Role, Volunteer, SpecificVolunteer, UniqueEmail
+from ntds_webportal.validators import Level, Role, ChoiceMade, SpecificVolunteer, UniqueEmail, IsBoolean
 from wtforms_sqlalchemy.fields import QuerySelectField
 import wtforms_sqlalchemy.fields as f
 
@@ -33,19 +33,32 @@ class BaseContestantForm(FlaskForm):
     latin_partner = QuerySelectField('Latin partner', validators=[Role('latin_level'), Level()], allow_blank=True,
                                      blank_text='I have no partner in this category')
 
-    volunteer = SelectField('Volunteer', validators=[Volunteer()], choices=[(k, v) for k, v in data.VOLUNTEER.items()])
+    volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in data.VOLUNTEER.items()])
     first_aid = SelectField('First Aid', validators=[SpecificVolunteer('volunteer')],
                             choices=[(k, v) for k, v in data.FIRST_AID.items()])
-    jury_ballroom = SelectField('Jury Ballroom', validators=[SpecificVolunteer('volunteer')],
+    jury_ballroom = SelectField('Adjudicator Ballroom', validators=[SpecificVolunteer('volunteer')],
                                 choices=[(k, v) for k, v in data.JURY_BALLROOM.items()])
-    jury_latin = SelectField('Jury Latin', validators=[SpecificVolunteer('volunteer')],
+    jury_latin = SelectField('Adjudicator Latin', validators=[SpecificVolunteer('volunteer')],
                              choices=[(k, v) for k, v in data.JURY_LATIN.items()])
+    license_jury_ballroom = SelectField('Adjudicator license Ballroom', validators=[DataRequired()],
+                                        choices=[(k, v) for k, v in data.LICENSE_BALLROOM.items()])
+    license_jury_latin = SelectField('Adjudicator license Latin', validators=[DataRequired()],
+                                     choices=[(k, v) for k, v in data.LICENSE_LATIN.items()])
+    jury_salsa = SelectField('Adjudicator Salsa', validators=[DataRequired()],
+                              choices=[(k, v) for k, v in data.JURY_SALSA.items()])
+    jury_polka = SelectField('Adjudicator Polka', validators=[DataRequired()],
+                             choices=[(k, v) for k, v in data.JURY_POLKA.items()])
 
-    student = BooleanField('Student', description='I am a student')
-    first_time = BooleanField('First time', description='This is my first ETDS')
+    # student = BooleanField('Student', description='I am a student')
+    # first_time = BooleanField('First time', description='This is my first ETDS')
+    student = SelectField('Student', validators=[IsBoolean()], choices=[(k, v) for k, v in data.STUDENT.items()])
+    first_time = SelectField('First time', validators=[IsBoolean()],
+                             choices=[(k, v) for k, v in data.FIRST_TIME.items()])
     diet_allergies = StringField('Diet/Allergies')
-    sleeping_arrangements = BooleanField('Sleeping arrangement',
-                                         description='I would like to make use of the sleeping arrangements')
+    sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
+                                        choices=[(k, v) for k, v in data.SLEEPING.items()])
+    # sleeping_arrangements = BooleanField('Sleeping arrangement',
+    #                                      description='I would like to make use of the sleeping arrangements')
     t_shirt = SelectField('T-shirt', validators=[DataRequired()], choices=[(k, v) for k, v in data.SHIRTS.items()])
 
 
@@ -89,4 +102,3 @@ class NameChangeRequestForm(FlaskForm):
     prefixes = StringField('Prefixes')
     last_name = StringField('Last name', validators=[DataRequired()])
     submit = SubmitField('Send name change request')
-

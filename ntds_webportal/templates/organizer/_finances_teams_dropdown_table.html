@@ -1,6 +1,6 @@
 {% for team in teams %}
 <div class="tab-pane fade" role=tabpanel id={{team['id']}} aria-labelledby={{team['id']}}-tab>
-    {% if team['confirmed_dancers']|length + team['cancelled_dancers']|length > 0 %}
+    {% if (team['confirmed_dancers']|length + team['cancelled_dancers']|length) > 0 %}
     {% with finances=team['finances'] %}
             {% include 'organizer/_finances_summary.html' %}
         {% endwith %}

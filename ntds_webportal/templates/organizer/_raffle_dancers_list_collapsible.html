@@ -1,0 +1,43 @@
+<h2>{{title}}</h2>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+{% for team in teams %}
+    <div class="panel panel-default">
+        <div class="panel-heading" role="button" id="{{ team['id_title'] }}" data-toggle="collapse" data-parent="#accordion" href="#{{ team['id'] }}" aria-expanded="false" aria-controls="{{ team['id'] }}">
+            <h4 class="panel-title">{{ team['team'].country }} - {{ team['team'].name }}</h4>
+        </div>
+        <div id="{{ team['id'] }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ team['id_title'] }}">
+            <div class="panel-body">
+                <table class="table table-striped table-responsive table-clickable-checkbox">
+                    <colgroup>
+                        <col span="1" style="width: 10%;">
+                        <col span="1" style="width: 60%;">
+                        <col span="1" style="width: 30%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th><b>#</b></th>
+                            <th><b>Dancer</b></th>
+                            <th style="text-align:right"><b>Guaranteed to be selected</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for dancer in team['dancers'] %}
+                        <tr class="clickable-row">
+                            <td>
+                                {{ dancer.contestant_info[0].number }}
+                            </td>
+                            <td>
+                                {{ dancer.get_full_name() }}
+                            </td>
+                            <td align="right">
+                                <input class="checkbox" type="checkbox" value="y" id="{{ dancer.contestant_id }}" name="{{ dancer.contestant_id }}">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>

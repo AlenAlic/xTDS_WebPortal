@@ -10,7 +10,7 @@ raffle_settings = {
     MIN_TEAM_BEGINNERS: 0,
     MIN_LIONS: 0,
     BEGINNERS_CUTOFF: 0,
-    SELECTION_BUFFER: 0,
+    SELECTION_BUFFER: 30,
     MAX_TEAMCAPTAINS: 1
 }
 

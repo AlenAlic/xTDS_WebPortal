@@ -68,10 +68,33 @@ VOLUNTEER = {CHOOSE: 'Would you like to volunteer at the tournament?'}
 VOLUNTEER.update(YMN)
 FIRST_AID = {NONE: 'Are you a qualified First Aid Officer and would you like to volunteer as one?'}
 FIRST_AID.update(YMN)
-JURY_BALLROOM = {NONE: 'Would you like to volunteer as a Ballroom jury?'}
+JURY_BALLROOM = {NONE: 'Would you like to volunteer as a Ballroom adjudicator?'}
 JURY_BALLROOM.update(YMN)
-JURY_LATIN = {NONE: 'Would you like to volunteer as a Latin jury?'}
+JURY_LATIN = {NONE: 'Would you like to volunteer as a Latin adjudicator?'}
 JURY_LATIN.update(YMN)
+LICENSES = {
+    NO: 'No, I do not have a license',
+    'D': 'Yes, D',
+    'C': 'Yes, C',
+    'B': 'Yes, B',
+    'A': 'Yes, A',
+    'S': 'Yes, S'
+}
+LICENSE_BALLROOM = {'': 'Do you have an adjudicator license for Ballroom?'}
+LICENSE_BALLROOM.update(LICENSES)
+LICENSE_LATIN = {'': 'Do you have an adjudicator license for Latin?'}
+LICENSE_LATIN.update(LICENSES)
+JURY_SALSA = {'': 'Would you like to volunteer as a Salsa adjudicator?'}
+JURY_SALSA.update(YMN)
+JURY_POLKA = {'': 'Would you like to volunteer as a Polka adjudicator?'}
+JURY_POLKA.update(YMN)
+STUDENT = {'': 'Are you a student?'}
+STUDENT.update(YN)
+SLEEPING = {'': 'Would you like to stay in the sleeping halls?'}
+SLEEPING.update(YN)
+FIRST_TIME = {'': 'Is this your first time participating in {prefix} {tournament}?'.format(
+    tournament=tournament_settings['tournament'], prefix='a' if tournament_settings['tournament'] == NTDS else 'an')}
+FIRST_TIME.update(YN)
 SHIRTS = {'': 'Would you like to buy a t-shirt from this tournament?', NO: 'No'}
 SHIRTS.update(SHIRT_SIZES)
 

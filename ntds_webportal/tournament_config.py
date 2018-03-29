@@ -25,5 +25,6 @@ SHIRT_SIZES = {
 
 tournament_settings = {
     'levels': PARTICIPATING_LEVELS,
-    'blind_date_levels': BLIND_DATE_LEVELS
+    'blind_date_levels': BLIND_DATE_LEVELS,
+    'tournament': ETDS
 }

@@ -5,18 +5,27 @@
 {% endblock %}
 
 {% block app_content %}
+{% if tournament_settings.main_raffle_result_visible is sameas false %}
+
+<div class="row">
+    <h3>The raffle has not taken place yet.</h3>
+</div>
+
+{% else %}
+
 {% if selected_dancers|length > 0 %}
 <div class="no-print">
     <form method="POST" enctype="multipart/form-data" novalidate>
-        <button type="submit" id="submit-confirm_all" name="confirm_all" class="btn btn-success">Confirm ALL selected dancers</button>
         {% with status='Selected dancers', dancers=selected_dancers %}
             {% include 'teamcaptains/_raffle_list_selected.html' %}
         {% endwith %}
-        <button type="submit" id="submit-confirm" name="confirm" class="btn btn-success">Confirm selected dancers</button>
+        <button type="submit" id="submit-confirm" name="confirm" class="btn btn-info">Confirm selected dancers</button>
+        <button type="submit" id="submit-confirm_all" name="confirm_all" class="btn btn-info">Confirm ALL</button>
         <div style="height:10px;"></div>
     </form>
 </div>
 {% endif %}
+
 {% if confirmed_dancers|length > 0 %}
 <button class="btn btn-info no-print" onclick="printPage()">Print lists of confirmed dancers</button>
 {% with category='Ballroom', couples=confirmed_ballroom_couples %}
@@ -25,13 +34,14 @@
 {% with category='Latin', couples=confirmed_latin_couples %}
     {% include 'teamcaptains/_couples_list.html' %}
 {% endwith %}
-
 {% with category='Ballroom', leads=ballroom_lead_blind_daters, follows=ballroom_follow_blind_daters %}
     {% include 'teamcaptains/_blind_daters_lists.html' %}
 {% endwith %}
 {% with category='Latin', leads=latin_lead_blind_daters, follows=latin_follow_blind_daters %}
     {% include 'teamcaptains/_blind_daters_lists.html' %}
 {% endwith %}
+{% endif %}
+
 {% endif %}
 
 {% endblock %}

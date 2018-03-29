@@ -38,7 +38,7 @@
                     {{ data.STATUS[dancer.status_info[0].status] }}
                 </td>
                 <td>
-                    {{ data.TF[dancer.status_info[0].first_time] }}
+                    {{ data.TF[dancer.contestant_info[0].first_time] }}
                 </td>
                 <td>
                     {{ data.TF[dancer.contestant_info[0].student] }}
@@ -82,12 +82,12 @@
             <th><b>Latin level</b></th>
             <th><b>Latin role</b></th>
             <th><b>Sleeping spot</b></th>
-            <th><b>Diet/Allergies</b></th>
+            <!--<th><b>Diet/Allergies</b></th>-->
             <th><b>T-shirt</b></th>
-            <th><b>Volunteer</b></th>
-            <th><b>First Aid</b></th>
-            <th><b>Jury Ballroom</b></th>
-            <th><b>Jury Latin</b></th>
+            <!--<th><b>Volunteer</b></th>-->
+            <!--<th><b>First Aid</b></th>-->
+            <!--<th><b>Jury Ballroom</b></th>-->
+            <!--<th><b>Jury Latin</b></th>-->
         </tr>
     </thead>
     <tbody>
@@ -106,7 +106,7 @@
                     {{ data.STATUS[dancer.status_info[0].status] }}
                 </td>
                 <td>
-                    {{ data.TF[dancer.status_info[0].first_time] }}
+                    {{ data.TF[dancer.contestant_info[0].first_time] }}
                 </td>
                 <td>
                     {{ data.TF[dancer.contestant_info[0].student] }}
@@ -134,26 +134,26 @@
                 <td>
                     {{ data.TF[dancer.additional_info[0].sleeping_arrangements] }}
                 </td>
-                <td>
-                    {% if dancer.contestant_info[0].diet_allergies != None %}
-                        {{ dancer.contestant_info[0].diet_allergies }}
-                    {% endif %}
-                </td>
+                <!--<td>-->
+                    <!--{% if dancer.contestant_info[0].diet_allergies != None %}-->
+                        <!--{{ dancer.contestant_info[0].diet_allergies }}-->
+                    <!--{% endif %}-->
+                <!--</td>-->
                 <td>
                     {{ data.SHIRTS[dancer.additional_info[0].t_shirt] }}
                 </td>
-                <td>
-                    {{ data.YMN[dancer.volunteer_info[0].volunteer] }}
-                </td>
-                <td>
-                    {{ data.YMN[dancer.volunteer_info[0].first_aid] }}
-                </td>
-                <td>
-                    {{ data.YMN[dancer.volunteer_info[0].jury_ballroom] }}
-                </td>
-                <td>
-                    {{ data.YMN[dancer.volunteer_info[0].jury_latin] }}
-                </td>
+                <!--<td>-->
+                    <!--{{ data.YMN[dancer.volunteer_info[0].volunteer] }}-->
+                <!--</td>-->
+                <!--<td>-->
+                    <!--{{ data.YMN[dancer.volunteer_info[0].first_aid] }}-->
+                <!--</td>-->
+                <!--<td>-->
+                    <!--{{ data.YMN[dancer.volunteer_info[0].jury_ballroom] }}-->
+                <!--</td>-->
+                <!--<td>-->
+                    <!--{{ data.YMN[dancer.volunteer_info[0].jury_latin] }}-->
+                <!--</td>-->
             </tr>
         {% endfor %}
     </tbody>

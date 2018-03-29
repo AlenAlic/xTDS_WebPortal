@@ -5,6 +5,10 @@ import ntds_webportal.data as data
 from ntds_webportal.data import *
 
 
+def str2bool(v):
+    return v in (str(True))
+
+
 def get_dancing_categories(dancing_info):
     return {cat: DancingInfo(competition=cat) for cat in data.ALL_COMPETITIONS} if dancing_info is None \
         else {di.competition: di for di in dancing_info}
@@ -82,6 +86,8 @@ def contestant_validate_dancing(form):
                 elif form.latin_role.data == FOLLOW:
                     form.latin_partner.data = 'same_role_follow'
                     form.latin_role.data = 'same_role_follow'
+    form.volunteer.data = data.NO
+    form.first_aid.data = data.NO
     return form
 
 
@@ -109,7 +115,8 @@ def submit_contestant(f, contestant=None):
         new_dancer = False
     contestant.email = f.email.data
     ci.contestant = contestant
-    ci.student = f.student.data
+    ci.student = str2bool(f.student.data)
+    ci.first_time = str2bool(f.first_time.data)
     ci.diet_allergies = f.diet_allergies.data
     dancing_categories[BALLROOM].contestant = contestant
     dancing_categories[LATIN].contestant = contestant
@@ -138,18 +145,21 @@ def submit_contestant(f, contestant=None):
         else:
             dancing_categories[LATIN].set_partner(None)
     vi.contestant = contestant
-    if f.volunteer.data == data.NO:
-        vi.not_volunteering()
-    else:
-        vi.volunteer = f.volunteer.data
-        vi.first_aid = f.first_aid.data
-        vi.jury_ballroom = f.jury_ballroom.data
-        vi.jury_latin = f.jury_latin.data
+    # if f.volunteer.data == data.NO:
+    #     vi.not_volunteering()
+    # else:
+    vi.volunteer = f.volunteer.data
+    vi.first_aid = f.first_aid.data
+    vi.jury_ballroom = f.jury_ballroom.data
+    vi.jury_latin = f.jury_latin.data
+    vi.license_jury_ballroom = f.jury_ballroom.data
+    vi.license_jury_latin = f.jury_ballroom.data
+    vi.jury_salsa = f.jury_ballroom.data
+    vi.jury_polka = f.jury_ballroom.data
     ai.contestant = contestant
-    ai.sleeping_arrangements = f.sleeping_arrangements.data
+    ai.sleeping_arrangements = str2bool(f.sleeping_arrangements.data)
     ai.t_shirt = f.t_shirt.data
     si.contestant = contestant
-    si.first_time = f.first_time.data
     if new_dancer:
         db.session.add(contestant)
     db.session.commit()

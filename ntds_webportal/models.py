@@ -164,6 +164,7 @@ class ContestantInfo(db.Model):
     number = db.Column(db.Integer, nullable=False)
     team_captain = db.Column(db.Boolean, nullable=False, default=False)
     student = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     diet_allergies = db.Column('Diet/Allergies', db.String(512), nullable=True, default=None)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=False)
     team = db.relationship('Team')
@@ -239,6 +240,10 @@ class VolunteerInfo(db.Model):
     first_aid = db.Column(db.String(16), nullable=False)
     jury_ballroom = db.Column(db.String(16), nullable=False)
     jury_latin = db.Column(db.String(16), nullable=False)
+    license_jury_ballroom = db.Column(db.String(16), nullable=False)
+    license_jury_latin = db.Column(db.String(16), nullable=False)
+    jury_salsa = db.Column(db.String(16), nullable=False)
+    jury_polka = db.Column(db.String(16), nullable=False)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
@@ -266,18 +271,24 @@ class StatusInfo(db.Model):
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
     contestant = db.relationship('Contestant', back_populates='status_info')
     status = db.Column(db.String(16), index=True, default=data.REGISTERED)
-    first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    raffle_status = db.Column(db.String(16), index=True, default=data.REGISTERED)
     raffle_result_visible = db.Column(db.Boolean, index=True, nullable=False, default=False)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
-    def set_status(self, status):
-        self.status = status
-        if status == data.CONFIRMED:
+    def set_status(self, status=None):
+        if status is not None:
+            self.status = status
+            self.raffle_status = status
+        else:
+            self.status = self.raffle_status
+        if self.status == data.CONFIRMED:
             self.payment_required = True
+        elif self.status == data.REGISTERED:
+            self.payment_required = False
 
 
 class Notification(db.Model):
@@ -410,7 +421,13 @@ class TournamentState(db.Model):
         self.raffle_config = json.dumps(c)
 
     def get_raffle_config(self):
-        return json.loads(self.raffle_config)
+        rc = json.loads(self.raffle_config)
+        for k,v in rc.items():
+            try:
+                rc[k] = int(v)
+            except ValueError:
+                pass
+        return rc
     
     def update_raffle_config(self, key, value):
         tc = self.get_raffle_config()

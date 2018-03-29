@@ -2,71 +2,67 @@ from raffle_system.functions import *
 import random
 
 
-def raffle(guaranteed_dancers=None):
-    rearrange_numbers()
-    # Select teamcaptains
-    dancer_lists = DancerLists()
-    team_captains = dancer_lists.teamcaptains()
-    for tc in team_captains:
-        if not dancer_lists.complete():
-            if dancer_lists.check_availability(tc):
-                group = find_partners(dancer_lists.list(REGISTERED), tc)
-                dancer_lists.add_group(group, guaranteed=True)
+def select_groups(dl, list_of_dancers, guaranteed=False):
+    r = range(0, len(list_of_dancers))
+    for _ in r:
+        if not dl.complete():
+            try:
+                dancer = random.choice(list_of_dancers)
+            except IndexError:
+                pass
+            else:
+                if dl.check_availability(dancer):
+                    group = find_partners(dl.list(REGISTERED), dancer)
+                    dl.add_group(group, guaranteed=guaranteed)
         else:
             break
+
+
+def raffle(guaranteed_dancers=None):
+    # rearrange_numbers()
+    dancer_lists = DancerLists()
+
+    # Select teamcaptains
+    select_groups(dancer_lists, dancer_lists.teamcaptains(), guaranteed=True)
+
     # Select guaranteed dancers
     if guaranteed_dancers is not None:
-        for dancer in guaranteed_dancers:
-            if not dancer_lists.complete():
-                if dancer_lists.check_availability(dancer):
-                    group = find_partners(dancer_lists.list(REGISTERED), dancer)
-                    dancer_lists.add_group(group, guaranteed=True)
-            else:
-                break
+        select_groups(dancer_lists, guaranteed_dancers, guaranteed=True)
+
     # Select other dancers
-    remaining_dancers = dancer_lists.list(REGISTERED)
-    shuffle(remaining_dancers)
-    for dancer in remaining_dancers:
-        if not dancer_lists.complete():
-            if dancer_lists.check_availability(dancer):
-                group = find_partners(dancer_lists.list(REGISTERED), dancer)
-                dancer_lists.add_group(group)
-        else:
-            break
+    select_groups(dancer_lists, dancer_lists.list(REGISTERED))
+
     # Update raffle states
     dancer_lists.update_states()
-
     print('Raffle done')
+    print(f'{len(dancer_lists.selected_dancers)} dancers selected')
+
+    # for dancer in dancer_lists.selected_dancers:
+    #     if random.choice([True, False]):
+    #         dancer_lists.move_dancer_to_list(dancer, CONFIRMED)
+    #         dancer.status_info[0].set_status(CONFIRMED)
+    #     else:
+    #         dancer.status_info[0].set_status(SELECTED)
+    # dancer_lists.update_states()
 
 
 def test_raffle(selected):
     print('Starting test raffle.')
-    rearrange_numbers()
     dancer_lists = DancerLists()
-    team_captains = dancer_lists.teamcaptains()
-    for tc in team_captains:
-        if dancer_lists.check_availability(tc):
-            group = find_partners(dancer_lists.list(REGISTERED), tc)
-            dancer_lists.add_group(group, guaranteed=True)
 
-    random_order_list = list(range(0, len(dancer_lists.list(REGISTERED))))
-    shuffle(random_order_list)
-    for i in random_order_list:
-        dancer = dancer_lists.list(REGISTERED)[i] if i < len(dancer_lists.list(REGISTERED)) else None
-        if dancer is not None:
-            if not dancer_lists.complete():
-                if dancer_lists.check_availability(dancer):
-                    group = find_partners(dancer_lists.list(REGISTERED), dancer)
-                    dancer_lists.add_group(group)
-            else:
-                break
+    # Select teamcaptains
+    select_groups(dancer_lists, dancer_lists.teamcaptains(), guaranteed=True)
 
-    # dancer_lists.update_states()
+    # Select other dancers
+    select_groups(dancer_lists, dancer_lists.list(REGISTERED))
+
+    print('Done with test raffle')
+
     selected_dancers = dancer_lists.list(SELECTED)
     selected[0] = len(selected_dancers)
     for dancer in selected_dancers:
         selected[dancer.contestant_id] += 1
-    print('Done')
+
     return selected
 
 

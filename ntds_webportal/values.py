@@ -1,3 +1,7 @@
+# Tournaments
+NTDS = 'NTDS'
+ETDS = 'ETDS'
+
 # Countries
 NETHERLANDS = 'The Netherlands'
 GERMANY = 'Germany'
@@ -12,7 +16,9 @@ NO = 'no'
 MAYBE = 'maybe'
 YES = 'yes'
 YMN = {YES: 'Yes', MAYBE: 'Maybe', NO: 'No'}
+YN = {str(True): YMN[YES], str(False): YMN[NO]}
 TF = {True: YMN[YES], False: YMN[NO]}
+DIFF = 'diff'
 
 # Categories
 COMPETITION = 'competition'
@@ -35,11 +41,11 @@ ALL_LEVELS = {
 
 # Dancing roles
 ROLE = 'role'
-LEAD = 'lead'
-FOLLOW = 'follow'
+LEAD = 'Lead'
+FOLLOW = 'Follow'
 ALL_ROLES = {
-    LEAD: 'Lead',
-    FOLLOW: 'Follow'
+    LEAD: LEAD,
+    FOLLOW: FOLLOW
 }
 
 # Status values
