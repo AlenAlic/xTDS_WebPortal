@@ -92,7 +92,7 @@
     </thead>
     <tbody>
         {% for dancer in dancers %}
-            <tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+            <tr data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                 <td>
                     {{ dancer.contestant_info[0].number }}
                 </td>

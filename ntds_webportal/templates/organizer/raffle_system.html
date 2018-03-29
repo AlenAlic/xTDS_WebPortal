@@ -19,7 +19,7 @@
             <h2>Raffle</h2>
             <p>Select any dancers you want to be guaranteed entry into the tournament from the lists below.</p>
             <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-                <button type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success">Start Raffle</button>
+                <button type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success loading-btn">Start Raffle</button>
                 <!--<button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-danger btn-lg"><strong>DEBUG RAFFLE - FOR TESTING PURPOSES ONLY</strong></button>-->
             </form>
             {% with title='Lists of all eligible dancers', teams=teams %}
@@ -34,7 +34,7 @@
         <form class="form" method="POST" enctype="multipart/form-data" novalidate>
             <button type="submit" id="submit-confirm_raffle" name="confirm_raffle" class="btn btn-success">Confirm Raffle</button>
             <button type="submit" id="submit-redo_raffle" name="redo_raffle" class="btn btn-info">Redo Raffle</button>
-            <button type="submit" id="submit-cancel_raffle" name="cancel_raffle" class="btn btn-warning">Cancel Raffle</button>
+            <button type="submit" id="submit-cancel_raffle" name="cancel_raffle" class="btn btn-warning loading-btn">Cancel Raffle</button>
         </form>
         {% with title='Summary', desc='This will be the statistics if all the selected dancers are confirmed.', stats=stats_selected %}
             {% include 'organizer/_raffle_stats.html' %}

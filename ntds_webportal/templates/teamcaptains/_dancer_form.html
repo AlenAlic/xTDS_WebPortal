@@ -1,5 +1,10 @@
-<h2>{{title}}</h2>
+{% if mode == 'edit' %}
+{% set editable = not (dancer.status_info[0].status == data.SELECTED or dancer.status_info[0].status == data.CONFIRMED) %}
+{% else %}
+{% set editable = true %}
+{% endif %}
 
+<h2>{{title}}</h2>
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
@@ -23,8 +28,10 @@
     {{ my_wtf.form_field(form.email, placeholder='E-mail address') }}
     {{ my_wtf.form_field(form.student) }}
     {{ my_wtf.form_field(form.first_time) }}
+
+    {% if editable is sameas true %}
     <h3>Ballroom</h3>
-    {{ my_wtf.form_field(form.ballroom_level, onchange="dropDownGreyOut('ballroom', id)") }}
+    {{ my_wtf.form_field(form.ballroom_level, **{'onchange': "dropDownGreyOut('ballroom', id)"}) }}
     <div id="ballroom">
         {{ my_wtf.form_field(form.ballroom_role) }}
         <div id="ballroom_p">
@@ -32,13 +39,33 @@
         </div>
     </div>
     <h3>Latin</h3>
-    {{ my_wtf.form_field(form.latin_level, onchange="dropDownGreyOut('latin', id)") }}
+    {{ my_wtf.form_field(form.latin_level, **{'onchange': "dropDownGreyOut('latin', id)"} ) }}
     <div id="latin">
         {{ my_wtf.form_field(form.latin_role) }}
         <div id="latin_p">
             {{ my_wtf.form_field(form.latin_partner) }}
         </div>
     </div>
+    {% else %}
+
+    <h3>Ballroom</h3>
+    {{ my_wtf.form_field(form.ballroom_level, **{'onchange': "dropDownGreyOut('ballroom', id)", 'disabled': ''}) }}
+    <div id="ballroom">
+        {{ my_wtf.form_field(form.ballroom_role, disabled="") }}
+        <div id="ballroom_p">
+            {{ my_wtf.form_field(form.ballroom_partner, disabled="") }}
+        </div>
+    </div>
+    <h3>Latin</h3>
+    {{ my_wtf.form_field(form.latin_level, **{'onchange': "dropDownGreyOut('latin', id)", 'disabled': ''} ) }}
+    <div id="latin">
+        {{ my_wtf.form_field(form.latin_role, disabled="") }}
+        <div id="latin_p">
+            {{ my_wtf.form_field(form.latin_partner, disabled="") }}
+        </div>
+    </div>
+    {% endif %}
+
     <h3>Adjudication</h3>
     {{ my_wtf.form_field(form.jury_ballroom) }}
     {{ my_wtf.form_field(form.license_jury_ballroom) }}

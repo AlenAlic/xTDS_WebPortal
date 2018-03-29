@@ -17,13 +17,13 @@ onload="onStart()"
     function onStart() {
     document.getElementById('ballroom_level').onchange();
     document.getElementById('latin_level').onchange();
-    document.getElementById('volunteer').onchange();
+    <!--document.getElementById('volunteer').onchange();-->
 }
 function dropDownGreyOut(parent_id, id) {
     var ddl = document.getElementById(id);
     var parentDiv = document.getElementById(parent_id);
     selectedValue = ddl.options[ddl.selectedIndex].value;
-    if (selectedValue == "no") {
+    if (selectedValue == "no" || ddl.disabled == true) {
         $(parentDiv).find('*').attr('disabled', true);
     } else {
         $(parentDiv).find('*').attr('disabled', false);

@@ -49,11 +49,13 @@ def register_dancers():
         new_id += 1
     form.number.data = new_id
     form.team.data = current_user.team.name
-    form.ballroom_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
-        .filter(ContestantInfo.team == current_user.team, DancingInfo.competition == data.BALLROOM,
+    form.ballroom_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
+                DancingInfo.competition == data.BALLROOM,
                 DancingInfo.blind_date.is_(False), DancingInfo.partner.is_(None))
-    form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
-        .filter(ContestantInfo.team == current_user.team, DancingInfo.competition == data.LATIN,
+    form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
+                DancingInfo.competition == data.LATIN,
                 DancingInfo.blind_date.is_(False), DancingInfo.partner.is_(None))
     if request.method == 'POST':
         # noinspection PyTypeChecker
@@ -83,18 +85,21 @@ def edit_dancer(number):
     dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number) \
         .order_by(Contestant.contestant_id).first_or_404()
+    state = TournamentState.query.first()
     form = EditContestantForm()
     form.full_name.data = dancer.get_full_name()
     form.team.data = dancer.contestant_info[0].team.name
     form.number.data = dancer.contestant_info[0].number
-    form.ballroom_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
-        .filter(and_(ContestantInfo.team == current_user.team, DancingInfo.competition == data.BALLROOM,
+    form.ballroom_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(and_(ContestantInfo.team == current_user.team,
+                     DancingInfo.competition == data.BALLROOM,
                      Contestant.contestant_id != dancer.contestant_id,
                      or_(and_(DancingInfo.blind_date.is_(False), DancingInfo.partner.is_(None),
                               DancingInfo.level != data.NO), and_(DancingInfo.competition == data.BALLROOM,
                                                                   DancingInfo.partner == dancer.contestant_id))))
-    form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
-        .filter(and_(ContestantInfo.team == current_user.team, DancingInfo.competition == data.LATIN,
+    form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(and_(ContestantInfo.team == current_user.team,
+                     DancingInfo.competition == data.LATIN,
                      Contestant.contestant_id != dancer.contestant_id,
                      or_(and_(DancingInfo.blind_date.is_(False), DancingInfo.partner.is_(None),
                               DancingInfo.level != data.NO), and_(DancingInfo.competition == data.LATIN,
@@ -102,6 +107,20 @@ def edit_dancer(number):
     if request.method == 'POST':
         # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
+        if dancer.status_info[0].status == SELECTED or dancer.status_info[0].status == CONFIRMED:
+            dancing_categories = get_dancing_categories(dancer.dancing_info)
+            form.ballroom_level.data = dancing_categories[data.BALLROOM].level
+            form.ballroom_role.data = dancing_categories[data.BALLROOM].role
+            form.ballroom_blind_date.data = dancing_categories[data.BALLROOM].blind_date
+            form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+                .filter(ContestantInfo.team == current_user.team,
+                        Contestant.contestant_id == dancing_categories[data.BALLROOM].partner).first()
+            form.latin_level.data = dancing_categories[data.LATIN].level
+            form.latin_role.data = dancing_categories[data.LATIN].role
+            form.latin_blind_date.data = dancing_categories[data.LATIN].blind_date
+            form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+                .filter(ContestantInfo.team == current_user.team,
+                        Contestant.contestant_id == dancing_categories[data.LATIN].partner).first()
     else:
         form.email.data = dancer.email
         form.student.data = str(dancer.contestant_info[0].student)
@@ -134,7 +153,7 @@ def edit_dancer(number):
         flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
               'alert-success')
         return redirect(url_for('teamcaptains.edit_dancers', wide=int(request.values['wide'])))
-    return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, data=data)
+    return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, data=data, state=state)
 
 
 @bp.route('/register_dancer/<number>', methods=['GET', 'POST'])
