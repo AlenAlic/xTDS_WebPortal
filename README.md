@@ -27,7 +27,7 @@ Based on Flask and Python
     - [x] Register dancers
     - [x] Change dancer data (except name)
       - [ ] Name change can be requested
-      - [ ] Cancel registration/Re-register
+      - [x] Cancel registration/Re-register
     - [x] Overview of couples
     - [x] Select who is the teamcaptain
   - [ ] Raffle period

@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+
+<!-- ## [0.5.0] - 2018- -->
+<!-- ### Added -->
+<!-- For teamcaptains -->
+<!-- - Cancel registration/Re-register during signup period -->
+
+<!-- ### Changed -->
+<!-- Teamcaptain pages refactored as Blueprints -->
+
+
 ## [0.4.0] - 2018-04-13
 ### Added
 For teamcaptains

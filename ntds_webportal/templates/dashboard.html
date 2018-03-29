@@ -13,16 +13,16 @@ onload="onStart()"
     {% endwith %}
 {% endif %}
 {% if current_user.is_tc() %}
-    {% with url='main.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
+    {% with url='teamcaptains.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with url='main.edit_dancers', title='Edit Dancers', text='Edit information of registered dancers.', image='edit_contestant.png' %}
+    {% with url='teamcaptains.edit_dancers', title='Edit Dancers', text='Edit information of registered dancers.', image='edit_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with url='main.set_teamcaptains', title='Set team captain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
+    {% with url='teamcaptains.set_teamcaptains', title='Set team captain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with url='main.couples_list', title='Couples lists', text='List of all registered couples, and a list of blind daters for the tournament.', image='edit_contestant.png' %}
+    {% with url='teamcaptains.couples_list', title='Couples lists', text='List of all registered couples, and a list of blind daters for the tournament.', image='edit_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with url='main.todo', title='Raffle results', text='Manage the dancers after the raffle has taken place.', image='raffle_results.png' %}
@@ -30,7 +30,7 @@ onload="onStart()"
     {% endwith %}
 {% endif %}
 {% if current_user.is_tc() or current_user.is_treasurer() %}
-    {% with url='main.edit_finances', title='Finances', text='Manage payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+    {% with url='teamcaptains.edit_finances', title='Finances', text='Manage payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 {% endif %}
@@ -40,13 +40,13 @@ onload="onStart()"
 {% block scripts %}
 {{ super() }}
 <script>
-    function onStart() {
-        var maxHeight = 0;
-        $(".thumbnail").each(function(){
-           if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
-        });
-        $(".thumbnail").height(maxHeight);
-        $(".row").css('visibility', 'visible');
-    }
+function onStart() {
+    var maxHeight = 0;
+    $(".thumbnail").each(function(){
+       if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
+    });
+    $(".thumbnail").height(maxHeight);
+    $(".row").css('visibility', 'visible');
+}
 </script>
 {% endblock %}

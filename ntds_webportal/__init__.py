@@ -74,6 +74,9 @@ def create_app():
     from ntds_webportal.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 
+    from ntds_webportal.teamcaptains import bp as teamcaptains_bp
+    app.register_blueprint(teamcaptains_bp, url_prefix='/teamcaptains')
+
     return app
 
 

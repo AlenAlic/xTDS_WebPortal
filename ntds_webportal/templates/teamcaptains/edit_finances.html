@@ -48,11 +48,11 @@
     <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
 
     {% with status='Confirmed', dancers=confirmed_dancers %}
-        {% include '_finances_list.html' %}
+        {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
 
     {% with status='Cancelled', dancers=cancelled_dancers %}
-        {% include '_finances_list.html' %}
+        {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
 
 </form>
