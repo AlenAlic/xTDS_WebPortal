@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 {% import 'my_wtf.html' as my_wtf %}
 
-{% block body_attribs %}
-{% endblock %}
-
 {% block app_content %}
 
 <ul class="nav nav-tabs" id=myTabs role=tablist>
@@ -38,11 +35,4 @@
         {% include 'organizer/_finances_teams_dropdown_table.html' %}
     {% endwith %}
 </div>
-
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-</script>
 {% endblock %}

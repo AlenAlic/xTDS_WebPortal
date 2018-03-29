@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 {% import 'my_wtf.html' as my_wtf %}
 
-{% block body_attribs %}
-{% endblock %}
-
 {% block app_content %}
 <ul class="nav nav-tabs" id=myTabs role=tablist>
 	<li role=presentation class=active>
@@ -102,12 +99,4 @@
     </div>
 
 </div>
-{% endblock %}
-
-
-{% block scripts %}
-{{ super() }}
-<script>
-
-</script>
 {% endblock %}

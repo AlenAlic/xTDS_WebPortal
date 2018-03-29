@@ -10,24 +10,6 @@
 
 {% block app_content %}
 
-<!--<ul class="nav nav-tabs" id=myTabs role=tablist>-->
-	<!--<li role=presentation class=active>-->
-		<!--<a href=#short id=short-tab role=tab data-toggle=tab aria-controls=short aria-expanded=true>Short view</a>-->
-	<!--</li>-->
-    <!--<li role=presentation>-->
-        <!--<a href=#wide class=dropdown-toggle id=wide-tab data-toggle=tab aria-controls=wide-contents>Wide view</a>-->
-    <!--</li>-->
-<!--</ul>-->
-
-<!--<div class=tab-content id=myTabContent>-->
-	<!--<div class="tab-pane fade in active" role=tabpanel id=short aria-labelledby=short-tab>-->
-
-    <!--</div>-->
-    <!--<div class="tab-pane fade" role=tabpanel id=wide aria-labelledby=wide-tab>-->
-
-    <!--</div>-->
-<!--</div>-->
-
 {% if wide == 0 %}
 <a href="{{ url_for('teamcaptains.edit_dancers', wide=1) }}" class="btn btn-default">Wide view</a>
 <table class="table table-striped table-responsive">
