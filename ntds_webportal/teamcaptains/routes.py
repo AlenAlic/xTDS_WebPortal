@@ -5,7 +5,7 @@ from ntds_webportal.teamcaptains import bp
 from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm, \
     PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm, CreateCoupleForm
 from ntds_webportal.models import User, requires_access_level, TeamFinances, Contestant, ContestantInfo, DancingInfo, \
-    StatusInfo, PartnerRequest, NameChangeRequest, TournamentState
+    StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant
@@ -173,12 +173,21 @@ def edit_dancer(number):
 @requires_access_level([data.ACCESS['team_captain']])
 def register_dancer(number):
     register = request.args.get('register', None, type=int)
+    send_message = request.args.get('send_message', False, type=bool)
     changed_dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number).first()
     if register == 0:
+        status = changed_dancer.status_info[0].status
         changed_dancer.cancel_registration()
         db.session.commit()
         flash('The registration of {} has been cancelled.'.format(changed_dancer.get_full_name()), 'alert-info')
+        if send_message:
+            text = f"{changed_dancer.get_full_name()} from team {changed_dancer.contestant_info[0].team.name} " \
+                   f"has cancelled his/her registration.\n"
+            n = Notification(title=f"Cancelled registration, previously {status}", text=text,
+                             user=User.query.filter(User.access == ACCESS['organizer']).first())
+            db.session.add(n)
+            db.session.commit()
     elif register == 1:
         changed_dancer.status_info[0].status = data.REGISTERED
         db.session.commit()

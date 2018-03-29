@@ -12,6 +12,13 @@ from raffle_system.raffle_config import *
 import json
 
 
+USERS = 'users'
+TEAMS = 'teams'
+TEAM_FINANCES = 'team_finances'
+NOTIFICATIONS = 'notifications'
+EXCLUDED_FROM_CLEARING = [USERS, TEAMS, TEAM_FINANCES, NOTIFICATIONS]
+
+
 @login.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -31,7 +38,7 @@ def requires_access_level(access_levels):
 
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'users'
+    __tablename__ = USERS
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True)
@@ -98,19 +105,20 @@ class User(UserMixin, db.Model):
 
     def teamcaptains_selected(self):
         if self.has_dancers_registered():
-            return raffle_settings[MAX_TEAMCAPTAINS] - len([d for d in db.session.query(Contestant).join(ContestantInfo)
-                                                           .filter(ContestantInfo.team == current_user.team,
-                                                                   ContestantInfo.team_captain).all()])
+            return raffle_settings[MAX_TEAMCAPTAINS] - \
+                   len(db.session.query(ContestantInfo)
+                       .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).all())
         else:
             return 0
 
     @staticmethod
     def has_dancers_registered():
-        return len(db.session.query(Contestant).filter(ContestantInfo.team == current_user.team).all()) > 0
+        return len(db.session.query(Contestant).join(ContestantInfo)
+                   .filter(ContestantInfo.team == current_user.team).all()) > 0
 
 
 class Team(db.Model):
-    __tablename__ = 'teams'
+    __tablename__ = TEAMS
     team_id = db.Column(db.Integer, primary_key=True)
     country = db.Column(db.String(128), nullable=False)
     city = db.Column(db.String(128), nullable=False)
@@ -122,7 +130,7 @@ class Team(db.Model):
 
 
 class TeamFinances(db.Model):
-    __tablename__ = 'team_finances'
+    __tablename__ = TEAM_FINANCES
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), primary_key=True)
     team = db.relationship('Team', back_populates='finances')
     paid = db.Column(db.Integer, nullable=False, default=0)
@@ -310,7 +318,7 @@ class StatusInfo(db.Model):
 
 
 class Notification(db.Model):
-    __tablename__ = 'notifications'
+    __tablename__ = NOTIFICATIONS
     notification_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     sender_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)

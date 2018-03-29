@@ -2,6 +2,10 @@
 {# import 'bootstrap/wtf.html' as wtf #}
 {% import 'my_wtf.html' as wtf %}
 
+{% block head %}
+{{ super() }}
+{% endblock %}
+
 
 {% block title %}
 xTDS WebPortal

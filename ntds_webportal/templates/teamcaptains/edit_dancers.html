@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% import 'my_wtf.html' as my_wtf %}
 
-{% block body_attribs %}
+{% block head %}
+{{ super() }}
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/jquery.confirm.min.js"></script>
 {% endblock %}
 
 {% block app_content %}
@@ -42,44 +46,46 @@
     </thead>
     <tbody>
         {% for dancer in dancers %}
-            <tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+            <tr>
                 <td>
                     {{ dancer.contestant_info[0].number }}
                 </td>
-                <td>
+                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ dancer.get_full_name() }}
                 </td>
-                <td>
+                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ dancer.email }}
                 </td>
-                <td>
+                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ data.STATUS[dancer.status_info[0].status] }}
                 </td>
-                <td>
+                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ data.TF[dancer.contestant_info[0].first_time] }}
                 </td>
-                <td>
+                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ data.TF[dancer.contestant_info[0].student] }}
                 </td>
-                <td>
+                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {% if dancer.dancing_info[0].level != data.NO %}
                     {{ data.LEVELS[dancer.dancing_info[0].level] }}
                     {% else %} - {% endif %}
                 </td>
-                <td>
+                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {% if dancer.dancing_info[1].level != data.NO %}
                     {{ data.LEVELS[dancer.dancing_info[1].level] }}
                     {% else %} - {% endif %}
                 </td>
                 <td align="right">
                     {% if dancer.status_info[0].status == data.REGISTERED or dancer.status_info[0].status == data.CANCELLED %}
-                        <a id="{{ dancer.contestant_info[0].number }}" name="{{ dancer.contestant_info[0].number }}" role="button"
+                        <a id="{{ dancer.contestant_id }}" name="{{ dancer.contestant_id }}" role="button"
                         {% if dancer.status_info[0].status == data.REGISTERED %} class="btn btn-warning" href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}">Cancel registration
                         {% elif dancer.status_info[0].status == data.CANCELLED %} class="btn btn-info" href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">Re-register
                         </a>
                         {% endif %}
                     {% endif %}
-
+                    {% if dancer.status_info[0].status == data.SELECTED or dancer.status_info[0].status == data.CONFIRMED %}
+                        <button class="btn btn-danger confirm-cancellation" data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, send_message=true, wide=wide) }}" data-title="WARNING!" data-text="{% if dancer.status_info[0].status == data.CONFIRMED %}{{ dancer.get_full_name() }} is obliged to pay the admission fee, even upon cancelling.<br><br>{% endif %}Cancelling the registration will remove {% if dancer.status_info[0].status == data.CONFIRMED %}{{ dancer.first_name }}{% else %}{{ dancer.get_full_name() }}{% endif %} completely from the tournament.<br><br>Are you sure you want to cancel the registration of {{ dancer.first_name }}?" data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}" data-confirm="cancelRegistration('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')" data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
@@ -178,6 +184,20 @@
     </tbody>
 </table>
 {% endif %}
+<script>
+$.confirm.options = {
+    confirmButtonClass: "btn-danger",
+    cancelButtonClass: "btn-default",
+    dialogClass: "modal-dialog"
+}
+$(".confirm-cancellation").confirm({
+    confirm: function(button) {
+        <!--alert("You just confirmed.");-->
+        window.location.href = button.data('url');
+    },
+    cancel: function(button) {}
+});
+</script>
 {% endblock %}
 
 
@@ -190,5 +210,18 @@ $(document).ready(function($) {
         window.location = $(this).data("href");
     });
 });
+function cancelSelected(url, full_name, first_name) {
+    if (confirm(`Cancelling the registration will remove ${full_name} completely from the tournament.\n\nAre you sure you want to cancel the registration of ${first_name}?`)) {
+        window.location.href = url;
+    }
+};
+function cancelConfirmed(url, full_name, first_name) {
+    if (confirm(`WARNING! ${first_name} is obliged to pay the admission fee, even upon cancelling.\n\nCancelling the registration will remove ${full_name} completely from the tournament.\n\nAre you sure you want to cancel the registration of ${first_name}?`)) {
+        window.location.href = url;
+    }
+};
+function cancelRegistration(url) {
+    window.location.href = url;
+}
 </script>
 {% endblock %}
