@@ -21,6 +21,7 @@ def internal_error(error):
 def handle_unexpected_error(error):
     db.session.rollback()
     message = traceback.format_exc()
+    message = message.replace('\n', '\r\n')
     status_code = 500
     send_error_email(status_code, message)
     return render_template('errors/500.html')
