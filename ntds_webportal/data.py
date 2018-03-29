@@ -60,7 +60,7 @@ TEAMS = [
 # Registration form lists
 LEVELS = {
     CHOOSE: 'What level are you dancing?',
-    NO: 'I am not dancing in this category',
+    NO: 'Not dancing',
 }
 LEVELS.update({pl: ALL_LEVELS[pl] for pl in PARTICIPATING_LEVELS})
 ROLES = {NONE: 'What role are you dancing?'}

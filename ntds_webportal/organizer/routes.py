@@ -5,6 +5,7 @@ from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, StatusInfo, \
     NameChangeRequest, TournamentState
 import ntds_webportal.data as data
+from ntds_webportal.data import *
 from raffle_system.system import raffle, test_raffle
 from raffle_system.functions import RaffleSystem
 from ntds_webportal.organizer.forms import NameChangeResponse
@@ -25,7 +26,7 @@ def registration_overview():
     dancers = [{'country': team.country, 'name': team.name, 'id': team.name.replace(' ', '-').replace('`', ''),
                 'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team).all()}
                for team in all_teams]
-    # dancers = [d for d in dancers if len(d['dancers']) > 0]
+    dancers = [d for d in dancers if len(d['dancers']) > 0]
     dutch_dancers = [team for team in dancers if team['country'] == data.NETHERLANDS]
     german_dancers = [team for team in dancers if team['country'] == data.GERMANY]
     other_dancers = [team for team in dancers if team['country'] != data.NETHERLANDS and
@@ -112,6 +113,15 @@ def raffle_system():
     state = TournamentState.query.first()
     tournament_config = state.get_tournament_config()
     raffle_config = state.get_raffle_config()
+    selected_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(StatusInfo.raffle_status == data.SELECTED)\
+        .order_by(ContestantInfo.team_id, Contestant.first_name).all()
+    confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(StatusInfo.raffle_status == data.CONFIRMED)\
+        .order_by(ContestantInfo.team_id, Contestant.first_name).all()
+    available_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(StatusInfo.raffle_status == data.REGISTERED)\
+        .order_by(ContestantInfo.team_id, Contestant.first_name).all()
     all_teams = db.session.query(Team).all()
     teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
               'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
@@ -136,18 +146,12 @@ def raffle_system():
                 .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == data.SELECTED).all()
             t['confirmed_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
                 .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == data.CONFIRMED).all()
-
-    # teams = [team for team in teams if team['visible'] or team['confirmed_visible'] or team['available_visible']]
-    # for i in range(2):
-    #     start_time = time.time()
-    #     dancer_lists = DancerLists()
-    #     print("--- Done in %.3f seconds ---" % (time.time() - start_time))
     raffle_sys = RaffleSystem()
+    stats_registered, stats_selected, stats_confirmed = None, None, None
+    stats_registered = raffle_sys.get_stats(REGISTERED)
     if state.main_raffle_taken_place:
-        dl = RaffleSystem()
-        stats_selected, stats_confirmed = dl.get_stats()
-    else:
-        stats_selected, stats_confirmed = None, None
+        stats_selected = raffle_sys.get_stats(SELECTED)
+        stats_confirmed = raffle_sys.get_stats(CONFIRMED)
     if request.method == 'POST':
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(StatusInfo.status != data.CANCELLED).order_by(ContestantInfo.team_id, Contestant.first_name).all()
@@ -178,9 +182,6 @@ def raffle_system():
             raffle(raffle_sys)
             flash('Raffle completed.', 'alert-info')
         elif 'confirm_raffle' in form:
-            selected_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-                .filter(StatusInfo.raffle_status == data.SELECTED) \
-                .order_by(ContestantInfo.team_id, Contestant.first_name).all()
             for dancer in selected_dancers:
                 dancer.status_info[0].set_status(data.SELECTED)
             state.main_raffle_result_visible = True
@@ -210,4 +211,6 @@ def raffle_system():
         return redirect(url_for('organizer.raffle_system'))
     return render_template('organizer/raffle_system.html', state=state, data=data,
                            tournament_config=tournament_config, raffle_config=raffle_config, teams=teams,
-                           stats_selected=stats_selected, stats_confirmed=stats_confirmed)
+                           stats_registered=stats_registered, stats_selected=stats_selected,
+                           stats_confirmed=stats_confirmed, selected_dancers=selected_dancers,
+                           confirmed_dancers=confirmed_dancers, available_dancers=available_dancers)

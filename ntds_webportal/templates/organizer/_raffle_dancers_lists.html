@@ -1,4 +1,6 @@
-<h2>{{title}}</h2>
+<h2>{{title}}
+    <span id="{{ list_id }}-total-badge" class="badge" style="font-size:large">{% if type == 'selected' %}{{ selected_dancers|length }}{% elif type == 'available' %}{{ available_dancers|length }}{% elif type == 'completed_raffle' %}{{ confirmed_dancers|length }} / {{ selected_dancers|length }}{% endif %}</span>
+</h2>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 {% for team in teams %}
     {# if (type == 'guaranteed' and team['guaranteed_dancers']|length > 0) or (type == 'selected' and team['selected_dancers']|length > 0) or (type == 'available' and team['available_dancers']|length > 0) or (type == 'completed_raffle' and (team['selected_dancers']|length > 0 or team['confirmed_dancers']|length > 0)) #}
@@ -6,7 +8,7 @@
         <div class="panel-heading" role="button" id="{{ team['id_title'] }}-{{ list_id }}" data-toggle="collapse" data-parent="#accordion" href="#{{ team['id'] }}-{{ list_id }}" aria-expanded="false" aria-controls="{{ team['id'] }}-{{ list_id }}">
             <h4 class="panel-title">{{ team['team'].country }} - {{ team['team'].name }}
                 {% if type == 'guaranteed' %}
-                <span id="{{ team['id'] }}-badge" class="badge">{{ team['guaranteed_dancers']|length }}</span>
+                <span id="{{ team['id'] }}-guaranteed-badge" class="badge">{{ team['guaranteed_dancers']|length }}</span>
                 {% elif type == 'selected' %}
                 <span class="badge">{{ team['selected_dancers']|length }}</span>
                 {% elif type == 'completed_raffle' %}
@@ -38,57 +40,189 @@
                 </tbody>
             </table>
 
-            {% elif type == 'selected' %}
-            <table class="table table-responsive list-group">
-                <tbody>
-                {% for dancer in team['selected_dancers'] %}
-                    <tr class="{% if dancer.status_info[0].guaranteed_entry == true %}success{% endif %}">
-                        <td>
-                            {{ dancer.get_full_name() }}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            {% else %}
 
-            {% elif type == 'completed_raffle' %}
-            <table class="table table-responsive list-group">
-                <tbody>
-                {% if team['confirmed_dancers']|length > 0 %}
-                <tr><td><b style="font-size: x-large">{{ data.STATUS[data.CONFIRMED] }}</b></td></tr>
-                {% for dancer in team['confirmed_dancers'] %}
-                <tr>
-                    <td>
-                        {{ dancer.get_full_name() }}
-                    </td>
-                </tr>
-                {% endfor %}
-                {% endif %}
-                {% if team['selected_dancers']|length > 0 %}
-                <tr><td><b style="font-size: x-large">{{ data.STATUS[data.SELECTED] }}</b></td></tr>
-                {% for dancer in team['selected_dancers'] %}
-                <tr>
-                    <td>
-                        {{ dancer.get_full_name() }}
-                    </td>
-                </tr>
-                {% endfor %}
-                {% endif %}
-                </tbody>
-            </table>
+                {% if type == 'selected' or type == 'available' %}
+                <table class="table list-group">
+                    <colgroup>
+                        <col span="1" style="width: 40%;">
+                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 10%;">
+                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 10%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th colspan="2">
+                                Ballroom
+                            </th>
+                            <th colspan="2">
+                                Latin
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if type == 'selected' %}
+                        {% for dancer in team['selected_dancers'] %}
+                            <tr class="{% if type == 'selected' and dancer.status_info[0].guaranteed_entry == true %}success{% endif %}">
+                                <td>
+                                    {{ dancer.get_full_name() }}
+                                </td>
+                                <td>
+                                    {% if dancer.get_dancing_info(data.BALLROOM).level != data.NO %}
+                                    {{ dancer.get_dancing_info(data.BALLROOM).level }}
+                                    {% else %}-{% endif %}
+                                </td>
+                                <td>
+                                    {% if dancer.get_dancing_info(data.BALLROOM).role != data.NO %}
+                                    {{ dancer.get_dancing_info(data.BALLROOM).role }}
+                                    {% else %}-{% endif %}
+                                </td>
+                                <td>
+                                    {% if dancer.get_dancing_info(data.LATIN).level != data.NO %}
+                                    {{ dancer.get_dancing_info(data.LATIN).level }}
+                                    {% else %}-{% endif %}
+                                </td>
+                                <td>
+                                    {% if dancer.get_dancing_info(data.LATIN).role != data.NO %}
+                                    {{ dancer.get_dancing_info(data.LATIN).role }}
+                                    {% else %}-{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        {% for dancer in team['available_dancers'] %}
+                            <tr>
+                                <td>
+                                    {{ dancer.get_full_name() }}
+                                </td>
+                                <td>
+                                    {% if dancer.get_dancing_info(data.BALLROOM).level != data.NO %}
+                                    {{ dancer.get_dancing_info(data.BALLROOM).level }}
+                                    {% else %}-{% endif %}
+                                </td>
+                                <td>
+                                    {% if dancer.get_dancing_info(data.BALLROOM).role != data.NO %}
+                                    {{ dancer.get_dancing_info(data.BALLROOM).role }}
+                                    {% else %}-{% endif %}
+                                </td>
+                                <td>
+                                    {% if dancer.get_dancing_info(data.LATIN).level != data.NO %}
+                                    {{ dancer.get_dancing_info(data.LATIN).level }}
+                                    {% else %}-{% endif %}
+                                </td>
+                                <td>
+                                    {% if dancer.get_dancing_info(data.LATIN).role != data.NO %}
+                                    {{ dancer.get_dancing_info(data.LATIN).role }}
+                                    {% else %}-{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
 
-            {% elif type == 'available' %}
-            <table class="table table-responsive list-group">
-                <tbody>
-                {% for dancer in team['available_dancers'] %}
-                    <tr>
-                        <td>
-                            {{ dancer.get_full_name() }}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                {% elif type == 'completed_raffle' %}
+                <table class="table list-group">
+                    <colgroup>
+                        <col span="1" style="width: 40%;">
+                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 10%;">
+                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 10%;">
+                    </colgroup>
+                    <thead>
+                        <tr style="vertical-align:bottom">
+                            <th style="font-size: x-large">{{ data.STATUS[data.CONFIRMED] }}</th>
+                            <th colspan="2">
+                                Ballroom
+                            </th>
+                            <th colspan="2">
+                                Latin
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if team['confirmed_dancers']|length > 0 %}
+                        <tr><td><b style="font-size: x-large">{{ data.STATUS[data.CONFIRMED] }}</b></td></tr>
+                        {% for dancer in team['confirmed_dancers'] %}
+                        <tr>
+                            <td>
+                                {{ dancer.get_full_name() }}
+                            </td>
+                            <td>
+                                {% if dancer.get_dancing_info(data.BALLROOM).level != data.NO %}
+                                {{ dancer.get_dancing_info(data.BALLROOM).level }}
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if dancer.get_dancing_info(data.BALLROOM).role != data.NO %}
+                                {{ dancer.get_dancing_info(data.BALLROOM).role }}
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if dancer.get_dancing_info(data.LATIN).level != data.NO %}
+                                {{ dancer.get_dancing_info(data.LATIN).level }}
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if dancer.get_dancing_info(data.LATIN).role != data.NO %}
+                                {{ dancer.get_dancing_info(data.LATIN).role }}
+                                {% else %}-{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr><td>There are no confirmed dancers</td></tr>
+                    {% endif %}
+                    {% if team['selected_dancers']|length > 0 %}
+                        <tr style="vertical-align:bottom">
+                            <th style="font-size: x-large">
+                                {{ data.STATUS[data.SELECTED] }}
+                            </th>
+                            <th colspan="2">
+                                    Ballroom
+                            </th>
+                            <th colspan="2">
+                                Latin
+                            </th>
+                        </tr>
+                        {% for dancer in team['selected_dancers'] %}
+                        <tr>
+                            <td>
+                                {{ dancer.get_full_name() }}
+                            </td>
+                            <td>
+                                {% if dancer.get_dancing_info(data.BALLROOM).level != data.NO %}
+                                {{ dancer.get_dancing_info(data.BALLROOM).level }}
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if dancer.get_dancing_info(data.BALLROOM).role != data.NO %}
+                                {{ dancer.get_dancing_info(data.BALLROOM).role }}
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if dancer.get_dancing_info(data.LATIN).level != data.NO %}
+                                {{ dancer.get_dancing_info(data.LATIN).level }}
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if dancer.get_dancing_info(data.LATIN).role != data.NO %}
+                                {{ dancer.get_dancing_info(data.LATIN).role }}
+                                {% else %}-{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr><td>There are no selected dancers</td></tr>
+                    {% endif %}
+                    </tbody>
+
+                {% endif %}
+                </table>
+
             {% endif %}
 
             <div class=panel-footer><small style="visibility: hidden">Footer</small></div>

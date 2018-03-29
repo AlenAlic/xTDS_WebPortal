@@ -23,13 +23,13 @@ class BaseContestantForm(FlaskForm):
     ballroom_role = SelectField('Role', validators=[Role('ballroom_level')],
                                 choices=[(k, v) for k, v in data.ROLES.items()])
     ballroom_blind_date = BooleanField('Mandatory blind date',
-                                       description='I am obliged to blind date in this category')
+                                       description='I am obliged to blind date')
     ballroom_partner = QuerySelectField('Ballroom partner', validators=[Role('ballroom_level'), Level()],
-                                        allow_blank=True, blank_text='I have no partner in this category')
+                                        allow_blank=True, blank_text='No partner/Partner has not signed up yet')
 
     latin_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in data.LEVELS.items()])
     latin_role = SelectField('Role', validators=[Role('latin_level')], choices=[(k, v) for k, v in data.ROLES.items()])
-    latin_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date in this category')
+    latin_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date')
     latin_partner = QuerySelectField('Latin partner', validators=[Role('latin_level'), Level()], allow_blank=True,
                                      blank_text='I have no partner in this category')
 
@@ -51,14 +51,14 @@ class BaseContestantForm(FlaskForm):
 
     # student = BooleanField('Student', description='I am a student')
     # first_time = BooleanField('First time', description='This is my first ETDS')
+    # sleeping_arrangements = BooleanField('Sleeping arrangement',
+    #                                      description='I would like to make use of the sleeping arrangements')
     student = SelectField('Student', validators=[IsBoolean()], choices=[(k, v) for k, v in data.STUDENT.items()])
     first_time = SelectField('First time', validators=[IsBoolean()],
                              choices=[(k, v) for k, v in data.FIRST_TIME.items()])
     diet_allergies = StringField('Diet/Allergies')
     sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
                                         choices=[(k, v) for k, v in data.SLEEPING.items()])
-    # sleeping_arrangements = BooleanField('Sleeping arrangement',
-    #                                      description='I would like to make use of the sleeping arrangements')
     t_shirt = SelectField('T-shirt', validators=[DataRequired()], choices=[(k, v) for k, v in data.SHIRTS.items()])
 
 
@@ -81,10 +81,18 @@ class TeamCaptainForm(FlaskForm):
     submit = SubmitField('Set team captain')
 
 
+class CreateCoupleForm(FlaskForm):
+    lead = QuerySelectField('Lead', validators=[DataRequired()])
+    follow = QuerySelectField('Follow', validators=[DataRequired()])
+    competition = SelectField('Competition', validators=[DataRequired()],
+                              choices=[(comp, comp) for comp in data.ALL_COMPETITIONS])
+    submit = SubmitField('Create couple')
+
+
 class PartnerRequestForm(FlaskForm):
     dancer = SelectField(label='My dancer', validators=[DataRequired()], coerce=int)
     other = SelectField(label='Other dancer', validators=[DataRequired()], coerce=int)
-    competition = SelectField('Competition', choices=[(data.BALLROOM, data.BALLROOM), (data.LATIN, data.LATIN)])
+    competition = SelectField('Competition', choices=[(comp, comp) for comp in data.ALL_COMPETITIONS])
     level = SelectField('Level', validators=[Level()],
                         choices=[(k, data.ALL_LEVELS[k]) for k in data.PARTICIPATING_LEVELS])
     remark = TextAreaField(label='remark')

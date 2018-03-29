@@ -10,8 +10,7 @@
     </colgroup>
     <thead>
         <tr>
-            <th rowspan="2"><b style="font-size: x-large">{% if subtitle %}{{ subtitle }}{% endif %}</b></th>
-            <th></th>
+            <th colspan="2"><b style="font-size:x-large">{% if subtitle %}{{ subtitle }}{% endif %}</b></th>
             <th><b>Leaders</b></th>
             <th><b>Followers</b></th>
             <th><b>Difference</b></th>
@@ -28,13 +27,13 @@
                 {{ cat }}
             </td>
             <td>
-                {{ roles[data.LEAD] }}
+                {{ roles[data.LEAD] }}{% if second_stats %} / {{ second_stats[comp][cat][data.LEAD] }}{% endif %}
             </td>
             <td>
-                {{ roles[data.FOLLOW] }}
+                {{ roles[data.FOLLOW] }} {% if second_stats %} / {{ second_stats[comp][cat][data.FOLLOW] }}{% endif %}
             </td>
             <td>
-                {{ roles[data.DIFF] }}
+                {{ roles[data.DIFF] }} {% if second_stats %} / {{ second_stats[comp][cat][data.DIFF] }}{% endif %}
             </td>
         </tr>
         {% endfor %}

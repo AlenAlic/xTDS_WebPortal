@@ -1,4 +1,5 @@
 GROUP_MATCHED = 'Complete group: {}'
+GROUP_MATCHED_INCOMPLETE = 'Incomplete group: {}'
 GROUP_NO_PARTNER = 'Incomplete group: {}\n\tTemporarily removing from selection'
 TEAMCAPTAIN_EXCEPTION = 'Selected {} alone because he/she is a teamcaptain'
 
@@ -11,6 +12,10 @@ def string_group(group_list, base_string):
 
 def string_group_matched(group_list):
     return string_group(group_list, GROUP_MATCHED)
+
+
+def string_group_matched_incomplete(group_list):
+    return string_group(group_list, GROUP_MATCHED_INCOMPLETE)
 
 
 def string_group_no_partner(group_list):

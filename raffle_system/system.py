@@ -17,7 +17,11 @@ def select_groups(raffle_sys, list_of_dancers, guaranteed=False):
             else:
                 if raffle_sys.check_availability(dancer):
                     group = find_partners(raffle_sys.registered_dancers, dancer)
+                    # print('Group balance sum:')
+                    # print(raffle_sys.get_balance_sum(group.get_balance()))
                     raffle_sys.add_group(group, guaranteed=guaranteed)
+                    # print('Total balance sum:')
+                    # print(raffle_sys.get_balance_sum(raffle_sys.get_balance()))
         else:
             break
 

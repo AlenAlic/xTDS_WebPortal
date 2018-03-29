@@ -9,7 +9,7 @@
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
-    <h3>Personal Info</h3>
+    <h3>Personal information</h3>
     {% if mode == 'register' %}
         {{ reg_wtf.form_field(form.number) }}
         {{ reg_wtf.form_field(form.first_name, placeholder='First name') }}
@@ -74,25 +74,45 @@
     {{ reg_wtf.form_field(form.license_jury_latin) }}
     {{ reg_wtf.form_field(form.jury_salsa) }}
     {{ reg_wtf.form_field(form.jury_polka) }}
-    <h3>Additional info</h3>
+    <h3>Additional information</h3>
     {{ reg_wtf.form_field(form.sleeping_arrangements) }}
     {{ reg_wtf.form_field(form.t_shirt) }}
+    {% if mode == 'register' %}
+    <div class="form-group required">
+        <div class="col-xs-offset-2 col-xs-10">
+            <div class="checkbox">
+                <label>
+                    <input id="privacy_checkbox" name="privacy_checkbox" type="checkbox" value="y">I hereby state that I have read the <a data-toggle="modal" data-target="#privacy-modal">privacy notice</a> and accept the terms
+                </label>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     <div class="form-group  required">
         <label class="control-label col-xs-2" ></label>
         <div class="col-xs-10">
             <div class="input-group">
-                <!--{{ reg_wtf.form_field(form.submit) }}-->
-                {% if mode == 'edit' %}
-                <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
-                <a role="button" class="btn btn-default" href="{{ url_for('teamcaptains.edit_dancers', wide=wide) }}">Cancel</a>
-                {% else %}
-                <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Register dancer">
-                <a role="button" class="btn btn-default" href="{{ url_for('main.index') }}">Cancel</a>
-                {% endif %}
-                </div>
+                <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Register dancer{% endif %}">
+                <a role="button" class="btn btn-default" href="{% if mode == 'edit' %}{{ url_for('teamcaptains.edit_dancers', wide=wide) }}{% else %}{{ url_for('main.index') }}{% endif %}">Cancel</a>
+            </div>
         </div>
     </div>
-
-
-    <!--{{reg_wtf.quick_form(form)}}-->
+    <!--{#reg_wtf.quick_form(form)#}-->
 </form>
+<div class="modal fade" id="privacy-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog" role="document"  style="width:50%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Privacy notice</h4>
+            </div>
+            <div class="modal-body">
+                {% include 'teamcaptains/_privacy_statement.html' %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

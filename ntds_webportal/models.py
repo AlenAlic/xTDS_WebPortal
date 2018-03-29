@@ -142,7 +142,8 @@ class Contestant(db.Model):
     status_info = db.relationship('StatusInfo', back_populates='contestant', cascade='all, delete-orphan')
 
     def __repr__(self):
-        return '{id} - {name}'.format(id=self.contestant_id, name=self.get_full_name())
+        # return '{id} - {name}'.format(id=self.contestant_id, name=self.get_full_name())
+        return '{name}'.format(name=self.get_full_name())
 
     def get_full_name(self):
         if self.prefixes is None or self.prefixes == '':
@@ -159,6 +160,13 @@ class Contestant(db.Model):
 
     def cancel_registration(self):
         self.status_info[0].set_status(CANCELLED)
+        for di in self.dancing_info:
+            di.set_partner(None)
+        self.contestant_info[0].team_captain = False
+        db.session.commit()
+
+    def get_dancing_info(self, competition):
+        return next((di for di in self.dancing_info if di.competition == competition), None)
 
 
 class ContestantInfo(db.Model):
@@ -202,16 +210,19 @@ class DancingInfo(db.Model):
 
     def valid_match(self, other):
         errors = []
-        if self.competition != other.competition:
-            errors.append("The dancers are not in the same competition.")
-        if self.level != other.level:
-            errors.append("The dancers are not in the same level.")
-        if self.role == other.role:
-            errors.append("The dancers are not a valid Lead/Follow pair.")
-        if self.partner is not None:
-            errors.append(f"{self.contestant.get_full_name()} already has a partner.")
-        if other.partner is not None:
-            errors.append(f"{other.contestant.get_full_name()} already has a partner.")
+        if self.level in BLIND_DATE_LEVELS or other.level in BLIND_DATE_LEVELS:
+            errors.append("At least one of the dancers must blind date.")
+        else:
+            if self.competition != other.competition:
+                errors.append("The dancers are not in the same competition.")
+            if self.level != other.level:
+                errors.append("The dancers are not in the same level.")
+            if self.role == other.role:
+                errors.append("The dancers are not a valid Lead/Follow pair.")
+            if self.partner is not None:
+                errors.append(f"{self.contestant.get_full_name()} already has a partner.")
+            if other.partner is not None:
+                errors.append(f"{other.contestant.get_full_name()} already has a partner.")
         return not errors, errors
 
     def set_partner(self, contestant_id):
