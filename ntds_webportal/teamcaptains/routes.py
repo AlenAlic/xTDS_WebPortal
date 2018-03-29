@@ -451,14 +451,10 @@ def set_teamcaptains():
             flash('{} has been made teamcaptain.'.format(new_tc.get_full_name()), 'alert-success')
             return redirect(url_for('teamcaptains.set_teamcaptains'))
         else:
-            try:
+            if current_tc is not None:
                 current_tc.contestant_info[0].team_captain = False
                 db.session.commit()
-            except AttributeError:
-                pass
-            # current_tc.contestant_info[0].team_captain = False
-            # db.session.commit()
-            flash('Removed {} from teamcaptain function.'.format(current_tc.get_full_name()))
+                flash('Removed {} from teamcaptain function.'.format(current_tc.get_full_name()))
             return redirect(url_for('teamcaptains.set_teamcaptains'))
     return render_template('teamcaptains/set_teamcaptains.html', form=form, current_tc=current_tc)
 
