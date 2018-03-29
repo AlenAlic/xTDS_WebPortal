@@ -1,5 +1,4 @@
 instance/
-migrations/
 logs/
 ntds_webportal/__pycache__
 __pycache__

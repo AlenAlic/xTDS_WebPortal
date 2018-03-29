@@ -10,7 +10,7 @@
                 {% if type == 'guaranteed' %}
                 <span id="{{ team['id'] }}-guaranteed-badge" class="badge">{{ team['guaranteed_dancers']|length }} / {{ team['available_dancers']|length }}</span>
                 {% elif type == 'selected' %}
-                <span class="badge">{{ team['selected_dancers']|length }}</span>
+                <span class="badge">{{ team['selected_dancers']|length }}/{{ team['available_dancers']|length + team['selected_dancers']|length }}</span>
                 {% elif type == 'completed_raffle' %}
                 <span class="badge">{{ team['confirmed_dancers']|length }}/{{ team['selected_dancers']|length + team['confirmed_dancers']|length }}</span>
                 {% elif type == 'available' %}

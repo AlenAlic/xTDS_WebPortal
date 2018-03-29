@@ -24,11 +24,9 @@
             <form class="form" method="POST" enctype="multipart/form-data" novalidate>
                 <button type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success loading-btn">Start Raffle</button>
                 <button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-danger btn-lg"><strong>DEBUG RAFFLE - FOR TESTING PURPOSES ONLY</strong></button>
-            </form>
-            {% with subtitle='Registered', counter='available', stats=stats_registered %}
-                {% include 'organizer/_raffle_stats.html' %}
-            {% endwith %}
-            <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                {% with subtitle='Registered', counter='available', stats=stats_registered %}
+                    {% include 'organizer/_raffle_stats.html' %}
+                {% endwith %}
                 {% with list_id='guaranteed', type='guaranteed', title='Guaranteed dancers', teams=teams %}
                     {% include 'organizer/_raffle_dancers_lists.html' %}
                 {% endwith %}
