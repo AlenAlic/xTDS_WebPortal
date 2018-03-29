@@ -22,3 +22,8 @@ SHIRT_SIZES = {
     'FL': 'Woman\'s L',
     'FXL': 'Woman\'s XL'
 }
+
+tournament_settings = {
+    'levels': PARTICIPATING_LEVELS,
+    'blind_date_levels': BLIND_DATE_LEVELS
+}

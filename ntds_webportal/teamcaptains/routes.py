@@ -4,8 +4,8 @@ from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
 from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm, \
     PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm
-from ntds_webportal.models import User, requires_access_level, Contestant, ContestantInfo, DancingInfo, StatusInfo, \
-    PartnerRequest, NameChangeRequest
+from ntds_webportal.models import User, requires_access_level, TeamFinances, Contestant, ContestantInfo, DancingInfo, \
+    StatusInfo, PartnerRequest, NameChangeRequest
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant, \
@@ -177,7 +177,6 @@ def set_teamcaptains():
 @login_required
 @requires_access_level([data.ACCESS['team_captain']])
 def couples_list():
-    confirmed = request.args.get('confirmed', 0, type=int)
     all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(
         ContestantInfo.team == current_user.team,
@@ -220,44 +219,8 @@ def couples_list():
     latin_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                      list(itertools.product(latin_couples_leads, latin_couples_follows)) if
                      couple[0].contestant_id == get_dancing_categories(couple[1].dancing_info)[data.LATIN].partner]
-    confirmed_ballroom_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
-                                  list(itertools.product([dancer for dancer in ballroom_couples_leads if
-                                                          dancer.status_info[0].status == data.CONFIRMED],
-                                                         [dancer for dancer in ballroom_couples_follows if
-                                                          dancer.status_info[0].status == data.CONFIRMED])) if
-                                  couple[0].contestant_id == get_dancing_categories(
-                                      couple[1].dancing_info)[data.BALLROOM].partner]
-    confirmed_latin_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
-                               list(itertools.product([dancer for dancer in latin_couples_leads
-                                                       if dancer.status_info[0].status == data.CONFIRMED],
-                                                      [dancer for dancer in latin_couples_follows
-                                                       if dancer.status_info[0].status == data.CONFIRMED])) if
-                               couple[0].contestant_id == get_dancing_categories(
-                                   couple[1].dancing_info)[data.LATIN].partner]
-    ballroom_lead_blind_daters = [dancer for dancer in all_leads if
-                                  get_dancing_categories(dancer.dancing_info)[data.BALLROOM].role == data.LEAD and
-                                  get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is None and
-                                  dancer.status_info[0].status == data.CONFIRMED]
-    ballroom_follow_blind_daters = [dancer for dancer in all_follows if
-                                    get_dancing_categories(dancer.dancing_info)[data.BALLROOM].role == data.FOLLOW and
-                                    get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is None and
-                                    dancer.status_info[0].status == data.CONFIRMED]
-    latin_lead_blind_daters = [dancer for dancer in all_leads if
-                               get_dancing_categories(dancer.dancing_info)[data.LATIN].role == data.LEAD and
-                               get_dancing_categories(dancer.dancing_info)[data.LATIN].partner is None and
-                               dancer.status_info[0].status == data.CONFIRMED]
-    latin_follow_blind_daters = [dancer for dancer in all_follows if
-                                 get_dancing_categories(dancer.dancing_info)[data.LATIN].role == data.FOLLOW and
-                                 get_dancing_categories(dancer.dancing_info)[data.LATIN].partner is None and
-                                 dancer.status_info[0].status == data.CONFIRMED]
-    return render_template('teamcaptains/couples_lists.html', data=data, confirmed=confirmed,
-                           ballroom_couples=ballroom_couples, latin_couples=latin_couples,
-                           confirmed_ballroom_couples=confirmed_ballroom_couples,
-                           confirmed_latin_couples=confirmed_latin_couples,
-                           ballroom_lead_blind_daters=ballroom_lead_blind_daters,
-                           ballroom_follow_blind_daters=ballroom_follow_blind_daters,
-                           latin_lead_blind_daters=latin_lead_blind_daters,
-                           latin_follow_blind_daters=latin_follow_blind_daters)
+    return render_template('teamcaptains/couples_lists.html', data=data,
+                           ballroom_couples=ballroom_couples, latin_couples=latin_couples)
 
 
 @bp.route('/edit_finances', methods=['GET', 'POST'])
@@ -271,6 +234,7 @@ def edit_finances():
     confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
     cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
     finances = data.finances_overview(all_dancers)
+    team_finances = TeamFinances.query.filter_by(team=current_user.team).first()
     if request.method == 'POST':
         changes = False
         for dancer in all_dancers:
@@ -288,7 +252,7 @@ def edit_finances():
         else:
             flash('No changes were made to submit.', 'alert-warning')
         return redirect(url_for('teamcaptains.edit_finances'))
-    return render_template('teamcaptains/edit_finances.html', finances=finances,
+    return render_template('teamcaptains/edit_finances.html', finances=finances, team_finances=team_finances,
                            confirmed_dancers=confirmed_dancers, cancelled_dancers=cancelled_dancers, data=data)
 
 
@@ -399,3 +363,96 @@ def name_change_request(contestant):
     form.last_name.data = contestant.last_name
     return render_template('teamcaptains/name_change_request.html', title="Name change request", contestant=contestant,
                            form=form)
+
+
+@bp.route('/raffle_result', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['team_captain']])
+def raffle_result():
+    all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team).order_by(ContestantInfo.number).all()
+    selected_dancers = [d for d in all_dancers if d.status_info[0].status == data.SELECTED]
+    confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
+    all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(
+        ContestantInfo.team == current_user.team,
+        DancingInfo.role == data.LEAD) \
+        .order_by(DancingInfo.level, ContestantInfo.number).all()
+    all_follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, DancingInfo.role == data.FOLLOW) \
+        .order_by(DancingInfo.level, ContestantInfo.number).all()
+
+    for follow in all_follows:
+        for dance in follow.dancing_info:
+            if dance.partner is not None:
+                c = Contestant.query.filter_by(contestant_id=dance.partner).first()
+                if c and c not in all_leads:
+                    all_leads.append(c)
+
+    for lead in all_leads:
+        for dance in lead.dancing_info:
+            if dance.partner is not None:
+                c = Contestant.query.filter_by(contestant_id=dance.partner).first()
+                if c and c not in all_follows:
+                    all_follows.append(c)
+
+    ballroom_couples_leads = [dancer for dancer in all_leads if
+                              get_dancing_categories(dancer.dancing_info)[data.BALLROOM].role == data.LEAD and
+                              get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is not None]
+    ballroom_couples_follows = [dancer for dancer in all_follows if
+                                get_dancing_categories(dancer.dancing_info)[data.BALLROOM].role == data.FOLLOW and
+                                get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is not None]
+    latin_couples_leads = [dancer for dancer in all_leads if
+                           get_dancing_categories(dancer.dancing_info)[data.LATIN].role == data.LEAD and
+                           get_dancing_categories(dancer.dancing_info)[data.LATIN].partner is not None]
+    latin_couples_follows = [dancer for dancer in all_follows if
+                             get_dancing_categories(dancer.dancing_info)[data.LATIN].role == data.FOLLOW and
+                             get_dancing_categories(dancer.dancing_info)[data.LATIN].partner is not None]
+    confirmed_ballroom_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
+                                  list(itertools.product([dancer for dancer in ballroom_couples_leads if
+                                                          dancer.status_info[0].status == data.CONFIRMED],
+                                                         [dancer for dancer in ballroom_couples_follows if
+                                                          dancer.status_info[0].status == data.CONFIRMED])) if
+                                  couple[0].contestant_id == get_dancing_categories(
+                                      couple[1].dancing_info)[data.BALLROOM].partner]
+    confirmed_latin_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
+                               list(itertools.product([dancer for dancer in latin_couples_leads
+                                                       if dancer.status_info[0].status == data.CONFIRMED],
+                                                      [dancer for dancer in latin_couples_follows
+                                                       if dancer.status_info[0].status == data.CONFIRMED])) if
+                               couple[0].contestant_id == get_dancing_categories(
+                                   couple[1].dancing_info)[data.LATIN].partner]
+    ballroom_lead_blind_daters = [dancer for dancer in all_leads if
+                                  get_dancing_categories(dancer.dancing_info)[data.BALLROOM].role == data.LEAD and
+                                  get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is None and
+                                  dancer.status_info[0].status == data.CONFIRMED]
+    ballroom_follow_blind_daters = [dancer for dancer in all_follows if
+                                    get_dancing_categories(dancer.dancing_info)[data.BALLROOM].role == data.FOLLOW and
+                                    get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is None and
+                                    dancer.status_info[0].status == data.CONFIRMED]
+    latin_lead_blind_daters = [dancer for dancer in all_leads if
+                               get_dancing_categories(dancer.dancing_info)[data.LATIN].role == data.LEAD and
+                               get_dancing_categories(dancer.dancing_info)[data.LATIN].partner is None and
+                               dancer.status_info[0].status == data.CONFIRMED]
+    latin_follow_blind_daters = [dancer for dancer in all_follows if
+                                 get_dancing_categories(dancer.dancing_info)[data.LATIN].role == data.FOLLOW and
+                                 get_dancing_categories(dancer.dancing_info)[data.LATIN].partner is None and
+                                 dancer.status_info[0].status == data.CONFIRMED]
+    if request.method == 'POST':
+        form = request.form
+        if 'confirm' in form or 'confirm_all' in form:
+            confirmed_dancers = [d for d in selected_dancers if str(d.contestant_id) in form] if 'confirm' in form \
+                else selected_dancers
+            for dancer in confirmed_dancers:
+                dancer.status_info[0].set_status(data.CONFIRMED)
+            db.session.commit()
+            flash('Confirmed selected dancer(s).', 'alert-success')
+            return redirect(url_for('teamcaptains.raffle_result'))
+    return render_template('teamcaptains/raffle_results.html', data=data,
+                           selected_dancers=selected_dancers, confirmed_dancers=confirmed_dancers,
+                           confirmed_ballroom_couples=confirmed_ballroom_couples,
+                           confirmed_latin_couples=confirmed_latin_couples,
+                           ballroom_lead_blind_daters=ballroom_lead_blind_daters,
+                           ballroom_follow_blind_daters=ballroom_follow_blind_daters,
+                           latin_lead_blind_daters=latin_lead_blind_daters,
+                           latin_follow_blind_daters=latin_follow_blind_daters)

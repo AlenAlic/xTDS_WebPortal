@@ -10,14 +10,19 @@
     {% include 'organizer/_finances_summary.html' %}
 {% endwith %}
 
+<div class="row">
+    <h3>Amount recieved by organization: {{ data.euros(team_finances.paid) }}</h3>
+    <div style="height:30px;"></div>
+</div>
+
 <form method="POST" enctype="multipart/form-data" novalidate>
     <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
 
-    {% with status='Confirmed', dancers=confirmed_dancers %}
+    {% with status='Confirmed dancers', dancers=confirmed_dancers %}
         {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
 
-    {% with status='Cancelled', dancers=cancelled_dancers %}
+    {% with status='Cancelled dancers', dancers=cancelled_dancers %}
         {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
 
@@ -26,12 +31,12 @@
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }}
-    <script>
-        $(document).ready(function($) {
-        $(".checkbox").change(function() {
-            $(this).parents("tr:first").toggleClass('info ');
-        });
+{{ super() }}
+<script>
+    $(document).ready(function($) {
+    $(".checkbox").change(function() {
+        $(this).parents("tr:first").toggleClass('info ');
     });
-    </script>
+});
+</script>
 {% endblock %}

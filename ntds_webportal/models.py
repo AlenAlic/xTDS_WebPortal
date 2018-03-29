@@ -8,6 +8,7 @@ from time import time
 from datetime import datetime
 import ntds_webportal.data as data
 from raffle_system.raffle_config import *
+import json
 
 
 @login.user_loader
@@ -96,9 +97,12 @@ class User(UserMixin, db.Model):
 
     @staticmethod
     def teamcaptains_selected():
-        return raffle_settings[MAX_TEAMCAPTAINS] - len([d for d in db.session.query(Contestant).join(ContestantInfo)
-                                                       .filter(ContestantInfo.team == current_user.team,
-                                                               ContestantInfo.team_captain)])
+        if len(db.session.query(Contestant).filter(ContestantInfo.team == current_user.team).all()) > 0:
+            return raffle_settings[MAX_TEAMCAPTAINS] - len([d for d in db.session.query(Contestant).join(ContestantInfo)
+                                                           .filter(ContestantInfo.team == current_user.team,
+                                                                   ContestantInfo.team_captain)])
+        else:
+            return 0
 
 
 class Team(db.Model):
@@ -265,6 +269,7 @@ class StatusInfo(db.Model):
     first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    raffle_result_visible = db.Column(db.Boolean, index=True, nullable=False, default=False)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
@@ -389,3 +394,42 @@ class NameChangeRequest(db.Model):
     @staticmethod
     def open_requests():
         return NameChangeRequest.query.filter_by(state=NameChangeRequest.STATE['Open']).count()
+
+
+class TournamentState(db.Model):
+    __tablename__ = 'tournament_state'
+    main_raffle_taken_place = db.Column(db.Boolean, default=False, primary_key=True)
+    main_raffle_result_visible = db.Column(db.Boolean, default=False)
+    tournament_config = db.Column(db.String(128), nullable=False)
+    raffle_config = db.Column(db.String(2048), nullable=False)
+
+    def __repr__(self):
+        return 'Tournament config'
+
+    def set_raffle_config(self, c):
+        self.raffle_config = json.dumps(c)
+
+    def get_raffle_config(self):
+        return json.loads(self.raffle_config)
+    
+    def update_raffle_config(self, key, value):
+        tc = self.get_raffle_config()
+        tc[key] = value
+        db.session.commit()
+
+    def get_raffle_config_value(self, key):
+        return self.get_raffle_config()[key]
+    
+    def set_tournament_config(self, c):
+        self.tournament_config = json.dumps(c)
+
+    def get_tournament_config(self):
+        return json.loads(self.tournament_config)
+
+    def update_tournament_config(self, key, value):
+        tc = self.get_tournament_config()
+        tc[key] = value
+        db.session.commit()
+
+    def get_tournament_config_value(self, key):
+        return self.get_tournament_config()[key]

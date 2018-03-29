@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block app_content %}
-
 <ul class="nav nav-tabs" id=myTabs role=tablist>
 	<li role=presentation class=active>
 		<a href=#all_teams id=all_teams-tab role=tab data-toggle=tab aria-controls=all_teams aria-expanded=true>All teams <span class="badge">{{all_dancers|length}}</span></a>
@@ -45,7 +44,7 @@
 
 
 {% block scripts %}
-    {{ super() }}
-    <script>
-    </script>
+{{ super() }}
+<script>
+</script>
 {% endblock %}

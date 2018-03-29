@@ -42,7 +42,7 @@ onload="onStart()"
         {% with count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title='Set Teamcaptain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with url='main.todo', title='Raffle results', text='Manage the dancers after the raffle has taken place.', image='raffle_results.png' %}
+        {% with url='teamcaptains.raffle_result', title='Raffle results', text='Manage the dancers after the raffle has taken place.', image='raffle_results.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}

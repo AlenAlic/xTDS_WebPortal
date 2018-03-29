@@ -95,7 +95,7 @@ def submit_contestant(f, contestant=None):
         ai = AdditionalInfo()
         si = StatusInfo()
         contestant.first_name = f.first_name.data
-        contestant.prefixes = f.prefixes.data if f.prefixes.data is not '' else None
+        contestant.prefixes = f.prefixes.data if f.prefixes.data != '' else None
         contestant.last_name = f.last_name.data
         ci.number = f.number.data
         ci.team = db.session.query(Team).filter_by(name=f.team.data).first()

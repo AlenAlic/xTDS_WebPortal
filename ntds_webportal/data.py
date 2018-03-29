@@ -1,4 +1,5 @@
 from ntds_webportal.tournament_config import *
+from raffle_system.raffle_config import *
 
 # Access levels
 ACCESS = {
