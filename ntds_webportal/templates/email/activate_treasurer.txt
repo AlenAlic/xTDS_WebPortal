@@ -1,0 +1,17 @@
+Dear treasurer,
+
+Your teamcaptain has activated an account for you at the xTDS WebPortal.
+{% if message is defined %}
+A personal message from the teamcaptain was included:
+"{{ message }}"
+{% endif %}
+Use the following credentials to log in:
+Username: {{ username }}
+Password: {{ password }}
+
+You can click the link below to visit the site.
+{{ url_for('main.index', _external=True) }}
+
+Sincerely,
+
+The xTDS WebPortal Team

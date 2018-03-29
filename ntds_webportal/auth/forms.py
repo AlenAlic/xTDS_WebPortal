@@ -23,13 +23,14 @@ class ResetPasswordForm(FlaskForm):
 
 
 class ChangePasswordForm(FlaskForm):
-    password = PasswordField('Password', validators=[DataRequired()])
+    current_password = PasswordField('Current Password', validators=[DataRequired()])
+    password = PasswordField('New Password', validators=[DataRequired()])
     password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+        'Repeat New Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Change Password')
 
 
 class TreasurerForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    message = TextAreaField('Personal Message')
-    submit = SubmitField('Add Treasurer')
+    message = StringField('Personal Message')
+    tr_submit = SubmitField('Add Treasurer')

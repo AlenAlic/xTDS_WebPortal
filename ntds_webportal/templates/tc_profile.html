@@ -2,10 +2,18 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block treasurer_form %}
-    <h2> Add Treasurer</h2>
+{% if treasurer_active == false %}
+    <h2>Add Treasurer</h2>
     <p>You can add the treasurer of your organization as a separate user to the xTDS WebPortal,
         so that he/she can handle the payments required for the tournament.</p>
     <p>To do so, please fill out the the form below, and the treasurer will receive his/her credentials
     through the e-mail address provided.</p>
-    {{ wtf.quick_form(treasurer_form) }}
+    <form action="{{ url_for('main.add_treasurer') }}" class="form" method="POST" enctype="multipart/form-data" novalidate>
+        {{ treasurer_form.hidden_tag() }}
+        {{ treasurer_form.csrf_token }}
+        {{ wtf.form_field(treasurer_form.email) }}
+        {{ wtf.form_field(treasurer_form.message) }}
+        {{ wtf.form_field(treasurer_form.tr_submit) }}
+    </form>
+{% endif %}
 {% endblock %}

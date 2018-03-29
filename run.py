@@ -1,5 +1,5 @@
 from ntds_webportal import create_app, db
-from ntds_webportal.models import User
+from ntds_webportal.models import User, Contestant
 from sqlalchemy_utils import database_exists, create_database
 import sqlalchemy as alchemy
 from instance.populate import populate_db
@@ -10,7 +10,7 @@ app = create_app()
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User}
+    return {'db': db, 'User': User, 'Contestant': Contestant}
 
 
 def database_is_empty():
@@ -29,6 +29,5 @@ if __name__ == '__main__':
             db.create_all()
             populate_db()
             db.session.commit()
-
 
     app.run()

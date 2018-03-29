@@ -30,12 +30,12 @@ def reset_password(token):
     if not user:
         return redirect(url_for('main.index'))
     if user == 'error':
-        flash('Not a valid token.')
+        flash('Not a valid token.', 'alert-danger')
         return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset.')
+        flash('Your password has been reset.', 'alert-success')
         return redirect(url_for('main.index'))
     return render_template('auth/reset_password.html', form=form, user=user)

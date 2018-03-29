@@ -6,56 +6,69 @@
     xTDS WebPortal
 {% endblock %}
 
+{% block styles %}
+    {{ super() }}
+    <style>
+        body { padding-top: 60px;}
+        .navbar-default{background-color:#f8f8f8;}
+    </style>
+{% endblock %}
+
 
 {% block navbar %}
-    <nav class="navbar navbar-default">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
-            </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                {% if not current_user.is_anonymous %}
-                    <ul class="nav navbar-nav">
-                        <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
-                    </ul>
-                {% endif %}
-                {% if current_user.is_anonymous %}
-                    {% if login_form %}
-                        <ul class="nav navbar-nav navbar-right">
-                            <form class="navbar-form navbar-right" method="POST" enctype="multipart/form-data">
-                                {{ login_form.hidden_tag() }}
-                                {{ login_form.csrf_token }}
-                                {{ login_form.username(class_='form-control', placeholder='Username') }}
-                                {{ login_form.password(class_='form-control', placeholder='Password') }}
-                                {{ login_form.submit(class_='btn btn-default') }}
-                                <small><a href="{{url_for('auth.reset_password_request')}}" >Forgot password?</a></small>
-                            </form>
-                        </ul>
-                    {% endif %}
-                {% else %}
-                    <ul class="nav navbar-nav navbar-right">
-                        <p class="navbar-text">Welcome, {{ current_user.username }}!</p>
-                        <a href="{{ url_for('main.logout') }}" class="btn btn-default navbar-btn">Logout</a>
-                    </ul>
-                {% endif %}
-            </div>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
         </div>
-    </nav>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            {% if not current_user.is_anonymous %}
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
+                    <li><a href="{{ url_for('main.todo') }}">Messages <span class="badge">42</span></a></li>
+                </ul>
+            {% endif %}
+            {% if current_user.is_anonymous %}
+                {% if login_form %}
+                    <div class="nav navbar-nav navbar-right">
+                        <form class="navbar-form navbar-right" method="POST" enctype="multipart/form-data">
+                            {{ login_form.hidden_tag() }}
+                            {{ login_form.csrf_token }}
+                            {{ login_form.username(class_='form-control', placeholder='Username') }}
+                            {{ login_form.password(class_='form-control', placeholder='Password') }}
+                            {{ login_form.submit(class_='btn btn-default') }}
+                            <small><a href="{{url_for('auth.reset_password_request')}}" >Forgot password?</a></small>
+                        </form>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="nav navbar-nav navbar-right">
+                    <p class="navbar-text">Welcome, {{ current_user.username }}!</p>
+                    <a href="{{ url_for('main.logout') }}" class="btn btn-default navbar-btn">Logout</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
 
 {% block content %}
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
+    <div class="container" style="padding-bottom:20px">
+        {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-warning alert-dismissible" role="alert">
+                {% for category, message in messages %}
+                    {% if category=='message' %}
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                    {% else %}
+                    <div class="alert {{ category }} alert-dismissible" role="alert">
+                    {% endif %}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         {{ message }}
                     </div>
@@ -67,8 +80,12 @@
         {% block app_content %}
         {% endblock %}
     </div>
+    <nav class="navbar-default" style="padding-top:60px;">
+        <div class="container">
+            <p class="navbar-text">Place sticky footer content here.</p>
+        </div>
+    </nav>
 {% endblock %}
-
 
 {% block scripts %}
     {{ super() }}

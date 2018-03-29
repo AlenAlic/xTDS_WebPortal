@@ -1,0 +1,15 @@
+<p>Dear treasurer,</p>
+
+<p>Your teamcaptain has activated an account for you at the xTDS WebPortal.</p>
+{% if message is defined %}
+<p>A personal message from the teamcaptain was included:</p>
+<p>"{{ message }}"</p>
+{% endif %}
+<p>Use the following credentials to log in:</p>
+<p>Username: {{ username }}</p>
+<p>Password: {{ password }}</p>
+<p>
+Click <a href="{{ url_for('main.index', _external=True) }}">here</a> to visit the site.
+</p>
+<p>Sincerely,</p>
+<p>The xTDS WebPortal Team</p>
