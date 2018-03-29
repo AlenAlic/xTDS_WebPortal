@@ -149,7 +149,10 @@ def raffle_system():
 
         all_teams = db.session.query(Team).all()
         teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
-                  'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
+                  'id_title': team.name.replace(' ', '-').replace('`', '') + '-title',
+                  'teamcaptains_selected': len(Contestant.query.join(ContestantInfo)
+                      .filter(ContestantInfo.team == team, ContestantInfo.team_captain.is_(True)).all())}
+                 for team in all_teams]
         if not state.main_raffle_taken_place:
             for t in teams:
                 t['guaranteed_dancers'] = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\

@@ -1,4 +1,5 @@
 from ntds_webportal.values import *
+import datetime
 
 # Entry fees in EuroCENTS
 STUDENT_PRICE = 8000
@@ -11,20 +12,24 @@ PARTICIPATING_LEVELS = [BREITENSPORT, CLOSED, OPEN_CLASS]
 BLIND_DATE_LEVELS = [CLOSED, OPEN_CLASS]
 
 # Shirt price in EuroCENTS and shirt sizes
-SHIRT_PRICE = 1500
+SHIRT_PRICE = 1600
 SHIRT_SIZES = {
     'MS': 'Men\'s S',
     'MM': 'Men\'s M',
     'ML': 'Men\'s L',
     'MXL': 'Men\'s XL',
+    'MXXL': 'Men\'s XXL',
+    'FXS': 'Woman\'s XS',
     'FS': 'Woman\'s S',
     'FM': 'Woman\'s M',
     'FL': 'Woman\'s L',
-    'FXL': 'Woman\'s XL'
+    'FXL': 'Woman\'s XL',
+    'FXXL': 'Woman\'s XXL'
 }
 
 tournament_settings = {
     'levels': PARTICIPATING_LEVELS,
     'blind_date_levels': BLIND_DATE_LEVELS,
-    'tournament': ETDS
+    'tournament': ETDS,
+    'merchandise_closing_Date': datetime.datetime(2018, 9, 1, 0, 0, 0, 0).timestamp()
 }

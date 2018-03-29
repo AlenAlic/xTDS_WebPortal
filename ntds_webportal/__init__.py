@@ -50,7 +50,8 @@ def create_app():
     app.config.from_pyfile('config.py')
 
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(app, db, render_as_batch=getattr(app.config, 'SQLALCHEMY_DATABASE_URI', '').startswith('sqlite:'))
+    # migrate.init_app(app, db)
     login.init_app(app)
     login.login_view = 'main.index'
     bootstrap.init_app(app)

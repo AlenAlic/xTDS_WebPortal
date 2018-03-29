@@ -97,7 +97,7 @@ FIRST_TIME = {'': 'Is this your first time participating in {prefix} {tournament
     tournament=tournament_settings['tournament'], prefix='a' if tournament_settings['tournament'] == NTDS else 'an')}
 FIRST_TIME.update(YN)
 SHIRTS = {'': 'Would you like to buy a t-shirt from this tournament?', NO: 'No'}
-SHIRTS.update(SHIRT_SIZES)
+SHIRTS.update({k: 'Yes, '+v for k, v in SHIRT_SIZES.items()})
 
 
 # Format number to display as price
