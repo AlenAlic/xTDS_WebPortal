@@ -4,6 +4,7 @@ import sqlalchemy as alchemy
 # noinspection PyPackageRequirements
 from instance.populate import populate_db
 from ntds_webportal.models import User, Notification
+from raffle_system.functions import test_func
 
 app = create_app()
 

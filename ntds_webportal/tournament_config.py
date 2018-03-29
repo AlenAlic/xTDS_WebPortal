@@ -7,6 +7,9 @@ NON_STUDENT_PRICE = 8000
 # Levels that participate in the tournament
 PARTICIPATING_LEVELS = [BREITENSPORT, CLOSED, OPEN_CLASS]
 
+# Levels that have to blind date
+BLIND_DATE_LEVELS = [CLOSED, OPEN_CLASS]
+
 # Shirt price in EuroCENTS and shirt sizes
 SHIRT_PRICE = 1500
 SHIRT_SIZES = {

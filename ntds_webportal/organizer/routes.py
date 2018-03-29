@@ -4,6 +4,7 @@ from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, StatusInfo
 import ntds_webportal.data as data
+from raffle_system.functions import test_func
 
 
 @bp.route('/registration_overview')
@@ -65,3 +66,12 @@ def finances_overview():
         return redirect(url_for('organizer.finances_overview'))
     return render_template('organizer/finances_overview.html', teams=teams, data=data,
                            dutch_teams=dutch_teams, german_teams=german_teams, other_teams=other_teams)
+
+
+@bp.route('/raffle_system', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['organizer']])
+def raffle_system():
+    if request.method == 'POST':
+        test_func()
+    return render_template('organizer/raffle_system.html')

@@ -17,6 +17,7 @@ TF = {True: YMN[YES], False: YMN[NO]}
 # Categories
 BALLROOM = 'Ballroom'
 LATIN = 'Latin'
+ALL_CATEGORIES = [BALLROOM, LATIN]
 
 # All available levels
 BEGINNERS = 'beginners'

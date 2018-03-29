@@ -44,10 +44,14 @@
                     {{ data.TF[dancer.contestant_info[0].student] }}
                 </td>
                 <td>
-                    {{ data.LEVELS[dancer.dancing_info[0].ballroom_level] }}
+                    {% if dancer.dancing_info[0].level != data.NO %}
+                    {{ data.LEVELS[dancer.dancing_info[0].level] }}
+                    {% else %} - {% endif %}
                 </td>
                 <td>
-                    {{ data.LEVELS[dancer.dancing_info[0].latin_level] }}
+                    {% if dancer.dancing_info[1].level != data.NO %}
+                    {{ data.LEVELS[dancer.dancing_info[1].level] }}
+                    {% else %} - {% endif %}
                 </td>
                 <td align="right">
                     {% if dancer.status_info[0].status == data.REGISTERED or dancer.status_info[0].status == data.CANCELLED %}
@@ -75,10 +79,8 @@
             <th><b>Student</b></th>
             <th><b>Ballroom level</b></th>
             <th><b>Ballroom role</b></th>
-            <th><b>Ballroom mandatory blind date</b></th>
             <th><b>Latin level</b></th>
             <th><b>Latin role</b></th>
-            <th><b>Latin mandatory blind date</b></th>
             <th><b>Sleeping spot</b></th>
             <th><b>Diet/Allergies</b></th>
             <th><b>T-shirt</b></th>
@@ -110,22 +112,24 @@
                     {{ data.TF[dancer.contestant_info[0].student] }}
                 </td>
                 <td>
-                    {{ data.LEVELS[dancer.dancing_info[0].ballroom_level] }}
+                    {% if dancer.dancing_info[0].level != data.NO %}
+                    {{ data.LEVELS[dancer.dancing_info[0].level] }}
+                    {% else %} - {% endif %}
                 </td>
                 <td>
-                    {{ data.ROLES[dancer.dancing_info[0].ballroom_role] }}
+                    {% if dancer.dancing_info[0].role != data.NO %}
+                    {{ data.ROLES[dancer.dancing_info[0].role] }}
+                    {% else %} - {% endif %}
                 </td>
                 <td>
-                    {{ data.TF[dancer.dancing_info[0].ballroom_blind_date] }}
+                    {% if dancer.dancing_info[1].level != data.NO %}
+                    {{ data.LEVELS[dancer.dancing_info[1].level] }}
+                    {% else %} - {% endif %}
                 </td>
                 <td>
-                    {{ data.LEVELS[dancer.dancing_info[0].latin_level] }}
-                </td>
-                <td>
-                    {{ data.ROLES[dancer.dancing_info[0].latin_role] }}
-                </td>
-                <td>
-                    {{ data.TF[dancer.dancing_info[0].latin_blind_date] }}
+                    {% if dancer.dancing_info[1].role != data.NO %}
+                    {{ data.ROLES[dancer.dancing_info[1].role] }}
+                    {% else %} - {% endif %}
                 </td>
                 <td>
                     {{ data.TF[dancer.additional_info[0].sleeping_arrangements] }}

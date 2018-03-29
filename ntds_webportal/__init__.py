@@ -38,11 +38,6 @@ class UserView(BaseView):
             User.set_password(form.password2.data)
 
 
-class DancingInfoView(BaseView):
-    column_list = ('contestant', 'ballroom_level', 'ballroom_role', 'ballroom_partner',
-                   'latin_level', 'latin_role', 'latin_partner')
-
-
 def create_app():
     """
     Create instance of website.
@@ -67,7 +62,7 @@ def create_app():
     admin.add_view(BaseView(TeamFinances, db.session))
     admin.add_view(BaseView(Contestant, db.session))
     admin.add_view(BaseView(ContestantInfo, db.session))
-    admin.add_view(DancingInfoView(DancingInfo, db.session))
+    admin.add_view(BaseView(DancingInfo, db.session))
     admin.add_view(BaseView(VolunteerInfo, db.session))
     admin.add_view(BaseView(AdditionalInfo, db.session))
     admin.add_view(BaseView(StatusInfo, db.session))

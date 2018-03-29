@@ -27,6 +27,9 @@ onload="onStart()"
         {% with url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
+        {% with url='organizer.raffle_system', title='Raffle system', text='Raffle system.', image='dummy.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
     {% endif %}
     {% if current_user.is_tc() %}
         {% with url='teamcaptains.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}

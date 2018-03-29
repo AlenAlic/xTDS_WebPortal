@@ -11,8 +11,8 @@ function dropDownGreyOut(parent_id, id) {
         $(parentDiv).find('*').attr('disabled', true);
     } else {
         $(parentDiv).find('*').attr('disabled', false);
-        blindDateGreyOut('ballroom_p', 'ballroom_blind_date')
-        blindDateGreyOut('latin_p', 'latin_blind_date')
+//        blindDateGreyOut('ballroom_p', 'ballroom_blind_date')
+//        blindDateGreyOut('latin_p', 'latin_blind_date')
     }
 }
 //function blindDateGreyOut(partner_id, check_id) {
