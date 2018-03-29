@@ -448,7 +448,7 @@ def set_teamcaptains():
             new_tc = db.session.query(Contestant) \
                 .filter(Contestant.contestant_id == form.number.data.contestant_id).first()
             new_tc.contestant_info[0].set_teamcaptain()
-            flash('Set {} as team captain.'.format(new_tc.get_full_name()), 'alert-success')
+            flash('{} has been made teamcaptain.'.format(new_tc.get_full_name()), 'alert-success')
             return redirect(url_for('teamcaptains.set_teamcaptains'))
         else:
             current_tc.contestant_info[0].team_captain = False

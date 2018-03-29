@@ -133,8 +133,9 @@ def submit_contestant(f, contestant=None):
     ci.diet_allergies = f.diet_allergies.data
     dancing_categories[BALLROOM].contestant = contestant
     dancing_categories[LATIN].contestant = contestant
-    if f.ballroom_level.data is None:
+    if f.ballroom_level.data == NO:
         dancing_categories[BALLROOM].not_dancing(BALLROOM)
+        db.session.add(dancing_categories[BALLROOM])
     else:
         dancing_categories[BALLROOM].level = f.ballroom_level.data
         dancing_categories[BALLROOM].role = f.ballroom_role.data
@@ -145,8 +146,9 @@ def submit_contestant(f, contestant=None):
             dancing_categories[BALLROOM].set_partner(f.ballroom_partner.data.contestant_id)
         else:
             dancing_categories[BALLROOM].set_partner(None)
-    if f.latin_level.data is None:
+    if f.latin_level.data == NO:
         dancing_categories[LATIN].not_dancing(LATIN)
+        db.session.add(dancing_categories[LATIN])
     else:
         dancing_categories[LATIN].level = f.latin_level.data
         dancing_categories[LATIN].role = f.latin_role.data
@@ -165,10 +167,10 @@ def submit_contestant(f, contestant=None):
     vi.first_aid = f.first_aid.data
     vi.jury_ballroom = f.jury_ballroom.data
     vi.jury_latin = f.jury_latin.data
-    vi.license_jury_ballroom = f.jury_ballroom.data
-    vi.license_jury_latin = f.jury_ballroom.data
-    vi.jury_salsa = f.jury_ballroom.data
-    vi.jury_polka = f.jury_ballroom.data
+    vi.license_jury_ballroom = f.license_jury_ballroom.data
+    vi.license_jury_latin = f.license_jury_latin.data
+    vi.jury_salsa = f.jury_salsa.data
+    vi.jury_polka = f.jury_polka.data
     ai.contestant = contestant
     ai.sleeping_arrangements = str2bool(f.sleeping_arrangements.data)
     ai.t_shirt = f.t_shirt.data

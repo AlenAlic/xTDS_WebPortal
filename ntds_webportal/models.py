@@ -280,6 +280,10 @@ class VolunteerInfo(db.Model):
         self.first_aid = data.NO
         self.jury_ballroom = data.NO
         self.jury_latin = data.NO
+        self.license_jury_ballroom = data.NO
+        self.license_jury_latin = data.NO
+        self.jury_salsa = data.NO
+        self.jury_polka = data.NO
 
 
 class AdditionalInfo(db.Model):
