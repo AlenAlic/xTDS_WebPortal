@@ -3,15 +3,19 @@
 <!--<p>Dancers available: {{ available_dancers|length }}</p>-->
 <h2>Summary</h2>
 <div class="row">
-    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+        <p><b>Total spots available:</b></p>
+        {{ raffle_config[data.MAX_DANCERS] }}
+    </div>
+    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
         <p><b>Dancers in the raffle system:</b></p>
         {{ selected_dancers|length + confirmed_dancers|length }}
     </div>
-    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
         <p><b>Dancers available:</b></p>
         {{ available_dancers|length }}
     </div>
-    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
         <p><b>Sleeping spots taken:</b></p>
         {{ sleeping_spots }}
     </div>
@@ -87,7 +91,7 @@
             {% for dancer in newly_selected %}
                 <tr>
                     <td>
-                        {{ dancer.contestant_id }}
+                        {{ dancer.contestant_info[0].number }}
                     </td>
                     <td>
                         {{ dancer.get_full_name() }}
