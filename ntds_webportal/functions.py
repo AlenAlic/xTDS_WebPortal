@@ -160,9 +160,6 @@ def submit_contestant(f, contestant=None):
         else:
             dancing_categories[LATIN].set_partner(None)
     vi.contestant = contestant
-    # if f.volunteer.data == data.NO:
-    #     vi.not_volunteering()
-    # else:
     vi.volunteer = f.volunteer.data
     vi.first_aid = f.first_aid.data
     vi.jury_ballroom = f.jury_ballroom.data

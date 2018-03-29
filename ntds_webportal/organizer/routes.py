@@ -121,7 +121,6 @@ def raffle_system():
     state = raffle_sys.state
     raffle_config = raffle_sys.raffle_config
     tournament_config = raffle_sys.tournament_config
-
     selected_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(StatusInfo.raffle_status == SELECTED) \
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
@@ -131,10 +130,10 @@ def raffle_system():
     available_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(StatusInfo.raffle_status == REGISTERED) \
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
-
+    newly_selected, sleeping_spots = None, None
+    stats_registered, stats_selected, stats_confirmed = None, None, None
+    teams, available_combinations = None, None
     if request.method == 'GET':
-        newly_selected, sleeping_spots = None, None
-        stats_registered, stats_selected, stats_confirmed = None, None, None
         stats_registered = raffle_sys.get_stats(REGISTERED)
         if state.main_raffle_taken_place:
             stats_selected = raffle_sys.get_stats(SELECTED)

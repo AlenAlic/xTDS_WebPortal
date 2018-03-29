@@ -25,4 +25,3 @@ raffle_labels = {
     SELECTION_BUFFER: 'The number of spots that will be left at the end of the main raffle.',
     MAX_TEAMCAPTAINS: 'The number of team captains that will be allowed per team.'
 }
-

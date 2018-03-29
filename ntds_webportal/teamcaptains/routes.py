@@ -453,7 +453,7 @@ def set_teamcaptains():
         else:
             current_tc.contestant_info[0].team_captain = False
             db.session.commit()
-            flash('Removed {} as team captain.'.format(current_tc.get_full_name()))
+            flash('Removed {} from teamcaptain function.'.format(current_tc.get_full_name()))
             return redirect(url_for('teamcaptains.set_teamcaptains'))
     return render_template('teamcaptains/set_teamcaptains.html', form=form, current_tc=current_tc)
 

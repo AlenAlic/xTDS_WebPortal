@@ -383,7 +383,7 @@ def find_partners(dancers_list, dancer, target_team=None):
             return group
         elif verification_group.completable():
             verification_dancers = [d for d in verification_group.dancers]
-            for j in range(i+1,r):
+            for j in range(i+1, r):
                 verification_group = DancingGroup()
                 verification_group.add_dancers(verification_dancers)
                 test_dancer2 = dancers_list[random_order_list[j]]
@@ -400,5 +400,3 @@ def find_partners(dancers_list, dancer, target_team=None):
     # ALSO WORKING - BUT EVEN FASTER
 
     return group
-
-
