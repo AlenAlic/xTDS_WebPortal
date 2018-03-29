@@ -46,8 +46,8 @@ Based on Flask and Python
   - [x] Dashboard
   - [ ] Messages (Messages from admin)
   - [ ] Send messages to teamcaptains (and admin?)
-  - [ ] Registration overview (total and per team)
-    - [ ] Name change requests
+  - [x] Registration overview (total and per team)
+  - [ ] Name change requests
   - [ ] Payments overview (per team and total)
   - [ ] Raffle pages
     - [ ] Raffle system

@@ -1,0 +1,44 @@
+<table class="table table-striped table-responsive">
+    <thead>
+        <tr>
+            <th><b>#</b></th>
+            <th><b>Name</b></th>
+            <th><b>Team</b></th>
+            <th><b>Status</b></th>
+            <th><b>First time</b></th>
+            <th><b>Student</b></th>
+            <th><b>Ballroom</b></th>
+            <th><b>Latin</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dancer in dancers %}
+            <tr>
+                <td>
+                    {{ dancer.contestant_info[0].number }}
+                </td>
+                <td>
+                    {{ dancer.get_full_name() }}
+                </td>
+                <td>
+                    {{ dancer.contestant_info[0].team }}
+                </td>
+                <td>
+                    {{ data.STATUS[dancer.status_info[0].status] }}
+                </td>
+                <td>
+                    {{ data.TF[dancer.status_info[0].first_time] }}
+                </td>
+                <td>
+                    {{ data.TF[dancer.contestant_info[0].student] }}
+                </td>
+                <td>
+                    {{ data.LEVELS[dancer.dancing_info[0].ballroom_level] }}
+                </td>
+                <td>
+                    {{ data.LEVELS[dancer.dancing_info[0].latin_level] }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

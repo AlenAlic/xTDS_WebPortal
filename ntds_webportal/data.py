@@ -1,15 +1,20 @@
+NETHERLANDS = 'The Netherlands'
+GERMANY = 'Germany'
+CZECH = 'Czech Republic'
 TEAMS = [
-    {'name': '4 happy feet', 'city': 'Enschede'},
-    {'name': 'AmsterDance', 'city': 'Amsterdam',},
-    {'name': 'Blue Suede Shoes', 'city': 'Delft'},
-    {'name': 'Dance Fever', 'city': 'Nijmegen'},
-    {'name': 'Erasmus Dance Society', 'city': 'Rotterdam'},
-    {'name': 'Footloose', 'city': 'Eindhoven'},
-    {'name': 'LeiDance', 'city': 'Leiden'},
-    {'name': 'Let`s Dance', 'city': 'Maastricht'},
-    {'name': 'The Blue Toes', 'city': 'Groningen'},
-    {'name': 'U Dance', 'city': 'Utrecht'},
-    {'name': 'WUBDA', 'city': 'Wageningen'}
+    {'country': NETHERLANDS, 'name': '4 happy feet', 'city': 'Enschede'},
+    {'country': NETHERLANDS, 'name': 'AmsterDance', 'city': 'Amsterdam',},
+    {'country': NETHERLANDS, 'name': 'Blue Suede Shoes', 'city': 'Delft'},
+    {'country': NETHERLANDS, 'name': 'Dance Fever', 'city': 'Nijmegen'},
+    {'country': NETHERLANDS, 'name': 'Erasmus Dance Society', 'city': 'Rotterdam'},
+    {'country': NETHERLANDS, 'name': 'Footloose', 'city': 'Eindhoven'},
+    {'country': NETHERLANDS, 'name': 'LeiDance', 'city': 'Leiden'},
+    {'country': NETHERLANDS, 'name': 'Let`s Dance', 'city': 'Maastricht'},
+    {'country': NETHERLANDS, 'name': 'The Blue Toes', 'city': 'Groningen'},
+    {'country': NETHERLANDS, 'name': 'U Dance', 'city': 'Utrecht'},
+    {'country': NETHERLANDS, 'name': 'WUBDA', 'city': 'Wageningen'},
+    {'country': GERMANY, 'name': 'Unitanz Berlin', 'city': 'Berlin'},
+    {'country': CZECH, 'name': 'Brno', 'city': 'Brno'}
 ]
 
 ACCESS = {
