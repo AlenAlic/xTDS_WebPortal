@@ -1,8 +1,8 @@
 from ntds_webportal.values import *
 
 # Entry fees in EuroCENTS
-STUDENT_PRICE = 7000
-NON_STUDENT_PRICE = 8000
+STUDENT_PRICE = 8000
+NON_STUDENT_PRICE = 9000
 
 # Levels that participate in the tournament
 PARTICIPATING_LEVELS = [BREITENSPORT, CLOSED, OPEN_CLASS]

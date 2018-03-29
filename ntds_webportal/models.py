@@ -96,14 +96,17 @@ class User(UserMixin, db.Model):
             return 'error'
         return User.query.get(user_id)
 
-    @staticmethod
-    def teamcaptains_selected():
-        if len(db.session.query(Contestant).filter(ContestantInfo.team == current_user.team).all()) > 0:
+    def teamcaptains_selected(self):
+        if self.has_dancers_registered():
             return raffle_settings[MAX_TEAMCAPTAINS] - len([d for d in db.session.query(Contestant).join(ContestantInfo)
                                                            .filter(ContestantInfo.team == current_user.team,
-                                                                   ContestantInfo.team_captain)])
+                                                                   ContestantInfo.team_captain).all()])
         else:
             return 0
+
+    @staticmethod
+    def has_dancers_registered():
+        return len(db.session.query(Contestant).filter(ContestantInfo.team == current_user.team).all()) > 0
 
 
 class Team(db.Model):
@@ -426,6 +429,7 @@ class TournamentState(db.Model):
     __tablename__ = 'tournament_state'
     main_raffle_taken_place = db.Column(db.Boolean, default=False, primary_key=True)
     main_raffle_result_visible = db.Column(db.Boolean, default=False)
+    numbers_rearranged = db.Column(db.Boolean, default=False)
     tournament_config = db.Column(db.String(128), nullable=False)
     raffle_config = db.Column(db.String(2048), nullable=False)
 

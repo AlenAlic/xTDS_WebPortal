@@ -1,15 +1,16 @@
 from raffle_system.functions import *
-import random
+import time
+import ast
 
 
 def select_groups(raffle_sys, list_of_dancers, guaranteed=False):
     r = list(range(0, len(list_of_dancers)))
     shuffle(r)
     for i in r:
-        if not raffle_sys.complete():
+        if not raffle_sys.raffle_complete():
             try:
                 if not guaranteed:
-                    dancer = random.choice(list_of_dancers)
+                    dancer = list_of_dancers[r[i]]
                 else:
                     dancer = list_of_dancers[i]
             except IndexError:
@@ -17,55 +18,80 @@ def select_groups(raffle_sys, list_of_dancers, guaranteed=False):
             else:
                 if raffle_sys.check_availability(dancer):
                     group = find_partners(raffle_sys.registered_dancers, dancer)
-                    # print('Group balance sum:')
-                    # print(raffle_sys.get_balance_sum(group.get_balance()))
-                    raffle_sys.add_group(group, guaranteed=guaranteed)
-                    # print('Total balance sum:')
-                    # print(raffle_sys.get_balance_sum(raffle_sys.get_balance()))
+                    if not raffle_sys.exceed_max(group):
+                        raffle_sys.add_group(group, guaranteed=guaranteed)
         else:
             break
 
 
-def raffle(raffle_sys, guaranteed_dancers=None):
-    # rearrange_numbers()
-    # dancer_lists = DancerLists()
+def finish_raffle(raffle_sys):
+    r = list(range(0, len(raffle_sys.registered_dancers)))
+    shuffle(r)
+    if not raffle_sys.almost_full():
+        for i in r:
+            try:
+                dancer = raffle_sys.registered_dancers[r[i]]
+            except IndexError:
+                pass
+            else:
+                if raffle_sys.check_availability(dancer):
+                    group = find_partners(raffle_sys.registered_dancers, dancer)
+                    if not raffle_sys.exceed_max(group):
+                        raffle_sys.add_group(group)
+                        if raffle_sys.almost_full():
+                            break
+    raffle_sys.update_states()
+    return raffle_sys
 
+
+def raffle(raffle_sys, guaranteed_dancers=None):
+    print('Starting automated raffle.')
+    # Rearrange numbers of all dancers
+    rearrange_numbers()
     # Select teamcaptains
     select_groups(raffle_sys, raffle_sys.teamcaptains(), guaranteed=True)
-
     # Select guaranteed dancers
     if guaranteed_dancers is not None:
         select_groups(raffle_sys, guaranteed_dancers, guaranteed=True)
-
     # Select other dancers
     select_groups(raffle_sys, raffle_sys.registered_dancers)
-
     # Update raffle states
     raffle_sys.update_states()
     print('Raffle done')
     print(f'{len(raffle_sys.selected_dancers)} dancers selected')
-
-    # for dancer in dancer_lists.selected_dancers:
-    #     if random.choice([True, False]):
-    #         dancer_lists.move_dancer_to_list(dancer, CONFIRMED)
-    #         dancer.status_info[0].set_status(CONFIRMED)
-    #     else:
-    #         dancer.status_info[0].set_status(SELECTED)
-    # dancer_lists.update_states()
-
     return raffle_sys
+
+
+def raffle_add_neutral_group(raffle_sys):
+    if not raffle_sys.full():
+        r = list(range(0, len(raffle_sys.registered_dancers)))
+        shuffle(r)
+        for i in r:
+            try:
+                dancer = raffle_sys.registered_dancers[r[i]]
+            except IndexError:
+                pass
+            else:
+                if raffle_sys.check_availability(dancer):
+                    group = find_partners(raffle_sys.registered_dancers, dancer)
+                    if group.check():
+                        raffle_sys.add_group(group)
+                        raffle_sys.update_states()
+                        return 'Selected {}.'.format(group.get_dancers_summary())
+        return 'Could not find a neutral group.'
+    else:
+        return f"The maximum number of dancers ({raffle_sys.raffle_config[MAX_DANCERS]}) has been reached. " \
+               f"You cannot add more dancers."
 
 
 def test_raffle():
     print('Starting test raffle.')
+    start_time = time.time()
     raffle_sys = RaffleSystem()
-
     # Select teamcaptains
     select_groups(raffle_sys, raffle_sys.teamcaptains(), guaranteed=True)
-
     # Select other dancers
     select_groups(raffle_sys, raffle_sys.registered_dancers)
-
     print('Done with test raffle')
 
     selected_dancers = raffle_sys.selected_dancers
@@ -76,6 +102,21 @@ def test_raffle():
     for dancer in selected_dancers:
         selected[dancer.contestant_id] += 1
 
-    return selected
+    with open('stats.txt', 'a', encoding='utf-8') as f1:
+        f1.write(str(selected) + '\n')
+    print("--- Test raffle done in %.3f seconds ---" % (time.time() - start_time))
 
 
+def export_stats_list():
+    with open("stats.txt") as f:
+        total = {}
+        for line in f:
+            d = ast.literal_eval(line)
+            if len(total) > 0:
+                for k, v in d.items():
+                    total[k] += v
+            else:
+                total = d
+    with open('stats_list.txt', 'w', encoding='utf-8') as f1:
+        for _, v in total.items():
+            f1.write(str(v) + '\n')

@@ -1,0 +1,111 @@
+<!--{% if not raffle_sys.almost_full() %}-->
+<!--<p>The tournament is not full yet. Fill all remaingin</p>-->
+<!--<form class="form" method="POST" enctype="multipart/form-data" novalidate>-->
+    <!--<button type="submit" id="submit-finish_raffle" name="finish_raffle" class="btn btn-primary loading-btn">Complete raffle</button>-->
+<!--</form>-->
+<!--{% endif %}-->
+
+{% if newly_selected is not none %}
+{% if newly_selected|length > 0 %}
+<h2>Selected by system, but not yet visible to teamcaptain</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <table class="table table-clickable-checkbox">
+        <colgroup>
+            <col span="1" style="width: 5%;">
+            <col span="1" style="width: 25%;">
+            <col span="1" style="width: 25%;">
+            <col span="1" style="width: 20%;">
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 5%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Dancer</th>
+                <th>Email</th>
+                <th>Team</th>
+                <th>Ballroom partner</th>
+                <th>Latin partner</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for dancer in newly_selected %}
+            <tr>
+                <td>
+                    {{ dancer.contestant_id }}
+                </td>
+                <td>
+                    {{ dancer.get_full_name() }}
+                </td>
+                <td>
+                    {{ dancer.email }}
+                </td>
+                <td>
+                    {{ dancer.contestant_info[0].team }}
+                </td>
+                <td>
+                    {{ dancer.get_dancing_info(data.BALLROOM).partner }}
+                </td>
+                <td>
+                    {{ dancer.get_dancing_info(data.LATIN).partner }}
+                </td>
+                <td><input class="checkbox" type="checkbox" value="y" style="visibility:hidden" id="{{ dancer.contestant_id }}" name="{{ dancer.contestant_id }}"></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" id="submit-select_marked_dancers" name="select_marked_dancers" class="btn btn-primary loading-btn">Add marked dancers</button>
+    <button type="submit" id="submit-remove_marked_dancers" name="remove_marked_dancers" class="btn btn-warning loading-btn">Remove marked dancers</button>
+</form>
+{% endif %}
+{% endif %}
+
+<h2>Available dancers <span id="{{ list_id }}-total-badge" class="badge" style="font-size:large">{{ available_dancers|length }}</span></h2>
+<h3>Fill tournament spots</h3>
+<p>Add random dancers until all the tournament spots are taken. Adding dancers through here will not change the differences indicted above. To change the differences use the controls below.</p>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <button type="submit" id="submit-finish_raffle" name="finish_raffle" class="btn btn-primary loading-btn">Update raffle</button>
+</form>
+<!--<h3>Add group of dancers</h3>-->
+<!--<p>If more than one dancers needs to be added, you can add a group of dancers. The added group will not change the differences indicated above.</p>-->
+<!--<form class="form" method="POST" enctype="multipart/form-data" novalidate>-->
+    <!--<button type="submit" id="submit-select_random_group" name="select_random_group" class="btn btn-primary loading-btn">Add random group</button>-->
+<!--</form>-->
+<h3>Add single dancer</h3>
+<!--<p>To add a single dancer of a specific combination, use the list below.</p>-->
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <table class="table">
+        <colgroup>
+            <col span="1" style="width: 60%;">
+            <col span="1" style="width: 20%;">
+            <col span="1" style="width: 20%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>
+                    Combination
+                </th>
+                <th>
+                    # dancers available
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comb, val in available_combinations.items() %}
+            <tr>
+                <td>
+                    {{ comb }}
+                </td>
+                <td>
+                    {{ val }}
+                </td>
+                <td align="right">
+                    <button type="submit" id="{{comb}}" name="{{comb}}" class="btn btn-info loading-btn">Add random dancer</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>

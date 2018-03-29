@@ -15,8 +15,10 @@ def messages():
         .order_by(Notification.notification_id.desc(), Notification.unread.desc()).all()
     archived_messages = Notification.query.filter_by(user=current_user, archived=True) \
         .order_by(Notification.notification_id.desc(), Notification.unread.desc()).all()
-    return render_template('notifications/messages.html', title="Notifications",
-                           inbox_messages=inbox_messages, archived_messages=archived_messages)
+    sent_messages = Notification.query.filter_by(sender=current_user) \
+        .order_by(Notification.notification_id.desc()).all()
+    return render_template('notifications/messages.html', title="Notifications", inbox_messages=inbox_messages,
+                           archived_messages=archived_messages, sent_messages=sent_messages)
 
 
 @bp.route('/read/<notification>', methods=['GET'])
@@ -113,5 +115,5 @@ def create():
                     db.session.add(n)
         db.session.commit()
         flash('Message(s) submitted')
-        return redirect(url_for('notifications.create'))
+        return redirect(url_for('notifications.messages'))
     return render_template('notifications/create.html', title="Send message", form=form)

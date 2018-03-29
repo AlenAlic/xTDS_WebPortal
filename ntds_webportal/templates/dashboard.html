@@ -50,6 +50,14 @@ onload="onStart()"
         {% endwith %}
     {% endif %}
 
+    {% if max_tc > 1 %}
+        {% set tc_title = 'Set Teamcaptains' %}
+        {% set tc_text = 'Set who the team captains are.' %}
+    {% else %}
+        {% set tc_title = 'Set Teamcaptain' %}
+        {% set tc_text = 'Set who the team captains is.' %}
+    {% endif %}
+
     {% if current_user.is_tc() or current_user.is_treasurer() %}
         {% if current_user.is_tc() %}
             {% with url='teamcaptains.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
@@ -64,15 +72,18 @@ onload="onStart()"
             {% with count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dancing Partner Request', text='Create couples with dancers from another team', image='partner_request.png' %}
                 {% include '_dashboard_page.html' %}
             {% endwith %}
-            {% if max_tc > 1 %}
-                {% with count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title='Set Teamcaptains', text='Set who the team captains are.', image='captain.png' %}
-                    {% include '_dashboard_page.html' %}
-                {% endwith %}
-            {% else %}
-                {% with count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title='Set Teamcaptain', text='Set who the team captain is.', image='captain.png' %}
-                    {% include '_dashboard_page.html' %}
-                {% endwith %}
-            {% endif %}
+            {% with accessible=current_user.has_dancers_registered(), count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title=tc_title, text=tc_text, image='captain.png' %}
+                {% include '_dashboard_page.html' %}
+            {% endwith %}
+            <!--{% if max_tc > 1 %}-->
+                <!--{% with count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title='Set Teamcaptains', text='Set who the team captains are.', image='captain.png' %}-->
+                    <!--{% include '_dashboard_page.html' %}-->
+                <!--{% endwith %}-->
+            <!--{% else %}-->
+                <!--{% with count=current_user.teamcaptains_selected(), url='teamcaptains.set_teamcaptains', title='Set Teamcaptain', text='Set who the team captain is.', image='captain.png' %}-->
+                    <!--{% include '_dashboard_page.html' %}-->
+                <!--{% endwith %}-->
+            <!--{% endif %}-->
             {% with accessible=state.main_raffle_result_visible, url='teamcaptains.raffle_result', title='Raffle results', text='Manage dancers that have been selected or confirmed for the tournament.', image='raffle_results.png' %}
                 {% include '_dashboard_page.html' %}
             {% endwith %}

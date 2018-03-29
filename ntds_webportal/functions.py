@@ -41,6 +41,19 @@ def uniquify(seq):
     return s if len(seq) > 0 else []
 
 
+def check_combination(dancer, combination):
+    dc = []
+    for di in dancer.dancing_info:
+        if di.level != NO:
+            dc.extend([di.competition, di.level, di.role])
+    return dc == combination
+
+
+def get_combinations_list(s):
+    s = s.replace(' / ', ', ')
+    return s.split(', ')
+
+
 def contestant_validate_dancing(form):
     if form.ballroom_partner.data is not None:
         if form.ballroom_level.data in data.BLIND_DATE_LEVELS:

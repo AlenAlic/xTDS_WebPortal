@@ -10,13 +10,11 @@ raffle_settings = {
     MIN_TEAM_BEGINNERS: 0,
     MIN_LIONS: 0,
     BEGINNERS_CUTOFF: 0,
-    SELECTION_BUFFER: 30,
+    SELECTION_BUFFER: 20,
     MAX_TEAMCAPTAINS: 1
 }
 
 raffle_config_items = [MAX_DANCERS, SELECTION_BUFFER]
-
-# raffle_settings[SELECTION_BUFFER] = int(raffle_settings[MAX_DANCERS]*(100-raffle_settings[SELECTION_BUFFER])/100)
 
 raffle_labels = {
     MAX_DANCERS: 'The maximum number of dancers that will be let into the tournament.',

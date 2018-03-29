@@ -15,6 +15,9 @@ def get_pk_from_identity(obj):
 f.get_pk_from_identity = get_pk_from_identity
 
 
+PARTNER_TEXT = 'No partner / Partner has not signed up yet'
+
+
 class BaseContestantForm(FlaskForm):
     number = IntegerField('Contestant number', validators=[DataRequired()], render_kw={'disabled': True})
     team = StringField('Team', validators=[DataRequired()], render_kw={'disabled': True})
@@ -22,16 +25,15 @@ class BaseContestantForm(FlaskForm):
     ballroom_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in data.LEVELS.items()])
     ballroom_role = SelectField('Role', validators=[Role('ballroom_level')],
                                 choices=[(k, v) for k, v in data.ROLES.items()])
-    ballroom_blind_date = BooleanField('Mandatory blind date',
-                                       description='I am obliged to blind date')
+    ballroom_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date')
     ballroom_partner = QuerySelectField('Ballroom partner', validators=[Role('ballroom_level'), Level()],
-                                        allow_blank=True, blank_text='No partner/Partner has not signed up yet')
+                                        allow_blank=True, blank_text=PARTNER_TEXT)
 
     latin_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in data.LEVELS.items()])
     latin_role = SelectField('Role', validators=[Role('latin_level')], choices=[(k, v) for k, v in data.ROLES.items()])
     latin_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date')
     latin_partner = QuerySelectField('Latin partner', validators=[Role('latin_level'), Level()], allow_blank=True,
-                                     blank_text='I have no partner in this category')
+                                     blank_text=PARTNER_TEXT)
 
     volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in data.VOLUNTEER.items()])
     first_aid = SelectField('First Aid', validators=[SpecificVolunteer('volunteer')],
@@ -64,7 +66,7 @@ class BaseContestantForm(FlaskForm):
 
 class RegisterContestantForm(BaseContestantForm):
     first_name = StringField('First name', validators=[DataRequired()])
-    prefixes = StringField('Prefixes')
+    prefixes = StringField('Prefix')
     last_name = StringField('Last name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email(), UniqueEmail()])
     submit = SubmitField('Register')

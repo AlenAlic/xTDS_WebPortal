@@ -4,30 +4,42 @@ from ntds_webportal.tournament_config import *
 from ntds_webportal.functions import get_dancing_categories, get_partners_ids, uniquify, has_partners
 from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, TournamentState
 from ntds_webportal.strings import *
-import ntds_webportal.data as data
-from ntds_webportal.data import REGISTERED, SELECTED, CONFIRMED
-import random
+from ntds_webportal.data import REGISTERED, SELECTED, CONFIRMED, NO
 from random import shuffle
-import itertools
+
+
+def get_combinations(dancer):
+    strings = []
+    for di in dancer.dancing_info:
+        if di.level != NO:
+            strings.append(f"{di.competition}, {di.level}, {di.role}")
+        # else:
+        #     strings.append(f"Not dancing {di.competition}")
+    return ' / '.join(strings)
+
+
+def get_balance_sum(balance):
+    s = 0
+    for comp, levels in balance.items():
+        for lvl in levels:
+            s += abs(balance[comp][lvl])
+    return s
+
+
+def get_competition_sum(balance):
+    values = [abs(v) for v in [val for comp, level in balance.items() for lvl, val in level.items()]]
+    return (i < 2 for i in values)
 
 
 def rearrange_numbers():
-    all_dancers = db.session.query(Contestant).join(ContestantInfo)\
-        .order_by(ContestantInfo.team_id, Contestant.contestant_id).all()
-    all_teams = list(set([dancer.contestant_info[0].team_id for dancer in all_dancers]))
-    all_teams.sort()
-    max_number = 0
-    for team_id in all_teams:
-        all_team_dancers = [dancer for dancer in all_dancers if dancer.contestant_info[0].team_id == team_id]
-        if max_number > 0:
-            for dancer in all_team_dancers:
-                di = get_dancing_categories(dancer.dancing_info)
-                dancer.contestant_info[0].number += max_number
-                for _, cat in di.items():
-                    if cat.partner is not None:
-                        cat.partner += max_number
-        max_number = max([dancer.contestant_info[0].number for dancer in all_dancers if dancer.contestant_info[0].team_id == team_id])
-    db.session.commit()
+    state = TournamentState.query.first()
+    if not state.numbers_rearranged:
+        all_dancers = db.session.query(Contestant).join(ContestantInfo)\
+            .order_by(ContestantInfo.team_id, Contestant.contestant_id).all()
+        for i in range(0, len(all_dancers)):
+            all_dancers[i].contestant_info[0].number = i+1
+        state.numbers_rearranged = True
+        db.session.commit()
 
 
 class RaffleSystem:
@@ -40,6 +52,9 @@ class RaffleSystem:
         self.registered_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(StatusInfo.raffle_status == REGISTERED).order_by(ContestantInfo.team_id, Contestant.first_name)\
             .all()
+        # self.registered_dancers += db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        #     .filter(StatusInfo.raffle_status == REGISTERED, ContestantInfo.first_time.is_(True))\
+        #     .order_by(ContestantInfo.team_id, Contestant.first_name).all()
         self.selected_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(StatusInfo.raffle_status == SELECTED).order_by(ContestantInfo.team_id, Contestant.first_name).all()
         self.confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -47,13 +62,10 @@ class RaffleSystem:
         self.no_partner_list = []
         self.dancer_lists = {REGISTERED: self.registered_dancers, SELECTED: self.selected_dancers,
                              CONFIRMED: self.confirmed_dancers, self.NO_PARTNER: self.no_partner_list}
-        state = TournamentState.query.first()
-        self.tournament_config = state.get_tournament_config()
-        self.raffle_config = state.get_raffle_config()
+        self.state = TournamentState.query.first()
+        self.tournament_config = self.state.get_tournament_config()
+        self.raffle_config = self.state.get_raffle_config()
         self.balance = self.get_balance()
-
-    # def list(self, status):
-    #     return self.dancer_lists[status]
 
     def teamcaptains(self):
         return [dancer for dancer in self.registered_dancers if dancer.contestant_info[0].team_captain]
@@ -68,7 +80,8 @@ class RaffleSystem:
 
     def move_dancer_to_list(self, dancer, list_to):
         list_from = self.get_dancer_list(dancer)
-        self.dancer_lists[list_from].remove(dancer)
+        while dancer in self.dancer_lists[list_from]:
+            self.dancer_lists[list_from].remove(dancer)
         self.dancer_lists[list_to].append(dancer)
 
     def select_dancer(self, dancer):
@@ -86,23 +99,25 @@ class RaffleSystem:
                 print(string_group_matched(group.dancers))
                 add = True
         else:
-            # b = self.join_balances(self.balance, group.group)
-            # b = self.get_balance_sum(b)
-            # if b <= 3:
-            #     print(string_group_matched_incomplete(group.dancers))
-            #     add = True
-            # else:
             print(string_group_no_partner(group.dancers))
         if add:
-            # self.update_balance(group)
             for dancer in group.dancers:
                 self.select_dancer(dancer)
         else:
             for dancer in group.dancers:
                 self.no_partner_found(dancer)
 
-    def complete(self):
+    def raffle_complete(self):
         return len(self.selected_dancers) >= (self.raffle_config[MAX_DANCERS] - self.raffle_config[SELECTION_BUFFER])
+
+    def exceed_max(self, group):
+        return (len(self.selected_dancers) + len(group.dancers)) > (self.raffle_config[MAX_DANCERS])
+
+    def full(self):
+        return (len(self.selected_dancers)) == (self.raffle_config[MAX_DANCERS])
+
+    def almost_full(self):
+        return (len(self.selected_dancers)) > (self.raffle_config[MAX_DANCERS] - 2)
 
     def update_states(self):
         for dancer in self.registered_dancers:
@@ -154,14 +169,6 @@ class RaffleSystem:
                 b[comp][lvl] += b1[comp][lvl]
                 b[comp][lvl] += b2[comp][lvl]
         return b
-
-    @staticmethod
-    def get_balance_sum(balance):
-        s = 0
-        for comp, levels in balance.items():
-            for lvl in levels:
-                s += abs(balance[comp][lvl])
-        return s
 
 
 class DancingGroup:
@@ -241,9 +248,23 @@ class DancingGroup:
                 balance[di.competition][di.level] += self.measure[di.role]
         return balance
 
-    def get_dancer_types(self):
-        combinations = [(c,l,r) for c in ALL_COMPETITIONS for l in PARTICIPATING_LEVELS for r in ALL_ROLES]+[(c,NO,NO) for c in ALL_COMPETITIONS]
-        combinations = [(b,l) for b in combinations for l in combinations if b[0] !=l [0]]
+    def completable(self):
+        balance = self.get_balance()
+        values = [abs(v) for v in [val for comp, level in balance.items() for lvl, val in level.items()]]
+        return True if get_balance_sum(balance) <= 2 and all(i < 2 for i in values) else False
+
+    def get_dancers_summary(self):
+        f = '{name} ({team})'
+        dancers = [f.format(name=d.get_full_name(), team=d.contestant_info[0].team.name) for d in self.dancers[:-1]]
+        last_dancer = 'and {}'.format(f.format(name=self.dancers[-1].get_full_name(),
+                                               team=self.dancers[-1].contestant_info[0].team.name))
+        dancers.append(last_dancer)
+        return ', '.join(dancers)
+
+    @staticmethod
+    def get_dancer_types():
+        combinations = [(c, l, r) for c in ALL_COMPETITIONS for l in PARTICIPATING_LEVELS for r in ALL_ROLES]+[(c, NO, NO) for c in ALL_COMPETITIONS]
+        combinations = [(b, l) for b in combinations for l in combinations if b[0] != l[0]]
         combinations = ''
 
 
@@ -270,48 +291,9 @@ def find_partners(dancers_list, dancer, target_team=None):
     else:
         dancers_list = [d for d in dancers_list if d.contestant_info[0].team == target_team]
     partner_list = [d for d in dancers_list if [di.partner for di in d.dancing_info] != [None, None]]
-    # dancers_list = [d for d in dancers_list if [di.partner for di in d.dancing_info] == [None, None]]
 
+    # WORKING
     # See if a balanced group can be formed with 1 or 2 random additional dancers, iterated over in random order
-    random_order_list = list(range(0, len(dancers_list)))
-    shuffle(random_order_list)
-    for i in range(1, 3):
-        combinations = list(itertools.combinations(random_order_list, i))
-        for comb in combinations:
-            verification_group = DancingGroup()
-            verification_group.add_group(group)
-            for c in comb:
-                test_dancer = dancers_list[c]
-                if has_partners(test_dancer):
-                    verification_group.add_chain(group.check_chain(test_dancer, partner_list), partner_list)
-                else:
-                    verification_group.add(test_dancer)
-            if verification_group.check():
-                group.add_group(verification_group)
-                return group
-
-    # partner_groups = []
-    # for dancer in partner_list:
-    #     partners = group.check_chain(dancer, partner_list)
-    #     partners.sort()
-    #     partners = [d for d in partner_list if d.contestant_id in partners]
-    #     if partners not in partner_groups:
-    #         partner_groups.append(partners)
-
-    # random_order_list = list(range(0, len(partner_groups)))
-    # shuffle(random_order_list)
-    # for i in random_order_list:
-    #     test_partners = partner_groups[i]
-    #     verification_group = DancingGroup()
-    #     verification_group.add_group(group)
-    #     for p in test_partners:
-    #         verification_group.add(p)
-    #     if verification_group.check():
-    #         for p in test_partners:
-    #             group.add(p)
-    #         return group
-
-
     # random_order_list = list(range(0, len(dancers_list)))
     # shuffle(random_order_list)
     # for i in range(1, 3):
@@ -320,10 +302,106 @@ def find_partners(dancers_list, dancer, target_team=None):
     #         verification_group = DancingGroup()
     #         verification_group.add_group(group)
     #         for c in comb:
-    #             verification_group.add(dancers_list[c])
+    #             test_dancer = dancers_list[c]
+    #             if has_partners(test_dancer):
+    #                 partner_group = DancingGroup()
+    #                 partner_group.add_chain(group.check_chain(test_dancer, partner_list), partner_list)
+    #                 if not partner_group.check():
+    #                     verification_group.add_group(partner_group)
+    #             else:
+    #                 verification_group.add(test_dancer)
     #         if verification_group.check():
     #             group.add_group(verification_group)
     #             return group
+    # WORKING
+
+    # ALSO WORKING - BUT FASTER
+    # random_order_list = list(range(0, len(dancers_list)))
+    # shuffle(random_order_list)
+    # r = len(random_order_list)
+    # random_order_list.append(random_order_list[0])
+    # for i in range(0, r):
+    #     verification_group = DancingGroup()
+    #     verification_group.add_group(group)
+    #     test_dancer = dancers_list[random_order_list[i]]
+    #     if has_partners(test_dancer):
+    #         partner_group = DancingGroup()
+    #         partner_group.add_chain(group.check_chain(test_dancer, partner_list), partner_list)
+    #         if not partner_group.check():
+    #             verification_group.add_group(partner_group)
+    #     else:
+    #         verification_group.add(test_dancer)
+    #     if verification_group.check():
+    #         group.add_group(verification_group)
+    #         return group
+    #     elif verification_group.completable():
+    #         verification_dancers = [d for d in verification_group.dancers]
+    #         for j in range(i+1,r):
+    #             verification_group = DancingGroup()
+    #             verification_group.add_dancers(verification_dancers)
+    #             test_dancer2 = dancers_list[random_order_list[j]]
+    #             if has_partners(test_dancer2):
+    #                 partner_group = DancingGroup()
+    #                 partner_group.add_chain(group.check_chain(test_dancer2, partner_list), partner_list)
+    #                 if not partner_group.check():
+    #                     verification_group.add_group(partner_group)
+    #             else:
+    #                 verification_group.add(test_dancer2)
+    #             if verification_group.check():
+    #                 group.add_group(verification_group)
+    #                 return group
+    # ALSO WORKING - BUT FASTER
+    pass
+    # ALSO WORKING - BUT EVEN FASTER
+    random_order_list = list(range(0, len(dancers_list)))
+    shuffle(random_order_list)
+    r = len(random_order_list)
+    for i in range(0, r):
+        verification_group = DancingGroup()
+        verification_group.add_group(group)
+        test_dancer = dancers_list[random_order_list[i]]
+        if has_partners(test_dancer):
+            partner_group = DancingGroup()
+            partner_group.add_chain(group.check_chain(test_dancer, partner_list), partner_list)
+            if not partner_group.check():
+                verification_group.add_group(partner_group)
+        else:
+            verification_group.add(test_dancer)
+        if verification_group.check():
+            group.add_group(verification_group)
+            return group
+    random_order_list.append(random_order_list[0])
+    for i in range(0, r):
+        verification_group = DancingGroup()
+        verification_group.add_group(group)
+        test_dancer = dancers_list[random_order_list[i]]
+        if has_partners(test_dancer):
+            partner_group = DancingGroup()
+            partner_group.add_chain(group.check_chain(test_dancer, partner_list), partner_list)
+            if not partner_group.check():
+                verification_group.add_group(partner_group)
+        else:
+            verification_group.add(test_dancer)
+        if verification_group.check():
+            group.add_group(verification_group)
+            return group
+        elif verification_group.completable():
+            verification_dancers = [d for d in verification_group.dancers]
+            for j in range(i+1,r):
+                verification_group = DancingGroup()
+                verification_group.add_dancers(verification_dancers)
+                test_dancer2 = dancers_list[random_order_list[j]]
+                if has_partners(test_dancer2):
+                    partner_group = DancingGroup()
+                    partner_group.add_chain(group.check_chain(test_dancer2, partner_list), partner_list)
+                    if not partner_group.check():
+                        verification_group.add_group(partner_group)
+                else:
+                    verification_group.add(test_dancer2)
+                if verification_group.check():
+                    group.add_group(verification_group)
+                    return group
+    # ALSO WORKING - BUT EVEN FASTER
 
     return group
 

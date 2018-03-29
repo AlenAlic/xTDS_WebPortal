@@ -1,6 +1,6 @@
 {% if title %}<h2>{{ title }}</h2>{% endif %}
 {% if desc %}<p>{{ desc }}</p>{% endif %}
-<table class="table table-striped table-responsive">
+<table class="table table-striped">
     <colgroup>
         <col span="1" style="width: 30%;">
         <col span="1" style="width: 25%;">
@@ -10,7 +10,11 @@
     </colgroup>
     <thead>
         <tr>
-            <th colspan="2"><b style="font-size:x-large">{% if subtitle %}{{ subtitle }}{% endif %}</b></th>
+            <th align="bottom" colspan="2" style="font-size:x-large">
+                <b>{% if subtitle %}{{ subtitle }}{% endif %}
+                {% if counter %}<span id="{{ list_id }}-total-badge" class="badge" style="font-size:large">{% if counter == 'selected' %}{{ selected_dancers|length }}{% elif counter == 'available' %}{{ available_dancers|length }}{% elif counter == 'confirmed' %}{{ confirmed_dancers|length }}{% endif %}</span>{% endif %}
+                </b>
+            </th>
             <th><b>Leaders</b></th>
             <th><b>Followers</b></th>
             <th><b>Difference</b></th>
