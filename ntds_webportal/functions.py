@@ -14,6 +14,13 @@ def get_dancing_categories(dancing_info):
         else {di.competition: di for di in dancing_info}
 
 
+def get_discipline(dancer, discipline):
+    for di in dancer.dancing_info:
+        if di.competition == discipline:
+            return di
+    return None
+
+
 def get_partners_ids(dancer):
     return [cat.partner for cat in dancer.dancing_info if cat.partner is not None]
 

@@ -9,8 +9,8 @@
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
-    <!--{{ reg_wtf.form_field(form.team) }}-->
     <h3>Personal information</h3>
+    <!--{{ reg_wtf.form_field(form.team) }}-->
     {% if mode == 'register' %}
         {{ reg_wtf.form_field(form.number) }}
         {{ reg_wtf.form_field(form.first_name, placeholder='First name') }}
@@ -32,30 +32,25 @@
     {{ reg_wtf.form_field(form.first_time) }}
     <!--{{ reg_wtf.form_field(form.diet_allergies, placeholder='Please fill in any special dietary requirements and/or allergies.') }}-->
 
+    <h3>Ballroom</h3>
     {% if editable is sameas true %}
-    <h3>Ballroom</h3>
-    {{ reg_wtf.form_field(form.ballroom_level, **{'onchange': "dancingLevelGreyOut(id, 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')"}) }}
-    {{ reg_wtf.form_field(form.ballroom_role) }}
-    <!--{{ reg_wtf.form_field(form.ballroom_blind_date) }}-->
-    {{ reg_wtf.form_field(form.ballroom_partner) }}
-    <h3>Latin</h3>
-    {{ reg_wtf.form_field(form.latin_level, **{'onchange': "dancingLevelGreyOut(id, 'latin_role', 'latin_partner', 'latin_blind_date')"} ) }}
-    {{ reg_wtf.form_field(form.latin_role) }}
-    <!--{{ reg_wtf.form_field(form.latin_blind_date) }}-->
-    {{ reg_wtf.form_field(form.latin_partner) }}
+        {{ reg_wtf.form_field(form.ballroom_level, disabled=not editable, **{'onchange': "dancingLevelGreyOut(id, 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')"}) }}
     {% else %}
-
-    <h3>Ballroom</h3>
-    {{ reg_wtf.form_field(form.ballroom_level, **{'onchange': "dancingLevelGreyOut(id, 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')", 'disabled': ''}) }}
-    {{ reg_wtf.form_field(form.ballroom_role, disabled="") }}
-    <!--{{ reg_wtf.form_field(form.ballroom_blind_date, disabled="") }}-->
-    {{ reg_wtf.form_field(form.ballroom_partner, disabled="") }}
-    <h3>Latin</h3>
-    {{ reg_wtf.form_field(form.latin_level, **{'onchange': "dancingLevelGreyOut(id, 'latin_role', 'latin_partner', 'latin_blind_date')", 'disabled': ''} ) }}
-    {{ reg_wtf.form_field(form.latin_role, disabled="") }}
-    <!--{{ reg_wtf.form_field(form.latin_blind_date, disabled="") }}-->
-    {{ reg_wtf.form_field(form.latin_partner, disabled="") }}
+        {{ reg_wtf.form_field(form.ballroom_level, disabled=not editable) }}
     {% endif %}
+    {{ reg_wtf.form_field(form.ballroom_role, disabled=not editable) }}
+    <!--{{ reg_wtf.form_field(form.ballroom_blind_date, disabled=not editable) }}-->
+    {{ reg_wtf.form_field(form.ballroom_partner, disabled=not editable) }}
+
+    <h3>Latin</h3>
+    {% if editable is sameas true %}
+        {{ reg_wtf.form_field(form.latin_level, disabled=not editable, **{'onchange': "dancingLevelGreyOut(id, 'latin_role', 'latin_partner', 'latin_blind_date')"} ) }}
+    {% else %}
+        {{ reg_wtf.form_field(form.latin_level, disabled=not editable) }}
+    {% endif %}
+    {{ reg_wtf.form_field(form.latin_role, disabled=not editable) }}
+    <!--{{ reg_wtf.form_field(form.latin_blind_date, disabled=not editable) }}-->
+    {{ reg_wtf.form_field(form.latin_partner, disabled=not editable) }}
 
     <!--<h3>Volunteering</h3>-->
     <!--{{ reg_wtf.form_field(form.volunteer) }}-->
@@ -68,6 +63,7 @@
     {{ reg_wtf.form_field(form.license_jury_latin) }}
     {{ reg_wtf.form_field(form.jury_salsa) }}
     {{ reg_wtf.form_field(form.jury_polka) }}
+
     <h3>Additional information</h3>
     {{ reg_wtf.form_field(form.sleeping_arrangements) }}
     {{ reg_wtf.form_field(form.t_shirt) }}

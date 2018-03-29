@@ -21,13 +21,13 @@
 </div>
 {% endif %}
 
-<h2 class="no-print">Confirmed dancers</h2>
 {% if confirmed_dancers|length > 0 %}
+<h2 class="no-print">Confirmed dancers</h2>
 <button class="btn btn-default no-print" onclick="printPage()">Print lists of confirmed dancers</button>
-{% with category='Ballroom', couples=confirmed_ballroom_couples %}
+{% with category='Ballroom', couples=confirmed_ballroom_couples, show_break_up_button=false %}
     {% include 'teamcaptains/_couples_list.html' %}
 {% endwith %}
-{% with category='Latin', couples=confirmed_latin_couples %}
+{% with category='Latin', couples=confirmed_latin_couples, show_break_up_button=false %}
     {% include 'teamcaptains/_couples_list.html' %}
 {% endwith %}
 {% with category='Ballroom', leads=ballroom_lead_blind_daters, follows=ballroom_follow_blind_daters %}

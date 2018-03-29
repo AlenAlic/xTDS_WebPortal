@@ -24,6 +24,24 @@ def select_groups(raffle_sys, list_of_dancers, guaranteed=False):
             break
 
 
+def raffle(raffle_sys, guaranteed_dancers=None):
+    print('Starting automated raffle.')
+    # Rearrange numbers of all dancers
+    rearrange_numbers()
+    # Select teamcaptains
+    select_groups(raffle_sys, raffle_sys.teamcaptains(), guaranteed=True)
+    # Select guaranteed dancers
+    if guaranteed_dancers is not None:
+        select_groups(raffle_sys, guaranteed_dancers, guaranteed=True)
+    # Select other dancers
+    select_groups(raffle_sys, raffle_sys.registered_dancers)
+    # Update raffle states
+    raffle_sys.update_states()
+    print('Raffle done')
+    print(f'{len(raffle_sys.selected_dancers)} dancers selected')
+    return raffle_sys
+
+
 def finish_raffle(raffle_sys):
     r = list(range(0, len(raffle_sys.registered_dancers)))
     shuffle(r)
@@ -41,24 +59,6 @@ def finish_raffle(raffle_sys):
                         if raffle_sys.almost_full():
                             break
     raffle_sys.update_states()
-    return raffle_sys
-
-
-def raffle(raffle_sys, guaranteed_dancers=None):
-    print('Starting automated raffle.')
-    # Rearrange numbers of all dancers
-    rearrange_numbers()
-    # Select teamcaptains
-    select_groups(raffle_sys, raffle_sys.teamcaptains(), guaranteed=True)
-    # Select guaranteed dancers
-    if guaranteed_dancers is not None:
-        select_groups(raffle_sys, guaranteed_dancers, guaranteed=True)
-    # Select other dancers
-    select_groups(raffle_sys, raffle_sys.registered_dancers)
-    # Update raffle states
-    raffle_sys.update_states()
-    print('Raffle done')
-    print(f'{len(raffle_sys.selected_dancers)} dancers selected')
     return raffle_sys
 
 

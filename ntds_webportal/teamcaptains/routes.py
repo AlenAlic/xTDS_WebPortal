@@ -9,6 +9,7 @@ from ntds_webportal.models import User, requires_access_level, TeamFinances, Con
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant
+import ntds_webportal.functions as func
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 import itertools
@@ -262,7 +263,7 @@ def couples_list():
     latin_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                      list(itertools.product(latin_couples_leads, latin_couples_follows)) if
                      couple[0].contestant_id == get_dancing_categories(couple[1].dancing_info)[data.LATIN].partner]
-    return render_template('teamcaptains/couples_lists.html', data=data,
+    return render_template('teamcaptains/couples_lists.html', data=data, func=func,
                            ballroom_couples=ballroom_couples, latin_couples=latin_couples)
 
 
@@ -324,6 +325,15 @@ def partner_request_list():
     my_requests = [req for req in requests if req.dancer.contestant_info[0].team == current_user.team]
     other_requests = list(req for req in requests if req.other.contestant_info[0].team == current_user.team and
                           req.state == PartnerRequest.STATE['Open'])
+    if request.method == 'POST':
+        form = request.form
+        for r in form:
+            req = PartnerRequest.query.filter(PartnerRequest.id == r).first()
+            req.cancel()
+            flash(f'Partner request for {req.dancer} with {req.other} in {req.competition} cancelled.')
+        db.session.commit()
+
+        return redirect(url_for('teamcaptains.partner_request_list'))
     return render_template('teamcaptains/partner_list.html', my_requests=my_requests, other_requests=other_requests,
                            title='partner requests')
 
@@ -358,6 +368,7 @@ def partner_request():
                   .format(di1.contestant.get_full_name(), di2.contestant.get_full_name()), 'alert-danger')
             for e in errors:
                 flash(e, 'alert-warning')
+            return redirect(url_for('teamcaptains.partner_request'))
         else:
             pr = PartnerRequest(dancer_id=form.dancer.data, other_id=form.other.data, remark=form.remark.data,
                                 competition=form.competition.data, level=form.level.data)
@@ -513,7 +524,7 @@ def raffle_result():
                 db.session.commit()
                 flash('Confirmed selected dancer(s).', 'alert-success')
                 return redirect(url_for('teamcaptains.raffle_result'))
-        return render_template('teamcaptains/raffle_results.html', data=data, tournament_settings=ts,
+        return render_template('teamcaptains/raffle_results.html', data=data, tournament_settings=ts, func=func,
                                selected_dancers=selected_dancers, confirmed_dancers=confirmed_dancers,
                                confirmed_ballroom_couples=confirmed_ballroom_couples,
                                confirmed_latin_couples=confirmed_latin_couples,

@@ -35,6 +35,7 @@ def requires_access_level(access_levels):
     return decorator
 
 
+# noinspection PyUnresolvedReferences
 class User(UserMixin, db.Model):
     __tablename__ = USERS
     user_id = db.Column(db.Integer, primary_key=True)
@@ -77,6 +78,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def get_reset_password_token(self, expires_in=600):
+        # noinspection PyUnresolvedReferences
         return jwt.encode({'reset_password': self.user_id, 'exp': time() + expires_in},
                           current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
@@ -93,6 +95,7 @@ class User(UserMixin, db.Model):
             return NameChangeRequest.open_requests()
         return 0
 
+    # noinspection PyUnresolvedReferences
     @staticmethod
     def verify_reset_password_token(token):
         try:
@@ -104,8 +107,8 @@ class User(UserMixin, db.Model):
     def teamcaptains_selected(self):
         if self.has_dancers_registered():
             return raffle_settings[MAX_TEAMCAPTAINS] - \
-                   len(db.session.query(ContestantInfo)
-                       .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).all())
+                   len(db.session.query(ContestantInfo).filter(ContestantInfo.team == current_user.team,
+                                                               ContestantInfo.team_captain.is_(True)).all())
         else:
             return 0
 
@@ -195,7 +198,7 @@ class ContestantInfo(db.Model):
 
     def set_teamcaptain(self):
         current_tc = db.session.query(Contestant).join(ContestantInfo) \
-            .filter(ContestantInfo.team_captain.is_(True)).first()
+            .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).first()
         if current_tc is not None:
             current_tc.contestant_info[0].team_captain = False
         self.team_captain = True
@@ -341,7 +344,7 @@ class Notification(db.Model):
 
 
 class PartnerRequest(db.Model):
-    STATE = {'Open': 1, 'Accepted': 2, 'Rejected': 3}
+    STATE = {'Open': 1, 'Accepted': 2, 'Rejected': 3, 'Cancelled': 4}
     STATE_NAMES = {v: k for k, v in STATE.items()}
 
     __tablename__ = 'partner_request'
@@ -365,6 +368,10 @@ class PartnerRequest(db.Model):
     def reject(self):
         self.state = self.STATE['Rejected']
         self.notify()
+
+    def cancel(self):
+        self.state = self.STATE['Cancelled']
+        db.session.commit()
 
     def notify(self):
         recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team)
@@ -447,7 +454,7 @@ class TournamentState(db.Model):
 
     def get_raffle_config(self):
         rc = json.loads(self.raffle_config)
-        for k,v in rc.items():
+        for k, v in rc.items():
             try:
                 rc[k] = int(v)
             except ValueError:

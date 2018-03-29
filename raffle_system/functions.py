@@ -130,7 +130,8 @@ class RaffleSystem:
 
     def get_stats(self, status):
         stats = {lvl: {cat: {LEAD: 0, FOLLOW: 0, DIFF: 0} for cat in ALL_COMPETITIONS} for lvl in PARTICIPATING_LEVELS}
-        stats = self.update_stats(stats, self.confirmed_dancers)
+        if status == CONFIRMED:
+            stats = self.update_stats(stats, self.confirmed_dancers)
         if status == SELECTED:
             stats = self.update_stats(stats, self.selected_dancers)
         if status == REGISTERED:
