@@ -11,12 +11,20 @@
     <style>
         body { padding-top: 60px;}
         .navbar-default{background-color:#f8f8f8;}
+        @media (min-width:1440px){.container{width:1410px}}
+        .pagebreak { page-break-before: always; }
+        .print-friendly { page-break-inside:avoid; page-break-after:auto }
+        tr    { page-break-inside:avoid; page-break-after:auto }
+        td    { page-break-inside:avoid; page-break-after:auto }
+        thead { display:table-header-group }
+        tfoot { display:table-footer-group }
+        @media print {.no-print, .no-print * {display: none !important; } }
     </style>
 {% endblock %}
 
 
 {% block navbar %}
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top no-print">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -34,9 +42,9 @@
                     <li><a href="{{ url_for('main.todo') }}">Messages <span class="badge">42</span></a></li>
                 </ul>
             {% endif %}
-            {% if current_user.is_anonymous %}
-                {% if login_form %}
-                    <div class="nav navbar-nav navbar-right">
+            <div class="nav navbar-nav navbar-right" style="margin-right:0px">
+                {% if current_user.is_anonymous %}
+                    {% if login_form %}
                         <form class="navbar-form navbar-right" method="POST" enctype="multipart/form-data">
                             {{ login_form.hidden_tag() }}
                             {{ login_form.csrf_token }}
@@ -45,14 +53,12 @@
                             {{ login_form.submit(class_='btn btn-default') }}
                             <small><a href="{{url_for('auth.reset_password_request')}}" >Forgot password?</a></small>
                         </form>
-                    </div>
-                {% endif %}
-            {% else %}
-                <div class="nav navbar-nav navbar-right">
+                    {% endif %}
+                {% else %}
                     <p class="navbar-text">Welcome, {{ current_user.username }}!</p>
                     <a href="{{ url_for('main.logout') }}" class="btn btn-default navbar-btn">Logout</a>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
 </nav>
@@ -80,11 +86,11 @@
         {% block app_content %}
         {% endblock %}
     </div>
-    <nav class="navbar-default" style="padding-top:60px;">
-        <div class="container">
-            <p class="navbar-text">Place sticky footer content here.</p>
-        </div>
-    </nav>
+    <!--<nav class="navbar-defaul navbar-fixed-bottom" style="padding-top:60px;">-->
+        <!--<div class="container">-->
+            <!--<p class="navbar-text">Place sticky footer content here.</p>-->
+        <!--</div>-->
+    <!--</nav>-->
 {% endblock %}
 
 {% block scripts %}

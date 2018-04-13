@@ -2,45 +2,51 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block body_attribs %}
-    onload="onStart()"
+onload="onStart()"
 {% endblock %}
 
 {% block app_content %}
-    <div class="row" style="visibility:hidden">
-        {% if current_user.is_admin() %}
-            {% with url='admin.index', title='Admin Page', text='Gives direct access to the database.', image='admin.png' %}
-                {% include '_item.html' %}
-            {% endwith %}
-        {% endif %}
-        {% if current_user.is_tc() %}
-            {% with url='main.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
-                {% include '_item.html' %}
-            {% endwith %}
-            {% with url='main.todo', title='Edit Dancers', text='Edit information of registered dancers.', image='edit_contestant.png' %}
-                {% include '_item.html' %}
-            {% endwith %}
-            {% with url='main.todo', title='Raffle results', text='Here you can manage the dancers after the raffle has taken place.', image='raffle_results.png' %}
-                {% include '_item.html' %}
-            {% endwith %}
-        {% endif %}
-        {% if current_user.is_tc() or current_user.is_treasurer() %}
-            {% with url='main.todo', title='Finances', text='Here you can manage payment data of the dancers that have been selected for the tournament.', image='finances.png' %}
-                {% include '_item.html' %}
-            {% endwith %}
-        {% endif %}
-    </div>
+<div class="row" style="visibility:hidden">
+{% if current_user.is_admin() %}
+    {% with url='admin.index', title='Admin Page', text='Gives direct access to the database.', image='admin.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+{% endif %}
+{% if current_user.is_tc() %}
+    {% with url='main.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with url='main.edit_dancers', title='Edit Dancers', text='Edit information of registered dancers.', image='edit_contestant.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with url='main.set_teamcaptains', title='Set team captain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with url='main.couples_list', title='Couples lists', text='List of all registered couples, and a list of blind daters for the tournament.', image='edit_contestant.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with url='main.todo', title='Raffle results', text='Manage the dancers after the raffle has taken place.', image='raffle_results.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+{% endif %}
+{% if current_user.is_tc() or current_user.is_treasurer() %}
+    {% with url='main.edit_finances', title='Finances', text='Manage payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+{% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }}
-    <script>
-        function onStart() {
-            var maxHeight = 0;
-            $(".thumbnail").each(function(){
-               if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
-            });
-            $(".thumbnail").height(maxHeight);
-            $(".row").css('visibility', 'visible');
-        }
-    </script>
+{{ super() }}
+<script>
+    function onStart() {
+        var maxHeight = 0;
+        $(".thumbnail").each(function(){
+           if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
+        });
+        $(".thumbnail").height(maxHeight);
+        $(".row").css('visibility', 'visible');
+    }
+</script>
 {% endblock %}

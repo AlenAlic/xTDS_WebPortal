@@ -6,20 +6,15 @@ onload="onStart()"
 {% endblock %}
 
 {% block app_content %}
-<h2>Register dancer</h2>
+<h2>Edit dancer information</h2>
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <h3>Personal Info</h3>
-    {{ my_wtf.form_field(form.number) }}
-    {{ my_wtf.form_field(form.first_name, placeholder='First name') }}
-    {{ my_wtf.form_field(form.prefixes, placeholder='Prefixes') }}
-    {{ my_wtf.form_field(form.last_name, placeholder='Last name') }}
+    {{ my_wtf.form_field(form.full_name, placeholder='Full name') }}
     {{ my_wtf.form_field(form.email, placeholder='E-mail address') }}
     {{ my_wtf.form_field(form.student) }}
-    {{ my_wtf.form_field(form.first_time) }}
     {{ my_wtf.form_field(form.diet_allergies, placeholder='Please fill in any special dietary requirements and/or allergies.') }}
-    {{ my_wtf.form_field(form.team) }}
     <h3>Ballroom</h3>
     {{ my_wtf.form_field(form.ballroom_level, onchange="dropDownGreyOut('ballroom', id)") }}
     <div id="ballroom">

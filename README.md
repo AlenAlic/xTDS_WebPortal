@@ -4,59 +4,64 @@ A web portal for registration and selection for the NTDS.
 Based on Flask and Python
 
 
-
-## Geplande paginas
-- Publiekelijk
+## Planned pages
+- Publicly available
   - [x] Home
-  - [x] Login rechts bovenin
-  - [x] Algemene info die volledig publiekelijk toegankelijk is
+  - [x] Login
+  - [x] General information on main site
   - [x] Password reset
 
 
-- Ingelogd - Algemeen
-  - [x] Profielpagina waarop wachtwoord te veranderen is
+- Logged in - General
+  - [x] Profile page
+    - [x] Change password
 
 
-- Ingelogd - Teamcaptains
-  - [x] Welkom
-  - [ ] Actuele info (communicatie van organisatie naar teamcaptains EN van admins naar rest)
-  - [x] Kan penningmeester activeren in profielpagina
-  - [ ] Registratieperiode
-    - [x] Dansers inschrijven
-    - [ ] Gegevens dansers aanpassen (Naam aanpassen is op verzoek)
-  - [ ] Lotingsperiode
-    - [ ] Overzicht danser (ingeloot [+ status], wachtlijst en uitgeschreven). Hier zit ook verzoek tot uitschrijven, status aanpassingen e.d. bij.
-    - [ ] Betalingen overzicht (wel/niet betaald, + totaalbedrag)
+- Logged in - Teamcaptains
+  - [x] Dashboard
+  - [ ] Messages (Messages from organisation and admin)
+  - [x] Enable treasurer in profile page
+  - [ ] Registration period
+    - [x] Register dancers
+    - [x] Change dancer data (except name)
+      - [ ] Name change can be requested
+      - [ ] Cancel registration/Re-register
+    - [x] Overview of couples
+    - [x] Select who is the teamcaptain
+  - [ ] Raffle period
+    - [ ] Overview of dancers with their status
+      - [ ] Request for selected and confirmed dancers to de-register
+    - [x] Finances overview
 
 
-- Ingelogd - Penningmeester
-  - [x] Welkom
-  - [ ] Actuele info (communicatie van organisatie naar teamcaptains EN van admins naar rest)
-  - [ ] Betalingen, zie Teamcaptains
+- Logged in - Treasurer
+  - [x] Dashboard
+  - [ ] Messages (Messages from organisation and admin)
+  - [x] Finances overview (see Logged in - Teamcaptains)
 
 
-- Ingelogd - Organisatie
-  - [x] Welkom
-  - [ ] Actuele info (communicatie van organisatie naar teamcaptains EN van admins naar orga)
-  - [ ] Orga moet berichten kunnen sturen
-  - [ ] Links naar andere pagina’s (per team en totaal)
-  - [ ] Registratie
-  - [ ] Overzicht dansers(editable gegevens zoals “heeft betaald” of danst toch met …). Hier zitten ook verzoek tot uitschrijven e.d.
-  - [ ] Betalingen
-  - [ ] Lotingspagina’s
-    - [ ] Huidige statistieken
-    - [ ] Verzoeken tot uitschrijving
-    - [ ] Verzoeken tot naamswijziging (imv fraude)
-    - [ ] Loting updaten (nieuwe mensen inloten e.d.)
-    - [ ] Export to BAD pagina
-
-- Ingelogd - Support/blind date bitch
-  - [ ] Registratiepagina voor blind date koppels
-  - [ ] Overzicht van beschikbare blind daters (naam, team, id, categorie) - heeft extra wachtwoord nodig
+- Logged in - Organisation
+  - [x] Dashboard
+  - [ ] Messages (Messages from admin)
+  - [ ] Send messages to teamcaptains (and admin?)
+  - [ ] Registration overview (total and per team)
+    - [ ] Name change requests
+  - [ ] Payments overview (per team and total)
+  - [ ] Raffle pages
+    - [ ] Raffle system
+      - [ ] Export to BAD
+    - [ ] Statistics
+    - [ ] Requests for cancellations
 
 
-## Algemene Features
-Notifications voor aparte users genereren
- - Dismiss
- - Goto
- - Oude notifications zijn gearchiveerd en altijd terug te kijken
+- Logged in - Blind date support
+  - [x] Dashboard
+  - [ ] Registration page for blind date couples
+  - [ ] Overview of available blind daters (name, team, id, per category) - Requires an extra password
+
+
+## General features
+Messagin system for users
+  - Send to specific (group of) users
+  - Read/Unread status
+  - Archive
