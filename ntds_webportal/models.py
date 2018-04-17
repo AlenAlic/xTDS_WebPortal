@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from time import time
 import jwt
+import ntds_webportal.data as data
 
 
 @login.user_loader
@@ -11,25 +12,16 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-ACCESS = {
-    'admin': 0,
-    'organizer': 1,
-    'team_captain': 2,
-    'treasurer': 3,
-    'blind_date_organizer': 4
-}
-
-
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
+    username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128), index=True)
-    access = db.Column(db.Integer, index=True)
-    is_active = db.Column(db.Boolean, index=True, default=False)
-    team = db.relationship('Team')
+    access = db.Column(db.Integer, index=True, nullable=False)
+    is_active = db.Column(db.Boolean, index=True, nullable=False, default=False)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
+    team = db.relationship('Team')
 
     def __repr__(self):
         return '{}'.format(self.username)
@@ -38,19 +30,19 @@ class User(UserMixin, db.Model):
         return self.user_id
 
     def is_admin(self):
-        return self.access == ACCESS['admin']
+        return self.access == data.ACCESS['admin']
 
     def is_organizer(self):
-        return self.access == ACCESS['organizer']
+        return self.access == data.ACCESS['organizer']
 
     def is_tc(self):
-        return self.access == ACCESS['team_captain']
+        return self.access == data.ACCESS['team_captain']
 
     def is_treasurer(self):
-        return self.access == ACCESS['treasurer']
+        return self.access == data.ACCESS['treasurer']
 
     def is_bdo(self):
-        return self.access == ACCESS['treasurer']
+        return self.access == data.ACCESS['blind_date_organizer']
 
     def allowed(self, access_level):
         return self.access <= access_level
@@ -77,13 +69,135 @@ class User(UserMixin, db.Model):
 class Team(db.Model):
     __tablename__ = 'teams'
     team_id = db.Column(db.Integer, primary_key=True)
-    city = db.Column(db.String(128))
-    name = db.Column(db.String(128))
+    city = db.Column(db.String(128), nullable=False)
+    name = db.Column(db.String(128), nullable=False, unique=True)
 
     def __repr__(self):
-        return '{}'.format(self.city)
+        return '{}'.format(self.name)
 
 
 class Contestant(db.Model):
     __tablename__ = 'contestants'
     contestant_id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(128), nullable=False)
+    prefixes = db.Column(db.String(128), nullable=True)
+    last_name = db.Column(db.String(128), nullable=False)
+    email = db.Column(db.String(128), nullable=False, unique=True)
+    contestant_info = db.relationship('ContestantInfo', back_populates='contestant', cascade='all, delete-orphan')
+    dancing_info = db.relationship('DancingInfo', back_populates='contestant', cascade='all, delete-orphan')
+    volunteer_info = db.relationship('VolunteerInfo', back_populates='contestant', cascade='all, delete-orphan')
+    additional_info = db.relationship('AdditionalInfo', back_populates='contestant', cascade='all, delete-orphan')
+    status_info = db.relationship('StatusInfo', back_populates='contestant', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return '{id} - {name}'.format(id=self.contestant_id, name=self.get_full_name())
+
+    def get_full_name(self):
+        if self.prefixes is None or self.prefixes == '':
+            return ' '.join((self.first_name, self.last_name))
+        else:
+            return ' '.join((self.first_name, self.prefixes, self.last_name))
+
+    def capitalize_name(self):
+        self.first_name.title()
+        self.last_name.title()
+
+
+class ContestantInfo(db.Model):
+    __tablename__ = 'contestant_info'
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
+    contestant = db.relationship('Contestant', back_populates='contestant_info')
+    number = db.Column(db.Integer, nullable=False)
+    team_captain = db.Column(db.Boolean, nullable=False, default=False)
+    student = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    diet_allergies = db.Column('Diet/Allergies', db.String(512), nullable=True, default=None)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=False)
+    team = db.relationship('Team')
+
+    def __repr__(self):
+        return '{id}: {name}'.format(id=self.number, name=self.contestant)
+
+    def set_teamcaptain(self):
+        current_tc = db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team_captain == True).first()
+        if current_tc is not None:
+            current_tc.contestant_info[0].team_captain = False
+        self.team_captain = True
+        db.session.commit()
+
+
+class DancingInfo(db.Model):
+    __tablename__ = 'dancing_info'
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
+    contestant = db.relationship('Contestant', back_populates='dancing_info', foreign_keys=contestant_id)
+    ballroom_level = db.Column(db.String(128), nullable=False)
+    ballroom_role = db.Column(db.String(128), nullable=False)
+    ballroom_blind_date = db.Column(db.Boolean, nullable=False, default=False)
+    ballroom_partner = db.Column(db.Integer, nullable=True, default=None)
+    latin_level = db.Column(db.String(128), nullable=False)
+    latin_role = db.Column(db.String(128), nullable=False)
+    latin_blind_date = db.Column(db.Boolean, nullable=False, default=False)
+    latin_partner = db.Column(db.Integer, nullable=True, default=None)
+
+    def __repr__(self):
+        return '{name}'.format(name=self.contestant)
+
+    def not_dancing_ballroom(self):
+        self.ballroom_level = data.NO
+        self.ballroom_role = data.NO
+        self.ballroom_blind_date = False
+        self.ballroom_partner = None
+
+    def not_dancing_latin(self):
+        self.latin_level = data.NO
+        self.latin_role = data.NO
+        self.latin_blind_date = False
+        self.latin_partner = None
+
+
+class VolunteerInfo(db.Model):
+    __tablename__ = 'volunteer_info'
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
+    contestant = db.relationship('Contestant', back_populates='volunteer_info')
+    volunteer = db.Column(db.String(16), nullable=False)
+    first_aid = db.Column(db.String(16), nullable=False)
+    jury_ballroom = db.Column(db.String(16), nullable=False)
+    jury_latin = db.Column(db.String(16), nullable=False)
+
+    def __repr__(self):
+        return '{name}'.format(name=self.contestant)
+
+    def not_volunteering(self):
+        self.volunteer = data.NO
+        self.first_aid = data.NO
+        self.jury_ballroom = data.NO
+        self.jury_latin = data.NO
+
+
+class AdditionalInfo(db.Model):
+    __tablename__ = 'additional_info'
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
+    contestant = db.relationship('Contestant', back_populates='additional_info')
+    sleeping_arrangements = db.Column(db.Boolean, nullable=False)
+    t_shirt = db.Column(db.String(128), nullable=False)
+
+    def __repr__(self):
+        return '{name}'.format(name=self.contestant)
+
+
+class StatusInfo(db.Model):
+    __tablename__ = 'status_info'
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
+    contestant = db.relationship('Contestant', back_populates='status_info')
+    status = db.Column(db.String(16), index=True, default=data.REGISTERED)
+    first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    # name_change_request = db.Column(db.String(384), nullable=True, default=None)
+
+    def __repr__(self):
+        return '{name}'.format(name=self.contestant)
+
+    def set_status(self, status):
+        self.status = status
+        if status == data.CONFIRMED:
+            self.payment_required = True

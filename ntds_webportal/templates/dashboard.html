@@ -1,12 +1,57 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
 {% block app_content %}
-    <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-            {% if current_user.allowed(0) %}
-                {% include '_admin.html' %}
-            {% endif %}
-        </div>
-    </div>
+<div class="row" style="visibility:hidden">
+    {% if current_user.is_admin() %}
+        {% with url='admin.index', title='Admin Page', text='Gives direct access to the database.', image='admin.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+    {% endif %}
+    {% if current_user.is_organizer() %}
+        {% with url='organizer.registration_overview', title='Registrered dancers', text='List of all registered dancers', image='dummy.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+    {% endif %}
+    {% if current_user.is_tc() %}
+        {% with url='teamcaptains.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with url='teamcaptains.edit_dancers', title='Edit Dancers', text='Edit information of registered dancers.', image='edit_contestant.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with url='teamcaptains.set_teamcaptains', title='Set team captain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with url='teamcaptains.couples_list', title='Couples lists', text='List of all registered couples, and a list of blind daters for the tournament.', image='dummy.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with url='main.todo', title='Raffle results', text='Manage the dancers after the raffle has taken place.', image='raffle_results.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+    {% endif %}
+    {% if current_user.is_tc() or current_user.is_treasurer() %}
+        {% with url='teamcaptains.edit_finances', title='Finances', text='Manage payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function onStart() {
+    var maxHeight = 0;
+    $(".thumbnail").each(function(){
+       if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
+    });
+    $(".thumbnail").height(maxHeight);
+    $(".row").css('visibility', 'visible');
+}
+</script>
 {% endblock %}

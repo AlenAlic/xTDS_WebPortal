@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block app_content %}
+<h2>Edit dancer information</h2>
+
+<form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <h3>Personal Info</h3>
+    {{ my_wtf.form_field(form.full_name, placeholder='Full name') }}
+    {{ my_wtf.form_field(form.email, placeholder='E-mail address') }}
+    {{ my_wtf.form_field(form.student) }}
+    {{ my_wtf.form_field(form.diet_allergies, placeholder='Please fill in any special dietary requirements and/or allergies.') }}
+    <h3>Ballroom</h3>
+    {{ my_wtf.form_field(form.ballroom_level, onchange="dropDownGreyOut('ballroom', id)") }}
+    <div id="ballroom">
+        {{ my_wtf.form_field(form.ballroom_role) }}
+        <div id="ballroom_bd" onclick="blindDateGreyOut('ballroom_p', 'ballroom_blind_date')">
+            {{ my_wtf.form_field(form.ballroom_blind_date) }}
+        </div>
+        <div id="ballroom_p">
+            {{ my_wtf.form_field(form.ballroom_partner) }}
+        </div>
+    </div>
+    <h3>Latin</h3>
+    {{ my_wtf.form_field(form.latin_level, onchange="dropDownGreyOut('latin', id)") }}
+    <div id="latin">
+        {{ my_wtf.form_field(form.latin_role) }}
+        <div id="latin_bd" onclick="blindDateGreyOut('latin_p', 'latin_blind_date')">
+            {{ my_wtf.form_field(form.latin_blind_date) }}
+        </div>
+        <div id="latin_p">
+            {{ my_wtf.form_field(form.latin_partner) }}
+        </div>
+    </div>
+    <h3>Volunteering</h3>
+    {{ my_wtf.form_field(form.volunteer, onchange="dropDownGreyOut('volunteering', id)") }}
+    <div id="volunteering">
+    {{ my_wtf.form_field(form.first_aid) }}
+    {{ my_wtf.form_field(form.jury_ballroom) }}
+    {{ my_wtf.form_field(form.jury_latin) }}
+    </div>
+    <h3>Additional info</h3>
+    {{ my_wtf.form_field(form.sleeping_arrangements) }}
+    {{ my_wtf.form_field(form.t_shirt) }}
+    {{ my_wtf.form_field(form.submit) }}
+</form>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    function onStart() {
+        document.getElementById('ballroom_level').onchange();
+        document.getElementById('latin_level').onchange();
+        document.getElementById('volunteer').onchange();
+    }
+    function dropDownGreyOut(parent_id, id) {
+        var ddl = document.getElementById(id);
+        var parentDiv = document.getElementById(parent_id);
+        selectedValue = ddl.options[ddl.selectedIndex].value;
+        if (selectedValue == "no") {
+            $(parentDiv).find('*').attr('disabled', true);
+        } else {
+            $(parentDiv).find('*').attr('disabled', false);
+            blindDateGreyOut('ballroom_p', 'ballroom_blind_date')
+            blindDateGreyOut('latin_p', 'latin_blind_date')
+        }
+    }
+    function blindDateGreyOut(partner_id, check_id) {
+        var bdcb = document.getElementById(check_id);
+        var checkDiv = document.getElementById(partner_id);
+        var selectedValue = bdcb.checked;
+        if (selectedValue == true || bdcb.disabled == true) {
+            $(checkDiv).find('*').attr('disabled', true);
+        } else {
+            $(checkDiv).find('*').attr('disabled', false);
+        }
+    }
+</script>
+{% endblock %}
