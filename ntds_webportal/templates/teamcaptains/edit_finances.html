@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block body_attribs %}
+{% endblock %}
+
+{% block app_content %}
+<div class="row">
+    <h3>Summary</h3>
+</div>
+<table class="table" style="width:55%">
+    <colgroup>
+        <col span="1" style="width: 40%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 45%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th><b>Units</b></th>
+            <th style="text-align:right"><b>Numbers</b></th>
+            <th style="text-align:right"><b>Price</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Students:</td>
+            <td style="text-align:right">{{finances['number_of_students']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_students'])}}</td>
+        </tr>
+        <tr>
+            <td>Non-students:</td>
+            <td style="text-align:right">{{finances['number_of_non_students']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_non_students'])}}</td>
+        </tr>
+        <tr>
+            <td>T-shirts:</td>
+            <td style="text-align:right">{{finances['t-shirts']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_t-shirts'])}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td style="text-align:right">{{data.euros(finances['price_total'])}}</td>
+        </tr>
+    </tbody>
+</table>
+<form method="POST" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
+
+    {% with status='Confirmed', dancers=confirmed_dancers %}
+        {% include 'teamcaptains/_finances_list.html' %}
+    {% endwith %}
+
+    {% with status='Cancelled', dancers=cancelled_dancers %}
+        {% include 'teamcaptains/_finances_list.html' %}
+    {% endwith %}
+
+</form>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(document).ready(function($) {
+        $(".checkbox").change(function() {
+            $(this).parents("tr:first").toggleClass('info ');
+        });
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block body_attribs %}
+{% endblock %}
+
+{% block app_content %}
+<ul class="nav nav-tabs" id=myTabs role=tablist>
+	<li role=presentation class=active>
+		<a href=#all_teams id=all_teams-tab role=tab data-toggle=tab aria-controls=all_teams aria-expanded=true>All teams <span class="badge">{{all_dancers|length}}</span></a>
+	</li>
+    {% with teams=dutch_dancers, dropdown_title='Dutch teams', dropdown_name='dutch' %}
+        {% include 'organizer/_teams_dropdown_menu.html' %}
+    {% endwith %}
+    {% with teams=german_dancers, dropdown_title='German teams', dropdown_name='german' %}
+        {% include 'organizer/_teams_dropdown_menu.html' %}
+    {% endwith %}
+    {% with teams=other_dancers, dropdown_title='Other teams', dropdown_name='other' %}
+        {% include 'organizer/_teams_dropdown_menu.html' %}
+    {% endwith %}
+</ul>
+<div class=tab-content id=myTabContent>
+	<div class="tab-pane fade in active" role=tabpanel id=all_teams aria-labelledby=all_teams-tab>
+        {% if all_dancers|length > 0 %}
+            {% with dancers=all_dancers %}
+                {% include 'organizer/_all_teams_overview.html' %}
+            {% endwith %}
+        {% else %}
+            <h2>There are no registered dancers.</h2>
+        {% endif %}
+	</div>
+    {% with teams=dutch_dancers %}
+        {% include 'organizer/_teams_dropdown_table.html' %}
+    {% endwith %}
+    {% with teams=german_dancers %}
+        {% include 'organizer/_teams_dropdown_table.html' %}
+    {% endwith %}
+    {% with teams=other_dancers %}
+        {% include 'organizer/_teams_dropdown_table.html' %}
+    {% endwith %}
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+    </script>
+{% endblock %}
