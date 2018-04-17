@@ -80,6 +80,9 @@ def create_app():
     from ntds_webportal.organizer import bp as organizer_bp
     app.register_blueprint(organizer_bp, url_prefix='/organizer')
 
+    from ntds_webportal.notifications import bp as notifications_bp
+    app.register_blueprint(notifications_bp, url_prefix='/notifications')
+
     return app
 
 
