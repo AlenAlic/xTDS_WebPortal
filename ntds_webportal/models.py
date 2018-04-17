@@ -118,7 +118,8 @@ class ContestantInfo(db.Model):
         return '{id}: {name}'.format(id=self.number, name=self.contestant)
 
     def set_teamcaptain(self):
-        current_tc = db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team_captain == True).first()
+        current_tc = db.session.query(Contestant).join(ContestantInfo).filter(
+            ContestantInfo.team_captain == True).first()
         if current_tc is not None:
             current_tc.contestant_info[0].team_captain = False
         self.team_captain = True
@@ -192,6 +193,7 @@ class StatusInfo(db.Model):
     first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+
     # name_change_request = db.Column(db.String(384), nullable=True, default=None)
 
     def __repr__(self):
@@ -202,6 +204,7 @@ class StatusInfo(db.Model):
         if status == data.CONFIRMED:
             self.payment_required = True
 
+
 class Notification(db.Model):
     __tablename__ = 'notifications'
     notification_id = db.Column(db.Integer, primary_key=True)
@@ -210,3 +213,7 @@ class Notification(db.Model):
     archived = db.Column(db.Boolean, index=True, default=False)
     title = db.Column(db.String(128))
     text = db.Column(db.Text())
+    user = db.relationship('User')
+
+    def __repr__(self):
+        return 'message to: {} \ntitle: {} \n {}'.format(self.user.username, self.title, self.text)

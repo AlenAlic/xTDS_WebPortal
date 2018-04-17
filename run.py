@@ -2,14 +2,14 @@ from ntds_webportal import create_app, db
 from sqlalchemy_utils import database_exists, create_database
 import sqlalchemy as alchemy
 from instance.populate import populate_db
-from ntds_webportal.models import User
+from ntds_webportal.models import User, Notification
 
 app = create_app()
 
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'populate': populate(), 'User': User}
+    return {'db': db, 'populate': populate(), 'User': User, 'Notification':Notification}
 
 
 def database_is_empty():
