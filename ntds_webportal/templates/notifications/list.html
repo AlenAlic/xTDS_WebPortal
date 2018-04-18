@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Current messages </h1>
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    {% for notification in notifications %}
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+              {% if notification.unread %}<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {% endif %}{{notification.title}}
+            </a>
+          </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+          {{notification.text}}
+              <hr>
+              {% if notification.archived %}
+                <button type="button" class="btn btn-default">Unarchive</button>
+              {% else %}
+                <button type="button" class="btn btn-default">Archive</button>
+              {% endif%}
+              {% if notification.unread %}
+                <button type="button" class="btn btn-default">Mark as read</button>
+              {% else %}
+                <button type="button" class="btn btn-default">Mark as unread</button>
+              {% endif%}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}
