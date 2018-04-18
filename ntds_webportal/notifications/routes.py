@@ -10,12 +10,13 @@ from ntds_webportal.models import Notification
 def list():
     show_archived = request.args.get('show_archived', False, type=bool)
     if show_archived:
-        notifications = Notification.query.filter_by(user=current_user) \
-            .order_by(Notification.unread.desc()).all()
+        notifications_query = Notification.query.filter_by(user=current_user)
     else:
-        notifications = Notification.query.filter_by(user=current_user, archived=False) \
-            .order_by(Notification.unread.desc()).all()
-    return render_template('notifications/list.html', title="Notifications", notifications=notifications, show_archived=show_archived)
+        notifications_query = Notification.query.filter_by(user=current_user, archived=False)
+    notifications = notifications_query.order_by(Notification.notification_id.desc())\
+                                       .order_by(Notification.unread.desc()).all()
+    return render_template('notifications/list.html', title="Notifications", notifications=notifications,
+                           show_archived=show_archived)
 
 
 @bp.route('/read/<notification>', methods=['GET'])
@@ -66,6 +67,19 @@ def unarchive(notification):
         n.archived = False
         db.session.commit()
         return redirect(url_for('notifications.list'))
+    else:
+        flash('Notification not found or inaccessible!'.format(notification))
+        return redirect(url_for('notifications.list'))
+
+
+@bp.route('/goto/<notification>', methods=['GET'])
+@login_required
+def goto(notification):
+    n = Notification.query.filter_by(notification_id=notification).first()
+    if n:
+        n.unread = False
+        db.session.commit()
+        return redirect(n.destination)
     else:
         flash('Notification not found or inaccessible!'.format(notification))
         return redirect(url_for('notifications.list'))

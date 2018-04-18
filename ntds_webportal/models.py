@@ -216,7 +216,8 @@ class Notification(db.Model):
     archived = db.Column(db.Boolean, index=True, default=False)
     title = db.Column(db.String(128))
     text = db.Column(db.Text())
+    destination = db.Column(db.String(256))
     user = db.relationship('User', backref=db.backref('notifications', lazy=True))
 
     def __repr__(self):
-        return 'message to: {} \ntitle: {} \n {}'.format(self.user.username, self.title, self.text)
+        return 'message to: {} \ntitle: {} \nlink: {}\n'.format(self.user.username, self.title, self.destination, self.text)
