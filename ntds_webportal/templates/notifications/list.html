@@ -3,13 +3,27 @@
 
 {% block app_content %}
     <h1>Current messages </h1>
+    <div>
+    {% if show_archived %}
+    <a href="{{url_for('notifications.list')}}">
+        <button type="button" class="btn btn-default">Hide archived</button>
+    </a>
+    {% else %}
+    <a href="{{url_for('notifications.list',show_archived=1)}}">
+        <button type="button" class="btn btn-default">Show archived</button>
+    </a>
+    {% endif %}
+    </div>
+    <br>
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     {% for notification in notifications %}
       <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="headingOne">
           <h4 class="panel-title">
             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-              {% if notification.unread %}<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {% endif %}{{notification.title}}
+                {% if notification.archived %}<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> {% endif %}
+                {% if notification.unread %}<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {% endif %}
+                {{notification.title}}
             </a>
           </h4>
         </div>
@@ -18,14 +32,22 @@
           {{notification.text}}
               <hr>
               {% if notification.archived %}
-                <button type="button" class="btn btn-default">Unarchive</button>
+               <a href="{{url_for('notifications.unarchive',notification=notification.notification_id)}}">
+                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-open" aria-hidden="true"> </span> Unarchive</button>
+               </a>
               {% else %}
-                <button type="button" class="btn btn-default">Archive</button>
+               <a href="{{url_for('notifications.archive',notification=notification.notification_id)}}">
+                   <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"> </span>Archive</button>
+               </a>
               {% endif%}
               {% if notification.unread %}
-                <button type="button" class="btn btn-default">Mark as read</button>
+              <a href="{{url_for('notifications.read',notification=notification.notification_id)}}">
+                  <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"> </span>Mark as read</button>
+              </a>
               {% else %}
-                <button type="button" class="btn btn-default">Mark as unread</button>
+              <a href="{{url_for('notifications.unread',notification=notification.notification_id)}}">
+                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> </span>Mark as unread</button>
+              </a>
               {% endif%}
           </div>
         </div>
