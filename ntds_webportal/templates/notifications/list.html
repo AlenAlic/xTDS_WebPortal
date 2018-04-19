@@ -2,8 +2,8 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h2>Current messages </h2>
-    <div>
+<h2>Current messages </h2>
+<div>
     {% if show_archived %}
     <a href="{{url_for('notifications.list')}}">
         <button type="button" class="btn btn-default navbar-btn">Hide archived</button>
@@ -13,51 +13,66 @@
         <button type="button" class="btn btn-default navbar-btn">Show archived</button>
     </a>
     {% endif %}
-    </div>
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+</div>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     {% for notification in notifications %}
-      <div class="panel panel-default">
+    <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="heading{{notification.notification_id}}">
-          <h4 class="panel-title">
-            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{notification.notification_id}}" aria-expanded="false" aria-controls="collapseOne">
-                {% if notification.archived %}<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> {% endif %}
-                {% if notification.unread %}<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {% endif %}
-                {{notification.title}}
-            </a>
-          </h4>
+            <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion"
+                   href="#collapse{{notification.notification_id}}" aria-expanded="false" aria-controls="collapseOne">
+                    {% if notification.archived %}<span class="glyphicon glyphicon-floppy-disk"
+                                                        aria-hidden="true"></span> {% endif %}
+                    {% if notification.unread %}<span class="glyphicon glyphicon-exclamation-sign"
+                                                      aria-hidden="true"></span> {% endif %}
+                    {{notification.title}}
+                </a>
+            </h4>
         </div>
-        <div id="collapse{{notification.notification_id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{notification.notification_id}}">
-          <div class="panel-body">
-          {{notification.text}}
-              <hr>
-              {% if notification.archived %}
-               <a href="{{url_for('notifications.unarchive',notification=notification.notification_id)}}">
-                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-open" aria-hidden="true"> </span> Unarchive</button>
-               </a>
-              {% else %}
-               <a href="{{url_for('notifications.archive',notification=notification.notification_id)}}">
-                   <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"> </span>Archive</button>
-               </a>
-              {% endif%}
-              {% if notification.unread %}
-              <a href="{{url_for('notifications.read',notification=notification.notification_id)}}">
-                  <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"> </span>Mark as read</button>
-              </a>
-              {% else %}
-              <a href="{{url_for('notifications.unread',notification=notification.notification_id)}}">
-                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> </span>Mark as unread</button>
-              </a>
-              {% endif%}
-              <span></span>
-              {% if notification.destination %}
-              <a style="float: right" href="{{url_for('notifications.goto',notification=notification.notification_id)}}">
-                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span>Goto</button>
-              </a>
-              {% endif %}
-          </div>
+        <div id="collapse{{notification.notification_id}}" class="panel-collapse collapse" role="tabpanel"
+             aria-labelledby="heading{{notification.notification_id}}">
+            <div class="panel-body">
+                {{notification.text}}
+                <hr>
+                {% if notification.archived %}
+                <a href="{{url_for('notifications.unarchive',notification=notification.notification_id)}}">
+                    <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-open"
+                                                                        aria-hidden="true"> </span> Unarchive
+                    </button>
+                </a>
+                {% else %}
+                <a href="{{url_for('notifications.archive',notification=notification.notification_id)}}">
+                    <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save"
+                                                                        aria-hidden="true"> </span>Archive
+                    </button>
+                </a>
+                {% endif%}
+                {% if notification.unread %}
+                <a href="{{url_for('notifications.read',notification=notification.notification_id)}}">
+                    <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-open"
+                                                                        aria-hidden="true"> </span>Mark as read
+                    </button>
+                </a>
+                {% else %}
+                <a href="{{url_for('notifications.unread',notification=notification.notification_id)}}">
+                    <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-envelope"
+                                                                        aria-hidden="true"> </span>Mark as unread
+                    </button>
+                </a>
+                {% endif%}
+                <span></span>
+                {% if notification.destination %}
+                <a style="float: right"
+                   href="{{url_for('notifications.goto',notification=notification.notification_id)}}">
+                    <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"
+                                                                        aria-hidden="true"> </span>Goto
+                    </button>
+                </a>
+                {% endif %}
+            </div>
         </div>
-      </div>
-    {% endfor %}
     </div>
+    {% endfor %}
+</div>
 
 {% endblock %}
