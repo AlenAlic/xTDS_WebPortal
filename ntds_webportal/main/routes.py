@@ -3,7 +3,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from ntds_webportal import db
 from ntds_webportal.main import bp
 from ntds_webportal.models import User
-from ntds_webportal.auth.forms import LoginForm, ChangePasswordForm, TreasurerForm
+from ntds_webportal.auth.forms import LoginForm, ChangePasswordForm
 
 
 @bp.route('/', methods=['GET', 'POST'])

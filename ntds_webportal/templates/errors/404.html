@@ -1,8 +1,6 @@
-{% extends 'bootstrap/base.html' %}
+{% extends "base.html" %}
 
-{% block content %}
-    <div class="container">
-        <h1>Page does not exist.</h1>
-        <p>Click <a href="{{ url_for('main.index') }}">here</a> to go to the main page</p>
-    </div>
+{% block app_content %}
+<h1>Page does not exist.</h1>
+<p>Click <a href="{{ url_for('main.index') }}">here</a> to go to the main page</p>
 {% endblock %}

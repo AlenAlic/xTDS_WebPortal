@@ -1,3 +1,4 @@
+# noinspection PyProtectedMember
 from wtforms.validators import ValidationError
 from ntds_webportal.data import LEAD, FOLLOW
 from ntds_webportal import db
@@ -28,17 +29,17 @@ class Role(object):
     """
     Compares the values of two fields.
 
-    :param fieldname:
+    :param field_name:
         The name of the other field to compare to.
     """
-    def __init__(self, fieldname):
-        self.fieldname = fieldname
+    def __init__(self, field_name):
+        self.field_name = field_name
 
     def __call__(self, form, field):
         try:
-            other = form[self.fieldname]
+            other = form[self.field_name]
         except KeyError:
-            raise ValidationError(field.gettext("Invalid field name '%s'.") % self.fieldname)
+            raise ValidationError(field.gettext("Invalid field name '%s'.") % self.field_name)
         if field.data == 'None' and other.data == 'choose':
             raise ValidationError(
                 field.gettext('Please select a role or indicate that you are not dancing for this category.'))

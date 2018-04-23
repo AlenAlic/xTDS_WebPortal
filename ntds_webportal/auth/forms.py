@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo
 
 
@@ -33,4 +33,4 @@ class ChangePasswordForm(FlaskForm):
 class TreasurerForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     message = StringField('Personal Message')
-    tr_submit = SubmitField('Add Treasurer')
+    tr_submit = SubmitField('Send e-mail to treasurer')

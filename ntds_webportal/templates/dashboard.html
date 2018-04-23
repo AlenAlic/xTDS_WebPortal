@@ -13,7 +13,13 @@ onload="onStart()"
         {% endwith %}
     {% endif %}
     {% if current_user.is_organizer() %}
-        {% with url='organizer.registration_overview', title='Registrered dancers', text='List of all registered dancers', image='dummy.png' %}
+        {% with url='organizer.registration_overview', title='Registrered dancers', text='List of all registered dancers', image='contestants.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with url='main.todo', title='Name change requests', text='Requests for name changes of dancers', image='dummy.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}
@@ -27,7 +33,7 @@ onload="onStart()"
         {% with url='teamcaptains.set_teamcaptains', title='Set team captain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with url='teamcaptains.couples_list', title='Couples lists', text='List of all registered couples, and a list of blind daters for the tournament.', image='dummy.png' %}
+        {% with url='teamcaptains.couples_list', title='Couples lists', text='List of all registered couples, and a list of blind daters for the tournament.', image='couple.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with url='main.todo', title='Raffle results', text='Manage the dancers after the raffle has taken place.', image='raffle_results.png' %}

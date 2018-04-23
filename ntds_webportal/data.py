@@ -3,7 +3,7 @@ GERMANY = 'Germany'
 CZECH = 'Czech Republic'
 TEAMS = [
     {'country': NETHERLANDS, 'name': '4 happy feet', 'city': 'Enschede'},
-    {'country': NETHERLANDS, 'name': 'AmsterDance', 'city': 'Amsterdam',},
+    {'country': NETHERLANDS, 'name': 'AmsterDance', 'city': 'Amsterdam'},
     {'country': NETHERLANDS, 'name': 'Blue Suede Shoes', 'city': 'Delft'},
     {'country': NETHERLANDS, 'name': 'Dance Fever', 'city': 'Nijmegen'},
     {'country': NETHERLANDS, 'name': 'Erasmus Dance Society', 'city': 'Rotterdam'},
@@ -88,13 +88,13 @@ STATUS = {
 }
 
 
-def euros(cents):
-    return '€{:,.2f}'.format(cents/100)
+def euros(amount):
+    return '€{:,.2f}'.format(amount)
 
 
-STUDENT_PRICE = 7000
-NON_STUDENT_PRICE = 8000
-SHIRT_PRICE = 1500
+STUDENT_PRICE = 70
+NON_STUDENT_PRICE = 80
+SHIRT_PRICE = 15
 PRICES = {'entry_fee': {True: STUDENT_PRICE, False: NON_STUDENT_PRICE},
           't-shirt': dict({NO: 0}, **{k: SHIRT_PRICE for k, v in SHIRT_SIZES.items()})}
 
@@ -103,9 +103,22 @@ def finances_overview(dancers):
     students = [PRICES['entry_fee'][dancer.contestant_info[0].student] for dancer in dancers if
                 dancer.contestant_info[0].student]
     non_students = [PRICES['entry_fee'][dancer.contestant_info[0].student] for dancer in dancers if not
-                dancer.contestant_info[0].student]
+                    dancer.contestant_info[0].student]
     shirts = [PRICES['t-shirt'][dancer.additional_info[0].t_shirt] for dancer in dancers if
               dancer.additional_info[0].t_shirt != NO]
+    students_paid = [PRICES['entry_fee'][dancer.contestant_info[0].student] for dancer in dancers if
+                     dancer.contestant_info[0].student and dancer.status_info[0].paid is True]
+    non_students_paid = [PRICES['entry_fee'][dancer.contestant_info[0].student] for dancer in dancers if not
+                         dancer.contestant_info[0].student and dancer.status_info[0].paid is True]
+    shirts_paid = [PRICES['t-shirt'][dancer.additional_info[0].t_shirt] for dancer in dancers if
+                   dancer.additional_info[0].t_shirt != NO and dancer.status_info[0].paid is True]
     return {'number_of_students': len(students), 'number_of_non_students': len(non_students), 't-shirts': len(shirts),
             'price_students': sum(students), 'price_non_students': sum(non_students), 'price_t-shirts': sum(shirts),
-            'price_total': sum(students) + sum(non_students) + sum(shirts)}
+            'price_total': sum(students) + sum(non_students) + sum(shirts),
+            'number_of_students_paid': len(students_paid), 'number_of_non_students_paid': len(non_students_paid),
+            't-shirts_paid': len(shirts_paid), 'price_students_paid': sum(students_paid),
+            'price_non_students_paid': sum(non_students_paid), 'price_t-shirts_paid': sum(shirts_paid),
+            'price_total_paid': sum(students_paid) + sum(non_students_paid) + sum(shirts_paid),
+            'total_number_of_payments': len(students) + len(non_students),
+            'total_number_of_payments_paid': len(students_paid) + len(non_students_paid)
+            }

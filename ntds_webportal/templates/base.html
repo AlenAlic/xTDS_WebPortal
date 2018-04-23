@@ -3,23 +3,24 @@
 
 
 {% block title %}
-    xTDS WebPortal
+xTDS WebPortal
 {% endblock %}
 
+
 {% block styles %}
-    {{ super() }}
-    <style>
-        body { padding-top: 60px;}
-        .navbar-default{background-color:#f8f8f8;}
-        @media (min-width:1440px){.container{width:1410px}}
-        .pagebreak { page-break-before: always; }
-        .print-friendly { page-break-inside:avoid; page-break-after:auto }
-        tr    { page-break-inside:avoid; page-break-after:auto }
-        td    { page-break-inside:avoid; page-break-after:auto }
-        thead { display:table-header-group }
-        tfoot { display:table-footer-group }
-        @media print {.no-print, .no-print * {display: none !important; } }
-    </style>
+{{ super() }}
+<style>
+    body { padding-top: 60px;}
+    .navbar-default{background-color:#f8f8f8;}
+    @media (min-width:1440px){.container{width:1410px}}
+    .pagebreak { page-break-before: always; }
+    .print-friendly { page-break-inside:avoid; page-break-after:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+    td    { page-break-inside:avoid; page-break-after:auto }
+    thead { display:table-header-group }
+    tfoot { display:table-footer-group }
+    @media print {.no-print, .no-print * {display: none !important; } }
+</style>
 {% endblock %}
 
 
@@ -66,34 +67,29 @@
 
 
 {% block content %}
-    <div class="container" style="padding-bottom:20px">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    {% if category=='message' %}
-                    <div class="alert alert-info alert-dismissible" role="alert">
-                    {% else %}
-                    <div class="alert {{ category }} alert-dismissible" role="alert">
-                    {% endif %}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+<div class="container" style="padding-bottom:20px">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+        <div class="alert {% if category=='message' %}alert-info{% else %}{{ category }}{% endif %} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 
-        {# application content needs to be provided in the app_content block #}
-        {% block app_content %}
-        {% endblock %}
-    </div>
-    <!--<nav class="navbar-defaul navbar-fixed-bottom" style="padding-top:60px;">-->
-        <!--<div class="container">-->
-            <!--<p class="navbar-text">Place sticky footer content here.</p>-->
-        <!--</div>-->
-    <!--</nav>-->
+    {% block app_content %}
+    {% endblock %}
+</div>
+<!--<nav class="navbar-defaul navbar-fixed-bottom" style="padding-top:60px;">-->
+    <!--<div class="container">-->
+        <!--<p class="navbar-text">Place sticky footer content here.</p>-->
+    <!--</div>-->
+<!--</nav>-->
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }}
-    {{ moment.include_moment() }}
+{{ super() }}
+{{ moment.include_moment() }}
 {% endblock %}

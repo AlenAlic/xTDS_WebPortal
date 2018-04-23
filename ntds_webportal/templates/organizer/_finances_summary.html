@@ -1,0 +1,63 @@
+<div class="row">
+    <h3>Summary</h3>
+</div>
+<table class="table">
+    <colgroup>
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 10%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th><b>Units</b></th>
+            <th style="text-align:right"><b>Numbers</b></th>
+            <th style="text-align:right"><b>Amounts owed</b></th>
+            <th style="text-align:right"><b>Numbers</b></th>
+            <th style="text-align:right"><b>Amounts paid</b></th>
+            <th style="text-align:right"><b>Numbers</b></th>
+            <th style="text-align:right"><b>Amounts not yet payed</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Students:</td>
+            <td style="text-align:right">{{finances['number_of_students']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_students'])}}</td>
+            <td style="text-align:right">{{finances['number_of_students_paid']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_students_paid'])}}</td>
+            <td style="text-align:right">{{finances['number_of_students']-finances['number_of_students_paid']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_students']-finances['price_students_paid'])}}</td>
+        </tr>
+        <tr>
+            <td>Non-students:</td>
+            <td style="text-align:right">{{finances['number_of_non_students']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_non_students'])}}</td>
+            <td style="text-align:right">{{finances['number_of_non_students_paid']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_non_students_paid'])}}</td>
+            <td style="text-align:right">{{finances['number_of_non_students']-finances['number_of_non_students_paid']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_non_students']-finances['price_non_students_paid'])}}</td>
+        </tr>
+        <tr>
+            <td>T-shirts:</td>
+            <td style="text-align:right">{{finances['t-shirts']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_t-shirts'])}}</td>
+            <td style="text-align:right">{{finances['t-shirts_paid']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_t-shirts_paid'])}}</td>
+            <td style="text-align:right">{{finances['t-shirts']-finances['t-shirts_paid']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_t-shirts']-finances['price_t-shirts_paid'])}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td style="text-align:right">{{data.euros(finances['price_total'])}}</td>
+            <td></td>
+            <td style="text-align:right">{{data.euros(finances['price_total_paid'])}}</td>
+            <td></td>
+            <td style="text-align:right">{{data.euros(finances['price_total']-finances['price_total_paid'])}}</td>
+        </tr>
+    </tbody>
+</table>
