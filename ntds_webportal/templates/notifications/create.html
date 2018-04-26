@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block styles %}
+{{ super() }}
+ 	<link rel="stylesheet" href="/static/jquery.dropdown.min.css">
+{% endblock %}
+
+{% block app_content %}
+<h2>Compose message</h2>
+<form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <div class="form-group  required">
+        <label class="control-label" for="{{form.recipients.name}}">{{form.recipients.label}}</label>
+        <div class="multiselect">
+            <select style="display:none" name="{{form.recipients.name}}" multiple>
+            {% for choice in form.recipients.choices %}
+            <option value="{{choice[0]}}">{{choice[1]}}</option>
+            {% endfor %}
+        </select>
+        </div>
+        {%- for error in form.recipients.errors %}
+          <p class="error">{{error}}</p>
+        {%- endfor %}
+    </div>
+    {{ wtf.form_field(form.title) }}
+    {{ wtf.form_field(form.body) }}
+    {{ wtf.form_field(form.submit) }}
+</form>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="/static/jquery.dropdown.js"></script>
+<script>
+    $('.multiselect').dropdown({
+        // options here
+    });
+</script>
+
+
+
+{% endblock %}

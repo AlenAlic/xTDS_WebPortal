@@ -2,7 +2,8 @@ from flask import render_template, url_for, redirect, flash, request
 from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.notifications import bp
-from ntds_webportal.models import Notification
+from ntds_webportal.models import Notification, User
+from ntds_webportal.notifications.forms import NotificationForm
 
 
 @bp.route('/list')
@@ -85,7 +86,21 @@ def goto(notification):
         return redirect(url_for('notifications.list'))
 
 
-@bp.route('/create', methods=['GET','POST'])
+@bp.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
-    return render_template('todo.html')
+    print("Processing Form")
+    form = NotificationForm()
+    choices = []
+    for user in User.query.all():
+        choices.append((user.user_id, user.username))
+    form.recipients.choices = choices
+    if form.validate_on_submit():
+        for recipient in form.recipients.data:
+            u = User.query.filter_by(user_id=recipient).first()
+            n = Notification(title=form.title.data, text=form.body.data,
+                             user=u)
+            db.session.add(n)
+        db.session.commit()
+        flash('Message(s) submitted')
+    return render_template('notifications/create.html', title="Send message", form=form)
