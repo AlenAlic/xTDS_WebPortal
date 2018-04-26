@@ -83,3 +83,9 @@ def goto(notification):
     else:
         flash('Notification not found or inaccessible!'.format(notification))
         return redirect(url_for('notifications.list'))
+
+
+@bp.route('/create', methods=['GET','POST'])
+@login_required
+def create():
+    return render_template('todo.html')
