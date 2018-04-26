@@ -4,6 +4,7 @@ from ntds_webportal import db
 from ntds_webportal.notifications import bp
 from ntds_webportal.models import Notification, User
 from ntds_webportal.notifications.forms import NotificationForm
+import ntds_webportal.data as data
 
 
 @bp.route('/list')
@@ -91,16 +92,27 @@ def goto(notification):
 def create():
     print("Processing Form")
     form = NotificationForm()
-    choices = []
+    choices = [('tc','All Teamcaptains'),('tr','All Treasurers')]
     for user in User.query.all():
-        choices.append((user.user_id, user.username))
+        choices.append(('{}'.format(user.user_id), user.username))
     form.recipients.choices = choices
     if form.validate_on_submit():
         for recipient in form.recipients.data:
-            u = User.query.filter_by(user_id=recipient).first()
-            n = Notification(title=form.title.data, text=form.body.data,
-                             user=u)
-            db.session.add(n)
+            if recipient.isdigit():
+                u = User.query.filter_by(user_id=recipient).first()
+                n = Notification(title=form.title.data, text=form.body.data,
+                                 user=u)
+                db.session.add(n)
+            else:
+                if recipient=='tc':
+                    users= User.query.filter_by(access=data.ACCESS['team_captain']).all()
+                if recipient=='tr':
+                    users= User.query.filter_by(access=data.ACCESS['treasurer']).all()
+                for u in users:
+                    n = Notification(title=form.title.data, text=form.body.data,
+                                     user=u)
+                    db.session.add(n)
+
         db.session.commit()
         flash('Message(s) submitted')
     return render_template('notifications/create.html', title="Send message", form=form)

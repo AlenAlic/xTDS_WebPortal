@@ -10,5 +10,5 @@ import wtforms_sqlalchemy.fields as f
 class NotificationForm(FlaskForm):
     title = StringField(label="Title", validators=[DataRequired()])
     body = TextAreaField(label="Message content", validators=[DataRequired()])
-    recipients = SelectMultipleField(label="Recipients", coerce=int)
+    recipients = SelectMultipleField(label="Recipients")
     submit = SubmitField('Send message')
