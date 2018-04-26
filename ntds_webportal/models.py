@@ -57,6 +57,9 @@ class User(UserMixin, db.Model):
         return jwt.encode({'reset_password': self.user_id, 'exp': time() + expires_in},
                           current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
+    def unread_notifications(self):
+        return Notification.query.filter_by(user=self, unread=True).count()
+
     @staticmethod
     def verify_reset_password_token(token):
         try:
@@ -202,3 +205,17 @@ class StatusInfo(db.Model):
         self.status = status
         if status == data.CONFIRMED:
             self.payment_required = True
+
+class Notification(db.Model):
+     __tablename__ = 'notifications'
+     notification_id = db.Column(db.Integer, primary_key=True)
+     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+     unread = db.Column(db.Boolean, index=True, default=True)
+     archived = db.Column(db.Boolean, index=True, default=False)
+     title = db.Column(db.String(128))
+     text = db.Column(db.Text())
+     destination = db.Column(db.String(256))
+     user = db.relationship('User', backref=db.backref('notifications', lazy=True))
+
+     def __repr__(self):
+         return 'message to: {} \ntitle: {} \nlink: {}\n'.format(self.user.username, self.title, self.destination, self.text)
