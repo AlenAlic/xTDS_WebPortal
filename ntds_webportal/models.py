@@ -4,6 +4,7 @@ from flask import current_app, url_for, redirect
 from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from time import time
+from datetime import datetime
 import jwt
 import ntds_webportal.data as data
 
@@ -20,7 +21,9 @@ def requires_access_level(access_levels):
             if current_user.access not in access_levels:
                 return redirect(url_for('main.index'))
             return f(*args, **kwargs)
+
         return decorated_function
+
     return decorator
 
 
@@ -137,7 +140,7 @@ class ContestantInfo(db.Model):
         return '{name}'.format(name=self.contestant)
 
     def set_teamcaptain(self):
-        current_tc = db.session.query(Contestant).join(ContestantInfo)\
+        current_tc = db.session.query(Contestant).join(ContestantInfo) \
             .filter(ContestantInfo.team_captain.is_(True)).first()
         if current_tc is not None:
             current_tc.contestant_info[0].team_captain = False
@@ -236,6 +239,7 @@ class StatusInfo(db.Model):
     first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+
     # name_change_request = db.Column(db.String(384), nullable=True, default=None)
 
     def __repr__(self):
@@ -251,12 +255,22 @@ class Notification(db.Model):
     __tablename__ = 'notifications'
     notification_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
     unread = db.Column(db.Boolean, index=True, default=True)
     archived = db.Column(db.Boolean, index=True, default=False)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     title = db.Column(db.String(128))
     text = db.Column(db.Text())
     destination = db.Column(db.String(256))
-    user = db.relationship('User', backref=db.backref('notifications', lazy=True))
+    user = db.relationship('User', foreign_keys=[user_id], backref=db.backref('notifications', lazy=True))
+    sender = db.relationship('User', foreign_keys=[sender_id])
 
     def __repr__(self):
-        return 'message to: {} \ntitle: {} \nlink: {}\n'.format(self.user.username, self.title, self.destination, self.text)
+        return 'message to: {} \ntitle: {} \nlink: {}\n'.format(self.user.username, self.title, self.destination,
+                                                                self.text)
+
+    def get_sender(self):
+        if not self.sender:
+            return 'automated message'
+        else:
+            return 'from: {}'.format(self.sender)
