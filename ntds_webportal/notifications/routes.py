@@ -2,7 +2,7 @@ from flask import render_template, url_for, redirect, flash, request
 from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.notifications import bp
-from ntds_webportal.models import Notification, User
+from ntds_webportal.models import Notification, User, requires_access_level
 from ntds_webportal.notifications.forms import NotificationForm
 import ntds_webportal.data as data
 
