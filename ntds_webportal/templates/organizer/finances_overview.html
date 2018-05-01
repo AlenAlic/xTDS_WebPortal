@@ -8,7 +8,9 @@
 
 <ul class="nav nav-tabs" id=myTabs role=tablist>
 	<li role=presentation class=active>
-		<a href=#all_teams id=all_teams-tab role=tab data-toggle=tab aria-controls=all_teams aria-expanded=true>All teams <span class="badge">{{all_finances['total_number_of_payments_paid']}} / {{all_finances['total_number_of_payments']}}</span></a>
+		<a href=#all_teams id=all_teams-tab role=tab data-toggle=tab aria-controls=all_teams aria-expanded=true>All teams
+            <span class="badge"></span>
+        </a>
 	</li>
     {% with teams=dutch_dancers, dropdown_title='Dutch teams', dropdown_name='dutch' %}
         {% include 'organizer/_finances_teams_dropdown_menu.html' %}
@@ -22,21 +24,8 @@
 </ul>
 <div class=tab-content id=myTabContent>
 	<div class="tab-pane fade in active" role=tabpanel id=all_teams aria-labelledby=all_teams-tab>
-        {% if all_confirmed_dancers|length + all_cancelled_dancers|length > 0 %}
-            {% with finances=all_finances %}
-                {% include 'organizer/_finances_summary.html' %}
-            {% endwith %}
-
-            {% with status='Confirmed', dancers=all_confirmed_dancers %}
-                {% include 'organizer/_finances_list.html' %}
-            {% endwith %}
-
-            {% with status='Cancelled', dancers=all_cancelled_dancers %}
-                {% include 'organizer/_finances_list.html' %}
-            {% endwith %}
-        {% else %}
-            <h2>There are no registered dancers.</h2>
-        {% endif %}
+        <h2>Todo</h2>
+        <p>Create a list of teams that shows total amount owed and paid (details dropdown menu)</p>
 	</div>
     {% with teams=dutch_dancers %}
         {% include 'organizer/_finances_teams_dropdown_table.html' %}

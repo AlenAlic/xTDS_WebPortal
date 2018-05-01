@@ -17,10 +17,10 @@
 
 {% else %}
 <a href="{{ url_for('teamcaptains.couples_list', confirmed=0) }}" class="btn btn-default navbar-btn no-print">Pre-registered couples</a>
-{% with category='Ballroom', couples=ballroom_couples %}
+{% with category='Ballroom', couples=confirmed_ballroom_couples %}
     {% include 'teamcaptains/_couples_list.html' %}
 {% endwith %}
-{% with category='Latin', couples=latin_couples %}
+{% with category='Latin', couples=confirmed_latin_couples %}
     {% include 'teamcaptains/_couples_list.html' %}
 {% endwith %}
 

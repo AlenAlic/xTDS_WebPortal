@@ -1,6 +1,7 @@
 from ntds_webportal import db, login
-from flask import current_app
-from flask_login import UserMixin
+from functools import wraps
+from flask import current_app, url_for, redirect
+from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from time import time
 import jwt
@@ -10,6 +11,17 @@ import ntds_webportal.data as data
 @login.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+def requires_access_level(access_levels):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if current_user.access not in access_levels:
+                return redirect(url_for('main.index'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 
 class User(UserMixin, db.Model):
@@ -45,7 +57,7 @@ class User(UserMixin, db.Model):
         return self.access == data.ACCESS['blind_date_organizer']
 
     def allowed(self, access_level):
-        return self.access <= access_level
+        return self.access == access_level
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -118,7 +130,7 @@ class ContestantInfo(db.Model):
     team = db.relationship('Team')
 
     def __repr__(self):
-        return '{id}: {name}'.format(id=self.number, name=self.contestant)
+        return '{name}'.format(name=self.contestant)
 
     def set_teamcaptain(self):
         current_tc = db.session.query(Contestant).join(ContestantInfo)\
@@ -133,12 +145,12 @@ class DancingInfo(db.Model):
     __tablename__ = 'dancing_info'
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
     contestant = db.relationship('Contestant', back_populates='dancing_info', foreign_keys=contestant_id)
-    ballroom_level = db.Column(db.String(128), nullable=False)
-    ballroom_role = db.Column(db.String(128), nullable=False)
+    ballroom_level = db.Column(db.String(128), nullable=False, default=data.NO)
+    ballroom_role = db.Column(db.String(128), nullable=False, default=data.NO)
     ballroom_blind_date = db.Column(db.Boolean, nullable=False, default=False)
     ballroom_partner = db.Column(db.Integer, nullable=True, default=None)
-    latin_level = db.Column(db.String(128), nullable=False)
-    latin_role = db.Column(db.String(128), nullable=False)
+    latin_level = db.Column(db.String(128), nullable=False, default=data.NO)
+    latin_role = db.Column(db.String(128), nullable=False, default=data.NO)
     latin_blind_date = db.Column(db.Boolean, nullable=False, default=False)
     latin_partner = db.Column(db.Integer, nullable=True, default=None)
 
@@ -156,6 +168,30 @@ class DancingInfo(db.Model):
         self.latin_role = data.NO
         self.latin_blind_date = False
         self.latin_partner = None
+
+    def set_ballroom_partner(self, contestant_id):
+        if contestant_id is not None:
+            partner = db.session.query(DancingInfo).filter_by(contestant_id=contestant_id).first()
+            partner.ballroom_partner = self.contestant_id
+            self.ballroom_partner = partner.contestant_id
+        else:
+            partner = db.session.query(DancingInfo).filter_by(ballroom_partner=self.contestant_id).first()
+            if partner is not None:
+                partner.ballroom_partner = None
+            self.ballroom_partner = None
+        db.session.commit()
+
+    def set_latin_partner(self, contestant_id):
+        if contestant_id is not None:
+            partner = db.session.query(DancingInfo).filter_by(contestant_id=contestant_id).first()
+            partner.latin_partner = self.contestant_id
+            self.latin_partner = partner.contestant_id
+        else:
+            partner = db.session.query(DancingInfo).filter_by(latin_partner=self.contestant_id).first()
+            if partner is not None:
+                partner.latin_partner = None
+            self.latin_partner = None
+        db.session.commit()
 
 
 class VolunteerInfo(db.Model):

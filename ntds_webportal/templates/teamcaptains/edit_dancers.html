@@ -24,7 +24,7 @@
     </thead>
     <tbody>
         {% for dancer in dancers %}
-            <tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_info[0].number, wide=wide)}}">
+            <tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                 <td>
                     {{ dancer.contestant_info[0].number }}
                 </td>
@@ -90,7 +90,7 @@
     </thead>
     <tbody>
         {% for dancer in dancers %}
-            <tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_info[0].number, wide=wide)}}">
+            <tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                 <td>
                     {{ dancer.contestant_info[0].number }}
                 </td>
@@ -159,13 +159,13 @@
 
 
 {% block scripts %}
-    {{ super() }}
-    <script>
-    $(document).ready(function($) {
-        $(".clickable-row").css("cursor", "pointer")
-        $(".clickable-row").click(function() {
-            window.location = $(this).data("href");
-        });
+{{ super() }}
+<script>
+$(document).ready(function($) {
+    $(".clickable-row").css("cursor", "pointer")
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
     });
-    </script>
+});
+</script>
 {% endblock %}

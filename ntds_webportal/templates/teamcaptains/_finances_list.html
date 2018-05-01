@@ -26,13 +26,13 @@
                 {{ dancer.contestant_info[0].number }} - {{ dancer.get_full_name() }}
             </td>
             <td style="text-align:right">
-                {{data.euros(data.PRICES['entry_fee'][dancer.contestant_info[0].student])}}
+                {{data.euros(data.PRICES['student'][dancer.contestant_info[0].student])}}
             </td>
             <td style="text-align:right">
                 {{data.euros(data.PRICES['t-shirt'][dancer.additional_info[0].t_shirt])}}
             </td>
             <td style="text-align:right">
-                {{data.euros(data.PRICES['t-shirt'][dancer.additional_info[0].t_shirt] + data.PRICES['entry_fee'][dancer.contestant_info[0].student])}}
+                {{data.euros(data.PRICES['t-shirt'][dancer.additional_info[0].t_shirt] + data.PRICES['student'][dancer.contestant_info[0].student])}}
             </td>
             <td align="right">
                 <input class="checkbox" type="checkbox" value="y" id="{{ dancer.contestant_info[0].number }}" name="{{ dancer.contestant_info[0].number }}" {% if dancer.status_info[0].paid == true %}checked{% endif %}>

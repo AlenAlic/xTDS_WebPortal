@@ -20,8 +20,8 @@ admin = Admin(template_mode='bootstrap3')
 
 
 class BaseView(ModelView):
-    column_hide_backrefs = True
-    page_size = 50
+    column_hide_backrefs = False
+    page_size = 100
 
     def is_accessible(self):
         return current_user.is_admin()
@@ -36,6 +36,11 @@ class UserView(BaseView):
     def on_model_change(self, form, User, is_created):
         if form.password2.data is not None:
             User.set_password(form.password2.data)
+
+
+class DancingInfoView(BaseView):
+    column_list = ('contestant', 'ballroom_level', 'ballroom_role', 'ballroom_partner',
+                   'latin_level', 'latin_role', 'latin_partner')
 
 
 def create_app():
@@ -61,7 +66,7 @@ def create_app():
     admin.add_view(BaseView(Team, db.session))
     admin.add_view(BaseView(Contestant, db.session))
     admin.add_view(BaseView(ContestantInfo, db.session))
-    admin.add_view(BaseView(DancingInfo, db.session))
+    admin.add_view(DancingInfoView(DancingInfo, db.session))
     admin.add_view(BaseView(VolunteerInfo, db.session))
     admin.add_view(BaseView(AdditionalInfo, db.session))
     admin.add_view(BaseView(StatusInfo, db.session))

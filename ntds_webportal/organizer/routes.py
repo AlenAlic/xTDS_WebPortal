@@ -2,12 +2,13 @@ from flask import render_template
 from flask_login import login_required
 from ntds_webportal import db
 from ntds_webportal.organizer import bp
-from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo
+from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, requires_access_level
 import ntds_webportal.data as data
 
 
 @bp.route('/registration_overview')
 @login_required
+@requires_access_level([data.ACCESS['organizer']])
 def registration_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .order_by(ContestantInfo.team_id, ContestantInfo.number).all()
@@ -27,9 +28,10 @@ def registration_overview():
 
 @bp.route('/finances_overview')
 @login_required
+@requires_access_level([data.ACCESS['organizer']])
 def finances_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
-        .filter(StatusInfo.payment_required == True).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
+        .filter(StatusInfo.payment_required.is_(True)).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
     all_confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
     all_cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
     all_finances = data.finances_overview(all_dancers)

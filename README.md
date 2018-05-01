@@ -1,5 +1,5 @@
 # NTDS_webportal
-Version [0.5.0][CHANGELOG]
+Version [0.5.1][CHANGELOG]
 
 A web portal for registration and selection for the NTDS.
 
@@ -23,6 +23,7 @@ Based on Flask and Python
   - [x] Dashboard
   - [ ] Messages (Messages from organisation and admin)
   - [x] Enable treasurer in profile page
+  - [x] Finances overview
   - [ ] Registration period
     - [x] Register dancers
     - [x] Change dancer data (except name)
@@ -33,7 +34,6 @@ Based on Flask and Python
   - [ ] Raffle period
     - [ ] Overview of dancers with their status
       - [ ] Request for selected and confirmed dancers to de-register
-    - [x] Finances overview
 
 
 - Logged in - Treasurer

@@ -5,7 +5,7 @@ from ntds_webportal import db
 from ntds_webportal.models import Contestant
 
 REQUIRED = 'This field is required.'
-SAME_ROLE = 'You can not dance as a {role}, the selected partner already has that role. ' \
+SAME_ROLE = 'You can not dance as a {role} with that partner, the selected partner already is a {role}. ' \
             'Please select a different role or a different partner.'
 NO_LEVEL = 'The selected partner is not dancing in this category.'
 DIFFERENT_LEVELS = 'You can not dance in the chosen level, the selected partner is dancing in a different level. ' \
