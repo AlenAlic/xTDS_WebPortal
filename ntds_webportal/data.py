@@ -77,7 +77,7 @@ SHIRTS.update(SHIRT_SIZES)
 
 # Format number to display as price
 def euros(amount):
-    return '€{:,.2f}'.format(amount)
+    return '€{:,.2f}'.format(amount/100)
 
 
 # Prices for

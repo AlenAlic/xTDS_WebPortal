@@ -47,7 +47,7 @@ def create_app():
     """
     Create instance of website.
     """
-    from ntds_webportal.models import User, Team, Contestant, ContestantInfo, DancingInfo, VolunteerInfo,\
+    from ntds_webportal.models import User, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo, VolunteerInfo,\
         AdditionalInfo, StatusInfo, Notification
 
     app = Flask(__name__, instance_relative_config=True)
@@ -64,6 +64,7 @@ def create_app():
     admin.init_app(app)
     admin.add_view(UserView(User, db.session))
     admin.add_view(BaseView(Team, db.session))
+    admin.add_view(BaseView(TeamFinances, db.session))
     admin.add_view(BaseView(Contestant, db.session))
     admin.add_view(BaseView(ContestantInfo, db.session))
     admin.add_view(DancingInfoView(DancingInfo, db.session))
