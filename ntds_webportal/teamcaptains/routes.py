@@ -123,7 +123,7 @@ def submit_contestant(f, contestant=None):
 
 @bp.route('/add_treasurer', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['team_captain']])
+@requires_access_level('team_captain')
 def add_treasurer():
     form = ChangePasswordForm()
     treasurer_form = TreasurerForm()
@@ -144,7 +144,7 @@ def add_treasurer():
 
 @bp.route('/register_dancers', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['team_captain']])
+@requires_access_level('team_captain')
 def register_dancers():
     form = RegisterContestantForm()
     new_id = db.session.query().filter(ContestantInfo.team == current_user.team)\
@@ -172,7 +172,7 @@ def register_dancers():
 
 @bp.route('/edit_dancers', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['team_captain']])
+@requires_access_level('team_captain')
 def edit_dancers():
     wide = request.args.get('wide', 0, type=int)
     dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
@@ -184,7 +184,7 @@ def edit_dancers():
 
 @bp.route('/edit_dancer/<number>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['team_captain']])
+@requires_access_level('team_captain')
 def edit_dancer(number):
     dancer = db.session.query(Contestant).join(ContestantInfo)\
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number)\
@@ -236,7 +236,7 @@ def edit_dancer(number):
 
 @bp.route('/register_dancer/<number>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['team_captain']])
+@requires_access_level('team_captain')
 def register_dancer(number):
     register = request.args.get('register', None, type=int)
     changed_dancer = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -254,7 +254,7 @@ def register_dancer(number):
 
 @bp.route('/set_teamcaptains', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['team_captain']])
+@requires_access_level('team_captain')
 def set_teamcaptains():
     form = TeamCaptainForm()
     form.number.query = Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == current_user.team)
@@ -277,7 +277,7 @@ def set_teamcaptains():
 
 @bp.route('/couples_list')
 @login_required
-@requires_access_level([data.ACCESS['team_captain']])
+@requires_access_level('team_captain')
 def couples_list():
     confirmed = request.args.get('confirmed', 0, type=int)
     all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
@@ -340,7 +340,7 @@ def couples_list():
 
 @bp.route('/edit_finances', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['team_captain'], data.ACCESS['treasurer']])
+@requires_access_level('team_captain', 'treasurer')
 def edit_finances():
     # TODO Stan zeurt, wil het graag exporteerbaar naar CSV (naam, bedrag, omschrijving), lage prio
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\

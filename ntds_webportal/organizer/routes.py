@@ -8,7 +8,7 @@ import ntds_webportal.data as data
 
 @bp.route('/registration_overview')
 @login_required
-@requires_access_level([data.ACCESS['organizer']])
+@requires_access_level('organizer')
 def registration_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .order_by(ContestantInfo.team_id, ContestantInfo.number).all()
@@ -28,7 +28,7 @@ def registration_overview():
 
 @bp.route('/finances_overview')
 @login_required
-@requires_access_level([data.ACCESS['organizer']])
+@requires_access_level('organizer')
 def finances_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .filter(StatusInfo.payment_required.is_(True)).order_by(ContestantInfo.team_id, ContestantInfo.number).all()

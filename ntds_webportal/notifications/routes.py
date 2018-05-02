@@ -89,7 +89,7 @@ def goto(notification):
 
 @bp.route('/create', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['organizer'], data.ACCESS['admin']])
+@requires_access_level('organizer', 'admin')
 def create():
     print("Processing Form")
     form = NotificationForm()
