@@ -274,3 +274,20 @@ class Notification(db.Model):
             return 'automated message'
         else:
             return 'from: {}'.format(self.sender)
+
+
+class PartnerRequest(db.Model):
+    STATE = {'OPEN': 1, 'ACCEPTED': 2, 'REJECTED': 3}
+
+    __tablename__ = 'partnerrequest'
+    id = db.Column(db.Integer,primary_key=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    remark = db.Column(db.Text())
+    level = db.Column(db.String(128), nullable=False, default=data.NO)
+    competition = db.Column(db.String(128), nullable=False)
+    dancer_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
+    other_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
+    state = db.Column(db.Integer, default=STATE['OPEN'])
+    dancer = db.relationship('Contestant', foreign_keys=[dancer_id])
+    other = db.relationship('Contestant', foreign_keys=[other_id])
+

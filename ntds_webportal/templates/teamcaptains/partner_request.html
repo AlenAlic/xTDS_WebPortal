@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block body_attribs %}
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+ 	<link rel="stylesheet" href="/static/jquery.dropdown.min.css">
+{% endblock %}
+
+{% block app_content %}
+    <h2>Partner request </h2>
+    <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <div class="form-group  required">
+        <label class="control-label" for="{{form.dancer.name}}">{{form.dancer.label}}</label>
+        <div class="select">
+            <select style="display:none" name="{{form.dancer.name}}">
+            {% for choice in form.dancer.choices %}
+            <option value="{{choice[0]}}">{{choice[1]}}</option>
+            {% endfor %}
+        </select>
+        </div>
+        {%- for error in form.dancer.errors %}
+          <p class="error">{{error}}</p>
+        {%- endfor %}
+    </div>
+     <div class="form-group  required">
+        <label class="control-label" for="{{form.other.name}}">{{form.other.label}}</label>
+        <div class="select">
+            <select style="display:none" name="{{form.other.name}}">
+            {% for choice in form.other.choices %}
+            <option value="{{choice[0]}}">{{choice[1]}}</option>
+            {% endfor %}
+        </select>
+        </div>
+        {%- for error in form.other.errors %}
+          <p class="error">{{error}}</p>
+        {%- endfor %}
+    </div>
+    {{ wtf.form_field(form.competition) }}
+    {{ wtf.form_field(form.level) }}
+    {{ wtf.form_field(form.remark) }}
+    {{ wtf.form_field(form.submit) }}
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="/static/jquery.dropdown.js"></script>
+<script>
+    $('.select').dropdown({
+        // options here
+    });
+</script>
+{% endblock %}

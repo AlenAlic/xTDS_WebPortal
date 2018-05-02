@@ -2,14 +2,16 @@ from flask import render_template, url_for, redirect, flash, request
 from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
-from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm
-from ntds_webportal.models import User, requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
-    VolunteerInfo, AdditionalInfo, StatusInfo
+from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm, \
+    PartnerRequestForm
+from ntds_webportal.models import User, requires_access_level, Team, Contestant, ContestantInfo, DancingInfo, \
+    VolunteerInfo, AdditionalInfo, StatusInfo, PartnerRequest
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 import ntds_webportal.data as data
 import itertools
 from sqlalchemy import and_, or_
+
 
 # TODO Registration constraints
 
@@ -147,7 +149,7 @@ def add_treasurer():
 @requires_access_level([data.ACCESS['team_captain']])
 def register_dancers():
     form = RegisterContestantForm()
-    new_id = db.session.query().filter(ContestantInfo.team == current_user.team)\
+    new_id = db.session.query().filter(ContestantInfo.team == current_user.team) \
         .with_entities(db.func.max(ContestantInfo.number)).scalar()
     if new_id is None:
         new_id = 1
@@ -155,10 +157,10 @@ def register_dancers():
         new_id += 1
     form.number.data = new_id
     form.team.data = current_user.team.name
-    form.ballroom_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo)\
+    form.ballroom_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
         .filter(ContestantInfo.team == current_user.team,
                 DancingInfo.ballroom_partner.is_(None), DancingInfo.ballroom_blind_date.is_(False))
-    form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo)\
+    form.latin_partner.query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
         .filter(ContestantInfo.team == current_user.team,
                 DancingInfo.latin_partner.is_(None), DancingInfo.latin_blind_date.is_(False))
     if request.method == 'POST':
@@ -175,7 +177,7 @@ def register_dancers():
 @requires_access_level([data.ACCESS['team_captain']])
 def edit_dancers():
     wide = request.args.get('wide', 0, type=int)
-    dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
+    dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team).order_by(ContestantInfo.number).all()
     order = [data.CONFIRMED, data.SELECTED, data.REGISTERED, data.CANCELLED]
     dancers = sorted(dancers, key=lambda o: order.index(o.status_info[0].status))
@@ -186,14 +188,14 @@ def edit_dancers():
 @login_required
 @requires_access_level([data.ACCESS['team_captain']])
 def edit_dancer(number):
-    dancer = db.session.query(Contestant).join(ContestantInfo)\
-        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number)\
+    dancer = db.session.query(Contestant).join(ContestantInfo) \
+        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number) \
         .order_by(Contestant.contestant_id).first_or_404()
     form = EditContestantForm()
     form.full_name.data = dancer.get_full_name()
     form.team.data = dancer.contestant_info[0].team.name
     form.number.data = dancer.contestant_info[0].number
-    form.ballroom_partner.\
+    form.ballroom_partner. \
         query = Contestant.query.join(ContestantInfo).join(DancingInfo) \
         .filter(and_(ContestantInfo.team == current_user.team, Contestant.contestant_id != number,
                      or_(and_(DancingInfo.ballroom_partner.is_(None), DancingInfo.ballroom_blind_date.is_(False)),
@@ -258,11 +260,11 @@ def register_dancer(number):
 def set_teamcaptains():
     form = TeamCaptainForm()
     form.number.query = Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == current_user.team)
-    current_tc = db.session.query(Contestant).join(ContestantInfo)\
+    current_tc = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).first()
     if form.validate_on_submit():
         if form.number.data is not None:
-            new_tc = db.session.query(Contestant)\
+            new_tc = db.session.query(Contestant) \
                 .filter(Contestant.contestant_id == form.number.data.contestant_id).first()
             new_tc.contestant_info[0].set_teamcaptain()
             flash('Set {} as team captain.'.format(new_tc.get_full_name()), 'alert-success')
@@ -280,8 +282,8 @@ def set_teamcaptains():
 @requires_access_level([data.ACCESS['team_captain']])
 def couples_list():
     confirmed = request.args.get('confirmed', 0, type=int)
-    all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
-        .filter(ContestantInfo.team == current_user.team, DancingInfo.ballroom_role == data.LEAD)\
+    all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, DancingInfo.ballroom_role == data.LEAD) \
         .order_by(DancingInfo.ballroom_level, ContestantInfo.number).all()
     all_follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team, DancingInfo.ballroom_role == data.FOLLOW) \
@@ -343,8 +345,8 @@ def couples_list():
 @requires_access_level([data.ACCESS['team_captain'], data.ACCESS['treasurer']])
 def edit_finances():
     # TODO Stan zeurt, wil het graag exporteerbaar naar CSV (naam, bedrag, omschrijving), lage prio
-    all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required.is_(True))\
+    all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required.is_(True)) \
         .order_by(ContestantInfo.number).all()
     confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
     cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
@@ -368,3 +370,25 @@ def edit_finances():
         return redirect(url_for('teamcaptains.edit_finances'))
     return render_template('teamcaptains/edit_finances.html', finances=finances, confirmed_dancers=confirmed_dancers,
                            cancelled_dancers=cancelled_dancers, data=data)
+
+
+@bp.route('/partner_request', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['team_captain']])
+def partner_request():
+    form = PartnerRequestForm()
+    form.dancer.choices = map(lambda c: (c.contestant_id, c.contestant.get_full_name()),
+                              ContestantInfo.query.filter_by(team=current_user.team).join(ContestantInfo.contestant).join(Contestant.dancing_info).filter().all())
+    form.other.choices = map(lambda c: (c.contestant_id, c.contestant.get_full_name()),
+                             ContestantInfo.query.filter(ContestantInfo.team != current_user.team).join(ContestantInfo.contestant).join(Contestant.dancing_info).filter(
+                                 DancingInfo.latin_partner is None or DancingInfo.ballroom_partner is None).all())
+
+    if form.validate_on_submit():
+        pr = PartnerRequest(dancer_id=form.dancer.data, other_id=form.other.data, remark=form.remark.data,
+                            competition=form.competition.data, level=form.level.data)
+        print(pr)
+        db.session.add(pr)
+        db.session.commit()
+        flash('Partner request created')
+
+    return render_template('teamcaptains/partner_request.html', form=form, title='partner_request')
