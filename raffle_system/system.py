@@ -5,7 +5,7 @@ import ntds_webportal.data as data
 # Load Settings
 
 # Load values
-all_dancers = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
+all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
     .filter(StatusInfo.status != data.CANCELLED).all()
 registered_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].status == data.REGISTERED]
 selected_dancers = [dancer for dancer in all_dancers if dancer.status_info[0].status == data.SELECTED]

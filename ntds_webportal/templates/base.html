@@ -40,7 +40,7 @@ xTDS WebPortal
             {% if not current_user.is_anonymous %}
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
-                    <li><a href="{{ url_for('notifications.list') }}">Messages <span class="badge">{{current_user.unread_notifications()}}</span></a></li>
+                    <li><a href="{{ url_for('notifications.message_list') }}">Messages <span class="badge">{{current_user.unread_notifications()}}</span></a></li>
                 </ul>
             {% endif %}
             <div class="nav navbar-nav navbar-right" style="margin-right:0px">

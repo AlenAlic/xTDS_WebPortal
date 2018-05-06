@@ -1,11 +1,11 @@
 from ntds_webportal import db, login
-from functools import wraps
 from flask import current_app, url_for, redirect
 from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+from functools import wraps
 from time import time
 from datetime import datetime
-import jwt
 import ntds_webportal.data as data
 
 
@@ -21,9 +21,7 @@ def requires_access_level(access_levels):
             if current_user.access not in access_levels:
                 return redirect(url_for('main.index'))
             return f(*args, **kwargs)
-
         return decorated_function
-
     return decorator
 
 
@@ -87,15 +85,23 @@ class User(UserMixin, db.Model):
 class Team(db.Model):
     __tablename__ = 'teams'
     team_id = db.Column(db.Integer, primary_key=True)
+    country = db.Column(db.String(128), nullable=False)
     city = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128), nullable=False, unique=True)
+    finances = db.relationship('TeamFinances', back_populates='team')
 
     def __repr__(self):
         return '{}'.format(self.name)
 
 
-# class TeamFinances(db.Model):
-#     __tablename__ = 'team_finances'
+class TeamFinances(db.Model):
+    __tablename__ = 'team_finances'
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), primary_key=True)
+    team = db.relationship('Team', back_populates='finances')
+    paid = db.Column(db.Integer, nullable=False, default=0)
+
+    def __repr__(self):
+        return '{}'.format(self.team)
 
 
 class Contestant(db.Model):
@@ -150,55 +156,39 @@ class ContestantInfo(db.Model):
 
 class DancingInfo(db.Model):
     __tablename__ = 'dancing_info'
-    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
-    contestant = db.relationship('Contestant', back_populates='dancing_info', foreign_keys=contestant_id)
-    ballroom_level = db.Column(db.String(128), nullable=False, default=data.NO)
-    ballroom_role = db.Column(db.String(128), nullable=False, default=data.NO)
-    ballroom_blind_date = db.Column(db.Boolean, nullable=False, default=False)
-    ballroom_partner = db.Column(db.Integer, nullable=True, default=None)
-    latin_level = db.Column(db.String(128), nullable=False, default=data.NO)
-    latin_role = db.Column(db.String(128), nullable=False, default=data.NO)
-    latin_blind_date = db.Column(db.Boolean, nullable=False, default=False)
-    latin_partner = db.Column(db.Integer, nullable=True, default=None)
+    __table_args__ = (db.UniqueConstraint('contestant_id', 'competition', 'level'),)
+    contest_id = db.Column(db.Integer, primary_key=True)
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
+    contestant = db.relationship('Contestant', foreign_keys=contestant_id)
+    competition = db.Column(db.String(128), nullable=False)
+    level = db.Column(db.String(128), nullable=False, default=data.NO)
+    role = db.Column(db.String(128), nullable=False, default=data.NO)
+    blind_date = db.Column(db.Boolean, nullable=False, default=False)
+    partner = db.Column(db.Integer, nullable=True, default=None)
 
     def __repr__(self):
-        return '{name}'.format(name=self.contestant)
+        return '{competition}: {name}'.format(competition=self.competition, name=self.contestant)
 
-    def not_dancing_ballroom(self):
-        self.ballroom_level = data.NO
-        self.ballroom_role = data.NO
-        self.ballroom_blind_date = False
-        self.ballroom_partner = None
-
-    def not_dancing_latin(self):
-        self.latin_level = data.NO
-        self.latin_role = data.NO
-        self.latin_blind_date = False
-        self.latin_partner = None
-
-    def set_ballroom_partner(self, contestant_id):
+    def set_partner(self, contestant_id):
+        partner = db.session.query(DancingInfo)\
+            .filter_by(contestant_id=contestant_id if contestant_id is not None else self.partner,
+                       competition=self.competition,level=self.level).first()
         if contestant_id is not None:
-            partner = db.session.query(DancingInfo).filter_by(contestant_id=contestant_id).first()
-            partner.ballroom_partner = self.contestant_id
-            self.ballroom_partner = partner.contestant_id
-        else:
-            partner = db.session.query(DancingInfo).filter_by(ballroom_partner=self.contestant_id).first()
             if partner is not None:
-                partner.ballroom_partner = None
-            self.ballroom_partner = None
-        db.session.commit()
-
-    def set_latin_partner(self, contestant_id):
-        if contestant_id is not None:
-            partner = db.session.query(DancingInfo).filter_by(contestant_id=contestant_id).first()
-            partner.latin_partner = self.contestant_id
-            self.latin_partner = partner.contestant_id
+                partner.partner = self.contestant_id
+                self.partner = partner.contestant_id
         else:
-            partner = db.session.query(DancingInfo).filter_by(latin_partner=self.contestant_id).first()
             if partner is not None:
-                partner.latin_partner = None
-            self.latin_partner = None
+                partner.partner = None
+            self.partner = None
         db.session.commit()
+    
+    def not_dancing(self, competition):
+        self.competition = competition
+        self.level = data.NO
+        self.role = data.NO
+        self.blind_date = False
+        self.partner = None
 
 
 class VolunteerInfo(db.Model):
@@ -239,7 +229,6 @@ class StatusInfo(db.Model):
     first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
-
     # name_change_request = db.Column(db.String(384), nullable=True, default=None)
 
     def __repr__(self):

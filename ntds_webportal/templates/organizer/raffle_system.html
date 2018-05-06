@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block body_attribs %}
+{% endblock %}
+
+{% block app_content %}
+<form>
+<input class="btn btn-primary" id="submit" name="submit" type="submit" value="Test find partner" formmethod="post">
+</form>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+    </script>
+{% endblock %}

@@ -7,9 +7,9 @@ from ntds_webportal.notifications.forms import NotificationForm
 import ntds_webportal.data as data
 
 
-@bp.route('/list')
+@bp.route('/message_list')
 @login_required
-def list():
+def message_list():
     show_archived = request.args.get('show_archived', False, type=bool)
     if show_archived:
         notifications_query = Notification.query.filter_by(user=current_user)
@@ -17,7 +17,7 @@ def list():
         notifications_query = Notification.query.filter_by(user=current_user, archived=False)
     notifications = notifications_query.order_by(Notification.notification_id.desc()) \
         .order_by(Notification.unread.desc()).all()
-    return render_template('notifications/list.html', title="Notifications", notifications=notifications,
+    return render_template('notifications/message_list.html', title="Notifications", notifications=notifications,
                            show_archived=show_archived)
 
 
@@ -28,10 +28,10 @@ def read(notification):
     if n:
         n.unread = False
         db.session.commit()
-        return redirect(url_for('notifications.list'))
+        return redirect(url_for('notifications.message_list'))
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.list'))
+        return redirect(url_for('notifications.message_list'))
 
 
 @bp.route('/unread/<notification>', methods=['GET'])
@@ -41,10 +41,10 @@ def unread(notification):
     if n:
         n.unread = True
         db.session.commit()
-        return redirect(url_for('notifications.list'))
+        return redirect(url_for('notifications.message_list'))
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.list'))
+        return redirect(url_for('notifications.message_list'))
 
 
 @bp.route('/archive/<notification>', methods=['GET'])
@@ -55,10 +55,10 @@ def archive(notification):
         n.archived = True
         n.unread = False
         db.session.commit()
-        return redirect(url_for('notifications.list'))
+        return redirect(url_for('notifications.message_list'))
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.list'))
+        return redirect(url_for('notifications.message_list'))
 
 
 @bp.route('/unarchive/<notification>', methods=['GET'])
@@ -68,10 +68,10 @@ def unarchive(notification):
     if n:
         n.archived = False
         db.session.commit()
-        return redirect(url_for('notifications.list'))
+        return redirect(url_for('notifications.message_list'))
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.list'))
+        return redirect(url_for('notifications.message_list'))
 
 
 @bp.route('/goto/<notification>', methods=['GET'])
@@ -84,12 +84,12 @@ def goto(notification):
         return redirect(n.destination)
     else:
         flash('Notification not found or inaccessible!'.format(notification))
-        return redirect(url_for('notifications.list'))
+        return redirect(url_for('notifications.message_list'))
 
 
 @bp.route('/create', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['organizer'], data.ACCESS['admin']])
+@requires_access_level([data.ACCESS['admin'], data.ACCESS['organizer']])
 def create():
     print("Processing Form")
     form = NotificationForm()
@@ -105,6 +105,7 @@ def create():
                                  user=u, sender=current_user)
                 db.session.add(n)
             else:
+                users = []
                 if recipient == 'tc':
                     users = User.query.filter_by(access=data.ACCESS['team_captain']).all()
                 if recipient == 'tr':

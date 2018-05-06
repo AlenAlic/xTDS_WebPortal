@@ -8,10 +8,11 @@
 
 {% block app_content %}
 <h2>Compose message</h2>
-<form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <div class="form-group  required">
+        <!--suppress XmlInvalidId -->
         <label class="control-label" for="{{form.recipients.name}}">{{form.recipients.label}}</label>
         <div class="multiselect">
             <select style="display:none" name="{{form.recipients.name}}" multiple>

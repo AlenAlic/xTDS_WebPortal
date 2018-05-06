@@ -10,6 +10,7 @@ SAME_ROLE = 'You can not dance as a {role} with that partner, the selected partn
 NO_LEVEL = 'The selected partner is not dancing in this category.'
 DIFFERENT_LEVELS = 'You can not dance in the chosen level, the selected partner is dancing in a different level. ' \
                    'Please select a different level or a different partner.'
+MUST_BLIND_DATE = 'You cannot have a partner at this level.'
 
 
 class Level(object):
@@ -23,6 +24,8 @@ class Level(object):
             raise ValidationError(field.gettext(NO_LEVEL))
         if field.data == 'diff_levels':
             raise ValidationError(field.gettext(DIFFERENT_LEVELS.format(lvl=field.description)))
+        if field.data == 'must_blind_date':
+            raise ValidationError(field.gettext(MUST_BLIND_DATE))
 
 
 class Role(object):

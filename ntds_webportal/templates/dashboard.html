@@ -7,6 +7,11 @@ onload="onStart()"
 
 {% block app_content %}
 <div class="row" style="visibility:hidden">
+    {% if current_user.is_admin() or current_user.is_organizer() %}
+        {% with url='notifications.create', title='Send message', text='Send a message to a user.', image='messages.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+    {% endif %}
     {% if current_user.is_admin() %}
         {% with url='admin.index', title='Admin Page', text='Gives direct access to the database.', image='admin.png' %}
             {% include '_dashboard_page.html' %}
@@ -22,9 +27,7 @@ onload="onStart()"
         {% with url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-    {% endif %}
-    {% if current_user.is_admin()  or current_user.is_organizer() %}
-        {% with url='notifications.create', title='Send message', text='Send a message to a user.', image='raffle_results.png' %}
+        {% with url='organizer.raffle_system', title='Raffle system', text='Raffle system.', image='dummy.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}
