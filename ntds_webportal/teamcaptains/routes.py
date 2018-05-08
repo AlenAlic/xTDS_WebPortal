@@ -476,6 +476,7 @@ def request_respond(request):
             if success:
                 request.accept()
                 flash('Dance partner request accepted')
+                db.session.commit()
             else:
                 return redirect(url_for('teamcaptains.request_respond',request=request.id))
         else:

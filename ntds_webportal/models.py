@@ -132,6 +132,9 @@ class Contestant(db.Model):
         self.first_name.title()
         self.last_name.title()
 
+    def competition(self, competition):
+        return DancingInfo.query.filter_by(contestant_id=self.contestant_id, competition=competition).first()
+
 
 class ContestantInfo(db.Model):
     __tablename__ = 'contestant_info'
@@ -296,12 +299,11 @@ class PartnerRequest(db.Model):
     other = db.relationship('Contestant', foreign_keys=[other_id])
 
     def accept(self):
-        self.state=self.STATE['Accepted']
-
+        self.state = self.STATE['Accepted']
+        self.dancer.competition(self.competition).set_partner(self.other_id)
 
     def reject(self):
         self.state = self.STATE['Rejected']
 
     def state_name(self):
         return self.STATENAMES[self.state]
-
