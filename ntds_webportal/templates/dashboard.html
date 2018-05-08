@@ -38,6 +38,9 @@ onload="onStart()"
         {% with url='teamcaptains.edit_dancers', title='Edit Dancers', text='Edit information of registered dancers.', image='edit_contestant.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
+        {% with count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dance partner request', text='Request a couple with another team', image='dummy.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
         {% with url='teamcaptains.set_teamcaptains', title='Set team captain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}

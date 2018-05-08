@@ -1,0 +1,9 @@
+The request for {{request.dancer.get_full_name()}}
+to dance with {{request.other.get_full_name()}} from {{request.other.contestant_info[0].team}},
+has been {{request.state_name()}} by their teamcaptain(s)
+{% if request.response %}
+with the following response:
+    {{request.response}}
+{% else %}
+.
+{% endif %}

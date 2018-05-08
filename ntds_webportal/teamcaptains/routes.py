@@ -412,8 +412,6 @@ def partner_request():
     if form.validate_on_submit():
         di1 = DancingInfo.query.filter_by(contestant_id=form.dancer.data, competition=form.competition.data).first()
         di2 = DancingInfo.query.filter_by(contestant_id=form.other.data, competition=form.competition.data).first()
-        print(di1)
-        print(di2)
         match, errors = di1.valid_match(di2)
         if not match:
             flash("The dancers {} and {} are not a valid couple because:".format(di1.contestant, di2.contestant),

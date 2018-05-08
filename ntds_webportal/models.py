@@ -1,5 +1,5 @@
 from ntds_webportal import db, login
-from flask import current_app, url_for, redirect
+from flask import current_app, url_for, redirect, render_template
 from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -74,6 +74,11 @@ class User(UserMixin, db.Model):
 
     def unread_notifications(self):
         return Notification.query.filter_by(user=self, unread=True).count()
+
+    def open_partner_requests(self):
+        return len(list(r for r in PartnerRequest.query.filter_by(state=PartnerRequest.STATE['Open']).all() if
+         r.other.contestant_info[0].team == current_user.team))
+
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -301,9 +306,21 @@ class PartnerRequest(db.Model):
     def accept(self):
         self.state = self.STATE['Accepted']
         self.dancer.competition(self.competition).set_partner(self.other_id)
+        self.notify()
 
     def reject(self):
         self.state = self.STATE['Rejected']
+        self.notify()
+
+    def notify(self):
+        recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team)
+        for u in recipients:
+            n=Notification()
+            n.title = "Partner request {}".format(self.state_name())
+            n.user = u
+            n.text = render_template('notifications/partner_request.html', request=self)
+            db.session.add(n)
+        db.session.commit()
 
     def state_name(self):
         return self.STATENAMES[self.state]
