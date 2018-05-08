@@ -70,8 +70,15 @@ class TeamCaptainForm(FlaskForm):
 
 class PartnerRequestForm(FlaskForm):
     dancer = SelectField(label='My dancer', validators=[DataRequired()], coerce=int)
-    other = SelectField(label='Other dancer', validators=[DataRequired()],coerce=int)
+    other = SelectField(label='Other dancer', validators=[DataRequired()], coerce=int)
     competition = SelectField('Competition', choices=[(data.BALLROOM, data.BALLROOM), (data.LATIN, data.LATIN)])
-    level = SelectField('Level', validators=[Level()], choices=[(k, data.ALL_LEVELS[k]) for k in data.PARTICIPATING_LEVELS])
+    level = SelectField('Level', validators=[Level()],
+                        choices=[(k, data.ALL_LEVELS[k]) for k in data.PARTICIPATING_LEVELS])
     remark = TextAreaField(label='remark')
     submit = SubmitField('Send partner request')
+
+
+class PartnerRespondForm(FlaskForm):
+    remark = TextAreaField(label='remark')
+    accept = SubmitField(label='Accept')
+    reject = SubmitField(label='Reject')

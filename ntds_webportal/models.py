@@ -21,7 +21,9 @@ def requires_access_level(access_levels):
             if current_user.access not in access_levels:
                 return redirect(url_for('main.index'))
             return f(*args, **kwargs)
+
         return decorated_function
+
     return decorator
 
 
@@ -169,10 +171,20 @@ class DancingInfo(db.Model):
     def __repr__(self):
         return '{competition}: {name}'.format(competition=self.competition, name=self.contestant)
 
+    def valid_match(self, other):
+        errors = []
+        if self.competition != other.competition:
+            errors.append("The dancers are not in the same competition.")
+        if self.level != other.level:
+            errors.append("The dancers are not in the same level.")
+        if self.role == other.role:
+            errors.append("The dancers are not a valid Lead/Follow pair.")
+        return not errors, errors
+
     def set_partner(self, contestant_id):
-        partner = db.session.query(DancingInfo)\
+        partner = db.session.query(DancingInfo) \
             .filter_by(contestant_id=contestant_id if contestant_id is not None else self.partner,
-                       competition=self.competition,level=self.level).first()
+                       competition=self.competition, level=self.level).first()
         if contestant_id is not None:
             if partner is not None:
                 partner.partner = self.contestant_id
@@ -182,7 +194,7 @@ class DancingInfo(db.Model):
                 partner.partner = None
             self.partner = None
         db.session.commit()
-    
+
     def not_dancing(self, competition):
         self.competition = competition
         self.level = data.NO
@@ -229,6 +241,7 @@ class StatusInfo(db.Model):
     first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+
     # name_change_request = db.Column(db.String(384), nullable=True, default=None)
 
     def __repr__(self):
@@ -266,17 +279,29 @@ class Notification(db.Model):
 
 
 class PartnerRequest(db.Model):
-    STATE = {'OPEN': 1, 'ACCEPTED': 2, 'REJECTED': 3}
+    STATE = {'Open': 1, 'Accepted': 2, 'Rejected': 3}
+    STATENAMES = {v: k for k, v in STATE.items()}
 
     __tablename__ = 'partnerrequest'
-    id = db.Column(db.Integer,primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     remark = db.Column(db.Text())
+    response = db.Column(db.Text())
     level = db.Column(db.String(128), nullable=False, default=data.NO)
     competition = db.Column(db.String(128), nullable=False)
     dancer_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     other_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
-    state = db.Column(db.Integer, default=STATE['OPEN'])
+    state = db.Column(db.Integer, default=STATE['Open'])
     dancer = db.relationship('Contestant', foreign_keys=[dancer_id])
     other = db.relationship('Contestant', foreign_keys=[other_id])
+
+    def accept(self):
+        self.state=self.STATE['Accepted']
+
+
+    def reject(self):
+        self.state = self.STATE['Rejected']
+
+    def state_name(self):
+        return self.STATENAMES[self.state]
 

@@ -2,9 +2,10 @@ from flask import render_template, url_for, redirect, flash, request
 from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
-from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm
+from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm, \
+    PartnerRequestForm, PartnerRespondForm
 from ntds_webportal.models import User, requires_access_level, Team, Contestant, ContestantInfo, DancingInfo, \
-    VolunteerInfo, AdditionalInfo, StatusInfo
+    VolunteerInfo, AdditionalInfo, StatusInfo, PartnerRequest
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 import ntds_webportal.data as data
@@ -403,18 +404,85 @@ def partner_request():
     form = PartnerRequestForm()
     form.dancer.choices = map(lambda c: (c.contestant_id, c.contestant.get_full_name()),
                               ContestantInfo.query.filter_by(team=current_user.team).join(
-                                  ContestantInfo.contestant).join(Contestant.dancing_info).filter().all())
-    form.other.choices = map(lambda c: (c.contestant_id, c.contestant.get_full_name()),
+                                  ContestantInfo.contestant).join(Contestant.dancing_info).all())
+    form.other.choices = map(lambda c: (c.contestant_id, "{} - {}".format(c.contestant.get_full_name(), c.team)),
                              ContestantInfo.query.filter(ContestantInfo.team != current_user.team).join(
-                                 ContestantInfo.contestant).join(Contestant.dancing_info).filter(
-                                 DancingInfo.latin_partner is None or DancingInfo.ballroom_partner is None).all())
+                                 ContestantInfo.contestant).join(Contestant.dancing_info).all())
 
     if form.validate_on_submit():
-        pr = PartnerRequest(dancer_id=form.dancer.data, other_id=form.other.data, remark=form.remark.data,
-                            competition=form.competition.data, level=form.level.data)
-        print(pr)
-        db.session.add(pr)
-        db.session.commit()
-        flash('Partner request created')
+        di1 = DancingInfo.query.filter_by(contestant_id=form.dancer.data, competition=form.competition.data).first()
+        di2 = DancingInfo.query.filter_by(contestant_id=form.other.data, competition=form.competition.data).first()
+        print(di1)
+        print(di2)
+        match, errors = di1.valid_match(di2)
+        if not match:
+            flash("The dancers {} and {} are not a valid couple because:".format(di1.contestant, di2.contestant),
+                  'alert-danger')
+            for e in errors:
+                flash(e, 'alert-danger')
+            return redirect(url_for('teamcaptains.partner_request'))
+        else:
+            pr = PartnerRequest(dancer_id=form.dancer.data, other_id=form.other.data, remark=form.remark.data,
+                                competition=form.competition.data, level=form.level.data)
+            print(pr)
+            db.session.add(pr)
+            db.session.commit()
+            flash('Partner request created, please wait untill the other teamcaptain had accepted the request')
+            return redirect(url_for('teamcaptains.partner_request'))
 
     return render_template('teamcaptains/partner_request.html', form=form, title='partner_request')
+
+
+@bp.route('/partner_request_list', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['team_captain']])
+def partner_request_list():
+    requests = PartnerRequest.query.all()
+    myrequests = list(request for request in requests if request.dancer.contestant_info[0].team == current_user.team)
+    otherrequests = list(request for request in requests if
+                     request.other.contestant_info[0].team == current_user.team and request.state ==
+                     PartnerRequest.STATE['Open'])
+    return render_template('teamcaptains/partner_list.html', myrequests=myrequests, otherrequests=otherrequests,
+                           title='partner requests')
+
+
+@bp.route('/partner_request/<request>/', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['team_captain']])
+def request_respond(request):
+    request = PartnerRequest.query.filter_by(id=request).first()
+    if not request:
+        return redirect('errors/404.html')
+    if request.other.contestant_info[0].team != current_user.team:
+        return redirect('errors/404.html')
+
+    form = PartnerRespondForm()
+    if form.validate_on_submit():
+        accepted = form.accept.data
+        request.response = form.remark.data
+        if accepted:
+            success = True
+            partner = next((p.partner for p in request.other.dancing_info if p.competition==request.competition),None)
+            if partner is not None:
+                success = False
+                flash('{} already has a dancing partner'.format(request.other.get_full_name(), partner))
+
+            partner = next((p.partner
+            for p in request.dancer.dancing_info if p.competition == request.competition),None)
+            if partner is not None:
+                success=False
+                flash('{} already has a dancing partner'.format(request.dancer.get_full_name(), partner))
+
+            if success:
+                request.accept()
+                flash('Dance partner request accepted')
+            else:
+                return redirect(url_for('teamcaptains.request_respond',request=request.id))
+        else:
+            request.reject()
+            flash('Dance partner request rejected')
+        db.session.commit()
+        return redirect(url_for('teamcaptains.partner_request_list'))
+
+    return render_template('teamcaptains/request_respond.html', title="Respond to partner request", form=form,
+                           req=request)
