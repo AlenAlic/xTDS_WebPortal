@@ -77,8 +77,12 @@ class User(UserMixin, db.Model):
 
     def open_partner_requests(self):
         return len(list(r for r in PartnerRequest.query.filter_by(state=PartnerRequest.STATE['Open']).all() if
-         r.other.contestant_info[0].team == current_user.team))
+                        r.other.contestant_info[0].team == current_user.team))
 
+    def open_name_change_requests(self):
+        if self.is_organizer():
+            return NameChangeRequest.open_requests()
+        return 0
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -315,7 +319,7 @@ class PartnerRequest(db.Model):
     def notify(self):
         recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team)
         for u in recipients:
-            n=Notification()
+            n = Notification()
             n.title = "Partner request {}".format(self.state_name())
             n.user = u
             n.text = render_template('notifications/partner_request.html', request=self)
@@ -324,3 +328,52 @@ class PartnerRequest(db.Model):
 
     def state_name(self):
         return self.STATENAMES[self.state]
+
+
+class NameChangeRequest(db.Model):
+    STATE = {'Open': 1, 'Accepted': 2, 'Rejected': 3}
+    STATENAMES = {v: k for k, v in STATE.items()}
+
+    __tablename__ = 'namechangerequests'
+    id = db.Column(db.Integer, primary_key=True)
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
+    contestant = db.relationship('Contestant', foreign_keys=[contestant_id])
+    first_name = db.Column(db.String(128), nullable=False)
+    prefixes = db.Column(db.String(128), nullable=True)
+    last_name = db.Column(db.String(128), nullable=False)
+    state = db.Column(db.Integer, default=STATE['Open'])
+    response = db.Column(db.Text())
+
+    def accept(self):
+        self.state = self.STATE['Accepted']
+        self.contestant.first_name = self.first_name
+        self.contestant.last_name = self.last_name
+        self.contestant.prefixes = self.prefixes
+        self.notify()
+
+    def reject(self):
+        self.state = self.STATE['Rejected']
+        self.notify()
+
+    def notify(self):
+        recipients = User.query.filter_by(team=self.contestant.contestant_info[0].team)
+        for u in recipients:
+            n = Notification()
+            n.title = "Name change request {}".format(self.state_name())
+            n.user = u
+            n.text = render_template('notifications/name_change_request.html', request=self)
+            db.session.add(n)
+        db.session.commit()
+
+    def get_full_name(self):
+        if self.prefixes is None or self.prefixes == '':
+            return ' '.join((self.first_name, self.last_name))
+        else:
+            return ' '.join((self.first_name, self.prefixes, self.last_name))
+
+    def state_name(self):
+        return self.STATENAMES[self.state]
+
+    @staticmethod
+    def open_requests():
+        return NameChangeRequest.query.filter_by(state=NameChangeRequest.STATE['Open']).count()

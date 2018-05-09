@@ -21,7 +21,7 @@ onload="onStart()"
         {% with url='organizer.registration_overview', title='Registrered dancers', text='List of all registered dancers', image='contestants.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with url='main.todo', title='Name change requests', text='Requests for name changes of dancers', image='dummy.png' %}
+        {% with count=current_user.open_name_change_requests(), url='organizer.name_change_list', title='Name change requests', text='Requests for name changes of dancers', image='dummy.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}

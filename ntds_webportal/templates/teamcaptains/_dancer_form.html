@@ -10,7 +10,19 @@
         {{ my_wtf.form_field(form.prefixes, placeholder='Prefixes') }}
         {{ my_wtf.form_field(form.last_name, placeholder='Last name') }}
     {% elif mode == 'edit' %}
-        {{ my_wtf.form_field(form.full_name, placeholder='Full name') }}
+        <div class="form-group  required">
+        <label class="control-label  col-xs-2" for="full_name">Full name</label>
+        <div class="col-xs-10">
+            <div style="display:inline-block">
+                <input class="form-control" disabled="" id="full_name" name="full_name" placeholder="Full name" required="" type="text" value="Test Contestant42">
+            </div>
+            <div style="display:inline-block">
+                <a href="{{url_for('teamcaptains.name_change_request', contestant=dancer.contestant_id)}}" class="btn btn-default">
+                <span class="glyphicon glyphicon-edit"></span>
+                </a>
+            </div>
+        </div>
+
     {% endif %}
     {{ my_wtf.form_field(form.email, placeholder='E-mail address') }}
     {{ my_wtf.form_field(form.student) }}

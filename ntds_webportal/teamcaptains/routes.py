@@ -3,9 +3,9 @@ from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
 from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm, \
-    PartnerRequestForm, PartnerRespondForm
+    PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm
 from ntds_webportal.models import User, requires_access_level, Team, Contestant, ContestantInfo, DancingInfo, \
-    VolunteerInfo, AdditionalInfo, StatusInfo, PartnerRequest
+    VolunteerInfo, AdditionalInfo, StatusInfo, PartnerRequest, NameChangeRequest
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 import ntds_webportal.data as data
@@ -503,3 +503,32 @@ def request_respond(request):
 
     return render_template('teamcaptains/request_respond.html', title="Respond to partner request", form=form,
                            req=request)
+
+
+@bp.route('/name_change_request/<contestant>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['team_captain']])
+def name_change_request(contestant):
+    contestant = Contestant.query.filter_by(contestant_id=contestant).first()
+    if not contestant:
+        return redirect('errors/404.html')
+    if not contestant.contestant_info[0].team == current_user.team:
+        return redirect('errors/404.html')
+    form = NameChangeRequestForm()
+
+    if form.validate_on_submit():
+        flash('Name change request send')
+        ncr = NameChangeRequest(first_name=form.first_name.data,
+                                last_name=form.last_name.data,
+                                prefixes=form.prefixes.data,
+                                contestant=contestant)
+        db.session.add(ncr)
+        db.session.commit()
+        return redirect(url_for('teamcaptains.edit_dancer', number=contestant.contestant_id))
+
+    form.first_name.data = contestant.first_name
+    form.prefixes.data = contestant.prefixes
+    form.last_name.data = contestant.last_name
+
+    return render_template('teamcaptains/name_change_request.html', title="Name change request", contestant=contestant,
+                           form=form)
