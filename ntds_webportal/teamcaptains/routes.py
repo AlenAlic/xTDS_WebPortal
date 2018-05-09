@@ -301,11 +301,28 @@ def set_teamcaptains():
 def couples_list():
     confirmed = request.args.get('confirmed', 0, type=int)
     all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, DancingInfo.role == data.LEAD) \
+        .filter(
+        ContestantInfo.team == current_user.team,
+        DancingInfo.role == data.LEAD) \
         .order_by(DancingInfo.level, ContestantInfo.number).all()
     all_follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team, DancingInfo.role == data.FOLLOW) \
         .order_by(DancingInfo.level, ContestantInfo.number).all()
+
+    for follow in all_follows:
+        for dance in follow.dancing_info:
+            if dance.partner is not None:
+                c = Contestant.query.filter_by(contestant_id=dance.partner).first()
+                if c and not c in all_leads:
+                    all_leads.append(c)
+
+    for lead in all_leads:
+        for dance in lead.dancing_info:
+            if dance.partner is not None:
+                c = Contestant.query.filter_by(contestant_id=dance.partner).first()
+                if c and not c in all_follows:
+                    all_follows.append(c)
+
     ballroom_couples_leads = [dancer for dancer in all_leads if
                               get_dancing_categories(dancer.dancing_info)[data.BALLROOM].role == data.LEAD and
                               get_dancing_categories(dancer.dancing_info)[data.BALLROOM].partner is not None]
@@ -438,8 +455,8 @@ def partner_request_list():
     requests = PartnerRequest.query.all()
     myrequests = list(request for request in requests if request.dancer.contestant_info[0].team == current_user.team)
     otherrequests = list(request for request in requests if
-                     request.other.contestant_info[0].team == current_user.team and request.state ==
-                     PartnerRequest.STATE['Open'])
+                         request.other.contestant_info[0].team == current_user.team and request.state ==
+                         PartnerRequest.STATE['Open'])
     return render_template('teamcaptains/partner_list.html', myrequests=myrequests, otherrequests=otherrequests,
                            title='partner requests')
 
@@ -460,15 +477,16 @@ def request_respond(request):
         request.response = form.remark.data
         if accepted:
             success = True
-            partner = next((p.partner for p in request.other.dancing_info if p.competition==request.competition),None)
+            partner = next((p.partner for p in request.other.dancing_info if p.competition == request.competition),
+                           None)
             if partner is not None:
                 success = False
                 flash('{} already has a dancing partner'.format(request.other.get_full_name(), partner))
 
             partner = next((p.partner
-            for p in request.dancer.dancing_info if p.competition == request.competition),None)
+                            for p in request.dancer.dancing_info if p.competition == request.competition), None)
             if partner is not None:
-                success=False
+                success = False
                 flash('{} already has a dancing partner'.format(request.dancer.get_full_name(), partner))
 
             if success:
@@ -476,7 +494,7 @@ def request_respond(request):
                 flash('Dance partner request accepted')
                 db.session.commit()
             else:
-                return redirect(url_for('teamcaptains.request_respond',request=request.id))
+                return redirect(url_for('teamcaptains.request_respond', request=request.id))
         else:
             request.reject()
             flash('Dance partner request rejected')
