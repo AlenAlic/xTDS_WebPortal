@@ -6,135 +6,13 @@ from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContes
     PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm
 from ntds_webportal.models import User, requires_access_level, Team, Contestant, ContestantInfo, DancingInfo, \
     VolunteerInfo, AdditionalInfo, StatusInfo, PartnerRequest, NameChangeRequest
+
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
+from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant
 import ntds_webportal.data as data
 import itertools
 from sqlalchemy import and_, or_
-
-
-def contestant_validate_dancing(form):
-    if form.ballroom_partner.data is not None:
-        if form.ballroom_level.data in data.BLIND_DATE_LEVELS:
-            form.ballroom_partner.data = 'must_blind_date'
-        else:
-            # noinspection PyUnresolvedReferences
-            dancing_partner = db.session.query(Contestant) \
-                .filter(Contestant.contestant_id == form.ballroom_partner.data.contestant_id).first()
-            dancing_categories = get_dancing_categories(dancing_partner.dancing_info)
-            if form.ballroom_level.data != dancing_categories[data.BALLROOM].level:
-                if dancing_categories[data.BALLROOM].level is None:
-                    form.ballroom_partner.data = 'diff_levels_no_level'
-                    form.ballroom_level.data = 'diff_levels_no_level'
-                elif form.ballroom_level.data != data.CHOOSE:
-                    form.ballroom_partner.data = 'diff_levels'
-                    form.ballroom_level.data = 'diff_levels'
-            if form.ballroom_role.data == dancing_categories[data.BALLROOM].role:
-                if form.ballroom_role.data == data.LEAD:
-                    form.ballroom_partner.data = 'same_role_lead'
-                    form.ballroom_role.data = 'same_role_lead'
-                elif form.ballroom_role.data == data.FOLLOW:
-                    form.ballroom_partner.data = 'same_role_follow'
-                    form.ballroom_role.data = 'same_role_follow'
-    if form.latin_partner.data is not None:
-        if form.latin_level.data in data.BLIND_DATE_LEVELS:
-            form.latin_partner.data = 'must_blind_date'
-        else:
-            # noinspection PyUnresolvedReferences
-            dancing_partner = db.session.query(Contestant) \
-                .filter(Contestant.contestant_id == form.latin_partner.data.contestant_id).first()
-            dancing_categories = get_dancing_categories(dancing_partner.dancing_info)
-            if form.latin_level.data != dancing_categories[data.LATIN].level:
-                if dancing_categories[data.LATIN].level is None:
-                    form.latin_partner.data = 'diff_levels_no_level'
-                    form.latin_level.data = 'diff_levels_no_level'
-                elif form.latin_level.data != data.CHOOSE:
-                    form.latin_partner.data = 'diff_levels'
-                    form.latin_level.data = 'diff_levels'
-            if form.latin_role.data == dancing_categories[data.LATIN].role:
-                if form.latin_role.data == data.LEAD:
-                    form.latin_partner.data = 'same_role_lead'
-                    form.latin_role.data = 'same_role_lead'
-                elif form.latin_role.data == data.FOLLOW:
-                    form.latin_partner.data = 'same_role_follow'
-                    form.latin_role.data = 'same_role_follow'
-    return form
-
-
-def submit_contestant(f, contestant=None):
-    new_dancer = True
-    if contestant is None:
-        contestant = Contestant()
-        ci = ContestantInfo()
-        di = DancingInfo()
-        dancing_categories = {cat: DancingInfo(competition=cat) for cat in data.ALL_CATEGORIES}
-        vi = VolunteerInfo()
-        ai = AdditionalInfo()
-        si = StatusInfo()
-        contestant.first_name = f.first_name.data
-        contestant.prefixes = f.prefixes.data if f.prefixes.data is not '' else None
-        contestant.last_name = f.last_name.data
-        ci.number = f.number.data
-        ci.team = db.session.query(Team).filter_by(name=f.team.data).first()
-    else:
-        ci = contestant.contestant_info[0]
-        di = contestant.dancing_info
-        vi = contestant.volunteer_info[0]
-        ai = contestant.additional_info[0]
-        si = contestant.status_info[0]
-        dancing_categories = get_dancing_categories(di)
-        new_dancer = False
-    contestant.email = f.email.data
-    ci.contestant = contestant
-    ci.student = f.student.data
-    ci.diet_allergies = f.diet_allergies.data
-    dancing_categories[data.BALLROOM].contestant = contestant
-    dancing_categories[data.LATIN].contestant = contestant
-    if f.ballroom_level.data is None:
-        dancing_categories[data.BALLROOM].not_dancing(data.BALLROOM)
-    else:
-        dancing_categories[data.BALLROOM].level = f.ballroom_level.data
-        dancing_categories[data.BALLROOM].role = f.ballroom_role.data
-        dancing_categories[data.BALLROOM].blind_date = f.ballroom_blind_date.data
-        db.session.add(dancing_categories[data.BALLROOM])
-        db.session.flush()
-        if f.ballroom_partner.data is not None:
-            dancing_categories[data.BALLROOM].set_partner(f.ballroom_partner.data.contestant_id)
-        else:
-            dancing_categories[data.BALLROOM].set_partner(None)
-    if f.latin_level.data is None:
-        dancing_categories[data.LATIN].not_dancing(data.LATIN)
-    else:
-        dancing_categories[data.LATIN].level = f.latin_level.data
-        dancing_categories[data.LATIN].role = f.latin_role.data
-        dancing_categories[data.LATIN].blind_date = f.latin_blind_date.data
-        db.session.add(dancing_categories[data.LATIN])
-        db.session.flush()
-        if f.latin_partner.data is not None:
-            dancing_categories[data.LATIN].set_partner(f.latin_partner.data.contestant_id)
-        else:
-            dancing_categories[data.LATIN].set_partner(None)
-    vi.contestant = contestant
-    if f.volunteer.data == data.NO:
-        vi.not_volunteering()
-    else:
-        vi.volunteer = f.volunteer.data
-        vi.first_aid = f.first_aid.data
-        vi.jury_ballroom = f.jury_ballroom.data
-        vi.jury_latin = f.jury_latin.data
-    ai.contestant = contestant
-    ai.sleeping_arrangements = f.sleeping_arrangements.data
-    ai.t_shirt = f.t_shirt.data
-    si.contestant = contestant
-    si.first_time = f.first_time.data
-    if new_dancer:
-        db.session.add(contestant)
-    db.session.commit()
-    return contestant.get_full_name()
-
-
-def get_dancing_categories(dancing_info):
-    return {di.competition: di for di in dancing_info}
 
 
 @bp.route('/add_treasurer', methods=['GET', 'POST'])
@@ -165,6 +43,7 @@ def register_dancers():
     form = RegisterContestantForm()
     new_id = db.session.query().filter(ContestantInfo.team == current_user.team) \
         .with_entities(db.func.max(ContestantInfo.number)).scalar()
+    new_id = db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar()
     if new_id is None:
         new_id = 1
     else:

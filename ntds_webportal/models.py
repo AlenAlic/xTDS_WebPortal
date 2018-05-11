@@ -254,8 +254,6 @@ class StatusInfo(db.Model):
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
 
-    # name_change_request = db.Column(db.String(384), nullable=True, default=None)
-
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 

@@ -4,12 +4,13 @@ from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, StatusInfo, NameChangeRequest
 import ntds_webportal.data as data
-from raffle_system.functions import test_func
+from raffle_system.system import test_raffle
 from ntds_webportal.organizer.forms import NameChangeResponse
+
 
 @bp.route('/registration_overview')
 @login_required
-@requires_access_level(data.ACCESS['organizer'])
+@requires_access_level([data.ACCESS['organizer']])
 def registration_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .order_by(ContestantInfo.team_id, ContestantInfo.number).all()
@@ -104,5 +105,13 @@ def name_change_respond(request):
 @requires_access_level([data.ACCESS['organizer']])
 def raffle_system():
     if request.method == 'POST':
-        test_func()
+        max_id = db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar()
+        dancer_ids = list(range(0, max_id+1))
+        selected = {did: 0 for did in dancer_ids}
+        runs = 100
+        for i in range(0, runs):
+            print(f'Performing run {i+1} of {runs}...')
+            selected = test_raffle(selected)
+            with open('stats.txt', 'a', encoding='utf-8') as f1:
+                f1.write(str(selected))
     return render_template('organizer/raffle_system.html')

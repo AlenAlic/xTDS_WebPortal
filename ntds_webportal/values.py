@@ -15,11 +15,13 @@ YMN = {YES: 'Yes', MAYBE: 'Maybe', NO: 'No'}
 TF = {True: YMN[YES], False: YMN[NO]}
 
 # Categories
+COMPETITION = 'competition'
 BALLROOM = 'Ballroom'
 LATIN = 'Latin'
-ALL_CATEGORIES = [BALLROOM, LATIN]
+ALL_COMPETITIONS = [BALLROOM, LATIN]
 
 # All available levels
+LEVEL = 'level'
 BEGINNERS = 'beginners'
 BREITENSPORT = 'breitensport'
 CLOSED = 'closed'
@@ -32,6 +34,7 @@ ALL_LEVELS = {
 }
 
 # Dancing roles
+ROLE = 'role'
 LEAD = 'lead'
 FOLLOW = 'follow'
 ALL_ROLES = {
