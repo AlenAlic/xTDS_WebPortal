@@ -1,5 +1,5 @@
 from ntds_webportal import db, login
-from flask import current_app, url_for, redirect
+from flask import current_app, url_for, redirect, render_template
 from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -21,7 +21,9 @@ def requires_access_level(access_levels):
             if current_user.access not in access_levels:
                 return redirect(url_for('main.index'))
             return f(*args, **kwargs)
+
         return decorated_function
+
     return decorator
 
 
@@ -72,6 +74,15 @@ class User(UserMixin, db.Model):
 
     def unread_notifications(self):
         return Notification.query.filter_by(user=self, unread=True).count()
+
+    def open_partner_requests(self):
+        return len(list(r for r in PartnerRequest.query.filter_by(state=PartnerRequest.STATE['Open']).all() if
+                        r.other.contestant_info[0].team == current_user.team))
+
+    def open_name_change_requests(self):
+        if self.is_organizer():
+            return NameChangeRequest.open_requests()
+        return 0
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -130,6 +141,9 @@ class Contestant(db.Model):
         self.first_name.title()
         self.last_name.title()
 
+    def competition(self, competition):
+        return DancingInfo.query.filter_by(contestant_id=self.contestant_id, competition=competition).first()
+
 
 class ContestantInfo(db.Model):
     __tablename__ = 'contestant_info'
@@ -169,10 +183,20 @@ class DancingInfo(db.Model):
     def __repr__(self):
         return '{competition}: {name}'.format(competition=self.competition, name=self.contestant)
 
+    def valid_match(self, other):
+        errors = []
+        if self.competition != other.competition:
+            errors.append("The dancers are not in the same competition.")
+        if self.level != other.level:
+            errors.append("The dancers are not in the same level.")
+        if self.role == other.role:
+            errors.append("The dancers are not a valid Lead/Follow pair.")
+        return not errors, errors
+
     def set_partner(self, contestant_id):
-        partner = db.session.query(DancingInfo)\
+        partner = db.session.query(DancingInfo) \
             .filter_by(contestant_id=contestant_id if contestant_id is not None else self.partner,
-                       competition=self.competition,level=self.level).first()
+                       competition=self.competition, level=self.level).first()
         if contestant_id is not None:
             if partner is not None:
                 partner.partner = self.contestant_id
@@ -182,7 +206,7 @@ class DancingInfo(db.Model):
                 partner.partner = None
             self.partner = None
         db.session.commit()
-    
+
     def not_dancing(self, competition):
         self.competition = competition
         self.level = data.NO
@@ -262,3 +286,92 @@ class Notification(db.Model):
             return 'automated message'
         else:
             return 'from: {}'.format(self.sender)
+
+
+class PartnerRequest(db.Model):
+    STATE = {'Open': 1, 'Accepted': 2, 'Rejected': 3}
+    STATENAMES = {v: k for k, v in STATE.items()}
+
+    __tablename__ = 'partnerrequest'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    remark = db.Column(db.Text())
+    response = db.Column(db.Text())
+    level = db.Column(db.String(128), nullable=False, default=data.NO)
+    competition = db.Column(db.String(128), nullable=False)
+    dancer_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
+    other_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
+    state = db.Column(db.Integer, default=STATE['Open'])
+    dancer = db.relationship('Contestant', foreign_keys=[dancer_id])
+    other = db.relationship('Contestant', foreign_keys=[other_id])
+
+    def accept(self):
+        self.state = self.STATE['Accepted']
+        self.dancer.competition(self.competition).set_partner(self.other_id)
+        self.notify()
+
+    def reject(self):
+        self.state = self.STATE['Rejected']
+        self.notify()
+
+    def notify(self):
+        recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team)
+        for u in recipients:
+            n = Notification()
+            n.title = "Partner request {}".format(self.state_name())
+            n.user = u
+            n.text = render_template('notifications/partner_request.html', request=self)
+            db.session.add(n)
+        db.session.commit()
+
+    def state_name(self):
+        return self.STATENAMES[self.state]
+
+
+class NameChangeRequest(db.Model):
+    STATE = {'Open': 1, 'Accepted': 2, 'Rejected': 3}
+    STATENAMES = {v: k for k, v in STATE.items()}
+
+    __tablename__ = 'namechangerequests'
+    id = db.Column(db.Integer, primary_key=True)
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
+    contestant = db.relationship('Contestant', foreign_keys=[contestant_id])
+    first_name = db.Column(db.String(128), nullable=False)
+    prefixes = db.Column(db.String(128), nullable=True)
+    last_name = db.Column(db.String(128), nullable=False)
+    state = db.Column(db.Integer, default=STATE['Open'])
+    response = db.Column(db.Text())
+
+    def accept(self):
+        self.state = self.STATE['Accepted']
+        self.contestant.first_name = self.first_name
+        self.contestant.last_name = self.last_name
+        self.contestant.prefixes = self.prefixes
+        self.notify()
+
+    def reject(self):
+        self.state = self.STATE['Rejected']
+        self.notify()
+
+    def notify(self):
+        recipients = User.query.filter_by(team=self.contestant.contestant_info[0].team)
+        for u in recipients:
+            n = Notification()
+            n.title = "Name change request {}".format(self.state_name())
+            n.user = u
+            n.text = render_template('notifications/name_change_request.html', request=self)
+            db.session.add(n)
+        db.session.commit()
+
+    def get_full_name(self):
+        if self.prefixes is None or self.prefixes == '':
+            return ' '.join((self.first_name, self.last_name))
+        else:
+            return ' '.join((self.first_name, self.prefixes, self.last_name))
+
+    def state_name(self):
+        return self.STATENAMES[self.state]
+
+    @staticmethod
+    def open_requests():
+        return NameChangeRequest.query.filter_by(state=NameChangeRequest.STATE['Open']).count()

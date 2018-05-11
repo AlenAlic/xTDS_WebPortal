@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block app_content %}
+<h2>Name change requests</h2>
+{% if list %}
+<table class="table table-striped table-responsive">
+    <thead>
+    <td> From</td>
+    <td> To</td>
+    <td> Respond</td>
+    </thead>
+    <tbody>
+    <tr>
+        {% for req in list %}
+        <td> {{req.contestant.get_full_name()}}</td>
+        <td> {{req.get_full_name()}}</td>
+        <td>
+            <a href="{{url_for('organizer.name_change_respond',request=req.id)}}">
+                <span class="glyphicon glyphicon-edit"></span>
+            </a>
+        </td>
+    </tr>
+</div>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+There are no open name change requests.
+{% endif %}
+
+{% endblock %}

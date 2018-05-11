@@ -2,9 +2,10 @@ from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required
 from ntds_webportal import db
 from ntds_webportal.organizer import bp
-from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, StatusInfo
+from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, StatusInfo, NameChangeRequest
 import ntds_webportal.data as data
 from raffle_system.system import test_raffle
+from ntds_webportal.organizer.forms import NameChangeResponse
 
 
 @bp.route('/registration_overview')
@@ -66,6 +67,37 @@ def finances_overview():
         return redirect(url_for('organizer.finances_overview'))
     return render_template('organizer/finances_overview.html', teams=teams, data=data,
                            dutch_teams=dutch_teams, german_teams=german_teams, other_teams=other_teams)
+
+@bp.route('/name_change_list', methods=['GET'])
+@login_required
+@requires_access_level([data.ACCESS['organizer']])
+def name_change_list():
+    nml = NameChangeRequest.query.filter_by(state=NameChangeRequest.STATE['Open']).all()
+    return render_template('organizer/name_change_list.html', list = nml)
+
+@bp.route('/name_change_respond/<request>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['organizer']])
+def name_change_respond(request):
+    req = NameChangeRequest.query.filter_by(id=request).first()
+    if not req:
+        return redirect('error.404')
+
+    form = NameChangeResponse()
+    if form.validate_on_submit():
+        accepted = form.accept.data
+        req.response = form.remark.data
+        if accepted:
+            flash('Name change request accepted')
+            req.accept()
+        else:
+            flash('Name change request rejected')
+            req.reject()
+        db.session.commit()
+        return redirect(url_for('organizer.name_change_list'))
+
+    return render_template('organizer/name_change_respond.html', request=req, form=form)
+
 
 
 @bp.route('/raffle_system', methods=['GET', 'POST'])

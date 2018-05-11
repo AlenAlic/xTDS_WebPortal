@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block app_content %}
+<h2>Name change request</h2>
+The teamcaptain of {{request.contestant.contestant_info[0].team}} want to change the name of:
+<p>{{request.contestant.get_full_name()}} to: <br>{{request.get_full_name()}}</p>
+
+<div class="container">
+<form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+
+    <div class="form-group ">
+        <label class="control-label" for="remark">remark</label>
+        <textarea class="form-control" id="remark" name="remark"></textarea>
+    </div>
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <input type="submit" id="accept" name="accept" value="Accept" class="btn btn-success"/>
+        <input type="submit" id="reject" name="reject" value="Reject" class="btn btn-danger"/>
+    </div>
+</form>
+    </div>
+{% endblock %}

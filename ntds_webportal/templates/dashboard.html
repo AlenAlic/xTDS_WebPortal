@@ -21,7 +21,7 @@ onload="onStart()"
         {% with url='organizer.registration_overview', title='Registrered dancers', text='List of all registered dancers', image='contestants.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with url='main.todo', title='Name change requests', text='Requests for name changes of dancers', image='name_change.png' %}
+        {% with count=current_user.open_name_change_requests(), url='organizer.name_change_list', title='Name change requests', text='Requests for name changes of dancers', image='name_change.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
@@ -36,6 +36,9 @@ onload="onStart()"
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with url='teamcaptains.edit_dancers', title='Edit Dancers', text='Edit information of registered dancers.', image='edit_contestant.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dance partner request', text='Request a couple with another team', image='dummy.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with url='teamcaptains.set_teamcaptains', title='Set team captain(s)', text='Set who the team captain(s) is(are).', image='captain.png' %}
