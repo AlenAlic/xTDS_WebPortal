@@ -44,7 +44,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), index=True)
     access = db.Column(db.Integer, index=True, nullable=False)
     is_active = db.Column(db.Boolean, index=True, nullable=False, default=False)
-    send_new_messages_email = db.Column(db.Boolean, nullable=True, default=True)
+    send_new_messages_email = db.Column(db.Boolean, nullable=False, default=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
     team = db.relationship('Team')
 
@@ -469,10 +469,11 @@ class NameChangeRequest(db.Model):
 
 class TournamentState(db.Model):
     __tablename__ = 'tournament_state'
-    main_raffle_taken_place = db.Column(db.Boolean, default=False, primary_key=True)
-    main_raffle_result_visible = db.Column(db.Boolean, default=False)
-    numbers_rearranged = db.Column(db.Boolean, default=False)
-    raffle_completed_message_sent = db.Column(db.Boolean, default=False)
+    lock = db.Column(db.Integer, primary_key=True)
+    main_raffle_taken_place = db.Column(db.Boolean, nullable=False, default=False)
+    main_raffle_result_visible = db.Column(db.Boolean, nullable=False, default=False)
+    numbers_rearranged = db.Column(db.Boolean, nullable=False, default=False)
+    raffle_completed_message_sent = db.Column(db.Boolean, nullable=False, default=False)
     tournament_config = db.Column(db.String(2048), nullable=False)
     raffle_config = db.Column(db.String(2048), nullable=False)
 
