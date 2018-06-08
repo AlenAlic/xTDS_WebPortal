@@ -50,7 +50,8 @@ class DevShell:
                 if table.name not in EXCLUDED_FROM_CLEARING:
                     print('Cleared table {}.'.format(table))
                     db.session.execute(table.delete())
-                    db.session.execute(f"ALTER TABLE {table.name} AUTO_INCREMENT = 1;")
+                    if not app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:'):
+                        db.session.execute(f"ALTER TABLE {table.name} AUTO_INCREMENT = 1;")
             tf = TeamFinances.query.all()
             for f in tf:
                 f.paid = 0
@@ -64,7 +65,8 @@ class DevShell:
             for table in reversed(meta.sorted_tables):
                 print('Cleared table {}.'.format(table))
                 db.session.execute(table.delete())
-                db.session.execute(f"ALTER TABLE {table.name} AUTO_INCREMENT = 1;")
+                if not app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:'):
+                    db.session.execute(f"ALTER TABLE {table.name} AUTO_INCREMENT = 1;")
             db.session.commit()
 
     def reset_test_data(self):
