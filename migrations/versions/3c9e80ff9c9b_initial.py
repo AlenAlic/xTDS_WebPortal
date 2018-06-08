@@ -1,17 +1,16 @@
 """initial
 
-Revision ID: ab3e0b0cf0dd
+Revision ID: 3c9e80ff9c9b
 Revises: 
-Create Date: 2018-05-28 21:51:53.180913
+Create Date: 2018-06-08 08:50:18.763296
 
 """
 from alembic import op
 import sqlalchemy as sa
 
 
-# fix attempt
 # revision identifiers, used by Alembic.
-revision = 'ab3e0b0cf0dd'
+revision = '3c9e80ff9c9b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,6 +27,13 @@ def upgrade():
     sa.PrimaryKeyConstraint('contestant_id'),
     sa.UniqueConstraint('email')
     )
+    op.create_table('merchandise',
+    sa.Column('merchandise_id', sa.Integer(), nullable=False),
+    sa.Column('product_name', sa.String(length=128), nullable=False),
+    sa.Column('product_description', sa.String(length=256), nullable=False),
+    sa.Column('price', sa.Integer(), nullable=False),
+    sa.PrimaryKeyConstraint('merchandise_id')
+    )
     op.create_table('teams',
     sa.Column('team_id', sa.Integer(), nullable=False),
     sa.Column('country', sa.String(length=128), nullable=False),
@@ -37,12 +43,14 @@ def upgrade():
     sa.UniqueConstraint('name')
     )
     op.create_table('tournament_state',
+    sa.Column('lock', sa.Integer(), nullable=False),
     sa.Column('main_raffle_taken_place', sa.Boolean(), nullable=False),
-    sa.Column('main_raffle_result_visible', sa.Boolean(), nullable=True),
-    sa.Column('numbers_rearranged', sa.Boolean(), nullable=True),
+    sa.Column('main_raffle_result_visible', sa.Boolean(), nullable=False),
+    sa.Column('numbers_rearranged', sa.Boolean(), nullable=False),
+    sa.Column('raffle_completed_message_sent', sa.Boolean(), nullable=False),
     sa.Column('tournament_config', sa.String(length=2048), nullable=False),
     sa.Column('raffle_config', sa.String(length=2048), nullable=False),
-    sa.PrimaryKeyConstraint('main_raffle_taken_place')
+    sa.PrimaryKeyConstraint('lock')
     )
     op.create_table('additional_info',
     sa.Column('contestant_id', sa.Integer(), nullable=False),
@@ -76,6 +84,14 @@ def upgrade():
     sa.ForeignKeyConstraint(['contestant_id'], ['contestants.contestant_id'], ),
     sa.PrimaryKeyConstraint('contest_id'),
     sa.UniqueConstraint('contestant_id', 'competition', 'level')
+    )
+    op.create_table('merchandise_info',
+    sa.Column('order_id', sa.Integer(), nullable=False),
+    sa.Column('contestant_id', sa.Integer(), nullable=True),
+    sa.Column('product_id', sa.Integer(), nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['contestant_id'], ['contestants.contestant_id'], ),
+    sa.PrimaryKeyConstraint('order_id')
     )
     op.create_table('name_change_requests',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -130,6 +146,7 @@ def upgrade():
     sa.Column('password_hash', sa.String(length=128), nullable=True),
     sa.Column('access', sa.Integer(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('send_new_messages_email', sa.Boolean(), nullable=False),
     sa.Column('team_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['team_id'], ['teams.team_id'], ),
     sa.PrimaryKeyConstraint('user_id')
@@ -194,6 +211,7 @@ def downgrade():
     op.drop_index(op.f('ix_partner_request_timestamp'), table_name='partner_request')
     op.drop_table('partner_request')
     op.drop_table('name_change_requests')
+    op.drop_table('merchandise_info')
     op.drop_table('dancing_info')
     op.drop_index(op.f('ix_contestant_info_student'), table_name='contestant_info')
     op.drop_index(op.f('ix_contestant_info_first_time'), table_name='contestant_info')
@@ -201,5 +219,6 @@ def downgrade():
     op.drop_table('additional_info')
     op.drop_table('tournament_state')
     op.drop_table('teams')
+    op.drop_table('merchandise')
     op.drop_table('contestants')
     # ### end Alembic commands ###
