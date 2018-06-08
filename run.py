@@ -9,7 +9,7 @@ app = create_app()
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'dev': DevShell, 'User': User, 'Notification': Notification}
+    return {'db': db, 'dev': DevShell, 'prod': ProductionShell, 'User': User, 'Notification': Notification}
 
 
 def database_is_empty():
@@ -17,6 +17,15 @@ def database_is_empty():
     is_empty = table_names == []
     print('Database empty: {is_empty}.'.format(is_empty=is_empty))
     return is_empty
+
+
+class ProductionShell:
+    @staticmethod
+    def create():
+        with app.app_context():
+            print('Creating Users.')
+            create_users()
+            create_tournament()
 
 
 class DevShell:
@@ -41,6 +50,7 @@ class DevShell:
                 if table.name not in EXCLUDED_FROM_CLEARING:
                     print('Cleared table {}.'.format(table))
                     db.session.execute(table.delete())
+                    db.session.execute(f"ALTER TABLE {table.name} AUTO_INCREMENT = 1;")
             tf = TeamFinances.query.all()
             for f in tf:
                 f.paid = 0
@@ -54,15 +64,12 @@ class DevShell:
             for table in reversed(meta.sorted_tables):
                 print('Cleared table {}.'.format(table))
                 db.session.execute(table.delete())
+                db.session.execute(f"ALTER TABLE {table.name} AUTO_INCREMENT = 1;")
             db.session.commit()
 
     def reset_test_data(self):
         with app.app_context():
-            meta = db.metadata
-            for table in reversed(meta.sorted_tables):
-                print('Cleared table {}.'.format(table))
-                db.session.execute(table.delete())
-            db.session.commit()
+            self.full_clear()
             self.create()
             self.populate_test()
 

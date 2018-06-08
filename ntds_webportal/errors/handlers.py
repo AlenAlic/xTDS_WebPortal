@@ -5,15 +5,17 @@ from ntds_webportal.errors.email import send_error_email
 import traceback
 
 
+# noinspection PyUnusedLocal
 @bp.app_errorhandler(404)
 def not_found_error(error):
-    return render_template('errors/404.html'), error.status
+    return render_template('errors/404.html')
 
 
+# noinspection PyUnusedLocal
 @bp.app_errorhandler(500)
 def internal_error(error):
     db.session.rollback()
-    return render_template('errors/500.html'), error.status
+    return render_template('errors/500.html')
 
 
 # noinspection PyUnusedLocal
