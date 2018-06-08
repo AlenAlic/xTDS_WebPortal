@@ -39,7 +39,7 @@ def upgrade():
     sa.Column('main_raffle_taken_place', sa.Boolean(), nullable=False),
     sa.Column('main_raffle_result_visible', sa.Boolean(), nullable=True),
     sa.Column('numbers_rearranged', sa.Boolean(), nullable=True),
-    sa.Column('tournament_config', sa.String(length=128), nullable=False),
+    sa.Column('tournament_config', sa.String(length=2048), nullable=False),
     sa.Column('raffle_config', sa.String(length=2048), nullable=False),
     sa.PrimaryKeyConstraint('main_raffle_taken_place')
     )
