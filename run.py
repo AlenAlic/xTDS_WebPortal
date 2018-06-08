@@ -1,7 +1,6 @@
 from ntds_webportal import create_app, db
 from ntds_webportal.models import User, Notification, EXCLUDED_FROM_CLEARING, TeamFinances
 import sqlalchemy as alchemy
-# noinspection PyPackageRequirements
 from instance.populate import populate_test_db, create_users, create_tournament
 
 

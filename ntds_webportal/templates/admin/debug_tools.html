@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block app_content %}
+<h3>Force error to test the error mail</h3>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <button type="submit" id="submit-force_error" name="force_error" class="btn btn-danger">Force error</button>
+</form>
+{% endblock %}

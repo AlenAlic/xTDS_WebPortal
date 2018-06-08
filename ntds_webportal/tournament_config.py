@@ -27,6 +27,20 @@ SHIRT_SIZES = {
     'FXXL': 'Woman\'s XXL'
 }
 
+# Sticker price in EuroCENTS and type of stickers
+STICKER_PRICE = 100
+MERCHANDISE = {
+    'AliceinWonderland': 'Alice in Wonderland',
+    'Avatar': 'Avatar',
+    'HarryPotter': 'Harry Potter',
+    'IndianaJones': 'Indiana Jones',
+    'LordoftheRings': 'Lord of the Rings',
+    'Matrix': 'Matrix',
+    'PiratesoftheCaribean': 'Pirates of the Caribean',
+    'StarTrek': 'Star Trek',
+    'StarWars': 'Star Wars'
+}
+
 tournament_settings = {
     'levels': PARTICIPATING_LEVELS,
     'blind_date_levels': BLIND_DATE_LEVELS,

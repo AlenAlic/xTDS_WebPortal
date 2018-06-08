@@ -33,6 +33,9 @@ onload="onStart()"
         {% with url='admin.index', title='Admin Page', text='Gives direct access to the database.', image='admin.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
+        {% with url='self_admin.debug_tools', title='Debug Tools', text='Tools to debug the site.', image='debug_tools.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
     {% endif %}
 
     {% if current_user.is_organizer() %}
@@ -46,6 +49,18 @@ onload="onStart()"
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with accessible=false, url='main.todo', title='Merchandise', text='Coming soon...', image='merchandise.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with accessible=false, url='main.todo', title='Export to BAD', text='Coming soon...', image='BAD.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+    {% endif %}
+
+    {% if current_user.is_bdo() %}
+        {% with accessible=state.main_raffle_result_visible, url='main.todo', title='Couples', text='View all registered couples, and create new couples.', image='view_couples.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}

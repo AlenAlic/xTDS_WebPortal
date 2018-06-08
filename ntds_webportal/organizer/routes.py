@@ -1,11 +1,13 @@
 from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from ntds_webportal import db
+from ntds_webportal.main.email import send_new_messages_email
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification
 from ntds_webportal.functions import uniquify, check_combination, get_combinations_list
 from ntds_webportal.organizer.forms import NameChangeResponse
+from ntds_webportal.organizer.email import send_raffle_completed_email
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.system import raffle, finish_raffle, raffle_add_neutral_group, test_raffle
@@ -183,7 +185,7 @@ def raffle_system():
                     .filter(ContestantInfo.team == t['team'], StatusInfo.raffle_status == CONFIRMED).all()
             newly_selected = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
                 .filter(StatusInfo.raffle_status == SELECTED, StatusInfo.status == REGISTERED)\
-                .order_by(Contestant.contestant_id).all()
+                .order_by(ContestantInfo.number).all()
             sleeping_spots = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
                 .filter(or_(StatusInfo.raffle_status == SELECTED, StatusInfo.raffle_status == CONFIRMED),
                         AdditionalInfo.sleeping_arrangements.is_(True)).count()
@@ -222,7 +224,17 @@ def raffle_system():
                 dancer.status_info[0].set_status(REGISTERED)
             state.main_raffle_taken_place = False
             state.main_raffle_result_visible = False
+            state.raffle_completed_message_sent = False
             flash('Raffle results cleared.', 'alert-info')
+        elif 'send_raffle_completed_message' in form:
+            teamcaptains = User.query.filter(User.is_active, User.access == ACCESS['team_captain']).all()
+            for tc in teamcaptains:
+                dancers = Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == tc.team).all()
+                if len(dancers) > 0:
+                    send_raffle_completed_email(tc.email)
+            state.raffle_completed_message_sent = True
+        elif 'do_not_send_raffle_completed_message' in form:
+            state.raffle_completed_message_sent = True
         elif 'finish_raffle' in form:
             finish_raffle(raffle_sys)
         elif 'select_random_group' in form:
@@ -231,6 +243,14 @@ def raffle_system():
             marked_dancers = [d for d in all_dancers if str(d.contestant_id) in form]
             for dancer in marked_dancers:
                 dancer.status_info[0].set_status(SELECTED)
+                teamcaptain = User.query.filter(User.is_active, User.access == ACCESS['team_captain'],
+                                                User.team == dancer.contestant_info[0].team).first()
+                if teamcaptain.send_new_messages_email:
+                    text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
+                    n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
+                                     user=teamcaptain)
+                    db.session.add(n)
+                    send_new_messages_email(current_user, teamcaptain)
         elif 'remove_marked_dancers' in form:
             marked_dancers = [d for d in all_dancers if str(d.contestant_id) in form]
             for dancer in marked_dancers:
@@ -286,7 +306,8 @@ def cancel_dancer(number):
     if send_message:
         text = f"{changed_dancer.get_full_name()}' registration has been cancelled by the organization.\n"
         n = Notification(title=f"Cancelled registration of {changed_dancer.get_full_name()}", text=text,
-                         user=User.query.filter(User.team == changed_dancer.contestant_info[0].team).first())
+                         user=User.query.filter(User.access == ACCESS['team_captain'],
+                                                User.team == changed_dancer.contestant_info[0].team).first())
         db.session.add(n)
         db.session.commit()
     return redirect(url_for('organizer.raffle_system'))

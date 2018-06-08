@@ -1,11 +1,14 @@
-<p>I crashed</p>
+I crashed
 
-<p>Error message:</p>
+Error message:
 
 {% if message is defined %}
-<p>{{ message }}</p>
+{% for msg in message %}
+{{ msg }}
+{% endfor %}
 {% endif %}
 
 
-<p>Sincerely,</p>
-<p>The xTDS WebPortal</p>
+Sincerely,
+
+The xTDS WebPortal

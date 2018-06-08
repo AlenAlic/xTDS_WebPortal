@@ -5,7 +5,7 @@ from ntds_webportal.teamcaptains import bp
 from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm, \
     PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm, CreateCoupleForm
 from ntds_webportal.models import User, requires_access_level, TeamFinances, Contestant, ContestantInfo, DancingInfo, \
-    StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification
+    StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification, Merchandise, MerchandiseInfo
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant
@@ -62,6 +62,7 @@ def register_dancers():
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     form.ballroom_partner.query = ballroom_dancers
     form.latin_partner.query = latin_dancers
+    merchandise = Merchandise.query.all()
     if request.method == 'POST':
         # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
@@ -75,7 +76,7 @@ def register_dancers():
         if form.is_submitted():
             flash('Not all fields of the form have been filled in (correctly).', 'alert-danger')
     return render_template('teamcaptains/register_dancers.html', form=form, data=data,
-                           timestamp=datetime.datetime.now().timestamp())
+                           timestamp=datetime.datetime.now().timestamp(), merchandise=merchandise)
 
 
 @bp.route('/edit_dancers', methods=['GET', 'POST'])
@@ -101,19 +102,19 @@ def edit_dancer(number):
     state = TournamentState.query.first()
     form = EditContestantForm()
     ballroom_partners = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
-                or_(and_(DancingInfo.competition == data.BALLROOM, DancingInfo.partner == dancer.contestant_id),
-                    and_(DancingInfo.competition == data.BALLROOM, DancingInfo.partner.is_(None))),
-                DancingInfo.competition == data.BALLROOM,
-                Contestant.contestant_id != dancer.contestant_id,
+        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id != dancer.contestant_id,
+                or_(and_(StatusInfo.status != CANCELLED,
+                         DancingInfo.competition == data.BALLROOM, DancingInfo.partner == dancer.contestant_id),
+                    and_(StatusInfo.status == REGISTERED,
+                         DancingInfo.competition == data.BALLROOM, DancingInfo.partner.is_(None))),
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     latin_partners = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
-                or_(and_(DancingInfo.competition == data.LATIN, DancingInfo.partner == dancer.contestant_id),
-                    and_(DancingInfo.competition == data.LATIN, DancingInfo.partner.is_(None))),
-                DancingInfo.competition == data.LATIN,
-                Contestant.contestant_id != dancer.contestant_id,
+        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id != dancer.contestant_id,
+                or_(and_(StatusInfo.status != CANCELLED,
+                         DancingInfo.competition == data.LATIN, DancingInfo.partner == dancer.contestant_id),
+                    and_(StatusInfo.status == REGISTERED,
+                         DancingInfo.competition == data.LATIN, DancingInfo.partner.is_(None))),
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     form.full_name.data = dancer.get_full_name()
@@ -121,23 +122,28 @@ def edit_dancer(number):
     form.number.data = dancer.contestant_info[0].number
     form.ballroom_partner.query = ballroom_partners
     form.latin_partner.query = latin_partners
+    dancing_categories = get_dancing_categories(dancer.dancing_info)
+    form.ballroom_level.data = dancing_categories[data.BALLROOM].level
+    if form.ballroom_level.data == 'no':
+        form.ballroom_role.data = 'None'
+    else:
+        form.ballroom_role.data = dancing_categories[data.BALLROOM].role
+    form.ballroom_blind_date.data = dancing_categories[data.BALLROOM].blind_date
+    form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+        .filter(ContestantInfo.team == current_user.team,
+                Contestant.contestant_id == dancing_categories[data.BALLROOM].partner).first()
+    form.latin_level.data = dancing_categories[data.LATIN].level
+    if form.latin_level.data == 'no':
+        form.latin_role.data = 'None'
+    else:
+        form.latin_role.data = dancing_categories[data.LATIN].role
+    form.latin_blind_date.data = dancing_categories[data.LATIN].blind_date
+    form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+        .filter(ContestantInfo.team == current_user.team,
+                Contestant.contestant_id == dancing_categories[data.LATIN].partner).first()
     if request.method == 'POST':
         # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
-        if dancer.status_info[0].status == SELECTED or dancer.status_info[0].status == CONFIRMED:
-            dancing_categories = get_dancing_categories(dancer.dancing_info)
-            form.ballroom_level.data = dancing_categories[data.BALLROOM].level
-            form.ballroom_role.data = dancing_categories[data.BALLROOM].role
-            form.ballroom_blind_date.data = dancing_categories[data.BALLROOM].blind_date
-            form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-                .filter(ContestantInfo.team == current_user.team,
-                        Contestant.contestant_id == dancing_categories[data.BALLROOM].partner).first()
-            form.latin_level.data = dancing_categories[data.LATIN].level
-            form.latin_role.data = dancing_categories[data.LATIN].role
-            form.latin_blind_date.data = dancing_categories[data.LATIN].blind_date
-            form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-                .filter(ContestantInfo.team == current_user.team,
-                        Contestant.contestant_id == dancing_categories[data.LATIN].partner).first()
         if datetime.datetime.now().timestamp() > data.tournament_settings['merchandise_closing_date']:
             form.t_shirt.data = dancer.additional_info[0].t_shirt
     else:
@@ -145,19 +151,6 @@ def edit_dancer(number):
         form.student.data = str(dancer.contestant_info[0].student)
         form.first_time.data = str(dancer.contestant_info[0].first_time)
         form.diet_allergies.data = dancer.contestant_info[0].diet_allergies
-        dancing_categories = get_dancing_categories(dancer.dancing_info)
-        form.ballroom_level.data = dancing_categories[data.BALLROOM].level
-        form.ballroom_role.data = dancing_categories[data.BALLROOM].role
-        form.ballroom_blind_date.data = dancing_categories[data.BALLROOM].blind_date
-        form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-            .filter(ContestantInfo.team == current_user.team,
-                    Contestant.contestant_id == dancing_categories[data.BALLROOM].partner).first()
-        form.latin_level.data = dancing_categories[data.LATIN].level
-        form.latin_role.data = dancing_categories[data.LATIN].role
-        form.latin_blind_date.data = dancing_categories[data.LATIN].blind_date
-        form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-            .filter(ContestantInfo.team == current_user.team,
-                    Contestant.contestant_id == dancing_categories[data.LATIN].partner).first()
         form.volunteer.data = dancer.volunteer_info[0].volunteer
         form.first_aid.data = dancer.volunteer_info[0].first_aid
         form.jury_ballroom.data = dancer.volunteer_info[0].jury_ballroom
@@ -168,6 +161,12 @@ def edit_dancer(number):
         form.jury_polka.data = dancer.volunteer_info[0].jury_polka
         form.sleeping_arrangements.data = str(dancer.additional_info[0].sleeping_arrangements)
         form.t_shirt.data = dancer.additional_info[0].t_shirt
+        if len(dancer.merchandise_info):
+            merchandises = Merchandise.query.all()
+            for key, value in MERCHANDISE.items():
+                field = getattr(form, key)
+                ref_merch = [merch for merch in merchandises if field.name == merch.product_name][0]
+                field.data = [merch for merch in dancer.merchandise_info if merch.product_id == ref_merch.merchandise_id][0].quantity
     if form.validate_on_submit():
         flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
               'alert-success')

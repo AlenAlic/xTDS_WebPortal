@@ -6,6 +6,7 @@
         <col span="1" style="width: 15%;">
         <col span="1" style="width: 15%;">
         <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
         <col span="1" style="width: 30%;">
     </colgroup>
     <thead>
@@ -13,6 +14,7 @@
             <th><b>Dancer</b></th>
             <th style="text-align:right"><b>Entry fee</b></th>
             <th style="text-align:right"><b>T-shirt</b></th>
+            <th style="text-align:right"><b>Merchandise</b></th>
             <th style="text-align:right"><b>Total amount</b></th>
             <th style="text-align:right"><b>Paid</b></th>
         </tr>
@@ -30,7 +32,10 @@
                 {{data.euros(data.PRICES['t-shirt'][dancer.additional_info[0].t_shirt])}}
             </td>
             <td style="text-align:right">
-                {{data.euros(data.PRICES['t-shirt'][dancer.additional_info[0].t_shirt] + data.PRICES['student'][dancer.contestant_info[0].student])}}
+                {{data.euros(data.PRICES['stickers']*dancer.merchandise_info | sum(attribute='quantity') )}}
+            </td>
+            <td style="text-align:right">
+                {{data.euros(data.PRICES['t-shirt'][dancer.additional_info[0].t_shirt] + data.PRICES['student'][dancer.contestant_info[0].student] + data.PRICES['stickers']*dancer.merchandise_info | sum(attribute='quantity') )}}
             </td>
             <td align="right">
                 <input class="checkbox" type="checkbox" value="y" id="{{ dancer.contestant_info[0].number }}" name="{{ dancer.contestant_info[0].number }}" {% if dancer.status_info[0].paid == true %}checked{% endif %}>

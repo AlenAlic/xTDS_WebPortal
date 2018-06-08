@@ -1,6 +1,6 @@
 from ntds_webportal import db
 from ntds_webportal.models import Team, Contestant, ContestantInfo, DancingInfo, VolunteerInfo, AdditionalInfo, \
-    StatusInfo
+    StatusInfo, MerchandiseInfo, Merchandise
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 
@@ -106,6 +106,7 @@ def contestant_validate_dancing(form):
 
 def submit_contestant(f, contestant=None):
     new_dancer = True
+    merchandises = Merchandise.query.all()
     if contestant is None:
         contestant = Contestant()
         ci = ContestantInfo()
@@ -124,6 +125,18 @@ def submit_contestant(f, contestant=None):
         vi = contestant.volunteer_info[0]
         ai = contestant.additional_info[0]
         si = contestant.status_info[0]
+        mi = contestant.merchandise_info
+        if len(mi) > 0:
+            for m in mi:
+                ref_merch = [merch for merch in merchandises if merch.merchandise_id == m.product_id][0]
+                m.quantity = getattr(f, ref_merch.product_name).data
+        else:
+            for key, value in MERCHANDISE.items():
+                mi = MerchandiseInfo()
+                mi.contestant = contestant
+                mi.product_id = [merch for merch in merchandises if merch.product_name == key][0].merchandise_id
+                mi.quantity = int(getattr(f, key).data)
+                db.session.add(mi)
         dancing_categories = get_dancing_categories(di)
         new_dancer = False
     contestant.email = f.email.data
@@ -174,5 +187,11 @@ def submit_contestant(f, contestant=None):
     si.contestant = contestant
     if new_dancer:
         db.session.add(contestant)
+        for key, value in MERCHANDISE.items():
+            mi = MerchandiseInfo()
+            mi.contestant = contestant
+            mi.product_id = [merch for merch in merchandises if merch.product_name == key][0].merchandise_id
+            mi.quantity = int(getattr(f, key).data)
+            db.session.add(mi)
     db.session.commit()
     return contestant.get_full_name()

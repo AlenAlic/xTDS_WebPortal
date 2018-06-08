@@ -3,8 +3,11 @@ I crashed!
 Error message:
 
 {% if message is defined %}
-{{ message }}
+{% for msg in message %}
+{{ msg }}
+{% endfor %}
 {% endif %}
+
 
 Sincerely,
 

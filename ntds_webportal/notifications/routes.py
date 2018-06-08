@@ -103,6 +103,11 @@ def create():
                 n = Notification(title=form.title.data, text=form.body.data,
                                  user=u, sender=current_user)
                 db.session.add(n)
+                if u.access == ACCESS['treasurer'] and current_user.team != u.team:
+                    tc = User.query.filter(User.access == ACCESS['team_captain'], User.team == u.team).first()
+                    n = Notification(title=form.title.data, text='Message sent to your treasurer:\n\n'+form.body.data,
+                                     user=tc, sender=current_user)
+                    db.session.add(n)
             else:
                 users = []
                 if recipient == 'tc':

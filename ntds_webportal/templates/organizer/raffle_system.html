@@ -45,6 +45,13 @@
                 {% endwith %}
                 {% include 'organizer/_raffle_controls.html' %}
             {% else %}
+                {% if state.raffle_completed_message_sent is sameas false %}
+                <h3>Send an email to the teamcaptains that the raffle is complete</h3>
+                <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                    <button type="submit" id="submit-send_raffle_completed_message" name="send_raffle_completed_message" class="btn btn-primary loading-btn">Send message</button>
+                    <button type="submit" id="submit-do_not_send_raffle_completed_message" name="do_not_send_raffle_completed_message" class="btn btn-default loading-btn">Don't send message</button>
+                </form>
+                {% endif %}
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
                         {% with subtitle='Selected', counter='selected', stats=stats_selected %}

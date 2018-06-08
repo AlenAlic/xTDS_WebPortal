@@ -44,6 +44,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), index=True)
     access = db.Column(db.Integer, index=True, nullable=False)
     is_active = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    send_new_messages_email = db.Column(db.Boolean, nullable=True, default=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
     team = db.relationship('Team')
 
@@ -152,6 +153,7 @@ class Contestant(db.Model):
     volunteer_info = db.relationship('VolunteerInfo', back_populates='contestant', cascade='all, delete-orphan')
     additional_info = db.relationship('AdditionalInfo', back_populates='contestant', cascade='all, delete-orphan')
     status_info = db.relationship('StatusInfo', back_populates='contestant', cascade='all, delete-orphan')
+    merchandise_info = db.relationship('MerchandiseInfo', back_populates='contestant', cascade='all, delete-orphan')
 
     def __repr__(self):
         # return '{id} - {name}'.format(id=self.contestant_id, name=self.get_full_name())
@@ -322,6 +324,29 @@ class StatusInfo(db.Model):
             self.payment_required = False
 
 
+class MerchandiseInfo(db.Model):
+    __tablename__ = 'merchandise_info'
+    order_id = db.Column(db.Integer, primary_key=True)
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
+    contestant = db.relationship('Contestant', back_populates='merchandise_info')
+    product_id = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return '{name}'.format(name=self.contestant)
+
+
+class Merchandise(db.Model):
+    __tablename__ = 'merchandise'
+    merchandise_id = db.Column(db.Integer, primary_key=True)
+    product_name = db.Column(db.String(128), nullable=False)
+    product_description = db.Column(db.String(256), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return '{name}'.format(name=self.product_name)
+
+
 class Notification(db.Model):
     __tablename__ = NOTIFICATIONS
     notification_id = db.Column(db.Integer, primary_key=True)
@@ -447,7 +472,8 @@ class TournamentState(db.Model):
     main_raffle_taken_place = db.Column(db.Boolean, default=False, primary_key=True)
     main_raffle_result_visible = db.Column(db.Boolean, default=False)
     numbers_rearranged = db.Column(db.Boolean, default=False)
-    tournament_config = db.Column(db.String(128), nullable=False)
+    raffle_completed_message_sent = db.Column(db.Boolean, default=False)
+    tournament_config = db.Column(db.String(2048), nullable=False)
     raffle_config = db.Column(db.String(2048), nullable=False)
 
     def __repr__(self):

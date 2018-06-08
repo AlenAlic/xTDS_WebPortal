@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, BooleanField, SubmitField, IntegerField, SelectField, TextAreaField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, NumberRange
 from ntds_webportal.data import *
 from ntds_webportal.validators import Level, Role, ChoiceMade, SpecificVolunteer, UniqueEmail, IsBoolean
 from wtforms_sqlalchemy.fields import QuerySelectField
@@ -65,7 +65,14 @@ class BaseContestantForm(FlaskForm):
     diet_allergies = StringField('Diet/Allergies')
     sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
                                         choices=[(k, v) for k, v in SLEEPING.items()])
-    t_shirt = SelectField('T-shirt', validators=[DataRequired()], choices=[(k, v) for k, v in SHIRTS.items()])
+    t_shirt = SelectField('T-shirt - {}'.format(euros(SHIRT_PRICE)), validators=[DataRequired()],
+                          choices=[(k, v) for k, v in SHIRTS.items()])
+
+
+for key, value in MERCHANDISE.items():
+    setattr(BaseContestantForm, key, IntegerField(value, validators=[NumberRange(0, 99)], default=0,
+                                                  render_kw={"type": "number", "min": "0", "max": "99",
+                                                             "step": "1"}))
 
 
 class RegisterContestantForm(BaseContestantForm):

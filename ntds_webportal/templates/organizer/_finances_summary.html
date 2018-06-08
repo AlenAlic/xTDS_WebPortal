@@ -49,6 +49,15 @@
             <td style="text-align:right">{{data.euros(finances['price_t-shirts']-finances['price_t-shirts_paid'])}}</td>
         </tr>
         <tr>
+            <td>Stickers:</td>
+            <td style="text-align:right">{{finances['stickers']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_stickers'])}}</td>
+            <td style="text-align:right">{{finances['stickers_paid']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_stickers_paid'])}}</td>
+            <td style="text-align:right">{{finances['stickers']-finances['stickers_paid']}}</td>
+            <td style="text-align:right">{{data.euros(finances['price_stickers']-finances['price_stickers_paid'])}}</td>
+        </tr>
+        <tr>
             <td></td>
             <td></td>
             <td style="text-align:right">{{data.euros(finances['price_total'])}}</td>

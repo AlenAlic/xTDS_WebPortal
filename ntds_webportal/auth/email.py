@@ -26,11 +26,3 @@ def send_treasurer_activation_email(email, username, password, message):
 def random_password():
     allowed_chars = string.ascii_letters + '0123456789'
     return ''.join(random.sample(allowed_chars, 12))
-
-
-def send_error_email(code, msg):
-    send_email('xTDS WebPortal error: {}'.format(code),
-               sender=current_app.config['ADMINS'][0],
-               recipients=[current_app.config['ADMINS'][0]],
-               text_body=render_template('email/error.txt', message=msg),
-               html_body=render_template('email/error.html', message=msg))

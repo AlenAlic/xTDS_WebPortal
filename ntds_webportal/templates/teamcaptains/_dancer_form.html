@@ -65,13 +65,32 @@
     {{ reg_wtf.form_field(form.jury_salsa) }}
     {{ reg_wtf.form_field(form.jury_polka) }}
     <h3>Merchandise</h3>
-    {{ reg_wtf.form_field(form.t_shirt, disabled=(timestamp > data.tournament_settings['merchandise_closing_date']) ) }}
+    {{ reg_wtf.form_field(form.t_shirt, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    <div class="form-group  required">
+        <label class="control-label col-xs-2" ></label>
+        <div class="col-xs-10"><b>Please select the quantity of any stickers you would like to buy (<a href="http://178.62.251.214/etds/index.php/merchandising/" target="_blank">see website</a>) - {{ data.euros(data.STICKER_PRICE) }} a piece</b></div>
+    </div>
+    {#
+    <!--{% for merch in merchandise %}-->
+        <!--{% with merch=merch %}-->
+            <!--{% include 'teamcaptains/_merchandise.html' %}-->
+        <!--{% endwith %}-->
+    <!--{% endfor %}--> #}
+    {{ reg_wtf.form_field(form.AliceinWonderland, placeholder='E-mail address') }}
+    {{ reg_wtf.form_field(form.Avatar) }}
+    {{ reg_wtf.form_field(form.HarryPotter) }}
+    {{ reg_wtf.form_field(form.IndianaJones) }}
+    {{ reg_wtf.form_field(form.LordoftheRings) }}
+    {{ reg_wtf.form_field(form.Matrix) }}
+    {{ reg_wtf.form_field(form.PiratesoftheCaribean) }}
+    {{ reg_wtf.form_field(form.StarTrek) }}
+    {{ reg_wtf.form_field(form.StarWars) }}
     {% if mode == 'register' %}
     <div class="form-group required">
         <div class="col-xs-offset-2 col-xs-10">
             <div class="checkbox">
                 <label>
-                    <input id="privacy_checkbox" name="privacy_checkbox" type="checkbox" value="y">I have read the <a data-toggle="modal" data-target="#privacy-modal">privacy notice</a> and give consent for the processing of my personal data, as well as the terms, as stated on the tournament site
+                    <input id="privacy_checkbox" name="privacy_checkbox" type="checkbox" value="y">I have read the <a data-toggle="modal" data-target="#privacy-modal">privacy notice</a> and give consent for the processing of my personal data, as well as the <a href="http://178.62.251.214/etds/index.php/registrations/" target="_blank">terms</a> stated on the tournament site
                 </label>
             </div>
         </div>

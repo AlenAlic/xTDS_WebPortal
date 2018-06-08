@@ -1,7 +1,7 @@
 from flask import render_template
 from ntds_webportal import db
 from ntds_webportal.errors import bp
-from ntds_webportal.auth.email import send_error_email
+from ntds_webportal.errors.email import send_error_email
 import traceback
 
 
@@ -21,7 +21,7 @@ def internal_error(error):
 def handle_unexpected_error(error):
     db.session.rollback()
     message = traceback.format_exc()
-    message = message.replace('\n', '\r\n')
+    message = message.split('\n')
     status_code = 500
     send_error_email(status_code, message)
     return render_template('errors/500.html')

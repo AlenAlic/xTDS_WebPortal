@@ -51,7 +51,7 @@ Based on Flask and Python
     - [x] Statistics
 
 
-- Logged in - Blind date support
+- Logged in - Blind date assistant
   - [x] Dashboard
   - [ ] Registration page for blind date couples
   - [ ] Overview of available blind daters (name, team, id, per category) - Requires an extra password

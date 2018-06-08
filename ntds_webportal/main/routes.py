@@ -31,15 +31,15 @@ def logout():
 @bp.route('/dashboard')
 @login_required
 def dashboard():
+    state = TournamentState.query.first()
     if current_user.is_tc():
-        state = TournamentState.query.first()
         raffle_config = state.get_raffle_config()
         dancers_registered = current_user.has_dancers_registered()
         num_teamcaptains = current_user.teamcaptains_selected()
         return render_template('dashboard.html', state=state, max_tc=raffle_config['max_teamcaptains'],
                                dancers_registered=dancers_registered,
                                num_teamcaptains=num_teamcaptains)
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', state=state)
 
 
 @bp.route('/todo')
@@ -60,7 +60,7 @@ def profile():
         current_user.set_password(form.password.data)
         db.session.commit()
         flash('Your password has been changed.', 'alert-success')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.profile'))
     if current_user.is_tc():
         return redirect(url_for('teamcaptains.teamcaptain_profile'))
     else:

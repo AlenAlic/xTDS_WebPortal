@@ -107,7 +107,8 @@ def euros(amount):
 
 # Prices for
 PRICES = {'student': {True: STUDENT_PRICE, False: NON_STUDENT_PRICE},
-          't-shirt': dict({NO: 0}, **{k: SHIRT_PRICE for k, v in SHIRT_SIZES.items()})}
+          't-shirt': dict({NO: 0}, **{k: SHIRT_PRICE for k, v in SHIRT_SIZES.items()}),
+          'stickers': STICKER_PRICE}
 
 
 def finances_overview(dancers):
@@ -123,13 +124,26 @@ def finances_overview(dancers):
                          dancer.contestant_info[0].student and dancer.status_info[0].paid is True]
     shirts_paid = [PRICES['t-shirt'][dancer.additional_info[0].t_shirt] for dancer in dancers if
                    dancer.additional_info[0].t_shirt != NO and dancer.status_info[0].paid is True]
+    stickers = [dancer.merchandise_info for dancer in dancers if len(dancer.merchandise_info) > 0]
+    number_of_stickers = 0
+    for merch in stickers:
+        number_of_stickers += sum([m.quantity for m in merch])
+    stickers = [dancer.merchandise_info for dancer in dancers if
+                len(dancer.merchandise_info) > 0 and dancer.status_info[0].paid is True]
+    number_of_paid_stickers = 0
+    for merch in stickers:
+        number_of_paid_stickers += sum([m.quantity for m in merch])
     return {'number_of_students': len(students), 'number_of_non_students': len(non_students), 't-shirts': len(shirts),
+            'stickers': number_of_stickers,
             'price_students': sum(students), 'price_non_students': sum(non_students), 'price_t-shirts': sum(shirts),
-            'price_total': sum(students) + sum(non_students) + sum(shirts),
+            'price_stickers': number_of_stickers*PRICES['stickers'],
+            'price_total': sum(students) + sum(non_students) + sum(shirts) + number_of_stickers*PRICES['stickers'],
             'number_of_students_paid': len(students_paid), 'number_of_non_students_paid': len(non_students_paid),
-            't-shirts_paid': len(shirts_paid), 'price_students_paid': sum(students_paid),
-            'price_non_students_paid': sum(non_students_paid), 'price_t-shirts_paid': sum(shirts_paid),
-            'price_total_paid': sum(students_paid) + sum(non_students_paid) + sum(shirts_paid),
+            't-shirts_paid': len(shirts_paid), 'stickers_paid': number_of_paid_stickers,
+            'price_students_paid': sum(students_paid), 'price_non_students_paid': sum(non_students_paid),
+            'price_t-shirts_paid': sum(shirts_paid), 'price_stickers_paid': number_of_paid_stickers*PRICES['stickers'],
+            'price_total_paid': sum(students_paid) + sum(non_students_paid) + sum(shirts_paid) +
+                                number_of_paid_stickers*PRICES['stickers'],
             'total_number_of_payments': len(students) + len(non_students),
             'total_number_of_payments_paid': len(students_paid) + len(non_students_paid)
             }

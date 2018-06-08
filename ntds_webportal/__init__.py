@@ -50,7 +50,7 @@ def create_app():
     app.config.from_pyfile('config.py')
 
     db.init_app(app)
-    migrate.init_app(app, db, render_as_batch=getattr(app.config, 'SQLALCHEMY_DATABASE_URI', '').startswith('sqlite:'))
+    migrate.init_app(app, db, render_as_batch=app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:'))
     # migrate.init_app(app, db)
     login.init_app(app)
     login.login_view = 'main.index'
@@ -80,6 +80,9 @@ def create_app():
 
     from ntds_webportal.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
+
+    from ntds_webportal.self_admin import bp as admin_bp
+    app.register_blueprint(admin_bp, url_prefix='/admin')
 
     from ntds_webportal.teamcaptains import bp as teamcaptains_bp
     app.register_blueprint(teamcaptains_bp, url_prefix='/teamcaptains')
