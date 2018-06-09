@@ -5,7 +5,7 @@ from ntds_webportal.teamcaptains import bp
 from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm, \
     PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm, CreateCoupleForm
 from ntds_webportal.models import User, requires_access_level, TeamFinances, Contestant, ContestantInfo, DancingInfo, \
-    StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification, Merchandise, MerchandiseInfo
+    StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification, Merchandise, AdditionalInfo, Team
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant
@@ -166,7 +166,8 @@ def edit_dancer(number):
             for key, value in MERCHANDISE.items():
                 field = getattr(form, key)
                 ref_merch = [merch for merch in merchandises if field.name == merch.product_name][0]
-                field.data = [merch for merch in dancer.merchandise_info if merch.product_id == ref_merch.merchandise_id][0].quantity
+                field.data = [merch for merch in dancer.merchandise_info if
+                              merch.product_id == ref_merch.merchandise_id][0].quantity
     if form.validate_on_submit():
         flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
               'alert-success')
@@ -566,8 +567,8 @@ def edit_finances():
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required.is_(True)) \
             .order_by(ContestantInfo.number).all()
-        confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == data.CONFIRMED]
-        cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == data.CANCELLED]
+        confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == CONFIRMED]
+        cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == CANCELLED]
         finances = data.finances_overview(all_dancers)
         team_finances = TeamFinances.query.filter_by(team=current_user.team).first()
         if request.method == 'POST':
@@ -591,3 +592,45 @@ def edit_finances():
         finances, team_finances, confirmed_dancers, cancelled_dancers = None, None, None, None
     return render_template('teamcaptains/edit_finances.html', ts=ts, finances=finances, team_finances=team_finances,
                            confirmed_dancers=confirmed_dancers, cancelled_dancers=cancelled_dancers, data=data)
+
+
+@bp.route('/bus_to_brno', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([data.ACCESS['team_captain']])
+def bus_to_brno():
+    ts = TournamentState.query.first()
+    tc_dusseldorf = User.query.join(Team) \
+        .filter(User.access == ACCESS['team_captain'], Team.city == "Düsseldorf").first()
+    add_overview = True if tc_dusseldorf.team.name == current_user.team.name else False
+    if add_overview:
+        included_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
+            .join(Team).filter(StatusInfo.status == CONFIRMED, AdditionalInfo.bus_to_brno.is_(True)) \
+            .order_by(Team.city, ContestantInfo.number).all()
+    else:
+        included_dancers = None
+    if ts.main_raffle_result_visible:
+        confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
+            .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED) \
+            .order_by(ContestantInfo.number).all()
+        if request.method == 'POST':
+            changes = False
+            for dancer in confirmed_dancers:
+                if request.form.get(str(dancer.contestant_info[0].number)) is not None:
+                    if not dancer.additional_info[0].bus_to_brno:
+                        changes = True
+                    dancer.additional_info[0].bus_to_brno = True
+                else:
+                    if dancer.additional_info[0].bus_to_brno:
+                        changes = True
+                    dancer.additional_info[0].bus_to_brno = False
+            if changes:
+                db.session.commit()
+                flash('Changes saved successfully.', 'alert-success')
+            else:
+                flash('No changes were made to submit.', 'alert-warning')
+            return redirect(url_for('teamcaptains.bus_to_brno'))
+    else:
+        confirmed_dancers = None
+    return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_dusseldorf=tc_dusseldorf,
+                           confirmed_dancers=confirmed_dancers, add_overview=add_overview,
+                           included_dancers=included_dancers)

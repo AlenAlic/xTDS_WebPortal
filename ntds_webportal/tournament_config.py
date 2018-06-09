@@ -28,7 +28,7 @@ SHIRT_SIZES = {
 }
 
 # Sticker price in EuroCENTS and type of stickers
-STICKER_PRICE = 100
+STICKER_PRICE = 200
 MERCHANDISE = {
     'AliceinWonderland': 'Alice in Wonderland',
     'Avatar': 'Avatar',

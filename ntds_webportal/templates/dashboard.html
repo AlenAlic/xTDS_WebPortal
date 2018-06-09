@@ -36,6 +36,9 @@ onload="onStart()"
         {% with url='self_admin.debug_tools', title='Debug Tools', text='Tools to debug the site.', image='debug_tools.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
+        {% with url='self_admin.users_lists', title='Users list', text='Get a list of usernames, email, and default passwords.', image='users_list.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
     {% endif %}
 
     {% if current_user.is_organizer() %}
@@ -99,7 +102,7 @@ onload="onStart()"
             {% endwith %}
         {% endif %}
         {% if current_user.is_tc() %}
-            {% with accessible=false, url='main.todo', title='Bus to Brno', text='Coming soon...', image='bus.png' %}
+            {% with accessible=state.main_raffle_result_visible, url='teamcaptains.bus_to_brno', title='Bus to Brno', text='Register dancers to travel to Brno by bus. Organized by team Düsseldorf', image='bus.png' %}
                 {% include '_dashboard_page.html' %}
             {% endwith %}
         {% endif %}

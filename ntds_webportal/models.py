@@ -177,6 +177,7 @@ class Contestant(db.Model):
         for di in self.dancing_info:
             di.set_partner(None)
         self.contestant_info[0].team_captain = False
+        self.additional_info[0].bus_to_brno = False
         db.session.commit()
 
     def get_dancing_info(self, competition):
@@ -294,6 +295,7 @@ class AdditionalInfo(db.Model):
     contestant = db.relationship('Contestant', back_populates='additional_info')
     sleeping_arrangements = db.Column(db.Boolean, nullable=False)
     t_shirt = db.Column(db.String(128), nullable=False)
+    bus_to_brno = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
