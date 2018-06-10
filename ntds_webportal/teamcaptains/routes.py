@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, flash, request
+from flask import render_template, url_for, redirect, flash, request, send_file
 from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
@@ -15,6 +15,8 @@ from ntds_webportal.data import *
 from sqlalchemy import and_, or_
 import itertools
 import datetime
+import xlsxwriter
+from io import BytesIO
 
 
 @bp.route('/teamcaptain_profile', methods=['GET', 'POST'])
@@ -611,22 +613,41 @@ def bus_to_brno():
             .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED) \
             .order_by(ContestantInfo.number).all()
         if request.method == 'POST':
-            changes = False
-            for dancer in confirmed_dancers:
-                if request.form.get(str(dancer.contestant_info[0].number)) is not None:
-                    if not dancer.additional_info[0].bus_to_brno:
-                        changes = True
-                    dancer.additional_info[0].bus_to_brno = True
-                else:
-                    if dancer.additional_info[0].bus_to_brno:
-                        changes = True
-                    dancer.additional_info[0].bus_to_brno = False
-            if changes:
-                db.session.commit()
-                flash('Changes saved successfully.', 'alert-success')
+            if 'download_file' in request.form:
+                output = BytesIO()
+                wb = xlsxwriter.Workbook(output, {'in_memory': True})
+                ws = wb.add_worksheet(name='Teamcaptain Login Information')
+                ws.write(0, 0, 'Dancer')
+                ws.write(0, 1, 'Email')
+                ws.write(0, 2, 'Team')
+                for c in range(0, len(included_dancers)):
+                    ws.write(c + 1, 0, included_dancers[c].get_full_name())
+                    ws.write(c + 1, 1, included_dancers[c].email)
+                    ws.write(c + 1, 2, included_dancers[c].contestant_info[0].team.city)
+                ws.set_column(0, 0, 20)
+                ws.set_column(1, 1, 40)
+                ws.set_column(2, 2, 30)
+                ws.set_column(3, 3, 20)
+                wb.close()
+                output.seek(0)
+                return send_file(output, as_attachment=True, attachment_filename="Bus_to_Brno_dancers.xlsx")
             else:
-                flash('No changes were made to submit.', 'alert-warning')
-            return redirect(url_for('teamcaptains.bus_to_brno'))
+                changes = False
+                for dancer in confirmed_dancers:
+                    if request.form.get(str(dancer.contestant_info[0].number)) is not None:
+                        if not dancer.additional_info[0].bus_to_brno:
+                            changes = True
+                        dancer.additional_info[0].bus_to_brno = True
+                    else:
+                        if dancer.additional_info[0].bus_to_brno:
+                            changes = True
+                        dancer.additional_info[0].bus_to_brno = False
+                if changes:
+                    db.session.commit()
+                    flash('Changes saved successfully.', 'alert-success')
+                else:
+                    flash('No changes were made to submit.', 'alert-warning')
+                return redirect(url_for('teamcaptains.bus_to_brno'))
     else:
         confirmed_dancers = None
     return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_dusseldorf=tc_dusseldorf,
