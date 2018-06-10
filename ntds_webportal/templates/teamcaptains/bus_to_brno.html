@@ -7,8 +7,17 @@
 <h3>Bus to Brno</h3>
 {% if add_overview is sameas false %}
 <p>Team Düsseldorf is organizing a bus that will travel to Brno for the ETDS.</p>
-<p>The bus will take a route from Eindhoven, Maastricht, Aachen, Bonn, Düsseldorf, Dortmund, Münster, Bielefeld, Hildesheim, Clausthal and Cottbus to Brno.</p>
+<p>The bus leaves at 18:30 from Aachen Hbf, and will travel through Düsseldorf, Schwerte, Bad Wünnenberg, and Werther, to Brno (<a href="https://www.google.nl/maps/dir/Aachen+Hbf,+52064+Aachen,+Duitsland/Park%26Ride+S%C3%BCdpark/Schwerte(Ruhr),+Schwerte,+Duitsland/Netto,+B%C3%BCrener+Str.+31,+33181+Bad+W%C3%BCnnenberg,+Duitsland/Halle-Kasseler-Stra%C3%9Fe,+99735+Werther,+Duitsland/KC+BABYLON+-+kulturn%C3%AD+centrum+Brno/@50.3637619,9.1033284,7z/data=!3m1!4b1!4m38!4m37!1m5!1m1!1s0x47c09bdf1cd852d1:0x99f5cb2dc173e577!2m2!1d6.0913829!2d50.7677437!1m5!1m1!1s0x47b8cbabcdadc985:0x7732b871c18c9e98!2m2!1d6.8015765!2d51.1944261!1m5!1m1!1s0x47b915ffaa307b97:0xa4d1c62453bb2202!2m2!1d7.5594478!2d51.4421112!1m5!1m1!1s0x47bbb0e666b6116d:0x9e6791f68b3fe7d8!2m2!1d8.7203024!2d51.5622555!1m5!1m1!1s0x47a4feff133ad227:0x63cdcadb23866f8d!2m2!1d10.7410197!2d51.4853459!1m5!1m1!1s0x47129415b3cdbfef:0x88ae42d46033ec0f!2m2!1d16.600311!2d49.203259!3e0" target="_blank">route on Google Maps</a>).</p>
+<p>You can join the bus at the following stations:</p>
+<ul>
+    <li>Aachen Hbf, 52064 Aachen, Germany</li>
+    <li>Park&Ride Südpark, 40225 Düsseldorf, Germany</li>
+    <li>Schwerte(Ruhr), 58239 Schwerte, Germany</li>
+    <li>Netto, Bürener Str. 31, 33181 Bad Wünnenberg, Germany</li>
+    <li>L3080, 99735 Werther, Duitsland</li>
+</ul>
 <p>Select dancers want to make use of this option.</p>
+<p>More information about this will come through the mail.</p>
 <p>If there are any questions about this, please contact the teamcaptain of team Düsseldorf.</p>
 <a class="btn btn-warning" href="mailto:{{tc_dusseldorf.email}}?SUBJECT=Bus to ETDS Brno">Send email to the teamcaptain of team Düsseldorf</a>
 {% else %}
@@ -16,7 +25,7 @@
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
         <div class="panel-heading" role="button" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            <b class="panel-title">Dancers that want to use the bus to Brno {% if included_dancers|length > 0 %}<span class="badge">{{ included_dancers|length }}</span>{% endif %}</b>
+            <b class="panel-title">Dancers that want to use the bus to Brno <span class="badge">{% if included_dancers|length > 0 %}{{ included_dancers|length }}{% else %}0{% endif %}</span></b>
         </div>
         <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
             {% if included_dancers|length > 0 %}
@@ -80,8 +89,8 @@
         {% endfor %}
         </tbody>
     </table>
-    {% endif %}
     <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
+    {% endif %}
 </form>
 {% else %}
 <h2>The raffle has not taken place yet.</h2>

@@ -9,6 +9,7 @@ BELGIUM = 'Belgium'
 CZECH = 'Czech Republic'
 NORWAY = 'Norway'
 UNITED_KINGDOM = 'United Kingdom'
+POLAND = 'Poland'
 
 # Basic options
 NONE = 'None'
