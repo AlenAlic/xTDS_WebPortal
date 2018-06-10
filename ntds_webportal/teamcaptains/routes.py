@@ -123,30 +123,28 @@ def edit_dancer(number):
     form.ballroom_partner.query = ballroom_partners
     form.latin_partner.query = latin_partners
     dancing_categories = get_dancing_categories(dancer.dancing_info)
-    form.ballroom_level.data = dancing_categories[data.BALLROOM].level
-    if form.ballroom_level.data == 'no':
-        form.ballroom_role.data = 'None'
-    else:
-        form.ballroom_role.data = dancing_categories[data.BALLROOM].role
-    form.ballroom_blind_date.data = dancing_categories[data.BALLROOM].blind_date
-    form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-        .filter(ContestantInfo.team == current_user.team,
-                Contestant.contestant_id == dancing_categories[data.BALLROOM].partner).first()
-    form.latin_level.data = dancing_categories[data.LATIN].level
-    if form.latin_level.data == 'no':
-        form.latin_role.data = 'None'
-    else:
-        form.latin_role.data = dancing_categories[data.LATIN].role
-    form.latin_blind_date.data = dancing_categories[data.LATIN].blind_date
-    form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-        .filter(ContestantInfo.team == current_user.team,
-                Contestant.contestant_id == dancing_categories[data.LATIN].partner).first()
     if request.method == 'POST':
         # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
         if datetime.datetime.now().timestamp() > data.tournament_settings['merchandise_closing_date']:
             form.t_shirt.data = dancer.additional_info[0].t_shirt
+        if form.ballroom_level.data == 'no':
+            form.ballroom_role.data = 'None'
+        if form.latin_level.data == 'no':
+            form.latin_role.data = 'None'
     else:
+        form.ballroom_level.data = dancing_categories[data.BALLROOM].level
+        form.ballroom_role.data = dancing_categories[data.BALLROOM].role
+        form.ballroom_blind_date.data = dancing_categories[data.BALLROOM].blind_date
+        form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+            .filter(ContestantInfo.team == current_user.team,
+                    Contestant.contestant_id == dancing_categories[data.BALLROOM].partner).first()
+        form.latin_level.data = dancing_categories[data.LATIN].level
+        form.latin_role.data = dancing_categories[data.LATIN].role
+        form.latin_blind_date.data = dancing_categories[data.LATIN].blind_date
+        form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+            .filter(ContestantInfo.team == current_user.team,
+                    Contestant.contestant_id == dancing_categories[data.LATIN].partner).first()
         form.email.data = dancer.email
         form.student.data = str(dancer.contestant_info[0].student)
         form.first_time.data = str(dancer.contestant_info[0].first_time)
