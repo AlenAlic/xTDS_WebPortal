@@ -405,7 +405,7 @@ class PartnerRequest(db.Model):
         db.session.commit()
 
     def notify(self):
-        recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team)
+        recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team, access=ACCESS['team_captain'])
         for u in recipients:
             n = Notification()
             n.title = f"{self.state_name()} - Partner request: {self.dancer.get_full_name()} with " \
@@ -445,7 +445,7 @@ class NameChangeRequest(db.Model):
         self.notify()
 
     def notify(self):
-        recipients = User.query.filter_by(team=self.contestant.contestant_info[0].team)
+        recipients = User.query.filter_by(team=self.contestant.contestant_info[0].team, access=ACCESS['team_captain'])
         for u in recipients:
             n = Notification()
             n.title = f"{self.state_name()} - Name change request: " \
