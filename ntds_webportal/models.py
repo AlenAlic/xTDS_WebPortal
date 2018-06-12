@@ -434,8 +434,8 @@ class NameChangeRequest(db.Model):
     response = db.Column(db.Text())
 
     def accept(self):
-        self.notify()
         self.state = self.STATE['Accepted']
+        self.notify()
         self.contestant.first_name = self.first_name
         self.contestant.last_name = self.last_name
         self.contestant.prefixes = self.prefixes
