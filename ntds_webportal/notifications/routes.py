@@ -8,7 +8,7 @@ import ntds_webportal.data as data
 from ntds_webportal.data import *
 
 
-@bp.route('/messages')
+@bp.route('/messages', methods=['GET'])
 @login_required
 def messages():
     inbox_messages = Notification.query.filter_by(user=current_user, archived=False)\
@@ -111,9 +111,9 @@ def create():
             else:
                 users = []
                 if recipient == 'tc':
-                    users = User.query.filter_by(access=data.ACCESS['team_captain']).all()
+                    users = User.query.filter_by(access=ACCESS['team_captain']).all()
                 if recipient == 'tr':
-                    users = User.query.filter_by(access=data.ACCESS['treasurer']).all()
+                    users = User.query.filter_by(access=ACCESS['treasurer']).all()
                 for u in users:
                     n = Notification(title=form.title.data, text=form.body.data,
                                      user=u, sender=current_user)

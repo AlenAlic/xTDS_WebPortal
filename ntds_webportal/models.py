@@ -55,19 +55,19 @@ class User(UserMixin, db.Model):
         return self.user_id
 
     def is_admin(self):
-        return self.access == data.ACCESS['admin']
+        return self.access == ACCESS['admin']
 
     def is_organizer(self):
-        return self.access == data.ACCESS['organizer']
+        return self.access == ACCESS['organizer']
 
     def is_tc(self):
-        return self.access == data.ACCESS['team_captain']
+        return self.access == ACCESS['team_captain']
 
     def is_treasurer(self):
-        return self.access == data.ACCESS['treasurer']
+        return self.access == ACCESS['treasurer']
 
     def is_bdo(self):
-        return self.access == data.ACCESS['blind_date_organizer']
+        return self.access == ACCESS['blind_date_organizer']
 
     def allowed(self, access_level):
         return self.access == access_level
@@ -215,8 +215,8 @@ class DancingInfo(db.Model):
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     contestant = db.relationship('Contestant', foreign_keys=contestant_id)
     competition = db.Column(db.String(128), nullable=False)
-    level = db.Column(db.String(128), nullable=False, default=data.NO)
-    role = db.Column(db.String(128), nullable=False, default=data.NO)
+    level = db.Column(db.String(128), nullable=False, default=NO)
+    role = db.Column(db.String(128), nullable=False, default=NO)
     blind_date = db.Column(db.Boolean, nullable=False, default=False)
     partner = db.Column(db.Integer, nullable=True, default=None)
 
@@ -256,8 +256,8 @@ class DancingInfo(db.Model):
 
     def not_dancing(self, competition):
         self.competition = competition
-        self.level = data.NO
-        self.role = data.NO
+        self.level = NO
+        self.role = NO
         self.blind_date = False
         self.partner = None
 
@@ -279,14 +279,14 @@ class VolunteerInfo(db.Model):
         return '{name}'.format(name=self.contestant)
 
     def not_volunteering(self):
-        self.volunteer = data.NO
-        self.first_aid = data.NO
-        self.jury_ballroom = data.NO
-        self.jury_latin = data.NO
-        self.license_jury_ballroom = data.NO
-        self.license_jury_latin = data.NO
-        self.jury_salsa = data.NO
-        self.jury_polka = data.NO
+        self.volunteer = NO
+        self.first_aid = NO
+        self.jury_ballroom = NO
+        self.jury_latin = NO
+        self.license_jury_ballroom = NO
+        self.license_jury_latin = NO
+        self.jury_salsa = NO
+        self.jury_polka = NO
 
 
 class AdditionalInfo(db.Model):
@@ -305,10 +305,10 @@ class StatusInfo(db.Model):
     __tablename__ = 'status_info'
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
     contestant = db.relationship('Contestant', back_populates='status_info')
-    status = db.Column(db.String(16), index=True, default=data.REGISTERED)
+    status = db.Column(db.String(16), index=True, default=REGISTERED)
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
-    raffle_status = db.Column(db.String(16), index=True, default=data.REGISTERED)
+    raffle_status = db.Column(db.String(16), index=True, default=REGISTERED)
     guaranteed_entry = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
@@ -320,9 +320,9 @@ class StatusInfo(db.Model):
             self.raffle_status = status
         else:
             self.status = self.raffle_status
-        if self.status == data.CONFIRMED:
+        if self.status == CONFIRMED:
             self.payment_required = True
-        elif self.status == data.REGISTERED:
+        elif self.status == REGISTERED:
             self.payment_required = False
 
 
@@ -383,8 +383,8 @@ class PartnerRequest(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     remark = db.Column(db.Text())
     response = db.Column(db.Text())
-    level = db.Column(db.String(128), nullable=False, default=data.NO)
-    competition = db.Column(db.String(128), nullable=False, default=data.BREITENSPORT)
+    level = db.Column(db.String(128), nullable=False, default=NO)
+    competition = db.Column(db.String(128), nullable=False, default=BREITENSPORT)
     dancer_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     other_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     state = db.Column(db.Integer, default=STATE['Open'])

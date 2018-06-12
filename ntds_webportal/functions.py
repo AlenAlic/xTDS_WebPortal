@@ -10,7 +10,7 @@ def str2bool(v):
 
 
 def get_dancing_categories(dancing_info):
-    return {cat: DancingInfo(competition=cat) for cat in data.ALL_COMPETITIONS} if dancing_info is None \
+    return {cat: DancingInfo(competition=cat) for cat in ALL_COMPETITIONS} if dancing_info is None \
         else {di.competition: di for di in dancing_info}
 
 
@@ -56,7 +56,7 @@ def contestant_validate_dancing(form):
     except AttributeError:
         pass
     if form.ballroom_partner.data is not None:
-        if form.ballroom_level.data in data.BLIND_DATE_LEVELS:
+        if form.ballroom_level.data in BLIND_DATE_LEVELS:
             form.ballroom_partner.data = 'must_blind_date'
         else:
             # noinspection PyUnresolvedReferences
@@ -67,7 +67,7 @@ def contestant_validate_dancing(form):
                 if dancing_categories[BALLROOM].level is None:
                     form.ballroom_partner.data = 'diff_levels_no_level'
                     form.ballroom_level.data = 'diff_levels_no_level'
-                elif form.ballroom_level.data != data.CHOOSE:
+                elif form.ballroom_level.data != CHOOSE:
                     form.ballroom_partner.data = 'diff_levels'
                     form.ballroom_level.data = 'diff_levels'
             if form.ballroom_role.data == dancing_categories[BALLROOM].role:
@@ -78,7 +78,7 @@ def contestant_validate_dancing(form):
                     form.ballroom_partner.data = 'same_role_follow'
                     form.ballroom_role.data = 'same_role_follow'
     if form.latin_partner.data is not None:
-        if form.latin_level.data in data.BLIND_DATE_LEVELS:
+        if form.latin_level.data in BLIND_DATE_LEVELS:
             form.latin_partner.data = 'must_blind_date'
         else:
             # noinspection PyUnresolvedReferences
@@ -89,7 +89,7 @@ def contestant_validate_dancing(form):
                 if dancing_categories[LATIN].level is None:
                     form.latin_partner.data = 'diff_levels_no_level'
                     form.latin_level.data = 'diff_levels_no_level'
-                elif form.latin_level.data != data.CHOOSE:
+                elif form.latin_level.data != CHOOSE:
                     form.latin_partner.data = 'diff_levels'
                     form.latin_level.data = 'diff_levels'
             if form.latin_role.data == dancing_categories[LATIN].role:
@@ -99,8 +99,8 @@ def contestant_validate_dancing(form):
                 elif form.latin_role.data == FOLLOW:
                     form.latin_partner.data = 'same_role_follow'
                     form.latin_role.data = 'same_role_follow'
-    form.volunteer.data = data.NO
-    form.first_aid.data = data.NO
+    form.volunteer.data = NO
+    form.first_aid.data = NO
     return form
 
 

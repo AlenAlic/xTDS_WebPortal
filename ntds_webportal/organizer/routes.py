@@ -1,10 +1,10 @@
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, send_file
 from flask_login import login_required, current_user
 from ntds_webportal import db
 from ntds_webportal.main.email import send_new_messages_email
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
-    StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification
+    StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification, MerchandiseInfo, Merchandise
 from ntds_webportal.functions import uniquify, check_combination, get_combinations_list
 from ntds_webportal.organizer.forms import NameChangeResponse
 from ntds_webportal.organizer.email import send_raffle_completed_email
@@ -12,14 +12,16 @@ import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.system import raffle, finish_raffle, raffle_add_neutral_group, test_raffle
 from raffle_system.functions import RaffleSystem, get_combinations
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 import time
 import random
+import xlsxwriter
+from io import BytesIO
 
 
-@bp.route('/registration_overview')
+@bp.route('/registration_overview', methods=['GET'])
 @login_required
-@requires_access_level([data.ACCESS['organizer']])
+@requires_access_level([ACCESS['organizer']])
 def registration_overview():
     # TODO speed up render
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
@@ -32,17 +34,17 @@ def registration_overview():
                 'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team).all()}
                for team in all_teams]
     dancers = [d for d in dancers if len(d['dancers']) > 0]
-    dutch_dancers = [team for team in dancers if team['country'] == data.NETHERLANDS]
-    german_dancers = [team for team in dancers if team['country'] == data.GERMANY]
-    other_dancers = [team for team in dancers if team['country'] != data.NETHERLANDS and
-                     team['country'] != data.GERMANY]
+    dutch_dancers = [team for team in dancers if team['country'] == NETHERLANDS]
+    german_dancers = [team for team in dancers if team['country'] == GERMANY]
+    other_dancers = [team for team in dancers if team['country'] != NETHERLANDS and
+                     team['country'] != GERMANY]
     return render_template('organizer/registration_overview.html', data=data, all_dancers=all_dancers,
                            dutch_dancers=dutch_dancers, german_dancers=german_dancers, other_dancers=other_dancers)
 
 
 @bp.route('/finances_overview', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['organizer']])
+@requires_access_level([ACCESS['organizer']])
 def finances_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .filter(StatusInfo.payment_required.is_(True)).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
@@ -58,14 +60,14 @@ def finances_overview():
                                     dancer.contestant_info[0].team.name == team.name],
               'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if
                                     dancer.contestant_info[0].team.name == team.name],
-              'finances': data.finances_overview([dancer for dancer in all_dancers if
+              'finances': finances_overview([dancer for dancer in all_dancers if
                                                   dancer.contestant_info[0].team.name == team.name])}
              for team in all_teams]
     teams = [team for team in teams if (len(team['confirmed_dancers']) + len(team['cancelled_dancers'])) > 0]
-    dutch_teams = [team for team in teams if team['team'].country == data.NETHERLANDS]
-    german_teams = [team for team in teams if team['team'].country == data.GERMANY]
+    dutch_teams = [team for team in teams if team['team'].country == NETHERLANDS]
+    german_teams = [team for team in teams if team['team'].country == GERMANY]
     other_teams = [team for team in teams if
-                   team['team'].country != data.NETHERLANDS and team['team'].country != data.GERMANY]
+                   team['team'].country != NETHERLANDS and team['team'].country != GERMANY]
     if request.method == 'POST':
         changes = False
         for team in all_teams:
@@ -87,7 +89,7 @@ def finances_overview():
 
 @bp.route('/name_change_list', methods=['GET'])
 @login_required
-@requires_access_level([data.ACCESS['organizer']])
+@requires_access_level([ACCESS['organizer']])
 def name_change_list():
     nml = NameChangeRequest.query.filter_by(state=NameChangeRequest.STATE['Open']).all()
     return render_template('organizer/name_change_list.html', list=nml)
@@ -95,7 +97,7 @@ def name_change_list():
 
 @bp.route('/name_change_respond/<req>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['organizer']])
+@requires_access_level([ACCESS['organizer']])
 def name_change_respond(req):
     req = NameChangeRequest.query.filter_by(id=req).first()
     if not req:
@@ -117,7 +119,7 @@ def name_change_respond(req):
 
 @bp.route('/raffle_system', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['organizer']])
+@requires_access_level([ACCESS['organizer']])
 def raffle_system():
     raffle_sys = RaffleSystem()
     state = raffle_sys.state
@@ -295,7 +297,7 @@ def raffle_system():
 
 @bp.route('/cancel_dancer/<number>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([data.ACCESS['organizer']])
+@requires_access_level([ACCESS['organizer']])
 def cancel_dancer(number):
     send_message = request.args.get('send_message', False, type=bool)
     changed_dancer = db.session.query(Contestant).join(ContestantInfo)\
@@ -311,3 +313,59 @@ def cancel_dancer(number):
         db.session.add(n)
         db.session.commit()
     return redirect(url_for('organizer.raffle_system'))
+
+
+@bp.route('/merchandise', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def merchandise():
+    dancers = Contestant.query.join(StatusInfo).join(ContestantInfo).join(AdditionalInfo).join(MerchandiseInfo)\
+        .join(Team).filter(or_(and_(StatusInfo.status == CONFIRMED, MerchandiseInfo.quantity > 0),
+                               AdditionalInfo.t_shirt != NO)).order_by(Team.city).all()
+    shirts = {code: 0 for code in SHIRT_SIZES}
+    for dancer in dancers:
+        try:
+            shirts[dancer.additional_info[0].t_shirt] += 1
+        except KeyError:
+            pass
+    shirts = {SHIRT_SIZES[shirt]: quantity for shirt, quantity in shirts.items()}
+    total_shirts = sum([quantity for size, quantity in shirts.items()])
+    all_stickers = Merchandise.query.all()
+    ordered_stickers = MerchandiseInfo.query.filter(MerchandiseInfo.quantity > 0).all()
+    stickers = {sticker.merchandise_id: 0 for sticker in all_stickers}
+    for sticker in ordered_stickers:
+        stickers[sticker.product_id] += sticker.quantity
+    stickers = {sticker.product_description: stickers[sticker.merchandise_id] for sticker in all_stickers}
+    total_stickers = sum([quantity for sticker, quantity in stickers.items()])
+    if request.method == 'POST':
+        fn = 'merchandise_ETDS_2018.xlsx'
+        output = BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        f = wb.add_format({'text_wrap': True, 'bold': True})
+        ws = wb.add_worksheet()
+        ws.write(0, 0, 'Dancer', f)
+        ws.write(0, 1, 'Email', f)
+        ws.write(0, 2, 'Team', f)
+        ws.write(0, 3, 'T-shirt', f)
+        ws.set_column(0, 0, 30)
+        ws.set_column(1, 1, 40)
+        ws.set_column(2, 3, 20)
+        for s in range(0, len(all_stickers)):
+            ws.write(0, s + 4, all_stickers[s].product_description, f)
+        for d in range(0, len(dancers)):
+            ws.write(d + 1, 0, dancers[d].get_full_name())
+            ws.write(d + 1, 1, dancers[d].email)
+            ws.write(d + 1, 2, dancers[d].contestant_info[0].team.city)
+            try:
+                ws.write(d + 1, 3, SHIRT_SIZES[dancers[d].additional_info[0].t_shirt])
+            except KeyError:
+                ws.write(d + 1, 3, NONE)
+            for m in range(0, len(dancers[d].merchandise_info)):
+                ws.write(d + 1, m + 4, dancers[d].merchandise_info[m].quantity)
+        ws.set_column(4, 4 + len(all_stickers), 13)
+        ws.freeze_panes(1, 0)
+        wb.close()
+        output.seek(0)
+        return send_file(output, as_attachment=True, attachment_filename=fn)
+    return render_template('organizer/merchandise.html', data=data, shirts=shirts, total_shirts=total_shirts,
+                           stickers=stickers, total_stickers=total_stickers, dancers=dancers)

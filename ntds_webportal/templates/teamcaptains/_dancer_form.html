@@ -76,15 +76,15 @@
             <!--{% include 'teamcaptains/_merchandise.html' %}-->
         <!--{% endwith %}-->
     <!--{% endfor %}--> #}
-    {{ reg_wtf.form_field(form.AliceinWonderland, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
-    {{ reg_wtf.form_field(form.Avatar, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
-    {{ reg_wtf.form_field(form.HarryPotter, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
-    {{ reg_wtf.form_field(form.IndianaJones, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
-    {{ reg_wtf.form_field(form.LordoftheRings, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
-    {{ reg_wtf.form_field(form.Matrix, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
-    {{ reg_wtf.form_field(form.PiratesoftheCaribean, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
-    {{ reg_wtf.form_field(form.StarTrek, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
-    {{ reg_wtf.form_field(form.StarWars, disabled=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    {{ reg_wtf.form_field(form.AliceinWonderland, readonly=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    {{ reg_wtf.form_field(form.Avatar, readonly=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    {{ reg_wtf.form_field(form.HarryPotter, readonly=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    {{ reg_wtf.form_field(form.IndianaJones, readonly=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    {{ reg_wtf.form_field(form.LordoftheRings, readonly=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    {{ reg_wtf.form_field(form.Matrix, readonly=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    {{ reg_wtf.form_field(form.PiratesoftheCaribean, readonly=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    {{ reg_wtf.form_field(form.StarTrek, readonly=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
+    {{ reg_wtf.form_field(form.StarWars, readonly=(timestamp > data.tournament_settings['merchandise_closing_date'])) }}
     {% if mode == 'register' %}
     <div class="form-group required">
         <div class="col-xs-offset-2 col-xs-10">

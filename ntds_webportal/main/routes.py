@@ -22,13 +22,13 @@ def index():
     return render_template('index.html', title='Home', login_form=form)
 
 
-@bp.route('/logout')
+@bp.route('/logout', methods=['GET'])
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
 
-@bp.route('/dashboard')
+@bp.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
     state = TournamentState.query.first()
@@ -42,7 +42,7 @@ def dashboard():
     return render_template('dashboard.html', state=state)
 
 
-@bp.route('/todo')
+@bp.route('/todo', methods=['GET'])
 @login_required
 def todo():
     return render_template('todo.html', title='#TODO')
