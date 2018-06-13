@@ -1,4 +1,4 @@
-from flask import render_template, current_app
+from flask import render_template
 from ntds_webportal.email import send_email
 
 

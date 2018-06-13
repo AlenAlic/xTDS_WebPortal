@@ -59,6 +59,8 @@ TEAMS = [
     {'country': UNITED_KINGDOM, 'name': 'Liverpool', 'city': 'Liverpool'}
 ]
 
+raffle_config_items = [MAX_DANCERS, SELECTION_BUFFER]
+
 # Registration form lists
 LEVELS = {
     CHOOSE: 'What level are you dancing?',
@@ -144,8 +146,8 @@ def finances_overview(dancers):
             't-shirts_paid': len(shirts_paid), 'stickers_paid': number_of_paid_stickers,
             'price_students_paid': sum(students_paid), 'price_non_students_paid': sum(non_students_paid),
             'price_t-shirts_paid': sum(shirts_paid), 'price_stickers_paid': number_of_paid_stickers*PRICES['stickers'],
-            'price_total_paid': sum(students_paid) + sum(non_students_paid) + sum(shirts_paid) +
-                                number_of_paid_stickers*PRICES['stickers'],
+            'price_total_paid': sum(students_paid + non_students_paid +
+                                    shirts_paid) + number_of_paid_stickers*PRICES['stickers'],
             'total_number_of_payments': len(students) + len(non_students),
             'total_number_of_payments_paid': len(students_paid) + len(non_students_paid)
             }

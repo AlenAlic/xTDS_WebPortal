@@ -12,7 +12,7 @@ import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.system import raffle, finish_raffle, raffle_add_neutral_group, test_raffle
 from raffle_system.functions import RaffleSystem, get_combinations
-from sqlalchemy import or_, and_
+from sqlalchemy import or_, and_, case
 import time
 import random
 import xlsxwriter
@@ -24,13 +24,11 @@ import datetime
 @login_required
 @requires_access_level([ACCESS['organizer']])
 def registration_overview():
-    # TODO speed up render
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
-        .order_by(ContestantInfo.team_id, ContestantInfo.number).all()
+        .order_by(ContestantInfo.team_id,
+                  case({CONFIRMED: 0, SELECTED: 1, REGISTERED: 2, CANCELLED: 3}, value=StatusInfo.status),
+                  ContestantInfo.number).all()
     all_teams = db.session.query(Team).all()
-    order = [CONFIRMED, SELECTED, REGISTERED, CANCELLED]
-    all_dancers = sorted(all_dancers, key=lambda o: (o.contestant_info[0].team_id,
-                                                     order.index(o.status_info[0].status)))
     dancers = [{'country': team.country, 'name': team.name, 'id': team.name.replace(' ', '-').replace('`', ''),
                 'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team).all()}
                for team in all_teams]
@@ -62,7 +60,7 @@ def finances_overview():
               'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if
                                     dancer.contestant_info[0].team.name == team.name],
               'finances': data.finances_overview([dancer for dancer in all_dancers if
-                                             dancer.contestant_info[0].team.name == team.name])}
+                                                  dancer.contestant_info[0].team.name == team.name])}
              for team in all_teams]
     teams = [team for team in teams if (len(team['confirmed_dancers']) + len(team['cancelled_dancers'])) > 0]
     dutch_teams = [team for team in teams if team['team'].country == NETHERLANDS]

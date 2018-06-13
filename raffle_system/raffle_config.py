@@ -14,8 +14,6 @@ raffle_settings = {
     MAX_TEAMCAPTAINS: 1
 }
 
-raffle_config_items = [MAX_DANCERS, SELECTION_BUFFER]
-
 raffle_labels = {
     MAX_DANCERS: 'The maximum number of dancers that will be let into the tournament.',
     MIN_TEAM_BEGINNERS: 'The number of Beginners that each team will get guaranteed.',

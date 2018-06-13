@@ -69,8 +69,8 @@ class BaseContestantForm(FlaskForm):
                           choices=[(k, v) for k, v in SHIRTS.items()])
 
 
-for key, value in MERCHANDISE.items():
-    setattr(BaseContestantForm, key, IntegerField(value, validators=[NumberRange(0, 99)], default=0,
+for k, value in MERCHANDISE.items():
+    setattr(BaseContestantForm, k, IntegerField(value, validators=[NumberRange(0, 99)], default=0,
                                                   render_kw={"type": "number", "min": "0", "max": "99",
                                                              "step": "1"}))
 

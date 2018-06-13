@@ -2,7 +2,6 @@ from ntds_webportal import db, login
 from flask import current_app, url_for, redirect, render_template
 from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.raffle_config import *
 from functools import wraps

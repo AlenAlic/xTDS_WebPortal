@@ -4,7 +4,6 @@ from ntds_webportal import db
 from ntds_webportal.notifications import bp
 from ntds_webportal.models import Notification, User, requires_access_level
 from ntds_webportal.notifications.forms import NotificationForm
-import ntds_webportal.data as data
 from ntds_webportal.data import *
 
 

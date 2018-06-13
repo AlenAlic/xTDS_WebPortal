@@ -1,7 +1,6 @@
 from ntds_webportal import db
 from ntds_webportal.models import Team, Contestant, ContestantInfo, DancingInfo, VolunteerInfo, AdditionalInfo, \
     StatusInfo, MerchandiseInfo, Merchandise
-import ntds_webportal.data as data
 from ntds_webportal.data import *
 
 
