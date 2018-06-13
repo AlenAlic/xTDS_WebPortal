@@ -3,7 +3,7 @@ asn1crypto==0.24.0
 blinker==1.4
 cffi==1.11.5
 click==6.7
-cryptography==1.7.2
+cryptography==2.2.2
 dominate==2.3.1
 Flask==1.0.2
 Flask-Admin==1.5.1
