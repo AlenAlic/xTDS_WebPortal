@@ -45,15 +45,16 @@ Based on Flask and Python
   - [x] Registration overview (total and per team)
   - [x] Name change requests
   - [x] Payments overview (per team and total)
-  - [ ] Raffle pages
+  - [x] Raffle pages
     - [x] Raffle system
-      - [ ] Export to BAD
     - [x] Statistics
+    - [x] Config
+  - [ ] Export to BAD
 
 
 - Logged in - Blind date assistant
   - [x] Dashboard
-  - [ ] Registration page for blind date couples
+  - [x] Registration page for blind date couples
   - [ ] Overview of available blind daters (name, team, id, per category) - Requires an extra password
 
 
