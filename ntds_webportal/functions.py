@@ -49,6 +49,22 @@ def get_combinations_list(s):
     return s.split(', ')
 
 
+def get_total_dancer_price_list(dancer):
+    number_of_stickers = sum([m.quantity for m in
+                              MerchandiseInfo.query.filter_by(contestant_id=dancer.contestant_id).all()])
+    student = dancer.contestant_info[0].student
+    t_shirt = dancer.additional_info[0].t_shirt
+    price = PRICES['student'][student] + PRICES['t-shirt'][t_shirt] + PRICES['stickers'] * number_of_stickers
+    student_string = {True: 'Student', False: 'Non-student'}
+    description = f"ETDS Brno 2018 - {student_string[student]} entry fee"
+    if t_shirt != NO:
+        description += " + t-shirt"
+    if number_of_stickers > 0:
+        description += f" + {number_of_stickers} stickers"
+    paid_string = {True: "Yes", False: "No"}
+    return [dancer.get_full_name(), price/100, description, paid_string[dancer.status_info[0].paid]]
+
+
 def contestant_validate_dancing(form):
     try:
         form.first_name.data = form.first_name.data.capitalize()

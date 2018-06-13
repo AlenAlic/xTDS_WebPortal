@@ -1,4 +1,5 @@
 from flask import render_template, request, send_file
+from flask_login import login_required
 from ntds_webportal.self_admin import bp
 from ntds_webportal.models import requires_access_level
 from ntds_webportal.data import *
@@ -8,6 +9,7 @@ from io import BytesIO
 
 
 @bp.route('/debug_tools', methods=['GET', 'POST'])
+@login_required
 @requires_access_level([ACCESS['admin']])
 def debug_tools():
     if request.method == 'POST':
@@ -18,6 +20,7 @@ def debug_tools():
 
 
 @bp.route('/users_lists', methods=['GET', 'POST'])
+@login_required
 @requires_access_level([ACCESS['admin']])
 def users_lists():
     fn = 'login_tc.xlsx'

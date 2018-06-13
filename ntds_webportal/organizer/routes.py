@@ -17,6 +17,7 @@ import time
 import random
 import xlsxwriter
 from io import BytesIO
+import datetime
 
 
 @bp.route('/registration_overview', methods=['GET'])
@@ -60,8 +61,8 @@ def finances_overview():
                                     dancer.contestant_info[0].team.name == team.name],
               'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if
                                     dancer.contestant_info[0].team.name == team.name],
-              'finances': finances_overview([dancer for dancer in all_dancers if
-                                                  dancer.contestant_info[0].team.name == team.name])}
+              'finances': data.finances_overview([dancer for dancer in all_dancers if
+                                             dancer.contestant_info[0].team.name == team.name])}
              for team in all_teams]
     teams = [team for team in teams if (len(team['confirmed_dancers']) + len(team['cancelled_dancers'])) > 0]
     dutch_teams = [team for team in teams if team['team'].country == NETHERLANDS]
@@ -342,7 +343,7 @@ def merchandise():
         output = BytesIO()
         wb = xlsxwriter.Workbook(output, {'in_memory': True})
         f = wb.add_format({'text_wrap': True, 'bold': True})
-        ws = wb.add_worksheet()
+        ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
         ws.write(0, 0, 'Dancer', f)
         ws.write(0, 1, 'Email', f)
         ws.write(0, 2, 'Team', f)

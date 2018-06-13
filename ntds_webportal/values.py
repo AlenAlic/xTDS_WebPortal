@@ -26,6 +26,8 @@ DIFF = 'diff'
 COMPETITION = 'competition'
 BALLROOM = 'Ballroom'
 LATIN = 'Latin'
+SALSA = 'Salsa'
+POLKA = 'Polka'
 ALL_COMPETITIONS = [BALLROOM, LATIN]
 
 # All available levels

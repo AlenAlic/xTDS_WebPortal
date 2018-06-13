@@ -44,7 +44,7 @@ def create_app():
     """
     from ntds_webportal.models import User, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo, VolunteerInfo,\
         AdditionalInfo, StatusInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, TournamentState,\
-        Merchandise
+        Merchandise, SalsaPartners, PolkaPartners
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('config')
@@ -74,6 +74,8 @@ def create_app():
     admin.add_view(BaseView(PartnerRequest, db.session))
     admin.add_view(BaseView(NameChangeRequest, db.session))
     admin.add_view(BaseView(TournamentState, db.session))
+    admin.add_view(BaseView(SalsaPartners, db.session))
+    admin.add_view(BaseView(PolkaPartners, db.session))
 
     from ntds_webportal.main import bp as main_bp
     app.register_blueprint(main_bp)
@@ -92,6 +94,9 @@ def create_app():
 
     from ntds_webportal.organizer import bp as organizer_bp
     app.register_blueprint(organizer_bp, url_prefix='/organizer')
+
+    from ntds_webportal.blind_date_assistant import bp as blind_date_assistant_bp
+    app.register_blueprint(blind_date_assistant_bp, url_prefix='/blind_date_assistant')
 
     from ntds_webportal.notifications import bp as notifications_bp
     app.register_blueprint(notifications_bp, url_prefix='/notifications')

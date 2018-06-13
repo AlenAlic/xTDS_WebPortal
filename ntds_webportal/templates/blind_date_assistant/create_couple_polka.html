@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as wtf %}
+
+{% block body_attribs %}
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+ 	<link rel="stylesheet" href="/static/jquery.dropdown.min.css">
+{% endblock %}
+
+{% block app_content %}
+<h2>Create couple for Polka</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <div class="form-group {% if form.lead.errors|length > 0  %} has-error {% endif %} required">
+        <label class="control-label" for="{{form.lead.name}}">{{form.lead.label}}</label>
+        <div class="select">
+            <select style="display:none" name="{{form.lead.name}}">
+            {% for choice in form.lead.choices %}
+                <option value="{{choice[0]}}">{{choice[1]}}</option>
+            {% endfor %}
+            </select>
+        </div>
+        {%- for error in form.lead.errors %}
+        <p class="help-block">{{error}}</p>
+        {%- endfor %}
+    </div>
+        <div class="form-group {% if form.follow.errors|length > 0  %} has-error {% endif %} required">
+            <label class="control-label" for="{{form.follow.name}}">{{form.follow.label}}</label>
+        <div class="select ">
+            <select style="display:none" name="{{form.follow.name}}">
+            {% for choice in form.follow.choices %}
+                <option value="{{choice[0]}}">{{choice[1]}}</option>
+            {% endfor %}
+        </select>
+        </div>
+        {%- for error in form.follow.errors %}
+            <p class="help-block">{{error}}</p>
+        {%- endfor %}
+    </div>
+    {{ wtf.form_field(form.submit) }}
+    <a role="button" class="btn btn-default btn-loading" href="{{ url_for('teamcaptains.partner_request_list') }}">Cancel</a>
+</form>
+{% if polka_couples|length > 0 %}
+<h2>Polka couples</h2>
+
+<table id="myTable" class="table">
+    <colgroup>
+        <col span="1" style="width: 33%;">
+        <col span="1" style="width: 33%;">
+        <col span="1" style="width: 34%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th><b>Lead</b></th>
+            <th><b>Follow</b></th>
+            <th><b><input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.."></b></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for couple in polka_couples %}
+        <tr>
+            <td>{{ couple[data.LEAD] }}</td>
+            <td>{{ couple[data.FOLLOW] }}</td>
+            <td align="right">
+                <a class="btn btn-warning" href="{{ url_for('blind_date_assistant.break_up_polka_couple', couple_id=couple['id']) }}">Break up couple</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="/static/jquery.dropdown.js"></script>
+<script>
+    $('.select').dropdown({
+        // options here
+    });
+</script>
+<script>
+function myFunction() {
+    // Declare variables
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        td2 = tr[i].getElementsByTagName("td")[1];
+        if (td || td2) {
+            if (td.innerHTML.toUpperCase().indexOf(filter) > -1 || td2.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

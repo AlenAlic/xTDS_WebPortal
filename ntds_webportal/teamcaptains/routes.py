@@ -8,7 +8,8 @@ from ntds_webportal.models import User, requires_access_level, TeamFinances, Con
     StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification, Merchandise, AdditionalInfo, Team
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
-from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant
+from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant, \
+    get_total_dancer_price_list
 import ntds_webportal.functions as func
 import ntds_webportal.data as data
 from ntds_webportal.data import *
@@ -16,7 +17,8 @@ from sqlalchemy import and_, or_
 import itertools
 import datetime
 import xlsxwriter
-from io import BytesIO
+from io import BytesIO, StringIO
+import csv
 
 
 @bp.route('/teamcaptain_profile', methods=['GET', 'POST'])
@@ -328,7 +330,7 @@ def create_couple():
     return render_template('teamcaptains/create_couple.html', form=form)
 
 
-@bp.route('/break_up_couple/<competition>,<lead_id>,<follow_id>', methods=['GET', 'POST'])
+@bp.route('/break_up_couple/<competition>,<lead_id>,<follow_id>', methods=['POST'])
 @login_required
 @requires_access_level([ACCESS['team_captain']])
 def break_up_couple(competition, lead_id, follow_id):
@@ -574,7 +576,6 @@ def raffle_result():
 @login_required
 @requires_access_level([ACCESS['team_captain'], ACCESS['treasurer']])
 def edit_finances():
-    # TODO Stan zeurt, wil het graag exporteerbaar naar CSV (naam, bedrag, omschrijving), lage prio
     ts = TournamentState.query.first()
     if ts.main_raffle_result_visible:
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -585,22 +586,34 @@ def edit_finances():
         finances = finances_overview(all_dancers)
         team_finances = TeamFinances.query.filter_by(team=current_user.team).first()
         if request.method == 'POST':
-            changes = False
-            for dancer in all_dancers:
-                if request.form.get(str(dancer.contestant_info[0].number)) is not None:
-                    if not dancer.status_info[0].paid:
-                        changes = True
-                    dancer.status_info[0].paid = True
-                else:
-                    if dancer.status_info[0].paid:
-                        changes = True
-                    dancer.status_info[0].paid = False
-            if changes:
-                db.session.commit()
-                flash('Changes saved successfully.', 'alert-success')
+            if 'download_file' in request.form:
+                download_list = [get_total_dancer_price_list(d) for d in all_dancers]
+                output = StringIO()
+                w = csv.writer(output)
+                w.writerow(['Name', 'Amount', 'Description', 'Has paid?'])
+                for d in download_list:
+                    w.writerow(d)
+                output.seek(0)
+                output = BytesIO(output.read().encode('utf-8-sig'))
+                return send_file(output, as_attachment=True,
+                                 attachment_filename=f"Payment_list_ETDS_Brno_2018_{current_user.team.city}.csv")
             else:
-                flash('No changes were made to submit.', 'alert-warning')
-            return redirect(url_for('teamcaptains.edit_finances'))
+                changes = False
+                for dancer in all_dancers:
+                    if request.form.get(str(dancer.contestant_info[0].number)) is not None:
+                        if not dancer.status_info[0].paid:
+                            changes = True
+                        dancer.status_info[0].paid = True
+                    else:
+                        if dancer.status_info[0].paid:
+                            changes = True
+                        dancer.status_info[0].paid = False
+                if changes:
+                    db.session.commit()
+                    flash('Changes saved successfully.', 'alert-success')
+                else:
+                    flash('No changes were made to submit.', 'alert-warning')
+                return redirect(url_for('teamcaptains.edit_finances'))
     else:
         finances, team_finances, confirmed_dancers, cancelled_dancers = None, None, None, None
     return render_template('teamcaptains/edit_finances.html', ts=ts, finances=finances, team_finances=team_finances,
@@ -629,7 +642,7 @@ def bus_to_brno():
             if 'download_file' in request.form:
                 output = BytesIO()
                 wb = xlsxwriter.Workbook(output, {'in_memory': True})
-                ws = wb.add_worksheet()
+                ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
                 ws.write(0, 0, 'Dancer')
                 ws.write(0, 1, 'Email')
                 ws.write(0, 2, 'Team')

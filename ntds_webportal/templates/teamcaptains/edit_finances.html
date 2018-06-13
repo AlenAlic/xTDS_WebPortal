@@ -10,7 +10,9 @@
 
 <h2>Received by organization:</h2>
 <div style="font-size:x-large">{{ data.euros(team_finances.paid) }} / {{ data.euros(finances['price_total']) }}</div>
-
+<form method="POST" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list">
+</form>
 <form method="POST" enctype="multipart/form-data" novalidate>
     {% with status='Confirmed dancers', dancers=confirmed_dancers %}
         {% include 'teamcaptains/_finances_list.html' %}

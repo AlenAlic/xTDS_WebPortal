@@ -63,7 +63,13 @@ onload="onStart()"
     {% endif %}
 
     {% if current_user.is_bdo() %}
-        {% with accessible=state.main_raffle_result_visible, url='main.todo', title='Couples', text='View all registered couples, and create new couples.', image='view_couples.png' %}
+        {% with accessible=state.main_raffle_result_visible, url='blind_date_assistant.create_couple', title='Ballroom Blind Date Couples', text='Create new blind date couples for Standard and Latin.', image='view_couples.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with accessible=state.main_raffle_result_visible, url='blind_date_assistant.create_couple_salsa', title='Salsa Blind Date Couples', text='Create new blind date couples for Salsa.', image='salsa.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+        {% with accessible=state.main_raffle_result_visible, url='blind_date_assistant.create_couple_polka', title='Polka Blind Date Couples', text='Create new blind date couples for Latin.', image='polka.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}

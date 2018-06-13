@@ -515,3 +515,23 @@ class TournamentState(db.Model):
 
     def get_tournament_config_value(self, key):
         return self.get_tournament_config()[key]
+
+
+class SalsaPartners(db.Model):
+    __tablename__ = 'salsa_partners'
+    couple_id = db.Column(db.Integer, primary_key=True)
+    lead_id = db.Column(db.Integer, nullable=False)
+    follow_id = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return 'Lead: {} - Follow {}'.format(self.lead_id, self.follow_id)
+
+
+class PolkaPartners(db.Model):
+    __tablename__ = 'polka_partners'
+    couple_id = db.Column(db.Integer, primary_key=True)
+    lead_id = db.Column(db.Integer, nullable=False)
+    follow_id = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return 'Lead: {} - Follow {}'.format(self.lead_id, self.follow_id)

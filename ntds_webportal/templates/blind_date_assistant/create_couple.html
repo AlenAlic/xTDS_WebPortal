@@ -10,39 +10,37 @@
 {% endblock %}
 
 {% block app_content %}
-    <h2>Partner request</h2>
-    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+<h2>Create couple</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
-    <div class="form-group {% if form.dancer.errors|length > 0  %} has-error {% endif %} required">
-        <label class="control-label" for="{{form.dancer.name}}">{{form.dancer.label}}</label>
+    {{ wtf.form_field(form.competition) }}
+    <div class="form-group {% if form.lead.errors|length > 0  %} has-error {% endif %} required">
+        <label class="control-label" for="{{form.lead.name}}">{{form.lead.label}}</label>
         <div class="select">
-            <select style="display:none" name="{{form.dancer.name}}">
-            {% for choice in form.dancer.choices %}
+            <select style="display:none" name="{{form.lead.name}}">
+            {% for choice in form.lead.choices %}
                 <option value="{{choice[0]}}">{{choice[1]}}</option>
             {% endfor %}
             </select>
         </div>
-        {%- for error in form.dancer.errors %}
+        {%- for error in form.lead.errors %}
         <p class="help-block">{{error}}</p>
         {%- endfor %}
     </div>
-        <div class="form-group {% if form.other.errors|length > 0  %} has-error {% endif %} required">
-            <label class="control-label" for="{{form.other.name}}">{{form.other.label}}</label>
+        <div class="form-group {% if form.follow.errors|length > 0  %} has-error {% endif %} required">
+            <label class="control-label" for="{{form.follow.name}}">{{form.follow.label}}</label>
         <div class="select ">
-            <select style="display:none" name="{{form.other.name}}">
-            {% for choice in form.other.choices %}
+            <select style="display:none" name="{{form.follow.name}}">
+            {% for choice in form.follow.choices %}
                 <option value="{{choice[0]}}">{{choice[1]}}</option>
             {% endfor %}
         </select>
         </div>
-        {%- for error in form.other.errors %}
+        {%- for error in form.follow.errors %}
             <p class="help-block">{{error}}</p>
         {%- endfor %}
     </div>
-    {{ wtf.form_field(form.competition) }}
-    <!--{{ wtf.form_field(form.level) }}-->
-    {{ wtf.form_field(form.remark) }}
     {{ wtf.form_field(form.submit) }}
     <a role="button" class="btn btn-default btn-loading" href="{{ url_for('teamcaptains.partner_request_list') }}">Cancel</a>
 </form>
