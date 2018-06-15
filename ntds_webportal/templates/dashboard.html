@@ -57,7 +57,7 @@ onload="onStart()"
         {% with accessible=state.main_raffle_result_visible, url='organizer.merchandise', title='Merchandise', text='Overview of ordered merchandise', image='merchandise.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with accessible=false, url='main.todo', title='Export to BAD', text='Coming soon...', image='BAD.png' %}
+        {% with accessible=state.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Work in progress...', image='BAD.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}

@@ -4,7 +4,7 @@ from ntds_webportal import db
 from ntds_webportal.main.email import send_new_messages_email
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
-    StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification, MerchandiseInfo, Merchandise
+    StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification, MerchandiseInfo, Merchandise, TournamentState
 from ntds_webportal.functions import uniquify, check_combination, get_combinations_list
 from ntds_webportal.organizer.forms import NameChangeResponse
 from ntds_webportal.organizer.email import send_raffle_completed_email
@@ -16,7 +16,7 @@ from sqlalchemy import or_, and_, case
 import time
 import random
 import xlsxwriter
-from io import BytesIO
+from io import BytesIO, StringIO
 import datetime
 
 
@@ -318,6 +318,7 @@ def cancel_dancer(number):
 @login_required
 @requires_access_level([ACCESS['organizer']])
 def merchandise():
+    ts = TournamentState.query.first()
     dancers = Contestant.query.join(StatusInfo).join(ContestantInfo).join(AdditionalInfo).join(MerchandiseInfo)\
         .join(Team).filter(or_(and_(StatusInfo.status == CONFIRMED, MerchandiseInfo.quantity > 0),
                                AdditionalInfo.t_shirt != NO)).order_by(Team.city).all()
@@ -366,5 +367,28 @@ def merchandise():
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
-    return render_template('organizer/merchandise.html', data=data, shirts=shirts, total_shirts=total_shirts,
+    return render_template('organizer/merchandise.html', ts=ts, data=data, shirts=shirts, total_shirts=total_shirts,
                            stickers=stickers, total_stickers=total_stickers, dancers=dancers)
+
+
+@bp.route('/BAD', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def bad():
+    ts = TournamentState.query.first()
+    if request.method == 'POST':
+        form = request.form
+        if 'download_createDB' in form:
+            output = StringIO(render_template('organizer/_BAD_createDB.sql'))
+            output = BytesIO(output.read().encode('utf-8-sig'))
+            return send_file(output, as_attachment=True,
+                             attachment_filename="createDB.sql")
+        if 'download_createTournament' in form:
+            teams = Team.query.all()
+            text = render_template('organizer/_BAD_createTournament.sql', teams=teams)
+            print(text)
+            # output = StringIO()
+            # output = BytesIO(output.read().encode('utf-8-sig'))
+            # return send_file(output, as_attachment=True,
+            #                  attachment_filename="createTournament.sql")
+    return render_template('organizer/BAD.html', ts=ts)

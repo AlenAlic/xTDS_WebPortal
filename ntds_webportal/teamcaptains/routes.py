@@ -212,7 +212,7 @@ def register_dancer(number):
             db.session.add(n)
             db.session.commit()
     elif register == 1:
-        changed_dancer.status_info[0].status = REGISTERED
+        changed_dancer.status_info[0].set_status(REGISTERED)
         db.session.commit()
         flash('{} has been re-registered successfully.'.format(changed_dancer.get_full_name()), 'alert-success')
     return redirect(url_for('teamcaptains.edit_dancers', wide=int(request.values['wide'])))
