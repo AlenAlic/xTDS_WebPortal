@@ -36,6 +36,9 @@ onload="onStart()"
         {% with url='self_admin.debug_tools', title='Debug Tools', text='Tools to debug the site.', image='debug_tools.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
+        {% with url='self_admin.switch_user', title='Switch User', text='Log in as a different user.', image='switch_user.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
         {% with url='self_admin.users_lists', title='Users list', text='Get a list of usernames, email, and default passwords.', image='users_list.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}

@@ -24,6 +24,15 @@
                 {% with subtitle='Registered', counter='available', stats=stats_registered %}
                     {% include 'organizer/_raffle_stats.html' %}
                 {% endwith %}
+
+                <h2>First time attendees</h2>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <!--<p><b>Number of first time attendees:</b></p>-->
+                        {{ first_time_dancers|length }}
+                    </div>
+                </div>
+
                 {% with list_id='guaranteed', type='guaranteed', title='Guaranteed dancers', teams=teams %}
                     {% include 'organizer/_raffle_dancers_lists.html' %}
                 {% endwith %}

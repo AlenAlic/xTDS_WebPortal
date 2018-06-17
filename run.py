@@ -75,6 +75,15 @@ class DevShell:
             self.create()
             self.populate_test()
 
+    @staticmethod
+    def test_passwords():
+        with app.app_context():
+            users = User.query.all()
+            for user in users:
+                if user.password_hash is not None:
+                    user.set_password('test')
+            db.session.commit()
+
 
 if __name__ == '__main__':
     app.run()

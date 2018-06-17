@@ -2,8 +2,11 @@
 {% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
-<h2>Force error to test the error mail</h2>
+<h2>Switch to a different user</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-    <button type="submit" id="submit-force_error" name="force_error" class="btn btn-danger">Force error</button>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    {{ wtf.form_field(form.user) }}
+    {{ wtf.form_field(form.submit) }}
 </form>
 {% endblock %}

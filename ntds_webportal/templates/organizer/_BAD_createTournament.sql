@@ -50,20 +50,20 @@ INSERT INTO `class` SET `id` = {{class_TEST}}, `name` = 'TEST';
 {%- set dance_BC = 21 -%}
 {%- set dance_MG = 22 -%}
 {%- set dance_PK = 30 -%}
-INSERT INTO `dance` SET `id` = {{dance_SW}}, `name` = 'Slow Waltz', `tag` = 'SW', `disc` = {{discipline_Ballroom}};
-INSERT INTO `dance` SET `id` = {{dance_TG}}, `name` = 'Tango', `tag` = 'TG', `disc` = {{discipline_Ballroom}};
+INSERT INTO `dance` SET `id` = {{dance_SW}}, `name` = 'Slow Waltz',     `tag` = 'SW', `disc` = {{discipline_Ballroom}};
+INSERT INTO `dance` SET `id` = {{dance_TG}}, `name` = 'Tango',          `tag` = 'TG', `disc` = {{discipline_Ballroom}};
 INSERT INTO `dance` SET `id` = {{dance_VW}}, `name` = 'Viennese Waltz', `tag` = 'VW', `disc` = {{discipline_Ballroom}};
-INSERT INTO `dance` SET `id` = {{dance_SF}}, `name` = 'Slow Foxtrot', `tag` = 'SF', `disc` = {{discipline_Ballroom}};
-INSERT INTO `dance` SET `id` = {{dance_QS}}, `name` = 'Quickstep', `tag` = 'QS', `disc` = {{discipline_Ballroom}};
-INSERT INTO `dance` SET `id` = {{dance_SB}}, `name` = 'Samba', `tag` = 'SB', `disc` = {{discipline_Latin}};
-INSERT INTO `dance` SET `id` = {{dance_CC}}, `name` = 'Cha Cha', `tag` = 'CC', `disc` = {{discipline_Latin}};
-INSERT INTO `dance` SET `id` = {{dance_RB}}, `name` = 'Rumba', `tag` = 'RB', `disc` = {{discipline_Latin}};
-INSERT INTO `dance` SET `id` = {{dance_PD}}, `name` = 'Paso Doble', `tag` = 'PD', `disc` = {{discipline_Latin}};
-INSERT INTO `dance` SET `id` = {{dance_JV}}, `name` = 'Jive', `tag` = 'JV', `disc` = {{discipline_Latin}};
-INSERT INTO `dance` SET `id` = {{dance_SS}}, `name` = 'Salsa', `tag` = 'SS', `disc` = {{discipline_Salsa}};
-INSERT INTO `dance` SET `id` = {{dance_BC}}, `name` = 'Bachata', `tag` = 'BC', `disc` = {{discipline_Salsa}};
-INSERT INTO `dance` SET `id` = {{dance_MG}}, `name` = 'Merengue', `tag` = 'MG', `disc` = {{discipline_Salsa}};
-INSERT INTO `dance` SET `id` = {{dance_PK}}, `name` = 'Polka', `tag` = 'PK', `disc` = {{discipline_Polka}};
+INSERT INTO `dance` SET `id` = {{dance_SF}}, `name` = 'Slow Foxtrot',   `tag` = 'SF', `disc` = {{discipline_Ballroom}};
+INSERT INTO `dance` SET `id` = {{dance_QS}}, `name` = 'Quickstep',      `tag` = 'QS', `disc` = {{discipline_Ballroom}};
+INSERT INTO `dance` SET `id` = {{dance_SB}}, `name` = 'Samba',          `tag` = 'SB', `disc` = {{discipline_Latin}};
+INSERT INTO `dance` SET `id` = {{dance_CC}}, `name` = 'Cha Cha',        `tag` = 'CC', `disc` = {{discipline_Latin}};
+INSERT INTO `dance` SET `id` = {{dance_RB}}, `name` = 'Rumba',          `tag` = 'RB', `disc` = {{discipline_Latin}};
+INSERT INTO `dance` SET `id` = {{dance_PD}}, `name` = 'Paso Doble',     `tag` = 'PD', `disc` = {{discipline_Latin}};
+INSERT INTO `dance` SET `id` = {{dance_JV}}, `name` = 'Jive',           `tag` = 'JV', `disc` = {{discipline_Latin}};
+INSERT INTO `dance` SET `id` = {{dance_SS}}, `name` = 'Salsa',          `tag` = 'SS', `disc` = {{discipline_Salsa}};
+INSERT INTO `dance` SET `id` = {{dance_BC}}, `name` = 'Bachata',        `tag` = 'BC', `disc` = {{discipline_Salsa}};
+INSERT INTO `dance` SET `id` = {{dance_MG}}, `name` = 'Merengue',       `tag` = 'MG', `disc` = {{discipline_Salsa}};
+INSERT INTO `dance` SET `id` = {{dance_PK}}, `name` = 'Polka',          `tag` = 'PK', `disc` = {{discipline_Polka}};
 
 -- Define the different tournaments, normally every discipline-class combination has its own tournament.
 -- Mode SP: since our couples will remain fixed during each tournament
@@ -93,7 +93,7 @@ INSERT INTO `tournament` SET `id` = {{tournament_Ballroom_Breitensport_Masters}}
 INSERT INTO `tournament` SET `id` = {{tournament_Ballroom_Breitensport_Champions}}, `event` = 1, `class` = {{class_Breitensport_Champions}}, `disc` = {{discipline_Ballroom}}, `when` = '2018-03-03 14:00', `mode` = 'SP', `quali` = {{tournament_Ballroom_Breitensport_qualification}};
 INSERT INTO `tournament` SET `id` = {{tournament_Latin_CloseD}}, `event` = 1, `class` = {{class_CloseD}}, `disc` = {{discipline_Latin}}, `when` = '2018-03-03 15:00', `mode` = 'CP_D', `numberl0` = 200, `numberl1` = 299;
 INSERT INTO `tournament` SET `id` = {{tournament_Latin_CloseD}}, `event` = 1, `class` = {{class_Open_Class}}, `disc` = {{discipline_Latin}}, `when` = '2018-03-03 15:00', `mode` = 'CP_D', `numberl0` = 300, `numberl1` = 399;
-INSERT INTO `tournament` SET `id` = {{tournament_Salsa}}, `event` = 1, `class` = {{class_Salsa}}, `disc` = {{discipline_Salsa}}, `when` = '2018-03-03 15:00', `mode` = 'CP_D', `numberl0` = 400, `numberl1` = 599;
+INSERT INTO `tournament` SET `id` = {{tournament_Salsa}}, `event` = 1, `class` = {{class_Salsa}}, `disc` = {{discipline_Salsa}}, `when` = '2018-03-03 15:00', `mode` = 'SP', `numberl0` = 400, `numberl1` = 599;
 -- Day 2
 INSERT INTO `tournament` SET `id` = {{tournament_Latin_Breitensport_qualification}}, `event` = 1, `class` = {{class_Breitensport_qualification}}, `disc` = {{discipline_Latin}}, `when` = '2018-03-04 09:00', `mode` = 'SP', `numberl0` = 1, `numberl1` = 199;
 INSERT INTO `tournament` SET `id` = {{tournament_Latin_Breitensport_Amateurs}}, `event` = 1, `class` = {{class_Breitensport_Amateurs}}, `disc` = {{discipline_Latin}}, `when` = '2018-03-04 11:00', `mode` = 'SP', `quali` = {{tournament_Latin_Breitensport_qualification}};
@@ -157,7 +157,7 @@ INSERT INTO `t_dance` SET `tourn` = {{tournament_Ballroom_Open_Class}}, `dance` 
 INSERT INTO `t_dance` SET `tourn` = {{tournament_Ballroom_Open_Class}}, `dance` = {{dance_CC}};
 INSERT INTO `t_dance` SET `tourn` = {{tournament_Ballroom_Open_Class}}, `dance` = {{dance_RB}};
 INSERT INTO `t_dance` SET `tourn` = {{tournament_Ballroom_Open_Class}}, `dance` = {{dance_PD}};
-INSERT INTO `t_dance` SET `tourn` = {{tournament_Ballroom_Breitensport_Open_Class}}, `dance` = {{dance_JV}};
+INSERT INTO `t_dance` SET `tourn` = {{tournament_Ballroom_Open_Class}}, `dance` = {{dance_JV}};
 INSERT INTO `t_dance` SET `tourn` = {{tournament_Polka}}, `dance` = {{dance_PK}};
 
 -- Teams
@@ -165,6 +165,11 @@ INSERT INTO `t_dance` SET `tourn` = {{tournament_Polka}}, `dance` = {{dance_PK}}
 INSERT INTO `team` SET `id` = 100, `name` = 'ORGANIZATION';
 {%- for team in teams %}
 INSERT INTO `team` SET `id` = {{ team.team_id }}, `name` = '{{ team.name }} ({{team.city}})';
+{%- endfor %}
+
+-- Insert dancers into system:
+{%- for dancer in dancers %}
+INSERT INTO `person` SET `id` = '{{ dancer.contestant_id }}', `fname` = '{{ dancer.first_name }}', `name` = '{% if dancer.prefixes == "" %}{{ dancer.last_name }}{% else %}{{ dancer.prefixes }} {{ dancer.last_name }}{% endif %}', `team` = (SELECT `id` FROM `team` WHERE `name` = '{{ dancer.contestant_info[0].team.name }} ({{ dancer.contestant_info[0].team.city }})');
 {%- endfor %}
 
 -- BAD team person files

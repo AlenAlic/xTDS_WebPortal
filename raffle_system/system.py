@@ -84,12 +84,15 @@ def raffle_add_neutral_group(raffle_sys):
                f"You cannot add more dancers."
 
 
-def test_raffle():
+def test_raffle(guaranteed_dancers=None):
     print('Starting test raffle.')
     start_time = time.time()
     raffle_sys = RaffleSystem()
     # Select teamcaptains
     select_groups(raffle_sys, raffle_sys.teamcaptains(), guaranteed=True)
+    # Select guaranteed dancers
+    if guaranteed_dancers is not None:
+        select_groups(raffle_sys, guaranteed_dancers, guaranteed=True)
     # Select other dancers
     select_groups(raffle_sys, raffle_sys.registered_dancers)
     print('Done with test raffle')

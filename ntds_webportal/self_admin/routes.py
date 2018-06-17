@@ -1,7 +1,8 @@
-from flask import render_template, request, send_file
-from flask_login import login_required
+from flask import render_template, request, send_file, redirect, url_for
+from flask_login import login_required, current_user, logout_user, login_user
 from ntds_webportal.self_admin import bp
-from ntds_webportal.models import requires_access_level
+from ntds_webportal.self_admin.forms import SwitchUserForm
+from ntds_webportal.models import requires_access_level, User
 from ntds_webportal.data import *
 from instance.populate import TEAM_CAPTAINS
 import xlsxwriter
@@ -17,6 +18,21 @@ def debug_tools():
         if 'force_error' in form:
             print(None.email)
     return render_template('admin/debug_tools.html')
+
+
+@bp.route('/switch_user', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['admin']])
+def switch_user():
+    form = SwitchUserForm()
+    users = User.query.filter(User.is_active.is_(True), User.user_id != current_user.user_id).all()
+    form.user.choices = map(lambda user: (user.user_id, user.username), users)
+    if form.validate_on_submit():
+        user = User.query.filter(User.user_id == form.user.data).first()
+        logout_user()
+        login_user(user)
+        return redirect(url_for('main.index'))
+    return render_template('admin/switch_user.html', form=form)
 
 
 @bp.route('/users_lists', methods=['GET', 'POST'])

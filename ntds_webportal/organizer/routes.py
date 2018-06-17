@@ -133,6 +133,9 @@ def raffle_system():
     available_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(StatusInfo.raffle_status == REGISTERED) \
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
+    first_time_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(StatusInfo.raffle_status == REGISTERED, ContestantInfo.first_time.is_(True)) \
+        .order_by(ContestantInfo.team_id, Contestant.first_name).all()
     newly_selected, sleeping_spots = None, None
     stats_registered, stats_selected, stats_confirmed = None, None, None
     teams, available_combinations = None, None
@@ -257,15 +260,16 @@ def raffle_system():
             for dancer in marked_dancers:
                 dancer.status_info[0].set_status(REGISTERED)
         elif 'start_test_raffle' in form:
-            runs = 25
+            runs = 20
+            guaranteed_dancers = [d for d in all_dancers if str(d.contestant_id) in form]
             if True:
                 start_time = time.time()
                 for i in range(0, runs):
                     print(f'Performing run {i+1} of {runs}...')
-                    test_raffle()
+                    test_raffle(guaranteed_dancers)
                 print(f"--- {runs} raffles done in %.3f seconds ---" % (time.time() - start_time))
             else:
-                test_raffle()
+                test_raffle(guaranteed_dancers)
         else:
             if not raffle_sys.full():
                 try:
@@ -291,7 +295,7 @@ def raffle_system():
                            stats_confirmed=stats_confirmed, selected_dancers=selected_dancers,
                            confirmed_dancers=confirmed_dancers, available_dancers=available_dancers,
                            available_combinations=available_combinations, newly_selected=newly_selected,
-                           sleeping_spots=sleeping_spots)
+                           sleeping_spots=sleeping_spots, first_time_dancers=first_time_dancers)
 
 
 @bp.route('/cancel_dancer/<number>', methods=['GET', 'POST'])
@@ -385,10 +389,10 @@ def bad():
                              attachment_filename="createDB.sql")
         if 'download_createTournament' in form:
             teams = Team.query.all()
-            text = render_template('organizer/_BAD_createTournament.sql', teams=teams)
-            print(text)
-            # output = StringIO()
-            # output = BytesIO(output.read().encode('utf-8-sig'))
-            # return send_file(output, as_attachment=True,
-            #                  attachment_filename="createTournament.sql")
+            dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == SELECTED).all()
+            text = render_template('organizer/_BAD_createTournament.sql', teams=teams, dancers=dancers)
+            output = StringIO(text)
+            output = BytesIO(output.read().encode('utf-8-sig'))
+            return send_file(output, as_attachment=True,
+                             attachment_filename="createTournament.sql")
     return render_template('organizer/BAD.html', ts=ts)

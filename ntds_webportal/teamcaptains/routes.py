@@ -282,9 +282,14 @@ def couples_list():
                         list(itertools.product(ballroom_couples_leads, ballroom_couples_follows)) if
                         couple[0].contestant_id == get_dancing_categories(
                             couple[1].dancing_info)[BALLROOM].partner]
+    ballroom_couples = [couple for couple in ballroom_couples if
+                        couple['lead'].contestant_info[0].team == current_user.team
+                        or couple['follow'].contestant_info[0].team == current_user.team]
     latin_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                      list(itertools.product(latin_couples_leads, latin_couples_follows)) if
                      couple[0].contestant_id == get_dancing_categories(couple[1].dancing_info)[LATIN].partner]
+    latin_couples = [couple for couple in latin_couples if couple['lead'].contestant_info[0].team == current_user.team
+                     or couple['follow'].contestant_info[0].team == current_user.team]
     return render_template('teamcaptains/couples_lists.html', data=data, func=func,
                            ballroom_couples=ballroom_couples, latin_couples=latin_couples)
 
@@ -330,7 +335,7 @@ def create_couple():
     return render_template('teamcaptains/create_couple.html', form=form)
 
 
-@bp.route('/break_up_couple/<competition>,<lead_id>,<follow_id>', methods=['POST'])
+@bp.route('/break_up_couple/<competition>,<lead_id>,<follow_id>', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS['team_captain']])
 def break_up_couple(competition, lead_id, follow_id):
