@@ -1,6 +1,7 @@
 from raffle_system.functions import *
 import time
 import ast
+from ntds_webportal.models import Contestant
 
 
 def select_groups(raffle_sys, list_of_dancers, guaranteed=False):

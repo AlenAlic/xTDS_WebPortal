@@ -5,17 +5,21 @@
 
 {% if ts.main_raffle_result_visible is sameas true %}
 <h2>Download files for the BAD system</h2>
-Not done yet.
-<!--<form method="POST" enctype="multipart/form-data" novalidate>-->
-    <!--<input class="btn btn-info" id="submit-download_createDB" name="download_createDB" type="submit" value="Download file to create BAD database">-->
+<!--Not done yet.-->
+<form method="GET" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-info" id="submit-download_createDB" name="download_createDB" type="submit" value="Create BAD database">
 <!--</form>-->
+<div style="height:10px"></div>
+<!--<form method="GET" enctype="multipart/form-data" novalidate>-->
+    <input class="btn btn-info" id="submit-download_createEvent" name="download_createEvent" type="submit" value="Create event">
+<div style="height:10px"></div>
+<!--<form method="GET" enctype="multipart/form-data" novalidate>-->
+    <input class="btn btn-info" id="submit-download_createTournament" name="download_createTournament" type="submit" value="Create tournament">
+<!--</form>-->
+</form>
 <!--<div style="height:10px"></div>-->
 <!--<form method="POST" enctype="multipart/form-data" novalidate>-->
-    <!--<input class="btn btn-info" id="submit-download_createTournament" name="download_createTournament" type="submit" value="Download file to create the tournament">-->
-<!--</form>-->
-<!--<div style="height:10px"></div>-->
-<!--<form method="POST" enctype="multipart/form-data" novalidate>-->
-    <!--<input class="btn btn-info" id="submit-download_populateTournament" name="download_populateTournament" type="submit" value="Download file to populate the tournament">-->
+    <!--<input class="btn btn-info" id="submit-download_populateContestants" name="download_populateContestants" type="submit" value="Download file to populate the tournament">-->
 <!--</form>-->
 
 {% else %}

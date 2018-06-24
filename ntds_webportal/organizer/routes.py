@@ -4,7 +4,8 @@ from ntds_webportal import db
 from ntds_webportal.main.email import send_new_messages_email
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
-    StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification, MerchandiseInfo, Merchandise, TournamentState
+    StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification, MerchandiseInfo, Merchandise, TournamentState, \
+    SalsaPartners, PolkaPartners
 from ntds_webportal.functions import uniquify, check_combination, get_combinations_list
 from ntds_webportal.organizer.forms import NameChangeResponse
 from ntds_webportal.organizer.email import send_raffle_completed_email
@@ -12,7 +13,7 @@ import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.system import raffle, finish_raffle, raffle_add_neutral_group, test_raffle
 from raffle_system.functions import RaffleSystem, get_combinations
-from sqlalchemy import or_, and_, case
+from sqlalchemy import or_, case
 import time
 import random
 import xlsxwriter
@@ -32,7 +33,7 @@ def registration_overview():
     dancers = [{'country': team.country, 'name': team.name, 'id': team.name.replace(' ', '-').replace('`', ''),
                 'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team).all()}
                for team in all_teams]
-    dancers = [d for d in dancers if len(d['dancers']) > 0]
+    # dancers = [d for d in dancers if len(d['dancers']) > 0]
     dutch_dancers = [team for team in dancers if team['country'] == NETHERLANDS]
     german_dancers = [team for team in dancers if team['country'] == GERMANY]
     other_dancers = [team for team in dancers if team['country'] != NETHERLANDS and
@@ -249,18 +250,18 @@ def raffle_system():
                 dancer.status_info[0].set_status(SELECTED)
                 teamcaptain = User.query.filter(User.is_active, User.access == ACCESS['team_captain'],
                                                 User.team == dancer.contestant_info[0].team).first()
-                if teamcaptain.send_new_messages_email:
-                    text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
-                    n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
-                                     user=teamcaptain)
-                    db.session.add(n)
-                    send_new_messages_email(current_user, teamcaptain)
+                # if teamcaptain.send_new_messages_email:
+                #     text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
+                #     n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
+                #                      user=teamcaptain)
+                #     db.session.add(n)
+                #     send_new_messages_email(current_user, teamcaptain)
         elif 'remove_marked_dancers' in form:
             marked_dancers = [d for d in all_dancers if str(d.contestant_id) in form]
             for dancer in marked_dancers:
                 dancer.status_info[0].set_status(REGISTERED)
         elif 'start_test_raffle' in form:
-            runs = 20
+            runs = 25
             guaranteed_dancers = [d for d in all_dancers if str(d.contestant_id) in form]
             if True:
                 start_time = time.time()
@@ -324,8 +325,8 @@ def cancel_dancer(number):
 def merchandise():
     ts = TournamentState.query.first()
     dancers = Contestant.query.join(StatusInfo).join(ContestantInfo).join(AdditionalInfo).join(MerchandiseInfo)\
-        .join(Team).filter(or_(and_(StatusInfo.status == CONFIRMED, MerchandiseInfo.quantity > 0),
-                               AdditionalInfo.t_shirt != NO)).order_by(Team.city).all()
+        .join(Team).filter(StatusInfo.status == CONFIRMED, MerchandiseInfo.quantity > 0,
+                           AdditionalInfo.t_shirt != NO).order_by(Team.city).all()
     shirts = {code: 0 for code in SHIRT_SIZES}
     for dancer in dancers:
         try:
@@ -335,7 +336,11 @@ def merchandise():
     shirts = {SHIRT_SIZES[shirt]: quantity for shirt, quantity in shirts.items()}
     total_shirts = sum([quantity for size, quantity in shirts.items()])
     all_stickers = Merchandise.query.all()
-    ordered_stickers = MerchandiseInfo.query.filter(MerchandiseInfo.quantity > 0).all()
+    ordered_stickers = []
+    for dancer in dancers:
+        ordered_stickers.extend(dancer.merchandise_info)
+    # ordered_stickers = [ordered_stickers.extend(dancer.merchandise_info) for dancer in dancers]
+    # ordered_stickers = MerchandiseInfo.query.filter(MerchandiseInfo.quantity > 0).all()
     stickers = {sticker.merchandise_id: 0 for sticker in all_stickers}
     for sticker in ordered_stickers:
         stickers[sticker.product_id] += sticker.quantity
@@ -380,19 +385,30 @@ def merchandise():
 @requires_access_level([ACCESS['organizer']])
 def bad():
     ts = TournamentState.query.first()
-    if request.method == 'POST':
-        form = request.form
-        if 'download_createDB' in form:
-            output = StringIO(render_template('organizer/_BAD_createDB.sql'))
-            output = BytesIO(output.read().encode('utf-8-sig'))
-            return send_file(output, as_attachment=True,
-                             attachment_filename="createDB.sql")
-        if 'download_createTournament' in form:
-            teams = Team.query.all()
-            dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == SELECTED).all()
-            text = render_template('organizer/_BAD_createTournament.sql', teams=teams, dancers=dancers)
-            output = StringIO(text)
-            output = BytesIO(output.read().encode('utf-8-sig'))
-            return send_file(output, as_attachment=True,
-                             attachment_filename="createTournament.sql")
+    form = request.args
+    if 'download_createDB' in form:
+        output = StringIO(render_template('organizer/_BAD_createDB.sql'))
+        output = BytesIO(output.read().encode('utf-8-sig'))
+        return send_file(output, as_attachment=True, attachment_filename="createDB.sql")
+    if 'download_createEvent' in form:
+        teams = Team.query.all()
+        text = render_template('organizer/_BAD_createEvent.sql', teams=teams)
+        output = StringIO(text)
+        output = BytesIO(output.read().encode('utf-8-sig'))
+        return send_file(output, as_attachment=True, attachment_filename="createEvent.sql")
+    if 'download_createTournament' in form:
+        teams = Team.query.all()
+        dancers = Contestant.query.join(StatusInfo)\
+            .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED)).all()
+        leads = Contestant.query.join(StatusInfo).join(DancingInfo) \
+            .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED), DancingInfo.role == LEAD)\
+            .all()
+        leads = [di for lead in leads for di in lead.dancing_info if di.role == LEAD and di.partner is not None]
+        salsa_couples = SalsaPartners.query.all()
+        polka_couples = PolkaPartners.query.all()
+        text = render_template('organizer/_BAD_createTournament.sql', teams=teams, dancers=dancers, leads=leads,
+                               salsa_couples=salsa_couples, polka_couples=polka_couples)
+        output = StringIO(text)
+        output = BytesIO(output.read().encode('utf-8-sig'))
+        return send_file(output, as_attachment=True, attachment_filename="createTournament.sql")
     return render_template('organizer/BAD.html', ts=ts)

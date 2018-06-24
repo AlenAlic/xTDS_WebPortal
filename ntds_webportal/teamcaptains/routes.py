@@ -31,6 +31,7 @@ def teamcaptain_profile():
     if treasurer_form.validate_on_submit():
         tr_pass = random_password()
         treasurer.set_password(tr_pass)
+        treasurer.email = treasurer_form.email.data
         treasurer.is_active = True
         db.session.commit()
         send_treasurer_activation_email(treasurer_form.email.data, treasurer.username, tr_pass,
