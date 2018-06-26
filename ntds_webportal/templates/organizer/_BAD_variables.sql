@@ -1,4 +1,11 @@
 {#- Define the different disciplines of the tournament. -#}
+{%- set id_root = 1001 -%}
+{%- set id_manager = 1002 -%}
+{%- set id_assistant = 1003 -%}
+{%- set id_floor1 = 1004 -%}
+{%- set id_floor2 = 1005 -%}
+{%- set id_floor3 = 1006 -%}
+{#- Define the different disciplines of the tournament. -#}
 {%- set discipline_Ballroom = 1 -%}
 {%- set discipline_Latin = 2 -%}
 {%- set discipline_Salsa = 3 -%}
@@ -30,7 +37,7 @@
 {%- set dance_MG = 22 -%}
 {%- set dance_PK = 30 -%}
 {#- Define the different tournaments, normally every discipline-class combination has its own tournament. -#}
-{% set tournament_Ballroom_Breitensport_qualification = 1 -%}
+{%- set tournament_Ballroom_Breitensport_qualification = 1 -%}
 {%- set tournament_Ballroom_Breitensport_Amateurs = 2 -%}
 {%- set tournament_Ballroom_Breitensport_Professionals = 3 -%}
 {%- set tournament_Ballroom_Breitensport_Masters = 4 -%}
@@ -47,5 +54,12 @@
 {%- set tournament_Latin_Open_Class = 31 -%}
 {%- set tournament_Polka = 50 -%}
 {%- set tournament_TEST = 99 -%}
+{%- set tournament_list = [tournament_Ballroom_Breitensport_qualification, tournament_Ballroom_Breitensport_Amateurs, tournament_Ballroom_Breitensport_Professionals,
+tournament_Ballroom_Breitensport_Masters, tournament_Ballroom_Breitensport_Champions, tournament_Latin_CloseD, tournament_Latin_Open_Class,
+tournament_Latin_Breitensport_qualification, tournament_Latin_Breitensport_Amateurs, tournament_Latin_Breitensport_Professionals,
+tournament_Latin_Breitensport_Masters, tournament_Latin_Breitensport_Champions, tournament_Ballroom_CloseD, tournament_Ballroom_Open_Class,
+tournament_TEST] -%}
+{{ tournament_list.append(tournament_Polka) }}
+{{ tournament_list.append(tournament_Salsa) }}
 {#- Set the id of the organization team. -#}
 {%- set team_organization = 100 -%}
