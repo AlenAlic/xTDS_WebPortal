@@ -326,7 +326,7 @@ def merchandise():
     ts = TournamentState.query.first()
     dancers = Contestant.query.join(StatusInfo).join(ContestantInfo).join(AdditionalInfo).join(MerchandiseInfo)\
         .join(Team).filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == CANCELLED),
-                           MerchandiseInfo.quantity > 0, AdditionalInfo.t_shirt != NO).order_by(Team.city).all()
+                           or_(MerchandiseInfo.quantity > 0, AdditionalInfo.t_shirt != NO)).order_by(Team.city).all()
     shirts = {code: 0 for code in SHIRT_SIZES}
     for dancer in dancers:
         try:
@@ -346,7 +346,8 @@ def merchandise():
         stickers[sticker.product_id] += sticker.quantity
     stickers = {sticker.product_description: stickers[sticker.merchandise_id] for sticker in all_stickers}
     total_stickers = sum([quantity for sticker, quantity in stickers.items()])
-    if request.method == 'POST':
+    form = request.args
+    if 'download_file' in form:
         fn = 'merchandise_ETDS_2018.xlsx'
         output = BytesIO()
         wb = xlsxwriter.Workbook(output, {'in_memory': True})

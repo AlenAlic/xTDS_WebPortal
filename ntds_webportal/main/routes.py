@@ -40,6 +40,8 @@ def dashboard():
         return render_template('dashboard.html', state=state, max_tc=raffle_config['max_teamcaptains'],
                                dancers_registered=dancers_registered,
                                num_teamcaptains=num_teamcaptains)
+    if current_user.is_treasurer():
+        return redirect(url_for('teamcaptains.edit_finances'))
     return render_template('dashboard.html', state=state)
 
 

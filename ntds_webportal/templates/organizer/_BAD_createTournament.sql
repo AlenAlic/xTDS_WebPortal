@@ -160,7 +160,7 @@ INSERT INTO `start` (`tourn`,`lead`,`follow`) VALUES ({{ var.tournament_TEST }},
 -- Dancers
 -- Insert dancers into system:
 {%- for dancer in dancers %}
-INSERT INTO `person` SET `id` = "{{ dancer.contestant_id }}", `fname` = "{{ dancer.first_name }}", `name` = "{% if dancer.prefixes is none %}{{ dancer.last_name }}{% else %}{{ dancer.prefixes }} {{ dancer.last_name }}{% endif %}", `team` = (SELECT `id` FROM `team` WHERE `name` = "{{ dancer.contestant_info[0].team.name }} ({{ dancer.contestant_info[0].team.city }})");
+INSERT INTO `person` SET `id` = "{{ dancer.contestant_id }}", `fname` = "{{ dancer.first_name }}", `name` = "{{ dancer.get_last_name() }}", `team` = (SELECT `id` FROM `team` WHERE `name` = "{{ dancer.contestant_info[0].team.name }} ({{ dancer.contestant_info[0].team.city }})");
 {%- endfor %}
 
 -- Jury

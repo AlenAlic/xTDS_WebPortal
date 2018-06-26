@@ -52,6 +52,21 @@ ALL_ROLES = {
     FOLLOW: FOLLOW
 }
 
+# Competition levels
+BELOW_D = 'Below D'
+D_LEVEL = 'D'
+C_LEVEL = 'C'
+B_LEVEL = 'B'
+A_LEVEL = 'A'
+S_LEVEL = 'S'
+COMPETITION_LEVELS = {
+    D_LEVEL: D_LEVEL,
+    C_LEVEL: C_LEVEL,
+    B_LEVEL: B_LEVEL,
+    A_LEVEL: A_LEVEL,
+    S_LEVEL: S_LEVEL
+}
+
 # Status values
 REGISTERED = 'registered'
 SELECTED = 'selected'

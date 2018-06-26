@@ -46,19 +46,19 @@ class BaseContestantForm(FlaskForm):
                                 choices=[(k, v) for k, v in JURY_BALLROOM.items()])
     jury_latin = SelectField('Adjudicator Latin', validators=[SpecificVolunteer('volunteer'), ChoiceMade()],
                              choices=[(k, v) for k, v in JURY_LATIN.items()])
-    license_jury_ballroom = SelectField('Adjudicator license Ballroom', validators=[DataRequired()],
+    license_jury_ballroom = SelectField('License Ballroom', validators=[DataRequired()],
                                         choices=[(k, v) for k, v in LICENSE_BALLROOM.items()])
-    license_jury_latin = SelectField('Adjudicator license Latin', validators=[DataRequired()],
+    license_jury_latin = SelectField('License Latin', validators=[DataRequired()],
                                      choices=[(k, v) for k, v in LICENSE_LATIN.items()])
+    level_jury_ballroom = SelectField('Level Ballroom', validators=[DataRequired()],
+                                      choices=[(k, v) for k, v in LEVEL_JURY_BALLROOM.items()])
+    level_jury_latin = SelectField('Level Latin', validators=[DataRequired()],
+                                   choices=[(k, v) for k, v in LEVEL_JURY_LATIN.items()])
     jury_salsa = SelectField('Adjudicator Salsa', validators=[DataRequired()],
                              choices=[(k, v) for k, v in JURY_SALSA.items()])
     jury_polka = SelectField('Adjudicator Polka', validators=[DataRequired()],
                              choices=[(k, v) for k, v in JURY_POLKA.items()])
 
-    # student = BooleanField('Student', description='I am a student')
-    # first_time = BooleanField('First time', description='This is my first ETDS')
-    # sleeping_arrangements = BooleanField('Sleeping arrangement',
-    #                                      description='I would like to make use of the sleeping arrangements')
     student = SelectField('Student', validators=[IsBoolean()], choices=[(k, v) for k, v in STUDENT.items()])
     first_time = SelectField('First time', validators=[IsBoolean()],
                              choices=[(k, v) for k, v in FIRST_TIME.items()])

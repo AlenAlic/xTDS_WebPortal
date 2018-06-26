@@ -9,7 +9,7 @@ from ntds_webportal.models import User, requires_access_level, TeamFinances, Con
 from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
 from ntds_webportal.auth.email import random_password, send_treasurer_activation_email
 from ntds_webportal.functions import get_dancing_categories, contestant_validate_dancing, submit_contestant, \
-    get_total_dancer_price_list
+    get_total_dancer_price_list, populate_registration_form
 import ntds_webportal.functions as func
 import ntds_webportal.data as data
 from ntds_webportal.data import *
@@ -106,84 +106,7 @@ def edit_dancer(number):
         .order_by(Contestant.contestant_id).first_or_404()
     state = TournamentState.query.first()
     form = EditContestantForm()
-    ballroom_partners = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id != dancer.contestant_id,
-                or_(and_(StatusInfo.status != CANCELLED,
-                         DancingInfo.competition == BALLROOM, DancingInfo.partner == dancer.contestant_id),
-                    and_(StatusInfo.status == REGISTERED,
-                         DancingInfo.competition == BALLROOM, DancingInfo.partner.is_(None))),
-                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
-    latin_partners = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id != dancer.contestant_id,
-                or_(and_(StatusInfo.status != CANCELLED,
-                         DancingInfo.competition == LATIN, DancingInfo.partner == dancer.contestant_id),
-                    and_(StatusInfo.status == REGISTERED,
-                         DancingInfo.competition == LATIN, DancingInfo.partner.is_(None))),
-                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
-    form.full_name.data = dancer.get_full_name()
-    form.team.data = dancer.contestant_info[0].team.name
-    form.number.data = dancer.contestant_info[0].number
-    form.ballroom_partner.query = ballroom_partners
-    form.latin_partner.query = latin_partners
-    dancing_categories = get_dancing_categories(dancer.dancing_info)
-    if request.method == 'POST':
-        # noinspection PyTypeChecker
-        form = contestant_validate_dancing(form)
-        if datetime.datetime.now().timestamp() > tournament_settings['merchandise_closing_date']:
-            form.t_shirt.data = dancer.additional_info[0].t_shirt
-        if dancer.status_info[0].status == SELECTED or dancer.status_info[0].status == CONFIRMED:
-            form.ballroom_level.data = dancing_categories[BALLROOM].level
-            form.ballroom_role.data = dancing_categories[BALLROOM].role
-            form.ballroom_blind_date.data = dancing_categories[BALLROOM].blind_date
-            form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-                .filter(ContestantInfo.team == current_user.team,
-                        Contestant.contestant_id == dancing_categories[BALLROOM].partner).first()
-            form.latin_level.data = dancing_categories[LATIN].level
-            form.latin_role.data = dancing_categories[LATIN].role
-            form.latin_blind_date.data = dancing_categories[LATIN].blind_date
-            form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-                .filter(ContestantInfo.team == current_user.team,
-                        Contestant.contestant_id == dancing_categories[LATIN].partner).first()
-        if form.ballroom_level.data == 'no':
-            form.ballroom_role.data = 'None'
-        if form.latin_level.data == 'no':
-            form.latin_role.data = 'None'
-    else:
-        form.ballroom_level.data = dancing_categories[BALLROOM].level
-        form.ballroom_role.data = dancing_categories[BALLROOM].role
-        form.ballroom_blind_date.data = dancing_categories[BALLROOM].blind_date
-        form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-            .filter(ContestantInfo.team == current_user.team,
-                    Contestant.contestant_id == dancing_categories[BALLROOM].partner).first()
-        form.latin_level.data = dancing_categories[LATIN].level
-        form.latin_role.data = dancing_categories[LATIN].role
-        form.latin_blind_date.data = dancing_categories[LATIN].blind_date
-        form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
-            .filter(ContestantInfo.team == current_user.team,
-                    Contestant.contestant_id == dancing_categories[LATIN].partner).first()
-        form.email.data = dancer.email
-        form.student.data = str(dancer.contestant_info[0].student)
-        form.first_time.data = str(dancer.contestant_info[0].first_time)
-        form.diet_allergies.data = dancer.contestant_info[0].diet_allergies
-        form.volunteer.data = dancer.volunteer_info[0].volunteer
-        form.first_aid.data = dancer.volunteer_info[0].first_aid
-        form.jury_ballroom.data = dancer.volunteer_info[0].jury_ballroom
-        form.jury_latin.data = dancer.volunteer_info[0].jury_latin
-        form.license_jury_ballroom.data = dancer.volunteer_info[0].license_jury_ballroom
-        form.license_jury_latin.data = dancer.volunteer_info[0].license_jury_latin
-        form.jury_salsa.data = dancer.volunteer_info[0].jury_salsa
-        form.jury_polka.data = dancer.volunteer_info[0].jury_polka
-        form.sleeping_arrangements.data = str(dancer.additional_info[0].sleeping_arrangements)
-        form.t_shirt.data = dancer.additional_info[0].t_shirt
-        if len(dancer.merchandise_info):
-            merchandises = Merchandise.query.all()
-            for key, value in MERCHANDISE.items():
-                field = getattr(form, key)
-                ref_merch = [merch for merch in merchandises if field.name == merch.product_name][0]
-                field.data = [merch for merch in dancer.merchandise_info if
-                              merch.product_id == ref_merch.merchandise_id][0].quantity
+    form = populate_registration_form(form, dancer)
     if form.validate_on_submit():
         flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
               'alert-success')
@@ -591,35 +514,35 @@ def edit_finances():
         cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == CANCELLED]
         finances = finances_overview(all_dancers)
         team_finances = TeamFinances.query.filter_by(team=current_user.team).first()
+        form = request.args
+        if 'download_file' in form:
+            download_list = [get_total_dancer_price_list(d) for d in all_dancers]
+            output = StringIO()
+            w = csv.writer(output)
+            w.writerow(['Name', 'Amount', 'Description', 'Has paid?'])
+            for d in download_list:
+                w.writerow(d)
+            output.seek(0)
+            output = BytesIO(output.read().encode('utf-8-sig'))
+            return send_file(output, as_attachment=True,
+                             attachment_filename=f"Payment_list_ETDS_Brno_2018_{current_user.team.city}.csv")
         if request.method == 'POST':
-            if 'download_file' in request.form:
-                download_list = [get_total_dancer_price_list(d) for d in all_dancers]
-                output = StringIO()
-                w = csv.writer(output)
-                w.writerow(['Name', 'Amount', 'Description', 'Has paid?'])
-                for d in download_list:
-                    w.writerow(d)
-                output.seek(0)
-                output = BytesIO(output.read().encode('utf-8-sig'))
-                return send_file(output, as_attachment=True,
-                                 attachment_filename=f"Payment_list_ETDS_Brno_2018_{current_user.team.city}.csv")
-            else:
-                changes = False
-                for dancer in all_dancers:
-                    if request.form.get(str(dancer.contestant_info[0].number)) is not None:
-                        if not dancer.status_info[0].paid:
-                            changes = True
-                        dancer.status_info[0].paid = True
-                    else:
-                        if dancer.status_info[0].paid:
-                            changes = True
-                        dancer.status_info[0].paid = False
-                if changes:
-                    db.session.commit()
-                    flash('Changes saved successfully.', 'alert-success')
+            changes = False
+            for dancer in all_dancers:
+                if request.form.get(str(dancer.contestant_info[0].number)) is not None:
+                    if not dancer.status_info[0].paid:
+                        changes = True
+                    dancer.status_info[0].paid = True
                 else:
-                    flash('No changes were made to submit.', 'alert-warning')
-                return redirect(url_for('teamcaptains.edit_finances'))
+                    if dancer.status_info[0].paid:
+                        changes = True
+                    dancer.status_info[0].paid = False
+            if changes:
+                db.session.commit()
+                flash('Changes saved successfully.', 'alert-success')
+            else:
+                flash('No changes were made to submit.', 'alert-warning')
+            return redirect(url_for('teamcaptains.edit_finances'))
     else:
         finances, team_finances, confirmed_dancers, cancelled_dancers = None, None, None, None
     return render_template('teamcaptains/edit_finances.html', ts=ts, finances=finances, team_finances=team_finances,
@@ -644,42 +567,42 @@ def bus_to_brno():
         confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
             .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED) \
             .order_by(ContestantInfo.number).all()
+        form = request.args
+        if 'download_file' in form:
+            output = BytesIO()
+            wb = xlsxwriter.Workbook(output, {'in_memory': True})
+            ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
+            ws.write(0, 0, 'Dancer')
+            ws.write(0, 1, 'Email')
+            ws.write(0, 2, 'Team')
+            for c in range(0, len(included_dancers)):
+                ws.write(c + 1, 0, included_dancers[c].get_full_name())
+                ws.write(c + 1, 1, included_dancers[c].email)
+                ws.write(c + 1, 2, included_dancers[c].contestant_info[0].team.city)
+            ws.set_column(0, 0, 20)
+            ws.set_column(1, 1, 40)
+            ws.set_column(2, 2, 30)
+            ws.set_column(3, 3, 20)
+            wb.close()
+            output.seek(0)
+            return send_file(output, as_attachment=True, attachment_filename="Bus_to_Brno_dancers.xlsx")
         if request.method == 'POST':
-            if 'download_file' in request.form:
-                output = BytesIO()
-                wb = xlsxwriter.Workbook(output, {'in_memory': True})
-                ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
-                ws.write(0, 0, 'Dancer')
-                ws.write(0, 1, 'Email')
-                ws.write(0, 2, 'Team')
-                for c in range(0, len(included_dancers)):
-                    ws.write(c + 1, 0, included_dancers[c].get_full_name())
-                    ws.write(c + 1, 1, included_dancers[c].email)
-                    ws.write(c + 1, 2, included_dancers[c].contestant_info[0].team.city)
-                ws.set_column(0, 0, 20)
-                ws.set_column(1, 1, 40)
-                ws.set_column(2, 2, 30)
-                ws.set_column(3, 3, 20)
-                wb.close()
-                output.seek(0)
-                return send_file(output, as_attachment=True, attachment_filename="Bus_to_Brno_dancers.xlsx")
-            else:
-                changes = False
-                for dancer in confirmed_dancers:
-                    if request.form.get(str(dancer.contestant_info[0].number)) is not None:
-                        if not dancer.additional_info[0].bus_to_brno:
-                            changes = True
-                        dancer.additional_info[0].bus_to_brno = True
-                    else:
-                        if dancer.additional_info[0].bus_to_brno:
-                            changes = True
-                        dancer.additional_info[0].bus_to_brno = False
-                if changes:
-                    db.session.commit()
-                    flash('Changes saved successfully.', 'alert-success')
+            changes = False
+            for dancer in confirmed_dancers:
+                if request.form.get(str(dancer.contestant_info[0].number)) is not None:
+                    if not dancer.additional_info[0].bus_to_brno:
+                        changes = True
+                    dancer.additional_info[0].bus_to_brno = True
                 else:
-                    flash('No changes were made to submit.', 'alert-warning')
-                return redirect(url_for('teamcaptains.bus_to_brno'))
+                    if dancer.additional_info[0].bus_to_brno:
+                        changes = True
+                    dancer.additional_info[0].bus_to_brno = False
+            if changes:
+                db.session.commit()
+                flash('Changes saved successfully.', 'alert-success')
+            else:
+                flash('No changes were made to submit.', 'alert-warning')
+            return redirect(url_for('teamcaptains.bus_to_brno'))
     else:
         confirmed_dancers = None
     return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_dusseldorf=tc_dusseldorf,

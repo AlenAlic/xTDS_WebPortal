@@ -77,18 +77,18 @@ JURY_BALLROOM = {NONE: 'Would you like to volunteer as a Ballroom adjudicator?'}
 JURY_BALLROOM.update(YMN)
 JURY_LATIN = {NONE: 'Would you like to volunteer as a Latin adjudicator?'}
 JURY_LATIN.update(YMN)
-LICENSES = {
-    NO: 'No, I do not have a license',
-    'D': 'Yes, D',
-    'C': 'Yes, C',
-    'B': 'Yes, B',
-    'A': 'Yes, A',
-    'S': 'Yes, S'
-}
+LICENSES = {NO: 'No, I do not have a license'}
+LICENSES.update({k: 'Yes, '+v for k, v in COMPETITION_LEVELS.items()})
 LICENSE_BALLROOM = {'': 'Do you have an adjudicator license for Ballroom?'}
 LICENSE_BALLROOM.update(LICENSES)
 LICENSE_LATIN = {'': 'Do you have an adjudicator license for Latin?'}
 LICENSE_LATIN.update(LICENSES)
+JURY_LEVELS = {BELOW_D: BELOW_D}
+JURY_LEVELS.update(COMPETITION_LEVELS)
+LEVEL_JURY_BALLROOM = {'': 'What is your highest achieved level in Ballroom?'}
+LEVEL_JURY_BALLROOM.update(JURY_LEVELS)
+LEVEL_JURY_LATIN = {'': 'What is your highest achieved level in Latin?'}
+LEVEL_JURY_LATIN.update(JURY_LEVELS)
 JURY_SALSA = {'': 'Would you like to volunteer as a Salsa adjudicator?'}
 JURY_SALSA.update(YMN)
 JURY_POLKA = {'': 'Would you like to volunteer as a Polka adjudicator?'}

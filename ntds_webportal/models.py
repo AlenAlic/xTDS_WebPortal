@@ -164,6 +164,12 @@ class Contestant(db.Model):
         else:
             return ' '.join((self.first_name, self.prefixes, self.last_name))
 
+    def get_last_name(self):
+        if self.prefixes is None or self.prefixes == '':
+            return self.last_name
+        else:
+            return ' '.join((self.prefixes, self.last_name))
+
     def capitalize_name(self):
         self.first_name.title()
         self.last_name.title()
@@ -269,6 +275,8 @@ class VolunteerInfo(db.Model):
     first_aid = db.Column(db.String(16), nullable=False)
     jury_ballroom = db.Column(db.String(16), nullable=False)
     jury_latin = db.Column(db.String(16), nullable=False)
+    level_ballroom = db.Column(db.String(16), nullable=False)
+    level_latin = db.Column(db.String(16), nullable=False)
     license_jury_ballroom = db.Column(db.String(16), nullable=False)
     license_jury_latin = db.Column(db.String(16), nullable=False)
     jury_salsa = db.Column(db.String(16), nullable=False)
@@ -284,6 +292,8 @@ class VolunteerInfo(db.Model):
         self.jury_latin = NO
         self.license_jury_ballroom = NO
         self.license_jury_latin = NO
+        self.level_ballroom = BELOW_D
+        self.level_latin = BELOW_D
         self.jury_salsa = NO
         self.jury_polka = NO
 
