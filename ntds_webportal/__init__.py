@@ -7,6 +7,7 @@ from flask_moment import Moment
 from flask_mail import Mail
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_debugtoolbar import DebugToolbarExtension
 from wtforms import PasswordField
 
 
@@ -17,6 +18,7 @@ bootstrap = Bootstrap()
 moment = Moment()
 mail = Mail()
 admin = Admin(template_mode='bootstrap3')
+toolbar = DebugToolbarExtension()
 
 
 class BaseView(ModelView):
@@ -76,6 +78,7 @@ def create_app():
     admin.add_view(BaseView(TournamentState, db.session))
     admin.add_view(BaseView(SalsaPartners, db.session))
     admin.add_view(BaseView(PolkaPartners, db.session))
+    toolbar.init_app(app)
 
     from ntds_webportal.main import bp as main_bp
     app.register_blueprint(main_bp)

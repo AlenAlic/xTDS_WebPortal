@@ -12,8 +12,10 @@ def str2bool(v):
 
 
 def get_dancing_categories(dancing_info):
-    return {cat: DancingInfo(competition=cat) for cat in ALL_COMPETITIONS} if dancing_info is None \
-        else {di.competition: di for di in dancing_info}
+    if dancing_info is None:
+        return {cat: DancingInfo(competition=cat) for cat in ALL_COMPETITIONS}
+    else:
+        return {di.competition: di for di in dancing_info}
 
 
 def get_discipline(dancer, discipline):

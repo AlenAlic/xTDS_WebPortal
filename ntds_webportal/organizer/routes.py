@@ -261,7 +261,7 @@ def raffle_system():
             for dancer in marked_dancers:
                 dancer.status_info[0].set_status(REGISTERED)
         elif 'start_test_raffle' in form:
-            runs = 25
+            runs = 3
             guaranteed_dancers = [d for d in all_dancers if str(d.contestant_id) in form]
             if True:
                 start_time = time.time()

@@ -21,6 +21,7 @@ def select_groups(raffle_sys, list_of_dancers, guaranteed=False):
                     group = find_partners(raffle_sys.registered_dancers, dancer)
                     if not raffle_sys.exceed_max(group):
                         raffle_sys.add_group(group, guaranteed=guaranteed)
+                        del group
         else:
             break
 
@@ -109,6 +110,7 @@ def test_raffle(guaranteed_dancers=None):
     with open('stats.txt', 'a', encoding='utf-8') as f1:
         f1.write(str(selected) + '\n')
     print("--- Test raffle done in %.3f seconds ---" % (time.time() - start_time))
+    del raffle_sys
 
 
 def export_stats_list():

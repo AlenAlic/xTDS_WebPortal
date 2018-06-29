@@ -20,7 +20,7 @@
             <p>Select any dancers you want to be guaranteed entry into the tournament from the lists below.</p>
             <form class="form" method="POST" enctype="multipart/form-data" novalidate>
                 <button type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success loading-btn">Start Raffle</button>
-                {# <button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-danger btn-lg"><strong>DEBUG RAFFLE - FOR TESTING PURPOSES ONLY</strong></button> #}
+                <button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-danger btn-lg"><strong>DEBUG RAFFLE - FOR TESTING PURPOSES ONLY</strong></button>
                 {% with subtitle='Registered', counter='available', stats=stats_registered %}
                     {% include 'organizer/_raffle_stats.html' %}
                 {% endwith %}
