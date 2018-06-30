@@ -111,7 +111,7 @@ onload="onStart()"
             {% endwith %}
         {% endif %}
         {% if current_user.is_tc() %}
-            {% with accessible=state.main_raffle_result_visible, url='teamcaptains.bus_to_brno', title='Bus to Brno', text='Register dancers to travel to Brno by bus. Organized by team Düsseldorf', image='bus.png' %}
+            {% with accessible=state.main_raffle_result_visible, url='teamcaptains.bus_to_brno', title='Bus to Brno', text='Register dancers to travel to Brno by bus. Organized by team Düsseldorf and Bielefeld', image='bus.png' %}
                 {% include '_dashboard_page.html' %}
             {% endwith %}
         {% endif %}

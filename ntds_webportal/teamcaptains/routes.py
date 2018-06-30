@@ -605,6 +605,6 @@ def bus_to_brno():
             return redirect(url_for('teamcaptains.bus_to_brno'))
     else:
         confirmed_dancers = None
-    return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_dusseldorf=tc_bus,
+    return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_bus=tc_bus,
                            confirmed_dancers=confirmed_dancers, add_overview=add_overview,
                            included_dancers=included_dancers)
