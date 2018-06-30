@@ -261,7 +261,7 @@ def raffle_system():
             for dancer in marked_dancers:
                 dancer.status_info[0].set_status(REGISTERED)
         elif 'start_test_raffle' in form:
-            runs = 3
+            runs = 25
             guaranteed_dancers = [d for d in all_dancers if str(d.contestant_id) in form]
             if True:
                 start_time = time.time()
@@ -339,8 +339,6 @@ def merchandise():
     ordered_stickers = []
     for dancer in dancers:
         ordered_stickers.extend(dancer.merchandise_info)
-    # ordered_stickers = [ordered_stickers.extend(dancer.merchandise_info) for dancer in dancers]
-    # ordered_stickers = MerchandiseInfo.query.filter(MerchandiseInfo.quantity > 0).all()
     stickers = {sticker.merchandise_id: 0 for sticker in all_stickers}
     for sticker in ordered_stickers:
         stickers[sticker.product_id] += sticker.quantity

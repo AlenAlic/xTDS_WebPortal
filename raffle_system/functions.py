@@ -362,12 +362,10 @@ def find_partners(dancers_list, dancer, target_team=None):
             partner_group.add_chain(group.check_chain(test_dancer, partner_list), partner_list)
             if not partner_group.check():
                 verification_group.add_group(partner_group)
-            del partner_group
         else:
             verification_group.add(test_dancer)
         if verification_group.check():
             group.add_group(verification_group)
-            del verification_group
             return group
     random_order_list.append(random_order_list[0])
     for i in range(0, r):
@@ -379,12 +377,10 @@ def find_partners(dancers_list, dancer, target_team=None):
             partner_group.add_chain(group.check_chain(test_dancer, partner_list), partner_list)
             if not partner_group.check():
                 verification_group.add_group(partner_group)
-            del partner_group
         else:
             verification_group.add(test_dancer)
         if verification_group.check():
             group.add_group(verification_group)
-            del verification_group
             return group
         elif verification_group.completable():
             verification_dancers = [d for d in verification_group.dancers]
@@ -397,14 +393,11 @@ def find_partners(dancers_list, dancer, target_team=None):
                     partner_group.add_chain(group.check_chain(test_dancer2, partner_list), partner_list)
                     if not partner_group.check():
                         verification_group.add_group(partner_group)
-                    del partner_group
                 else:
                     verification_group.add(test_dancer2)
                 if verification_group.check():
                     group.add_group(verification_group)
-                    del verification_group
                     return group
-                del verification_group
     # ALSO WORKING - BUT EVEN FASTER
 
     return group

@@ -554,9 +554,9 @@ def edit_finances():
 @requires_access_level([ACCESS['team_captain']])
 def bus_to_brno():
     ts = TournamentState.query.first()
-    tc_dusseldorf = User.query.join(Team) \
-        .filter(User.access == ACCESS['team_captain'], Team.city == "Düsseldorf").first()
-    add_overview = True if tc_dusseldorf.team.name == current_user.team.name else False
+    tc_bus = User.query.join(Team) \
+        .filter(User.access == ACCESS['team_captain'], Team.city == "Bielefeld").first()
+    add_overview = True if tc_bus.team.name == current_user.team.name else False
     if add_overview:
         included_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
             .join(Team).filter(StatusInfo.status == CONFIRMED, AdditionalInfo.bus_to_brno.is_(True)) \
@@ -605,6 +605,6 @@ def bus_to_brno():
             return redirect(url_for('teamcaptains.bus_to_brno'))
     else:
         confirmed_dancers = None
-    return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_dusseldorf=tc_dusseldorf,
+    return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_dusseldorf=tc_bus,
                            confirmed_dancers=confirmed_dancers, add_overview=add_overview,
                            included_dancers=included_dancers)
