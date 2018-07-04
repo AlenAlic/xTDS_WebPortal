@@ -69,22 +69,33 @@ def finances_overview():
     other_teams = [team for team in teams if
                    team['team'].country != NETHERLANDS and team['team'].country != GERMANY]
     if request.method == 'POST':
-        changes = False
-        for team in all_teams:
-            amount_paid = request.form.get(str(team.team_id))
-            if amount_paid != '' and amount_paid is not None:
-                amount_paid = int(float(amount_paid)*100)
-                if team.finances[0].paid != amount_paid:
-                    team.finances[0].paid = amount_paid
-                    changes = True
-        if changes:
-            db.session.commit()
-            flash('Changes saved successfully.', 'alert-success')
-        else:
-            flash('No changes were made to submit.', 'alert-warning')
-        return redirect(url_for('organizer.finances_overview'))
+        if 'submit' in request.form:
+            changes = False
+            for team in all_teams:
+                amount_paid = request.form.get(str(team.team_id))
+                if amount_paid != '' and amount_paid is not None:
+                    amount_paid = int(float(amount_paid)*100)
+                    if team.finances[0].paid != amount_paid:
+                        team.finances[0].paid = amount_paid
+                        changes = True
+            if changes:
+                db.session.commit()
+                flash('Changes saved successfully.', 'alert-success')
+            else:
+                flash('No changes were made to submit.', 'alert-warning')
+            return redirect(url_for('organizer.finances_overview'))
     return render_template('organizer/finances_overview.html', teams=teams, data=data,
                            dutch_teams=dutch_teams, german_teams=german_teams, other_teams=other_teams)
+
+
+@bp.route('/remove_payment_requirement/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def remove_payment_requirement(number):
+    dancer = StatusInfo.query.filter(StatusInfo.contestant_id == number).first()
+    dancer.payment_required = False
+    db.session.commit()
+    return redirect(url_for('organizer.finances_overview'))
 
 
 @bp.route('/name_change_list', methods=['GET'])

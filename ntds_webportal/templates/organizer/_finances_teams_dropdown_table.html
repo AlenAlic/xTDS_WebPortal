@@ -7,7 +7,7 @@
     {% with status='Confirmed dancers', dancers=team['confirmed_dancers'] %}
         {% include 'organizer/_finances_list.html' %}
     {% endwith %}
-    {% with status='Cancelled dancers', dancers=team['cancelled_dancers'] %}
+    {% with status='Cancelled dancers', dancers=team['cancelled_dancers'], cancelable=true %}
         {% include 'organizer/_finances_list.html' %}
     {% endwith %}
     {% else %}
