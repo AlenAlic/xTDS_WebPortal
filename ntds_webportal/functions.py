@@ -49,8 +49,11 @@ def check_combination(dancer, combination):
 
 
 def get_combinations_list(s):
-    s = s.replace(' / ', ', ')
-    return s.split(', ')
+    if s != NO:
+        s = s.replace(' / ', ', ')
+        return s.split(', ')
+    else:
+        return []
 
 
 def get_total_dancer_price_list(dancer):

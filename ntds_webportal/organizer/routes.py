@@ -12,7 +12,7 @@ from ntds_webportal.organizer.email import send_raffle_completed_email
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.system import raffle, finish_raffle, raffle_add_neutral_group, test_raffle
-from raffle_system.functions import RaffleSystem, get_combinations
+from raffle_system.functions import RaffleSystem, get_combinations, has_partners
 from sqlalchemy import or_, case
 import time
 import random
@@ -149,6 +149,7 @@ def raffle_system():
         combination_dancers = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
             .filter(StatusInfo.raffle_status == REGISTERED, DancingInfo.partner.is_(None)) \
             .order_by(ContestantInfo.team_id, Contestant.first_name).all()
+        combination_dancers = [d for d in combination_dancers if has_partners(d) is False]
         available_combinations_list = [get_combinations(d) for d in combination_dancers]
         available_combinations = {comb: 0 for comb in uniquify(available_combinations_list)}
         for comb in available_combinations_list:
@@ -280,6 +281,7 @@ def raffle_system():
                 else:
                     s = get_combinations_list(s)
                     single_dancers = [d for d in available_dancers if check_combination(d, s)]
+                    single_dancers = [d for d in single_dancers if has_partners(d) is False]
                     try:
                         single_dancer = random.choice(single_dancers)
                         single_dancer.status_info[0].raffle_status = SELECTED

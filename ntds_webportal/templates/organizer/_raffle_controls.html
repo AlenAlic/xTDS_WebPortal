@@ -146,7 +146,7 @@
                     {{ val }}
                 </td>
                 <td align="right">
-                    <button type="submit" id="{{comb}}" name="{{comb}}" class="btn btn-info loading-btn">Add random dancer</button>
+                    <button type="submit" id="{{comb}}" name="{% if comb != '' %}{{comb}}{% else %}{{data.NO}}{% endif %}" class="btn btn-info loading-btn">Add random dancer</button>
                 </td>
             </tr>
             {% endfor %}
