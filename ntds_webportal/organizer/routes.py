@@ -427,3 +427,11 @@ def bad():
         output = BytesIO(output.read().encode('utf-8-sig'))
         return send_file(output, as_attachment=True, attachment_filename="populateCouples.sql")
     return render_template('organizer/BAD.html', ts=ts)
+
+
+@bp.route('/adjudicators_overview', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def adjudicators_overview():
+    ts = TournamentState.query.first()
+    return render_template('organizer/adjudicators_overview.html')

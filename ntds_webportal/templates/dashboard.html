@@ -63,6 +63,9 @@ onload="onStart()"
         {% with accessible=state.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Work in progress...', image='BAD.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
+        {% with accessible=state.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Work in progress...', image='adjudicators.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
     {% endif %}
 
     {% if current_user.is_bdo() %}
