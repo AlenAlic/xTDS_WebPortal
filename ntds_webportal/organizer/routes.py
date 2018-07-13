@@ -5,7 +5,7 @@ from ntds_webportal.main.email import send_new_messages_email
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification, MerchandiseInfo, Merchandise, TournamentState, \
-    SalsaPartners, PolkaPartners
+    SalsaPartners, PolkaPartners, VolunteerInfo
 from ntds_webportal.functions import uniquify, check_combination, get_combinations_list
 from ntds_webportal.organizer.forms import NameChangeResponse
 from ntds_webportal.organizer.email import send_raffle_completed_email
@@ -434,4 +434,67 @@ def bad():
 @requires_access_level([ACCESS['organizer']])
 def adjudicators_overview():
     ts = TournamentState.query.first()
-    return render_template('organizer/adjudicators_overview.html')
+    ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo)\
+        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_ballroom != NO)\
+        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_ballroom), ContestantInfo.team_id)\
+        .all()
+    latin_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
+        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_latin != NO) \
+        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_latin), ContestantInfo.team_id) \
+        .all()
+    salsa_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
+        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_salsa != NO) \
+        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_salsa), ContestantInfo.team_id) \
+        .all()
+    polka_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
+        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_polka != NO) \
+        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_polka), ContestantInfo.team_id) \
+        .all()
+    form = request.args
+    if 'download_file' in form:
+        fn = 'adjudicators_ETDS_2018.xlsx'
+        output = BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        f = wb.add_format({'text_wrap': True, 'bold': True})
+        adjudicators = {BALLROOM: ballroom_adjudicators, LATIN: latin_adjudicators, SALSA: salsa_adjudicators,
+                        POLKA: polka_adjudicators}
+        for comp, adj in adjudicators.items():
+            ws = wb.add_worksheet(name=comp)
+            ws.write(0, 0, 'Dancer', f)
+            ws.write(0, 1, 'Team', f)
+            ws.write(0, 2, 'Wants to adjudicate?', f)
+            if comp == BALLROOM or comp == LATIN:
+                ws.write(0, 3, 'Has license?', f)
+                ws.write(0, 4, 'Highest achieved level', f)
+                ws.set_column(0, 4, 30)
+                for d in range(0, len(adj)):
+                    ws.write(d + 1, 0, adj[d].get_full_name())
+                    ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    if comp == BALLROOM:
+                        wants_to = adj[d].volunteer_info[0].jury_ballroom
+                        lic = adj[d].volunteer_info[0].license_jury_ballroom
+                        lvl = adj[d].volunteer_info[0].level_ballroom
+                    else:
+                        wants_to = adj[d].volunteer_info[0].jury_latin
+                        lic = adj[d].volunteer_info[0].license_jury_latin
+                        lvl = adj[d].volunteer_info[0].level_latin
+                    ws.write(d + 1, 2, wants_to)
+                    ws.write(d + 1, 3, lic)
+                    ws.write(d + 1, 4, lvl)
+            else:
+                ws.set_column(0, 2, 30)
+                for d in range(0, len(adj)):
+                    ws.write(d + 1, 0, adj[d].get_full_name())
+                    ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    if comp == SALSA:
+                        wants_to = adj[d].volunteer_info[0].jury_salsa
+                    else:
+                        wants_to = adj[d].volunteer_info[0].jury_polka
+                    ws.write(d + 1, 2, wants_to)
+            ws.freeze_panes(1, 0)
+        wb.close()
+        output.seek(0)
+        return send_file(output, as_attachment=True, attachment_filename=fn)
+    return render_template('organizer/adjudicators_overview.html', ts=ts, data=data,
+                           ballroom_adjudicators=ballroom_adjudicators, latin_adjudicators=latin_adjudicators,
+                           salsa_adjudicators=salsa_adjudicators, polka_adjudicators=polka_adjudicators)

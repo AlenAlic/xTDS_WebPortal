@@ -1,0 +1,70 @@
+<div class="panel panel-default">
+    <div class="panel-heading" role="button" id="heading-{{type}}" data-toggle="collapse" href="#collapse-{{type}}" aria-expanded="true" aria-controls="collapse-{{type}}">
+        <b class="panel-title">{{type}} adjudicators <span class="badge">{% if adjudicators|length > 0 %}{{ adjudicators|length }}{% else %}0{% endif %}</span></b>
+    </div>
+    <div id="collapse-{{type}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-{{type}}">
+        <table class="table table-list">
+            {% if type == data.BALLROOM or type == data.LATIN %}
+            <colgroup>
+                <col span="1" style="width: 30%;">
+                <col span="1" style="width: 25%;">
+                <col span="1" style="width: 15%;">
+                <col span="1" style="width: 15%;">
+                <col span="1" style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th><b>Name</b></th>
+                    <th><b>Team</b></th>
+                    <th><b>Wants to adjudicate?</b></th>
+                    <th><b>Has license?</b></th>
+                    <th><b>Highest achieved level</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for adjudicator in adjudicators %}
+                    <tr>
+                        <td>{{ adjudicator.get_full_name() }}</td>
+                        <td>{{ adjudicator.contestant_info[0].team.name }}</td>
+                        {% if type == data.BALLROOM %}
+                        <td>{{ adjudicator.volunteer_info[0].jury_ballroom }}</td>
+                        <td>{{ adjudicator.volunteer_info[0].license_jury_ballroom }}</td>
+                        <td>{{ adjudicator.volunteer_info[0].level_ballroom }}</td>
+                        {% elif type == data.LATIN %}
+                        <td>{{ adjudicator.volunteer_info[0].jury_latin }}</td>
+                        <td>{{ adjudicator.volunteer_info[0].license_jury_latin }}</td>
+                        <td>{{ adjudicator.volunteer_info[0].level_latin }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% else %}
+            <colgroup>
+                <col span="1" style="width: 40%;">
+                <col span="1" style="width: 35%;">
+                <col span="1" style="width: 25%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th><b>Name</b></th>
+                    <th><b>Team</b></th>
+                    <th><b>Wants to adjudicate?</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for adjudicator in adjudicators %}
+                    <tr>
+                        <td>{{ adjudicator.get_full_name() }}</td>
+                        <td>{{ adjudicator.contestant_info[0].team.name }}</td>
+                        {% if type == data.SALSA %}
+                        <td>{{ adjudicator.volunteer_info[0].jury_salsa }}</td>
+                        {% elif type == data.POLKA %}
+                        <td>{{ adjudicator.volunteer_info[0].jury_polka }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+</div>

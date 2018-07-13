@@ -57,13 +57,13 @@ onload="onStart()"
         {% with accessible=state.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with accessible=state.main_raffle_result_visible, url='organizer.merchandise', title='Merchandise', text='Overview of ordered merchandise', image='merchandise.png' %}
+        {% with accessible=state.main_raffle_result_visible, url='organizer.merchandise', title='Merchandise', text='Overview of ordered merchandise.', image='merchandise.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
         {% with accessible=state.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Work in progress...', image='BAD.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
-        {% with accessible=state.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Work in progress...', image='adjudicators.png' %}
+        {% with accessible=state.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}

@@ -4,9 +4,29 @@
 {% block app_content %}
 
 {% if ts.main_raffle_result_visible is sameas true %}
-<h2>Overview comes here</h2>
-
-
+<h2>Adjudicators for the tournament</h2>
+<form method="GET" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download lists of adjudicators">
+</form>
+<div style="height:10px;"></div>
+<!--<button id="expand-all" type="button" class="btn btn-default" onclick="expandAll()" disabled>Show all</button>-->
+<!--<button id="collapse-all" type="button" class="btn btn-default" onclick="collapseAll()">Hide all</button>-->
+<button id="toggle-all" type="button" class="btn btn-default" onclick="toggleAll()">Hide all</button>
+<div style="height:10px;"></div>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    {% with type=data.BALLROOM, adjudicators=ballroom_adjudicators %}
+        {% include 'organizer/_adjudicator_list.html' %}
+    {% endwith %}
+    {% with type=data.LATIN, adjudicators=latin_adjudicators %}
+        {% include 'organizer/_adjudicator_list.html' %}
+    {% endwith %}
+    {% with type=data.SALSA, adjudicators=salsa_adjudicators %}
+        {% include 'organizer/_adjudicator_list.html' %}
+    {% endwith %}
+    {% with type=data.POLKA, adjudicators=polka_adjudicators %}
+        {% include 'organizer/_adjudicator_list.html' %}
+    {% endwith %}
+</div>
 {% else %}
 <h2>The raffle has not taken place yet.</h2>
 {% endif %}
@@ -15,4 +35,27 @@
 
 {% block scripts %}
 {{ super() }}
+<script>
+<!--function expandAll() {-->
+    <!--$('#accordion .panel-collapse').collapse('show');-->
+    <!--document.getElementById('expand-all').setAttribute("disabled","disabled");-->
+    <!--document.getElementById('collapse-all').removeAttribute("disabled");-->
+<!--}-->
+<!--function collapseAll() {-->
+    <!--$('#accordion .panel-collapse').collapse('hide');-->
+    <!--document.getElementById('collapse-all').setAttribute("disabled","disabled");-->
+    <!--document.getElementById('expand-all').removeAttribute("disabled");-->
+<!--}-->
+function toggleAll() {
+    var btn = document.getElementById('toggle-all');
+    var txt = btn.textContent || btn.innerText;
+    if (txt == "Show all") {
+        $('#accordion .panel-collapse').collapse('show');
+        btn.innerHTML = 'Hide all'
+    } else {
+        $('#accordion .panel-collapse').collapse('hide');
+        btn.innerHTML = 'Show all'
+    }
+}
+</script>
 {% endblock %}
