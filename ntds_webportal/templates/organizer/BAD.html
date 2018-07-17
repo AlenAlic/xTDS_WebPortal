@@ -1,23 +1,38 @@
 {% extends "base.html" %}
 {% import 'my_wtf.html' as my_wtf %}
 
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
 {% block app_content %}
 
 {% if ts.main_raffle_result_visible is sameas true %}
 <h2>Download files for the BAD system</h2>
-<!--Not done yet.-->
-<form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-info" id="submit-download_createUniverse" name="download_createUniverse" type="submit" value="Create Universe">
-    <div style="height:10px"></div>
-    <input class="btn btn-info" id="submit-download_createDB" name="download_createDB" type="submit" value="Create BAD database">
-    <div style="height:10px"></div>
-    <input class="btn btn-info" id="submit-download_createTournament" name="download_createTournament" type="submit" value="Create Tournament">
-    <div style="height:10px"></div>
-    <input class="btn btn-info" id="submit-download_populateCouples" name="download_populateCouples" type="submit" value="Populate Couples">
-    <div style="height:10px"></div>
-</form>
-
-
+<!--<form method="GET" enctype="multipart/form-data" novalidate>-->
+    <!--<input class="btn btn-info" id="submit-download_createUniverse" name="download_createUniverse" type="submit" value="Create Universe">-->
+    <!--<div style="height:10px"></div>-->
+    <!--<input class="btn btn-info" id="submit-download_createDB" name="download_createDB" type="submit" value="Create BAD database">-->
+    <!--<div style="height:10px"></div>-->
+    <!--<input class="btn btn-info" id="submit-download_createTournament" name="download_createTournament" type="submit" value="Create Tournament">-->
+    <!--<div style="height:10px"></div>-->
+    <!--<input class="btn btn-info" id="submit-download_populateCouples" name="download_populateCouples" type="submit" value="Populate Couples">-->
+    <!--<div style="height:10px"></div>-->
+<!--</form>-->
+<div class="row">
+    <!--{% with name='download_createUniverse', title='Master file', text='Master file to make importing easier (optional).', image='dummy.png' %}-->
+        <!--{% include 'organizer/_BAD_page.html' %}-->
+    <!--{% endwith %}-->
+    {% with name='download_createDB', title='BAD database', text='File to initialize the BAD database.', image='BAD_database.png' %}
+        {% include 'organizer/_BAD_page.html' %}
+    {% endwith %}
+    {% with name='download_createTournament', title='Tournament', text='File to initialize the tournament. Creates all the rounds and imports all the confirmed dancers.', image='BAD_create_tournament.png' %}
+        {% include 'organizer/_BAD_page.html' %}
+    {% endwith %}
+    {% with name='download_populateCouples', title='Couples', text='File to import all the couples.', image='BAD_populate_couples.png' %}
+        {% include 'organizer/_BAD_page.html' %}
+    {% endwith %}
+</div>
 {% else %}
 <h2>The raffle has not taken place yet.</h2>
 {% endif %}
@@ -26,4 +41,14 @@
 
 {% block scripts %}
 {{ super() }}
+<script>
+function onStart() {
+    var maxHeight = 0;
+    $(".thumbnail-same-height").each(function(){
+       if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
+    });
+    $(".thumbnail-same-height").height(maxHeight);
+    $(".row").css('visibility', 'visible');
+}
+</script>
 {% endblock %}
