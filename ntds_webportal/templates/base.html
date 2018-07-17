@@ -4,6 +4,8 @@
 
 {% block head %}
 {{ super() }}
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">-->
 <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
@@ -50,30 +52,38 @@ xTDS WebPortal
             </button>
             <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
         </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
             {% if not current_user.is_anonymous %}
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-left">
                     <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
                     <li><a href="{{ url_for('notifications.messages') }}">Messages <span class="badge">{{current_user.unread_notifications()}}</span></a></li>
                 </ul>
             {% endif %}
-            <div class="nav navbar-nav navbar-right" style="margin-right:0px">
-                {% if current_user.is_anonymous %}
-                    {% if login_form %}
-                        <form class="navbar-form navbar-right" method="POST" enctype="multipart/form-data">
-                            {{ login_form.hidden_tag() }}
-                            {{ login_form.csrf_token }}
+            {% if current_user.is_anonymous %}
+                {% if login_form %}
+                    <form class="navbar-form navbar-right" method="POST" enctype="multipart/form-data">
+                        {{ login_form.hidden_tag() }}
+                        {{ login_form.csrf_token }}
+                        <div class="form-group">
                             {{ login_form.username(class_='form-control', placeholder='Username') }}
+                        </div>
+                        <div class="form-group">
                             {{ login_form.password(class_='form-control', placeholder='Password') }}
+                        </div>
+                        <div class="form-group">
                             {{ login_form.submit(class_='btn btn-default') }}
+                        </div>
+                        <div class="form-group">
                             <small><a href="{{url_for('auth.reset_password_request')}}" >Forgot password?</a></small>
-                        </form>
-                    {% endif %}
-                {% else %}
+                        </div>
+                    </form>
+                {% endif %}
+            {% else %}
+                <div class="nav navbar-nav navbar-right" style="padding-right: 15px; padding-left: 15px">
                     <p class="navbar-text">Welcome, {{ current_user.username }}!</p>
                     <a href="{{ url_for('main.logout') }}" class="btn btn-default navbar-btn">Logout</a>
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 </nav>
