@@ -5,8 +5,10 @@ from ntds_webportal.blind_date_assistant import bp
 from ntds_webportal.blind_date_assistant.forms import CreateCoupleForm, CreateCoupleExtraCompetitionForm
 from ntds_webportal.models import requires_access_level, Contestant, ContestantInfo, DancingInfo, StatusInfo, \
     SalsaPartners, PolkaPartners
+from ntds_webportal.functions import get_dancing_categories
 import ntds_webportal.data as data
 from ntds_webportal.data import *
+import itertools
 
 
 @bp.route('/create_couple', methods=['GET', 'POST'])
@@ -14,18 +16,48 @@ from ntds_webportal.data import *
 @requires_access_level([ACCESS['blind_date_organizer']])
 def create_couple():
     form = CreateCoupleForm()
-    leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(StatusInfo.status == CONFIRMED, DancingInfo.role == LEAD, DancingInfo.partner.is_(None),
-                DancingInfo.level == BREITENSPORT)\
+    leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
+        .filter(StatusInfo.status == CONFIRMED, DancingInfo.role == LEAD, DancingInfo.partner.is_(None))\
         .order_by(Contestant.first_name).all()
-    follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(StatusInfo.status == CONFIRMED, DancingInfo.role == FOLLOW, DancingInfo.partner.is_(None),
-                DancingInfo.level == BREITENSPORT)\
+    follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
+        .filter(StatusInfo.status == CONFIRMED, DancingInfo.role == FOLLOW, DancingInfo.partner.is_(None))\
         .order_by(Contestant.first_name).all()
     form.lead.choices = map(lambda c: (c.contestant_id, "{} - {}"
                                        .format(c.contestant_info[0].team, c.get_full_name())), leads)
     form.follow.choices = map(lambda c: (c.contestant_id, "{} - {}"
                                          .format(c.contestant_info[0].team, c.get_full_name())), follows)
+    all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
+        .filter(StatusInfo.status == CONFIRMED, DancingInfo.role == LEAD)\
+        .order_by(DancingInfo.level, ContestantInfo.number).all()
+    all_follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
+        .filter(StatusInfo.status == CONFIRMED, DancingInfo.role == FOLLOW)\
+        .order_by(DancingInfo.level, ContestantInfo.number).all()
+    ballroom_couples_leads = [dancer for dancer in all_leads if
+                              get_dancing_categories(dancer.dancing_info)[BALLROOM].role == LEAD and
+                              get_dancing_categories(dancer.dancing_info)[BALLROOM].partner is not None]
+    ballroom_couples_follows = [dancer for dancer in all_follows if
+                                get_dancing_categories(dancer.dancing_info)[BALLROOM].role == FOLLOW and
+                                get_dancing_categories(dancer.dancing_info)[BALLROOM].partner is not None]
+    latin_couples_leads = [dancer for dancer in all_leads if
+                           get_dancing_categories(dancer.dancing_info)[LATIN].role == LEAD and
+                           get_dancing_categories(dancer.dancing_info)[LATIN].partner is not None]
+    latin_couples_follows = [dancer for dancer in all_follows if
+                             get_dancing_categories(dancer.dancing_info)[LATIN].role == FOLLOW and
+                             get_dancing_categories(dancer.dancing_info)[LATIN].partner is not None]
+    confirmed_ballroom_couples = [{LEAD: couple[0], FOLLOW: couple[1]} for couple in
+                                  list(itertools.product([dancer for dancer in ballroom_couples_leads if
+                                                          dancer.status_info[0].status == CONFIRMED],
+                                                         [dancer for dancer in ballroom_couples_follows if
+                                                          dancer.status_info[0].status == CONFIRMED])) if
+                                  couple[0].contestant_id == get_dancing_categories(
+                                      couple[1].dancing_info)[BALLROOM].partner]
+    confirmed_latin_couples = [{LEAD: couple[0], FOLLOW: couple[1]} for couple in
+                               list(itertools.product([dancer for dancer in latin_couples_leads
+                                                       if dancer.status_info[0].status == CONFIRMED],
+                                                      [dancer for dancer in latin_couples_follows
+                                                       if dancer.status_info[0].status == CONFIRMED])) if
+                               couple[0].contestant_id == get_dancing_categories(
+                                   couple[1].dancing_info)[LATIN].partner]
     if form.validate_on_submit():
         lead = DancingInfo.query.filter_by(contestant_id=form.lead.data, competition=form.competition.data).first()
         follow = DancingInfo.query.filter_by(contestant_id=form.follow.data, competition=form.competition.data).first()
@@ -41,7 +73,22 @@ def create_couple():
             flash(f'Created a couple with {lead.contestant} and {follow.contestant} in {form.competition.data}.',
                   'alert-success')
         return redirect(url_for('blind_date_assistant.create_couple'))
-    return render_template('blind_date_assistant/create_couple.html', form=form)
+    return render_template('blind_date_assistant/create_couple.html', data=data, form=form,
+                           confirmed_ballroom_couples=confirmed_ballroom_couples,
+                           confirmed_latin_couples=confirmed_latin_couples)
+
+
+@bp.route('/break_up_couple/<couple_lead>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['blind_date_organizer']])
+def break_up_couple(couple_lead):
+    # couple = SalsaPartners.query.filter(SalsaPartners.couple_id == couple_id).first()
+    # lead = Contestant.query.filter_by(contestant_id=couple.lead_id).first().get_full_name()
+    # follow = Contestant.query.filter_by(contestant_id=couple.follow_id).first().get_full_name()
+    # db.session.delete(couple)
+    # db.session.commit()
+    # flash(f'{lead} and {follow} are no longer dancing {SALSA} together.', 'alert-info')
+    return redirect(url_for('blind_date_assistant.create_couple'))
 
 
 @bp.route('/create_couple_salsa', methods=['GET', 'POST'])

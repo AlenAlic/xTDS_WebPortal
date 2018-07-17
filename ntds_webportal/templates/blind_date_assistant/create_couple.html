@@ -45,6 +45,74 @@
     <a role="button" class="btn btn-default btn-loading" href="{{ url_for('teamcaptains.partner_request_list') }}">Cancel</a>
 </form>
 
+
+<h2>Registered couples <span class="badge">{{ confirmed_ballroom_couples|length + confirmed_latin_couples|length }}</span></h2>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        {% if confirmed_ballroom_couples|length > 0 %}
+        <h3>Ballroom couples <span class="badge">{{ confirmed_ballroom_couples|length }}</span></h3>
+        <table id="myTable" class="table">
+            <colgroup>
+                <col span="1" style="width: 33%;">
+                <col span="1" style="width: 33%;">
+                <col span="1" style="width: 34%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th><b>Lead</b></th>
+                    <th><b>Follow</b></th>
+                    <th><b><input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.."></b></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for couple in confirmed_ballroom_couples %}
+                <tr>
+                    <td>{{ couple[data.LEAD] }}</td>
+                    <td>{{ couple[data.FOLLOW] }}</td>
+                    <td align="right">
+                        <a class="btn btn-warning" href="{{ url_for('blind_date_assistant.break_up_couple', couple_lead=couple['lead']) }}">Break up couple</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <h3>There are no confirmed Ballroom couples yet</h3>
+        {% endif %}
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        {% if confirmed_latin_couples|length > 0 %}
+        <h3>Latin couples <span class="badge">{{ confirmed_latin_couples|length }}</span></h3>
+        <table id="myTable2" class="table">
+            <colgroup>
+                <col span="1" style="width: 33%;">
+                <col span="1" style="width: 33%;">
+                <col span="1" style="width: 34%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th><b>Lead</b></th>
+                    <th><b>Follow</b></th>
+                    <th><b><input class="form-control" type="text" id="myInput2" onkeyup="myFunction2()" placeholder="Search for names.."></b></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for couple in confirmed_latin_couples %}
+                <tr>
+                    <td>{{ couple[data.LEAD] }}</td>
+                    <td>{{ couple[data.FOLLOW] }}</td>
+                    <td align="right">
+                        <a class="btn btn-warning" href="{{ url_for('blind_date_assistant.break_up_couple', couple_lead=couple['lead'])  }}">Break up couple</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <h3>There are no confirmed Latin couples yet</h3>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -54,5 +122,49 @@
     $('.select').dropdown({
         // options here
     });
+</script>
+<script>
+function myFunction() {
+    // Declare variables
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        td2 = tr[i].getElementsByTagName("td")[1];
+        if (td || td2) {
+            if (td.innerHTML.toUpperCase().indexOf(filter) > -1 || td2.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+function myFunction2() {
+    // Declare variables
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("myInput2");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable2");
+    tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        td2 = tr[i].getElementsByTagName("td")[1];
+        if (td || td2) {
+            if (td.innerHTML.toUpperCase().indexOf(filter) > -1 || td2.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
 </script>
 {% endblock %}

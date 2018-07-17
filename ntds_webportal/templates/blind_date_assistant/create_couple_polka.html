@@ -43,9 +43,8 @@
     {{ wtf.form_field(form.submit) }}
     <a role="button" class="btn btn-default btn-loading" href="{{ url_for('teamcaptains.partner_request_list') }}">Cancel</a>
 </form>
+<h2>Registered Polka couples {% if polka_couples|length > 0 %}<span class="badge">{{ polka_couples|length }}</span>{% endif %}</h2>
 {% if polka_couples|length > 0 %}
-<h2>Polka couples</h2>
-
 <table id="myTable" class="table">
     <colgroup>
         <col span="1" style="width: 33%;">
@@ -71,6 +70,8 @@
     {% endfor %}
     </tbody>
 </table>
+{% else %}
+<h3>There are no registered Polka couples yet</h3>
 {% endif %}
 {% endblock %}
 
