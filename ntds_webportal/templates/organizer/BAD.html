@@ -20,9 +20,9 @@ onload="onStart()"
     <!--<div style="height:10px"></div>-->
 <!--</form>-->
 <div class="row">
-    <!--{% with name='download_createUniverse', title='Master file', text='Master file to make importing easier (optional).', image='dummy.png' %}-->
-        <!--{% include 'organizer/_BAD_page.html' %}-->
-    <!--{% endwith %}-->
+    {% with name='download_createUniverse', title='Master file', text='Master file to import the other files at once (because the site admin is lazy).', image='BAD_download_createUniverse.png' %}
+        {% include 'organizer/_BAD_page.html' %}
+    {% endwith %}
     {% with name='download_createDB', title='BAD database', text='File to initialize the BAD database.', image='BAD_database.png' %}
         {% include 'organizer/_BAD_page.html' %}
     {% endwith %}
