@@ -9,16 +9,6 @@ onload="onStart()"
 
 {% if ts.main_raffle_result_visible is sameas true %}
 <h2>Download files for the BAD system</h2>
-<!--<form method="GET" enctype="multipart/form-data" novalidate>-->
-    <!--<input class="btn btn-info" id="submit-download_createUniverse" name="download_createUniverse" type="submit" value="Create Universe">-->
-    <!--<div style="height:10px"></div>-->
-    <!--<input class="btn btn-info" id="submit-download_createDB" name="download_createDB" type="submit" value="Create BAD database">-->
-    <!--<div style="height:10px"></div>-->
-    <!--<input class="btn btn-info" id="submit-download_createTournament" name="download_createTournament" type="submit" value="Create Tournament">-->
-    <!--<div style="height:10px"></div>-->
-    <!--<input class="btn btn-info" id="submit-download_populateCouples" name="download_populateCouples" type="submit" value="Populate Couples">-->
-    <!--<div style="height:10px"></div>-->
-<!--</form>-->
 <div class="row">
     {% with name='download_createUniverse', title='Master file', text='Master file to import the other files at once (because the site admin is lazy).', image='BAD_download_createUniverse.png' %}
         {% include 'organizer/_BAD_page.html' %}

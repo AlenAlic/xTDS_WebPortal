@@ -1,10 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
+<html>
+  <head>
+
+    <title>
+xTDS WebPortal
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <!-- Bootstrap -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<style>
+    body { padding-top: 60px;}
+    .navbar-default{background-color:#f8f8f8;}
+    @media (min-width:1440px){.container{width:1410px}}
+    .pagebreak { page-break-before: always; }
+    .print-friendly { page-break-inside:avoid; page-break-after:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+    td    { page-break-inside:avoid; page-break-after:auto }
+    thead { display:table-header-group }
+    tfoot { display:table-footer-group }
+    @media print {.no-print, .no-print * {display: none !important; } }
+</style>
+
+<style>
+<!--body {-->
+    <!--background-color: black;-->
+<!--}-->
+@font-face {
+    font-family: 'BDCartoonShoutRegular';
+    src: url('custom_js/Pacman_font.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+#pacman {
+    height: 472px;
+    width: 382px;
+    border-radius: 5px;
+    margin: 0px auto;
+}
+#shim {
+    font-family: 'Permanent Marker', cursive;
+    position: absolute;
+    visibility: hidden
+}
+.pacman-title {
+    background-color: black;
+    font-family: 'Permanent Marker', cursive;
+    text-align: center;
+    color: yellow;
+}
+.centered-text {
+    text-align: center;
+}
+body {
+    width: 100%;
+    margin: 0px auto;
+    font-family: sans-serif;
+}
+.center-me {
+    margin: 0 auto;
+}
+</style>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
+<link rel="manifest" href="/static/favicons/site.webmanifest">
+<link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="shortcut icon" href="/static/favicons/favicon.ico">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
+  </head>
+  <body>
+    
+<nav class="navbar navbar-default navbar-fixed-top no-print">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/index">xTDS WebPortal</a>
+        </div>
+    </div>
+</nav>
+
+    
+<div class="container" style="padding-bottom:20px">
+    
+        
+        
+
+    
+<!--<div class="center-me" style="display:inline-block">-->
+    <!--<h1 class="pacman-title" style="margin-bottom:0px">Pacman</h1>-->
+    <!--<div id="pacman"></div>-->
+<!--</div>-->
+<h2 class="centered-text">Server maintenance</h2>
+<div class="centered-text">
+    <p >The server is currently undergoing maintenance and therefor offline.</p>
+    <p >It should be back up soon (we guaranteed it will be up somewhere before the end of time at the very least).</p>
+    <p >In the meantime, you can enjoy some Pacman to pass the time.</p>
+    <div style="height:20px"></div>
+    <p>Enjoy!</p>
+    <div style="height:30px"></div>
+</div>
+<div id="pacman"></div>
+<script src="custom_js/pacman.js"></script>
+<script src="custom_js/modernizr-1.5.min.js"></script>
+
+
+</div>
+<!--<nav class="navbar-defaul navbar-fixed-bottom" style="padding-top:60px;">-->
+    <!--<div class="container">-->
+        <!--<p class="navbar-text">Place sticky footer content here.</p>-->
+    <!--</div>-->
+<!--</nav>-->
+
+
+    
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
+<script>
+moment.locale("en");
+function flask_moment_render(elem) {
+    $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+    $(elem).removeClass('flask-moment').show();
+}
+function flask_moment_render_all() {
+    $('.flask-moment').each(function() {
+        flask_moment_render(this);
+        if ($(this).data('refresh')) {
+            (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
+        }
+    })
+}
+$(document).ready(function() {
+    flask_moment_render_all();
+});
+</script>
+<script src="/static/loading.js"></script>
+<script>
+$(document).ready(function() {
+    $('.table-clickable-checkbox tr').click(function(event) {
+        if (event.target.type !== 'checkbox') {
+            $(':checkbox', this).trigger('click');
+        }
+    });
+});
+$(document).ready(function($) {
+    $(".checkbox-row").css("cursor", "pointer")
+    $(".checkbox").css("cursor", "pointer")
+});
+$(document).ready(function($) {
+    $(".checkbox").change(function() {
+        $(this).parents("tr:first").toggleClass('success ');
+    });
+});
+</script>
+
+<script>
+var el = document.getElementById("pacman");
+if (Modernizr.canvas && Modernizr.localstorage &&
+    Modernizr.audio && (Modernizr.audio.ogg || Modernizr.audio.mp3)) {
+    window.setTimeout(function () { PACMAN.init(el, "./"); }, 0);
+} else {
+    el.innerHTML = "Sorry, needs a decent browser<br /><small>" +
+    "(firefox 3.6+, Chrome 4+, Opera 10+ and Safari 4+)</small>";
+}
+</script>
+
+  </body>
 </html>

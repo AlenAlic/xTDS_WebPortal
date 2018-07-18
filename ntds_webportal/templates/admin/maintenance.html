@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block app_content %}
+<h2>Server mainenance page (pacman)</h2>
+<p>Generate the webpage that will be displayed when the server is undergoing maintenance.</p>
+<a class="btn btn-primary" href="{{url_for('self_admin.maintenance')}}?502_page" style="text-decoration:none">Generate maintenance page</a>
+{% endblock %}

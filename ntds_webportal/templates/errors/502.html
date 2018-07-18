@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block styles %}
+{{ super() }}
+<style>
+<!--body {-->
+    <!--background-color: black;-->
+<!--}-->
+@font-face {
+    font-family: 'BDCartoonShoutRegular';
+    src: url('custom_js/Pacman_font.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+#pacman {
+    height: 472px;
+    width: 382px;
+    border-radius: 5px;
+    margin: 0px auto;
+}
+#shim {
+    font-family: 'Permanent Marker', cursive;
+    position: absolute;
+    visibility: hidden
+}
+.pacman-title {
+    background-color: black;
+    font-family: 'Permanent Marker', cursive;
+    text-align: center;
+    color: yellow;
+}
+.centered-text {
+    text-align: center;
+}
+body {
+    width: 100%;
+    margin: 0px auto;
+    font-family: sans-serif;
+}
+.center-me {
+    margin: 0 auto;
+}
+</style>
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-default navbar-fixed-top no-print">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block app_content %}
+<!--<div class="center-me" style="display:inline-block">-->
+    <!--<h1 class="pacman-title" style="margin-bottom:0px">Pacman</h1>-->
+    <!--<div id="pacman"></div>-->
+<!--</div>-->
+<h2 class="centered-text">Server maintenance</h2>
+<div class="centered-text">
+    <p >The server is currently undergoing maintenance and therefor offline.</p>
+    <p >It should be back up soon (we guaranteed it will be up somewhere before the end of time at the very least).</p>
+    <p >In the meantime, you can enjoy some Pacman to pass the time.</p>
+    <div style="height:20px"></div>
+    <p>Enjoy!</p>
+    <div style="height:30px"></div>
+</div>
+<div id="pacman"></div>
+<script src="custom_js/pacman.js"></script>
+<script src="custom_js/modernizr-1.5.min.js"></script>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script>
+var el = document.getElementById("pacman");
+if (Modernizr.canvas && Modernizr.localstorage &&
+    Modernizr.audio && (Modernizr.audio.ogg || Modernizr.audio.mp3)) {
+    window.setTimeout(function () { PACMAN.init(el, "./"); }, 0);
+} else {
+    el.innerHTML = "Sorry, needs a decent browser<br /><small>" +
+    "(firefox 3.6+, Chrome 4+, Opera 10+ and Safari 4+)</small>";
+}
+</script>
+{% endblock %}

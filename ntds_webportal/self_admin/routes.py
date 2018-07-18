@@ -1,4 +1,4 @@
-from flask import render_template, request, send_file, redirect, url_for
+from flask import render_template, request, send_file, redirect, url_for, current_app
 from flask_login import login_required, current_user, logout_user, login_user
 from ntds_webportal.self_admin import bp
 from ntds_webportal.self_admin.forms import SwitchUserForm
@@ -7,6 +7,7 @@ from ntds_webportal.data import *
 from instance.populate import TEAM_CAPTAINS
 import xlsxwriter
 from io import BytesIO
+import os
 
 
 @bp.route('/debug_tools', methods=['GET', 'POST'])
@@ -18,6 +19,19 @@ def debug_tools():
         if 'force_error' in form:
             print(None.email)
     return render_template('admin/debug_tools.html')
+
+
+@bp.route('/maintenance', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['admin']])
+def maintenance():
+    form = request.args
+    if '502_page' in form:
+        maintenance_page = render_template('errors/502.html')
+        dir_path = os.path.join(current_app.static_folder, '502.html')
+        with open(dir_path, 'w') as the_file:
+            the_file.write(maintenance_page)
+    return render_template('admin/maintenance.html')
 
 
 @bp.route('/switch_user', methods=['GET', 'POST'])
