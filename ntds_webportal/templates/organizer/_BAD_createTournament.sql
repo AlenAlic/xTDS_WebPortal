@@ -92,7 +92,7 @@ INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_Champio
 INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_CloseD }}, `event` = 1, `class` = {{ var.class_CloseD }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-04 15:00", `mode` = "CP_D", `numberl0` = 200, `numberl1` = 299, `floormin` = 1, `floormax` = 2;
 INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Open_Class }}, `event` = 1, `class` = {{ var.class_Open_Class }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-04 15:00", `mode` = "CP_D", `numberl0` = 300, `numberl1` = 399, `floormin` = 1, `floormax` = 2;
 INSERT INTO `tournament` SET `id` = {{ var.tournament_Salsa }}, `event` = 1, `class` = {{ var.class_Salsa }}, `disc` = {{ var.discipline_Salsa }}, `when` = "2018-03-03 15:00", `mode` = "SP", `numberl0` = 400, `numberl1` = 599, `floormin` = 1, `floormax` = 2;
--- Test to educate judges
+-- Test to educate adjudicators
 INSERT INTO `tournament` SET `id` = {{ var.tournament_TEST }}, `event` = 1, `class` = {{ var.class_TEST }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-03 08:00", `mode` = "SP", `numberl0` = 900, `numberl1` = 999, `floormin` = 1, `floormax` = 2;
 
 -- The dances to be danced in tournament, altered in webUI prior to actual rounds
