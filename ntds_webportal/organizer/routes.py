@@ -262,11 +262,11 @@ def raffle_system():
                 dancer.status_info[0].set_status(SELECTED)
                 teamcaptain = User.query.filter(User.is_active, User.access == ACCESS['team_captain'],
                                                 User.team == dancer.contestant_info[0].team).first()
+                text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
+                n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
+                                 user=teamcaptain)
+                db.session.add(n)
                 if teamcaptain.send_new_messages_email:
-                    text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
-                    n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
-                                     user=teamcaptain)
-                    db.session.add(n)
                     send_new_messages_email(current_user, teamcaptain)
         elif 'remove_marked_dancers' in form:
             marked_dancers = [d for d in all_dancers if str(d.contestant_id) in form]

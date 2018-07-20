@@ -42,7 +42,7 @@
         {%- endfor %}
     </div>
     {{ wtf.form_field(form.submit) }}
-    <a role="button" class="btn btn-default btn-loading" href="{{ url_for('teamcaptains.partner_request_list') }}">Cancel</a>
+    <a role="button" class="btn btn-default btn-loading" href="{{ url_for('main.index') }}">Cancel</a>
 </form>
 
 
@@ -70,7 +70,7 @@
                     <td>{{ couple[data.LEAD] }}</td>
                     <td>{{ couple[data.FOLLOW] }}</td>
                     <td align="right">
-                        <a class="btn btn-warning" href="{{ url_for('blind_date_assistant.break_up_couple', couple_lead=couple['lead']) }}">Break up couple</a>
+                        <a class="btn btn-warning" href="{{ url_for('blind_date_assistant.break_up_couple', couple_lead=couple['Lead'].contestant_id, competition=data.BALLROOM) }}">Break up couple</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -102,7 +102,7 @@
                     <td>{{ couple[data.LEAD] }}</td>
                     <td>{{ couple[data.FOLLOW] }}</td>
                     <td align="right">
-                        <a class="btn btn-warning" href="{{ url_for('blind_date_assistant.break_up_couple', couple_lead=couple['lead'])  }}">Break up couple</a>
+                        <a class="btn btn-warning" href="{{ url_for('blind_date_assistant.break_up_couple', couple_lead=couple['Lead'].contestant_id, competition=data.LATIN) }}">Break up couple</a>
                     </td>
                 </tr>
             {% endfor %}

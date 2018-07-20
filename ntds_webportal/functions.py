@@ -2,7 +2,7 @@ from flask import request
 from flask_login import current_user
 from ntds_webportal import db
 from ntds_webportal.models import Team, Contestant, ContestantInfo, DancingInfo, VolunteerInfo, AdditionalInfo, \
-    StatusInfo, MerchandiseInfo, Merchandise
+    StatusInfo, MerchandiseInfo, Merchandise, User, Notification
 from ntds_webportal.data import *
 from sqlalchemy import and_, or_
 
@@ -54,6 +54,40 @@ def get_combinations_list(s):
         return s.split(', ')
     else:
         return []
+
+
+def notify_teamcaptains_couple_created(lead, follow, competition):
+    teamcaptain_lead = User.query.filter(User.is_active, User.access == ACCESS['team_captain'],
+                                         User.team == lead.contestant_info[0].team).first()
+    text = "{dancer} has found a partner. He/She has signed up for {comp} with {partner} from team {team}."
+    n = Notification(title=f"{lead} found a dancing partner for {competition}",
+                     text=text.format(dancer=lead.get_full_name(), comp=competition,
+                                      partner=follow.get_full_name(), team=follow.contestant_info[0].team.name),
+                     user=teamcaptain_lead)
+    db.session.add(n)
+    teamcaptain_follow = User.query.filter(User.is_active, User.access == ACCESS['team_captain'],
+                                           User.team == follow.contestant_info[0].team).first()
+    n2 = Notification(title=f"{follow} found a dancing partner for {competition}",
+                      text=text.format(dancer=follow.get_full_name(), comp=competition,
+                                       partner=lead.get_full_name(), team=lead.contestant_info[0].team.name),
+                      user=teamcaptain_follow)
+    db.session.add(n2)
+    db.session.commit()
+
+
+def notify_teamcaptains_broken_up_couple(lead, follow, competition):
+    teamcaptain_lead = User.query.filter(User.is_active, User.access == ACCESS['team_captain'],
+                                         User.team == lead.contestant_info[0].team).first()
+    text = "{dancer} no longer has a partner in {comp}."
+    n = Notification(title=f"{lead.get_full_name()} no longer has a partner for {competition}",
+                     text=text.format(dancer=lead.get_full_name(), comp=competition), user=teamcaptain_lead)
+    db.session.add(n)
+    teamcaptain_follow = User.query.filter(User.is_active, User.access == ACCESS['team_captain'],
+                                           User.team == follow.contestant_info[0].team).first()
+    n2 = Notification(title=f"{follow.get_full_name()} no longer has a partner for {competition}",
+                      text=text.format(dancer=follow.get_full_name(), comp=competition), user=teamcaptain_follow)
+    db.session.add(n2)
+    db.session.commit()
 
 
 def get_total_dancer_price_list(dancer):
