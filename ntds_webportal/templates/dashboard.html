@@ -85,6 +85,9 @@ onload="onStart()"
 {% with accessible=state.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
+{% with url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistan User account.', image='switch_user.png' %}
+    {% include '_dashboard_page.html' %}
+{% endwith %}
 </div>
 {% endif %}
 

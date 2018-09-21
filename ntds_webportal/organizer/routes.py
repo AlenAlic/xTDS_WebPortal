@@ -1,5 +1,5 @@
 from flask import render_template, request, flash, redirect, url_for, send_file
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, logout_user, login_user
 from ntds_webportal import db
 from ntds_webportal.main.email import send_new_messages_email
 from ntds_webportal.organizer import bp
@@ -524,3 +524,13 @@ def adjudicators_overview():
     return render_template('organizer/adjudicators_overview.html', ts=ts, data=data,
                            ballroom_adjudicators=ballroom_adjudicators, latin_adjudicators=latin_adjudicators,
                            salsa_adjudicators=salsa_adjudicators, polka_adjudicators=polka_adjudicators)
+
+
+@bp.route('/switch_to_bda', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def switch_to_bda():
+    bda = User.query.filter(User.access == ACCESS['blind_date_organizer']).first()
+    logout_user()
+    login_user(bda)
+    return redirect(url_for('main.index'))
