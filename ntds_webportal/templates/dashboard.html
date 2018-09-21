@@ -29,8 +29,9 @@ onload="onStart()"
 {% block app_content %}
 
 {% if current_user.is_admin() %}
+<h2>Website tools</h2>
 <div class="row" style="visibility:hidden">
-{% with url='admin.index', title='Admin Page', text='Gives direct access to the database.', image='admin.png' %}
+{% with url='admin.index', title='Database', text='Gives direct access to the database.', image='admin.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
 {% with url='self_admin.debug_tools', title='Debug Tools', text='Tools to debug the site.', image='debug_tools.png' %}
@@ -39,16 +40,20 @@ onload="onStart()"
 {% with url='self_admin.maintenance', title='Maintenance', text='Tools for maintenance the site.', image='maintenance.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
+</div>
+<h2>System tools</h2>
+<div class="row" style="visibility:hidden">
 {% with url='self_admin.switch_user', title='Switch User', text='Log in as a different user.', image='switch_user.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
-{% with url='self_admin.users_lists', title='Users list', text='Get a list of usernames, email, and default passwords.', image='users_list.png' %}
+{% with url='self_admin.users_lists', title='Users list', text='Download a list of usernames, email, and default passwords.', image='users_list.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
 </div>
 {% endif %}
 
 {% if current_user.is_organizer() %}
+<h2>Registration</h2>
 <div class="row" style="visibility:hidden">
 {% with loading_screen=true, url='organizer.registration_overview', title='Registrered dancers', text='List of all registered dancers', image='contestants.png' %}
     {% include '_dashboard_page.html' %}
@@ -56,7 +61,13 @@ onload="onStart()"
 {% with count=current_user.open_name_change_requests(), url='organizer.name_change_list', title='Name change requests', text='Requests for name changes of dancers', image='name_change.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
+</div>
+<h2>Raffle</h2>
+<div class="row" style="visibility:hidden">
 {% with loading_screen=true, url='organizer.raffle_system', title='Raffle system', text='Raffle system.', image='raffle.png' %}
+    {% include '_dashboard_page.html' %}
+{% endwith %}
+{% with accessible=state.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
 {% with accessible=state.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
@@ -65,6 +76,9 @@ onload="onStart()"
 {% with accessible=state.main_raffle_result_visible, url='organizer.merchandise', title='Merchandise', text='Overview of ordered merchandise.', image='merchandise.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
+</div>
+<h2>Tournament</h2>
+<div class="row" style="visibility:hidden">
 {% with accessible=state.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Download files to setup BAD. (In essence done, but might be changed a bit due to input from Marek)', image='BAD.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
@@ -77,6 +91,9 @@ onload="onStart()"
 {% if current_user.is_bdo() %}
 <div class="row" style="visibility:hidden">
 {% with accessible=state.main_raffle_result_visible, url='blind_date_assistant.create_couple', title='Ballroom Blind Date Couples', text='Create new blind date couples for Standard and Latin.', image='view_couples.png' %}
+    {% include '_dashboard_page.html' %}
+{% endwith %}
+{% with accessible=state.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
     {% include '_dashboard_page.html' %}
 {% endwith %}
 {% with accessible=state.main_raffle_result_visible, url='blind_date_assistant.create_couple_salsa', title='Salsa Blind Date Couples', text='Create new blind date couples for Salsa.', image='salsa.png' %}

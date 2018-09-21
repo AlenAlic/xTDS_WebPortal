@@ -150,7 +150,7 @@
                     </thead>
                     <tbody>
                     {% if team['confirmed_dancers']|length > 0 %}
-                        <tr><td><b style="font-size: x-large">{{ data.STATUS[data.CONFIRMED] }}</b></td></tr>
+                        <!--<tr><td><b style="font-size: x-large">{{ data.STATUS[data.CONFIRMED] }}</b></td></tr>-->
                         {% for dancer in team['confirmed_dancers'] %}
                         <tr class="{% if dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
                             <td>
@@ -176,7 +176,8 @@
                                 {{ dancer.get_dancing_info(data.LATIN).role }}
                                 {% else %}-{% endif %}
                             </td>
-                            <td align="right"></td>
+                            <td align="right">
+                            </td>
                         </tr>
                         {% endfor %}
                     {% else %}

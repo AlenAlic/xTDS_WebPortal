@@ -6,9 +6,11 @@ from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification, MerchandiseInfo, Merchandise, TournamentState, \
     SalsaPartners, PolkaPartners, VolunteerInfo
-from ntds_webportal.functions import uniquify, check_combination, get_combinations_list
+from ntds_webportal.functions import uniquify, check_combination, get_combinations_list, submit_updated_dancing_info
 from ntds_webportal.organizer.forms import NameChangeResponse
 from ntds_webportal.organizer.email import send_raffle_completed_email
+from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
+from ntds_webportal.functions import populate_dancing_info_form
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.system import raffle, finish_raffle, raffle_add_neutral_group, test_raffle
@@ -330,6 +332,30 @@ def cancel_dancer(number):
         db.session.add(n)
         db.session.commit()
     return redirect(url_for('organizer.raffle_system'))
+
+
+@bp.route('/dancing_info_list', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer'], ACCESS['blind_date_organizer']])
+def dancing_info_list():
+    dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == SELECTED)).order_by(ContestantInfo.number)\
+        .all()
+    return render_template('organizer/dancing_info_list.html', data=data, dancers=dancers)
+
+
+@bp.route('/edit_dancing_info/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer'], ACCESS['blind_date_organizer']])
+def edit_dancing_info(number):
+    form = EditDancingInfoForm()
+    dancer = db.session.query(Contestant).join(DancingInfo).filter(Contestant.contestant_id == number).first()
+    form = populate_dancing_info_form(form, dancer, edit_dancing_info=True)
+    if form.validate_on_submit():
+        flash('{} data has been changed successfully.'.format(submit_updated_dancing_info(form, contestant=dancer)),
+              'alert-success')
+        return redirect(url_for('organizer.dancing_info_list'))
+    return render_template('organizer/edit_dancing_info.html', data=data, form=form, dancer=dancer)
 
 
 @bp.route('/merchandise', methods=['GET', 'POST'])

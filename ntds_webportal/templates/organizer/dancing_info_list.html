@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block app_content %}
+<table class="table table-striped table-responsive">
+    <thead>
+        <tr>
+            <th><b>Name</b></th>
+            <th><b>E-mail</b></th>
+            <th><b>Team</b></th>
+            <th><b>Status</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dancer in dancers %}
+            <tr>
+                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
+                    {{ dancer.get_full_name() }}
+                </td>
+                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
+                    {{ dancer.email }}
+                </td>
+                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
+                    {{ dancer.contestant_info[0].team }}
+                </td>
+                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
+                    {{ dancer.status_info[0].status }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function($) {
+    $(".clickable-row").css("cursor", "pointer")
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});
+</script>
+{% endblock %}

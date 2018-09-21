@@ -248,7 +248,7 @@ class DancingInfo(db.Model):
     def set_partner(self, contestant_id):
         partner = db.session.query(DancingInfo) \
             .filter_by(contestant_id=contestant_id if contestant_id is not None else self.partner,
-                       competition=self.competition, level=self.level).first()
+                       competition=self.competition).first()
         if contestant_id is not None:
             if partner is not None:
                 partner.partner = self.contestant_id
