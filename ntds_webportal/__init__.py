@@ -1,14 +1,26 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, current_user
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_mail import Mail
-from flask_admin import Admin
+from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_debugtoolbar import DebugToolbarExtension
 from wtforms import PasswordField
+
+
+class MyAdminIndexView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        if not current_user.is_authenticated:
+            return redirect(url_for('main.index'))
+        else:
+            if current_user.is_admin():
+                return self.render(self._template)
+            else:
+                return redirect(url_for('main.index'))
 
 
 db = SQLAlchemy()
@@ -17,7 +29,7 @@ login = LoginManager()
 bootstrap = Bootstrap()
 moment = Moment()
 mail = Mail()
-admin = Admin(template_mode='bootstrap3')
+admin = Admin(template_mode='bootstrap3', index_view=MyAdminIndexView())
 toolbar = DebugToolbarExtension()
 
 
@@ -26,7 +38,12 @@ class BaseView(ModelView):
     page_size = 100
 
     def is_accessible(self):
-        return current_user.is_admin()
+        if current_user.is_authenticated:
+            return current_user.is_admin()
+        return False
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('main.index'))
 
 
 class UserView(BaseView):
