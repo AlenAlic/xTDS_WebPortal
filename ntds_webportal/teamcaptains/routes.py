@@ -71,6 +71,10 @@ def register_dancers():
     if request.method == 'POST':
         # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
+        ts = TournamentState.query.first()
+        tc = ts.get_tournament_config()
+        if int(datetime.datetime.now().timestamp()) > tc['merchandise_closing_date']:
+            form.t_shirt.data = NO
     if form.validate_on_submit():
         if 'privacy_checkbox' in request.values:
             flash('{} has been registered successfully.'.format(submit_contestant(form)), 'alert-success')
