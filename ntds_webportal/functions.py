@@ -414,5 +414,5 @@ def submit_updated_dancing_info(form, contestant):
     di = contestant.dancing_info
     dancing_categories = get_dancing_categories(di)
     update_dancing_info(form, dancing_categories)
-    # db.session.commit()
+    db.session.commit()
     return contestant.get_full_name()
