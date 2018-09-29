@@ -6,7 +6,8 @@ from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification, MerchandiseInfo, Merchandise, TournamentState, \
     SalsaPartners, PolkaPartners, VolunteerInfo
-from ntds_webportal.functions import uniquify, check_combination, get_combinations_list, submit_updated_dancing_info
+from ntds_webportal.functions import uniquify, check_combination, get_combinations_list, submit_updated_dancing_info, \
+    get_dancing_categories
 from ntds_webportal.organizer.forms import NameChangeResponse
 from ntds_webportal.organizer.email import send_raffle_completed_email
 from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
@@ -460,11 +461,11 @@ def bad():
 @requires_access_level([ACCESS['organizer']])
 def adjudicators_overview():
     ts = TournamentState.query.first()
-    ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo)\
+    ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo)\
         .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_ballroom != NO)\
         .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_ballroom), ContestantInfo.team_id)\
         .all()
-    latin_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
+    latin_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo) \
         .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_latin != NO) \
         .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_latin), ContestantInfo.team_id) \
         .all()
@@ -492,7 +493,9 @@ def adjudicators_overview():
             if comp == BALLROOM or comp == LATIN:
                 ws.write(0, 3, 'Has license?', f)
                 ws.write(0, 4, 'Highest achieved level', f)
-                ws.set_column(0, 4, 30)
+                ws.write(0, 5, 'Dancing Ballroom?', f)
+                ws.write(0, 6, 'Dancing Latin?', f)
+                ws.set_column(0, 6, 30)
                 for d in range(0, len(adj)):
                     ws.write(d + 1, 0, adj[d].get_full_name())
                     ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
@@ -507,6 +510,9 @@ def adjudicators_overview():
                     ws.write(d + 1, 2, wants_to)
                     ws.write(d + 1, 3, lic)
                     ws.write(d + 1, 4, lvl)
+                    dc = get_dancing_categories(adj[d].dancing_info)
+                    ws.write(d + 1, 5, dc[BALLROOM].level)
+                    ws.write(d + 1, 6, dc[LATIN].level)
             else:
                 ws.set_column(0, 2, 30)
                 for d in range(0, len(adj)):
@@ -524,6 +530,42 @@ def adjudicators_overview():
     return render_template('organizer/adjudicators_overview.html', ts=ts, data=data,
                            ballroom_adjudicators=ballroom_adjudicators, latin_adjudicators=latin_adjudicators,
                            salsa_adjudicators=salsa_adjudicators, polka_adjudicators=polka_adjudicators)
+
+
+@bp.route('/sleeping_hall', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def sleeping_hall():
+    ts = TournamentState.query.first()
+    all_teams = db.session.query(Team).all()
+    teams = [{'name': team.name, 'dancers': db.session.query(Contestant)
+             .join(ContestantInfo, StatusInfo, AdditionalInfo)
+             .filter(ContestantInfo.team == team, StatusInfo.status == CONFIRMED,
+                     AdditionalInfo.sleeping_arrangements.is_(True))
+             .order_by(ContestantInfo.number).all()} for team in all_teams]
+    for team in teams:
+        team['number_of_dancers'] = len(team['dancers'])
+    total = sum([team['number_of_dancers'] for team in teams])
+    form = request.args
+    if 'download_file' in form:
+        fn = 'sleeping_hall_ETDS_2018.xlsx'
+        output = BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        f = wb.add_format({'text_wrap': True, 'bold': True})
+        la = wb.add_format({'align': 'left'})
+        ws = wb.add_worksheet()
+        ws.write(0, 0, 'Team', f)
+        ws.write(0, 1, 'Dancers in sleeping hall (Total: {total})'.format(total=total), f)
+        for d in range(0, len(teams)):
+            ws.write(d + 1, 0, teams[d]['name'])
+            ws.write(d + 1, 1, teams[d]['number_of_dancers'], la)
+        ws.set_column(0, 0, 30)
+        ws.set_column(1, 1, 40)
+        ws.freeze_panes(1, 0)
+        wb.close()
+        output.seek(0)
+        return send_file(output, as_attachment=True, attachment_filename=fn)
+    return render_template('organizer/sleeping_hall.html', data=data, ts=ts, teams=teams, total=total)
 
 
 @bp.route('/switch_to_bda', methods=['GET', 'POST'])
