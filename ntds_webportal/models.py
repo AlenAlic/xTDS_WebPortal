@@ -229,6 +229,7 @@ class DancingInfo(db.Model):
         return '{competition}: {name}'.format(competition=self.competition, name=self.contestant)
 
     def valid_match(self, other):
+        #TODO ervoor zorgen dat Open en CloseD blind daters wel met elkaar gematcht kunnen worden
         errors = []
         if self.level in BLIND_DATE_LEVELS or other.level in BLIND_DATE_LEVELS:
             errors.append("At least one of the dancers must blind date.")
@@ -319,6 +320,7 @@ class StatusInfo(db.Model):
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
     raffle_status = db.Column(db.String(16), index=True, default=REGISTERED)
     guaranteed_entry = db.Column(db.Boolean, nullable=False, default=False)
+    checked_in = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)

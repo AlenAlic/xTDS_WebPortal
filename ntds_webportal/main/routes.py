@@ -4,6 +4,7 @@ from ntds_webportal import db
 from ntds_webportal.main import bp
 from ntds_webportal.models import User, TournamentState
 from ntds_webportal.auth.forms import LoginForm, ChangePasswordForm
+import ntds_webportal.data as data
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -42,7 +43,7 @@ def dashboard():
                                num_teamcaptains=num_teamcaptains)
     if current_user.is_treasurer():
         return redirect(url_for('teamcaptains.edit_finances'))
-    return render_template('dashboard.html', state=state)
+    return render_template('dashboard.html', state=state, data=data)
 
 
 @bp.route('/todo', methods=['GET'])

@@ -612,3 +612,18 @@ def bus_to_brno():
     return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_bus=tc_bus,
                            confirmed_dancers=confirmed_dancers, add_overview=add_overview,
                            included_dancers=included_dancers)
+
+
+@bp.route('/tournament_check_in', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS['team_captain']])
+def tournament_check_in():
+    ts = TournamentState.query.first()
+    confirmed_dancers = db.session.query(Contestant).join(ContestantInfo, StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED)\
+        .order_by(ContestantInfo.number).all()
+    checked_in_dancers = db.session.query(Contestant).join(ContestantInfo, StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED,
+                StatusInfo.checked_in.is_(True)).order_by(ContestantInfo.number).all()
+    return render_template('teamcaptains/tournament_check_in.html', ts=ts, data=data,
+                           confirmed_dancers=confirmed_dancers, checked_in_dancers=checked_in_dancers)

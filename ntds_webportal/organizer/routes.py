@@ -1,4 +1,4 @@
-from flask import render_template, request, flash, redirect, url_for, send_file
+from flask import render_template, request, flash, redirect, url_for, send_file, Markup
 from flask_login import login_required, current_user, logout_user, login_user
 from ntds_webportal import db
 from ntds_webportal.main.email import send_new_messages_email
@@ -489,16 +489,18 @@ def adjudicators_overview():
             ws = wb.add_worksheet(name=comp)
             ws.write(0, 0, 'Dancer', f)
             ws.write(0, 1, 'Team', f)
-            ws.write(0, 2, 'Wants to adjudicate?', f)
+            ws.write(0, 2, 'E-mail', f)
+            ws.write(0, 3, 'Wants to adjudicate?', f)
             if comp == BALLROOM or comp == LATIN:
-                ws.write(0, 3, 'Has license?', f)
-                ws.write(0, 4, 'Highest achieved level', f)
-                ws.write(0, 5, 'Dancing Ballroom?', f)
-                ws.write(0, 6, 'Dancing Latin?', f)
-                ws.set_column(0, 6, 30)
+                ws.write(0, 4, 'Has license?', f)
+                ws.write(0, 5, 'Highest achieved level', f)
+                ws.write(0, 6, 'Dancing Ballroom?', f)
+                ws.write(0, 7, 'Dancing Latin?', f)
+                ws.set_column(0, 7, 30)
                 for d in range(0, len(adj)):
                     ws.write(d + 1, 0, adj[d].get_full_name())
                     ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    ws.write(d + 1, 2, adj[d].email)
                     if comp == BALLROOM:
                         wants_to = adj[d].volunteer_info[0].jury_ballroom
                         lic = adj[d].volunteer_info[0].license_jury_ballroom
@@ -507,22 +509,23 @@ def adjudicators_overview():
                         wants_to = adj[d].volunteer_info[0].jury_latin
                         lic = adj[d].volunteer_info[0].license_jury_latin
                         lvl = adj[d].volunteer_info[0].level_latin
-                    ws.write(d + 1, 2, wants_to)
-                    ws.write(d + 1, 3, lic)
-                    ws.write(d + 1, 4, lvl)
+                    ws.write(d + 1, 3, wants_to)
+                    ws.write(d + 1, 4, lic)
+                    ws.write(d + 1, 5, lvl)
                     dc = get_dancing_categories(adj[d].dancing_info)
-                    ws.write(d + 1, 5, dc[BALLROOM].level)
-                    ws.write(d + 1, 6, dc[LATIN].level)
+                    ws.write(d + 1, 6, dc[BALLROOM].level)
+                    ws.write(d + 1, 7, dc[LATIN].level)
             else:
-                ws.set_column(0, 2, 30)
+                ws.set_column(0, 3, 30)
                 for d in range(0, len(adj)):
                     ws.write(d + 1, 0, adj[d].get_full_name())
                     ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    ws.write(d + 1, 2, adj[d].email)
                     if comp == SALSA:
                         wants_to = adj[d].volunteer_info[0].jury_salsa
                     else:
                         wants_to = adj[d].volunteer_info[0].jury_polka
-                    ws.write(d + 1, 2, wants_to)
+                    ws.write(d + 1, 3, wants_to)
             ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
@@ -576,3 +579,76 @@ def switch_to_bda():
     logout_user()
     login_user(bda)
     return redirect(url_for('main.index'))
+
+
+@bp.route('/tournament_check_in', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def tournament_check_in():
+    ts = TournamentState.query.first()
+    all_teams = db.session.query(Team).all()
+    teams = [{'name': team.name, 'id': team.name.replace(' ', '-').replace('`', ''),
+              'team_finances': db.session.query(TeamFinances).filter(TeamFinances.team == team).first(),
+              'confirmed_dancers': db.session.query(Contestant).join(ContestantInfo, StatusInfo)
+              .filter(ContestantInfo.team == team, StatusInfo.status == CONFIRMED)
+              .order_by(ContestantInfo.number).all(),
+              'checked_in_dancers': db.session.query(Contestant).join(ContestantInfo, StatusInfo)
+              .filter(ContestantInfo.team == team, StatusInfo.status == CONFIRMED, StatusInfo.checked_in.is_(True))
+              .order_by(ContestantInfo.number).all(),
+              'finances': data.finances_overview(db.session.query(Contestant).join(ContestantInfo, StatusInfo)
+                                                 .filter(ContestantInfo.team == team, StatusInfo.status == CONFIRMED)
+                                                 .order_by(ContestantInfo.number).all())
+              }
+             for team in all_teams]
+    return render_template('organizer/tournament_check_in.html', ts=ts, data=data, teams=teams)
+
+
+@bp.route('/check_in_dancer/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def check_in_dancer(number):
+    dancer = db.session.query(Contestant).join(StatusInfo, ContestantInfo)\
+        .filter(Contestant.contestant_id == number).first()
+    if dancer.contestant_info[0].team_captain is True and dancer.status_info[0].checked_in is False:
+        dancers_unpaid = db.session.query(Contestant).join(ContestantInfo, StatusInfo)\
+            .filter(ContestantInfo.team == dancer.contestant_info[0].team, StatusInfo.status == CONFIRMED,
+                    StatusInfo.paid.is_(False)).order_by(ContestantInfo.number).all()
+        if len(dancers_unpaid) > 0:
+            flash(Markup('There are dancers that have not paid their entree fee and/or merchandise. '
+                         'Please click <a href="{url}" target="_blank">here</a> to check the finances tab.'
+                         .format(url=url_for('organizer.finances_overview'))), 'alert-danger')
+        else:
+            finances = data.finances_overview(db.session.query(Contestant).join(ContestantInfo, StatusInfo)
+                                              .filter(ContestantInfo.team == dancer.contestant_info[0].team,
+                                                      StatusInfo.status == CONFIRMED)
+                                              .order_by(ContestantInfo.number).all())
+            team_finances = db.session.query(TeamFinances).filter(TeamFinances.team == dancer.contestant_info[0].team) \
+                .first()
+            if team_finances.paid != finances['price_total']:
+                flash(Markup('There is a discrepancy with the total amount owed and total amount received. '
+                      'Please click <a href="{url}" target="_blank">here</a> to check the finances tab.'
+                             .format(url=url_for('organizer.finances_overview'))), 'alert-danger')
+    dancer.status_info[0].checked_in = True if dancer.status_info[0].checked_in is False else False
+    db.session.commit()
+    if dancer.status_info[0].checked_in:
+        flash('{name} from team {team} has been checked in.'
+              .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team), 'alert-success')
+        if not dancer.status_info[0].paid:
+            flash('Payment of the entry fee and/or merchandise for {name} from team {team} has not as marked as paid.'
+                  .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team), 'alert-warning')
+    else:
+        flash('{name} from team {team} has been checked out.'
+              .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team))
+    return redirect(url_for('organizer.tournament_check_in'))
+
+
+@bp.route('/dancer_paid/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def dancer_paid(number):
+    dancer = db.session.query(Contestant).join(StatusInfo).filter(Contestant.contestant_id == number).first()
+    dancer.status_info[0].paid = True if dancer.status_info[0].paid is False else False
+    db.session.commit()
+    flash('Payment status of {name} from team {team} changed successfully.'
+          .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team))
+    return redirect(url_for('organizer.tournament_check_in'))

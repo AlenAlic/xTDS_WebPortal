@@ -88,6 +88,9 @@ onload="onStart()"
     {% with url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% with accessible=state.main_raffle_result_visible, url='organizer.tournament_check_in', title='Tournament check-in', text='Check in dancers from teams.', image='checked_in.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
     {% with url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistant User account. This will log you out of the Organizer account.', image='switch_user.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
@@ -146,7 +149,10 @@ onload="onStart()"
     {% endwith %}
 {% endif %}
 {% if current_user.is_tc() %}
-    {% with accessible=state.main_raffle_result_visible, url='teamcaptains.bus_to_brno', title='Bus to Brno', text='Register dancers to travel to Brno by bus. Organized by team Düsseldorf and Bielefeld', image='bus.png' %}
+    {% with accessible=state.main_raffle_result_visible, url='teamcaptains.bus_to_brno', title='Bus to Brno', text='Register dancers to travel to Brno by bus. Organized by team Düsseldorf and Bielefeld.', image='bus.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=state.main_raffle_result_visible, url='teamcaptains.tournament_check_in', title='Tournament check-in', text='Shows who from your team has already checked in at the tournament desk.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 {% endif %}

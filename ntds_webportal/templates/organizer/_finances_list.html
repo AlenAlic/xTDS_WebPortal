@@ -23,7 +23,7 @@
     </thead>
     <tbody>
         {% for dancer in dancers %}
-            <tr class="clickable-row {% if dancer.status_info[0].paid == true %}success{% endif %}">
+            <tr class="{% if dancer.status_info[0].paid == true %}success{% endif %}">
                 <td>
                     {{ dancer.contestant_info[0].number }} - {{ dancer.get_full_name() }}
                 </td>
