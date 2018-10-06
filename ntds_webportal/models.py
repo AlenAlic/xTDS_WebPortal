@@ -68,6 +68,9 @@ class User(UserMixin, db.Model):
     def is_bdo(self):
         return self.access == ACCESS['blind_date_organizer']
 
+    def is_cia(self):
+        return self.access == ACCESS[CHECK_IN_ASSISTANT]
+
     def allowed(self, access_level):
         return self.access == access_level
 
@@ -124,7 +127,7 @@ class Team(db.Model):
     country = db.Column(db.String(128), nullable=False)
     city = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128), nullable=False, unique=True)
-    finances = db.relationship('TeamFinances', back_populates='team')
+    finances = db.relationship('TeamFinances', back_populates='team', cascade='all, delete-orphan')
 
     def __repr__(self):
         return '{}'.format(self.name)
@@ -228,9 +231,9 @@ class DancingInfo(db.Model):
     def __repr__(self):
         return '{competition}: {name}'.format(competition=self.competition, name=self.contestant)
 
-    def valid_match(self, other):
+    def valid_match(self, other, breitensport=True):
         errors = []
-        if self.level in BLIND_DATE_LEVELS or other.level in BLIND_DATE_LEVELS:
+        if breitensport and (self.level in BLIND_DATE_LEVELS or other.level in BLIND_DATE_LEVELS):
             errors.append("At least one of the dancers must blind date.")
         else:
             if self.competition != other.competition:
@@ -248,7 +251,7 @@ class DancingInfo(db.Model):
     def set_partner(self, contestant_id):
         partner = db.session.query(DancingInfo) \
             .filter_by(contestant_id=contestant_id if contestant_id is not None else self.partner,
-                       competition=self.competition, level=self.level).first()
+                       competition=self.competition).first()
         if contestant_id is not None:
             if partner is not None:
                 partner.partner = self.contestant_id
@@ -319,6 +322,7 @@ class StatusInfo(db.Model):
     paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
     raffle_status = db.Column(db.String(16), index=True, default=REGISTERED)
     guaranteed_entry = db.Column(db.Boolean, nullable=False, default=False)
+    checked_in = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)

@@ -71,6 +71,10 @@ def register_dancers():
     if request.method == 'POST':
         # noinspection PyTypeChecker
         form = contestant_validate_dancing(form)
+        ts = TournamentState.query.first()
+        tc = ts.get_tournament_config()
+        if int(datetime.datetime.now().timestamp()) > tc['merchandise_closing_date']:
+            form.t_shirt.data = NO
     if form.validate_on_submit():
         if 'privacy_checkbox' in request.values:
             flash('{} has been registered successfully.'.format(submit_contestant(form)), 'alert-success')
@@ -266,9 +270,14 @@ def break_up_couple(competition, lead_id, follow_id):
     lead = DancingInfo.query.filter(DancingInfo.competition == competition, DancingInfo.contestant_id == lead_id,
                                     DancingInfo.partner == follow_id).first()
     follow = Contestant.query.filter(Contestant.contestant_id == follow_id).first()
-    lead.set_partner(None)
-    db.session.commit()
-    flash(f'{lead.contestant} and {follow} are not a couple anymore in {competition}.')
+    lead_status = Contestant.query.filter(Contestant.contestant_id == lead_id).first()
+    if lead_status.status_info[0].status == SELECTED or lead_status.status_info[0].status == CONFIRMED \
+            or follow.status_info[0].status == SELECTED or follow.status_info[0].status == CONFIRMED:
+        flash(f"Cannot break up a couple that has been {SELECTED} or {CONFIRMED}.")
+    else:
+        lead.set_partner(None)
+        db.session.commit()
+        flash(f'{lead.contestant} and {follow} are not a couple anymore in {competition}.')
     return redirect(url_for('teamcaptains.couples_list'))
 
 
@@ -608,3 +617,18 @@ def bus_to_brno():
     return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_bus=tc_bus,
                            confirmed_dancers=confirmed_dancers, add_overview=add_overview,
                            included_dancers=included_dancers)
+
+
+@bp.route('/tournament_check_in', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS['team_captain']])
+def tournament_check_in():
+    ts = TournamentState.query.first()
+    confirmed_dancers = db.session.query(Contestant).join(ContestantInfo, StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED)\
+        .order_by(ContestantInfo.number).all()
+    checked_in_dancers = db.session.query(Contestant).join(ContestantInfo, StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED,
+                StatusInfo.checked_in.is_(True)).order_by(ContestantInfo.number).all()
+    return render_template('teamcaptains/tournament_check_in.html', ts=ts, data=data,
+                           confirmed_dancers=confirmed_dancers, checked_in_dancers=checked_in_dancers)

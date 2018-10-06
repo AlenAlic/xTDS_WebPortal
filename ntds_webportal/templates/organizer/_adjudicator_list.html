@@ -6,9 +6,11 @@
         <table class="table table-list">
             {% if type == data.BALLROOM or type == data.LATIN %}
             <colgroup>
-                <col span="1" style="width: 30%;">
-                <col span="1" style="width: 25%;">
-                <col span="1" style="width: 15%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 10%;">
                 <col span="1" style="width: 15%;">
                 <col span="1" style="width: 15%;">
             </colgroup>
@@ -19,6 +21,8 @@
                     <th><b>Wants to adjudicate?</b></th>
                     <th><b>Has license?</b></th>
                     <th><b>Highest achieved level</b></th>
+                    <th><b>Dancing Ballroom</b></th>
+                    <th><b>Dancing Latin</b></th>
                 </tr>
             </thead>
             <tbody>
@@ -35,6 +39,16 @@
                         <td>{{ adjudicator.volunteer_info[0].license_jury_latin }}</td>
                         <td>{{ adjudicator.volunteer_info[0].level_latin }}</td>
                         {% endif %}
+                        <td>
+                            {% if adjudicator.dancing_info[0].level != data.NO %}
+                            {{ data.LEVELS[adjudicator.dancing_info[0].level] }}
+                            {% else %} - {% endif %}
+                        </td>
+                        <td>
+                            {% if adjudicator.dancing_info[1].level != data.NO %}
+                            {{ data.LEVELS[adjudicator.dancing_info[1].level] }}
+                            {% else %} - {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

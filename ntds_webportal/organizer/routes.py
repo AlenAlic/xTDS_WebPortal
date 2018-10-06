@@ -1,14 +1,18 @@
-from flask import render_template, request, flash, redirect, url_for, send_file
-from flask_login import login_required, current_user
+from flask import render_template, request, flash, redirect, url_for, send_file, Markup
+from flask_login import login_required, current_user, logout_user, login_user
 from ntds_webportal import db
 from ntds_webportal.main.email import send_new_messages_email
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, TeamFinances, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, Notification, MerchandiseInfo, Merchandise, TournamentState, \
     SalsaPartners, PolkaPartners, VolunteerInfo
-from ntds_webportal.functions import uniquify, check_combination, get_combinations_list
-from ntds_webportal.organizer.forms import NameChangeResponse
+from ntds_webportal.functions import uniquify, check_combination, get_combinations_list, submit_updated_dancing_info, \
+    get_dancing_categories
+from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm
+from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm
 from ntds_webportal.organizer.email import send_raffle_completed_email
+from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
+from ntds_webportal.functions import populate_dancing_info_form
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 from raffle_system.system import raffle, finish_raffle, raffle_add_neutral_group, test_raffle
@@ -19,6 +23,87 @@ import random
 import xlsxwriter
 from io import BytesIO, StringIO
 import datetime
+
+
+@bp.route('/user_list', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def user_list():
+    users = User.query.filter(or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]))\
+        .order_by(case({True: 0, False: 1}, value=User.is_active), User.team_id).all()
+    bda = db.session.query(User).filter(User.access == ACCESS[BLIND_DATE_ASSISTANT]).first()
+    chi = db.session.query(User).filter(User.access == ACCESS[CHECK_IN_ASSISTANT]).first()
+    return render_template('organizer/user_list.html', data=data, users=users, bda=bda, chi=chi)
+
+
+def assistant_account(access_level):
+    submit = False
+    user = db.session.query(User).filter(User.access == ACCESS[access_level]).first()
+    if user is None:
+        form = CreateBaseUserWithoutEmailForm()
+        form.username.data = BLIND_DATE_ASSISTANT_ACCOUNT_NAME if access_level == BLIND_DATE_ASSISTANT \
+            else CHECK_IN_ASSISTANT_ACCOUNT_NAME
+        if form.validate_on_submit():
+            user = User()
+            user.username = form.username.data
+            user.set_password(form.password.data)
+            user.access = ACCESS[access_level]
+            user.is_active = True
+            user.send_messages_email = False
+            db.session.add(user)
+            db.session.commit()
+            flash(f"Assistant account \"{user.username}\" created.", 'alert-success')
+            submit = True
+    else:
+        form = EditAssistantAccountForm()
+        form.username.data = user.username
+        if form.validate_on_submit():
+            if form.password.data != '':
+                user.set_password(form.password.data)
+                db.session.commit()
+                flash(f"Assistant account \"{user.username}\" updated.", 'alert-success')
+            else:
+                flash(f"No changes were made to save.", "alert-warning")
+            submit = True
+    return form, user, submit
+
+
+@bp.route('/blind_date_assistant_account', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def blind_date_assistant_account():
+    form, user, submit = assistant_account(BLIND_DATE_ASSISTANT)
+    if submit:
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
+                           assistant=BLIND_DATE_ASSISTANT)
+
+
+@bp.route('/check_in_assistant_account', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def check_in_assistant_account():
+    form, user, submit = assistant_account(CHECK_IN_ASSISTANT)
+    if submit:
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
+                           assistant=CHECK_IN_ASSISTANT)
+
+
+@bp.route('/change_email/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER]])
+def change_email(number):
+    user = User.query.filter(User.user_id == number).first()
+    form = ChangeEmailForm()
+    if request.method == 'GET':
+        form.email.data = user.email
+    if form.validate_on_submit():
+        user.email = form.email.data
+        db.session.commit()
+        flash(f"Changed e-mail of {user.username} to {form.email.data}.", 'alert-success')
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/change_email.html', form=form, user=user)
 
 
 @bp.route('/registration_overview', methods=['GET'])
@@ -44,7 +129,7 @@ def registration_overview():
 
 @bp.route('/finances_overview', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['organizer']])
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 def finances_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .filter(StatusInfo.payment_required.is_(True)).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
@@ -332,6 +417,30 @@ def cancel_dancer(number):
     return redirect(url_for('organizer.raffle_system'))
 
 
+@bp.route('/dancing_info_list', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer'], ACCESS['blind_date_organizer']])
+def dancing_info_list():
+    dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+        .filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == SELECTED)).order_by(ContestantInfo.number)\
+        .all()
+    return render_template('organizer/dancing_info_list.html', data=data, dancers=dancers)
+
+
+@bp.route('/edit_dancing_info/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer'], ACCESS['blind_date_organizer']])
+def edit_dancing_info(number):
+    form = EditDancingInfoForm()
+    dancer = db.session.query(Contestant).join(DancingInfo).filter(Contestant.contestant_id == number).first()
+    form = populate_dancing_info_form(form, dancer, edit_dancing_info=True)
+    if form.validate_on_submit():
+        flash('{} data has been changed successfully.'.format(submit_updated_dancing_info(form, contestant=dancer)),
+              'alert-success')
+        return redirect(url_for('organizer.dancing_info_list'))
+    return render_template('organizer/edit_dancing_info.html', data=data, form=form, dancer=dancer)
+
+
 @bp.route('/merchandise', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS['organizer']])
@@ -410,7 +519,9 @@ def bad():
         teams = Team.query.all()
         dancers = Contestant.query.join(StatusInfo)\
             .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED)).all()
-        text = render_template('organizer/_BAD_createTournament.sql', teams=teams, dancers=dancers)
+        registered_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == REGISTERED).all()
+        text = render_template('organizer/_BAD_createTournament.sql', teams=teams, dancers=dancers,
+                               registered_dancers=registered_dancers)
         output = StringIO(text)
         output = BytesIO(output.read().encode('utf-8-sig'))
         return send_file(output, as_attachment=True, attachment_filename="createTournament.sql")
@@ -419,10 +530,21 @@ def bad():
             .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED), DancingInfo.role == LEAD) \
             .all()
         leads = [di for lead in leads for di in lead.dancing_info if di.role == LEAD and di.partner is not None]
+        closed_open_leads = Contestant.query.join(StatusInfo).join(DancingInfo) \
+            .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED), DancingInfo.role == LEAD,
+                    or_(DancingInfo.level == CLOSED, DancingInfo.level == OPEN_CLASS)).all()
+        closed_open_leads = [di for lead in closed_open_leads for di in lead.dancing_info if di.role == LEAD
+                             and (di.level == CLOSED or di.level == OPEN_CLASS)]
+        closed_open_follows = Contestant.query.join(StatusInfo).join(DancingInfo) \
+            .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED), DancingInfo.role == FOLLOW,
+                    or_(DancingInfo.level == CLOSED, DancingInfo.level == OPEN_CLASS)).all()
+        closed_open_follows = [di for follow in closed_open_follows for di in follow.dancing_info if di.role == FOLLOW
+                               and (di.level == CLOSED or di.level == OPEN_CLASS)]
         salsa_couples = SalsaPartners.query.all()
         polka_couples = PolkaPartners.query.all()
         text = render_template('organizer/_BAD_populateCouples.sql', leads=leads,
-                               salsa_couples=salsa_couples, polka_couples=polka_couples)
+                               salsa_couples=salsa_couples, polka_couples=polka_couples,
+                               closed_open_leads=closed_open_leads, closed_open_follows=closed_open_follows)
         output = StringIO(text)
         output = BytesIO(output.read().encode('utf-8-sig'))
         return send_file(output, as_attachment=True, attachment_filename="populateCouples.sql")
@@ -434,11 +556,11 @@ def bad():
 @requires_access_level([ACCESS['organizer']])
 def adjudicators_overview():
     ts = TournamentState.query.first()
-    ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo)\
+    ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo)\
         .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_ballroom != NO)\
         .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_ballroom), ContestantInfo.team_id)\
         .all()
-    latin_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
+    latin_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo) \
         .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_latin != NO) \
         .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_latin), ContestantInfo.team_id) \
         .all()
@@ -462,14 +584,18 @@ def adjudicators_overview():
             ws = wb.add_worksheet(name=comp)
             ws.write(0, 0, 'Dancer', f)
             ws.write(0, 1, 'Team', f)
-            ws.write(0, 2, 'Wants to adjudicate?', f)
+            ws.write(0, 2, 'E-mail', f)
+            ws.write(0, 3, 'Wants to adjudicate?', f)
             if comp == BALLROOM or comp == LATIN:
-                ws.write(0, 3, 'Has license?', f)
-                ws.write(0, 4, 'Highest achieved level', f)
-                ws.set_column(0, 4, 30)
+                ws.write(0, 4, 'Has license?', f)
+                ws.write(0, 5, 'Highest achieved level', f)
+                ws.write(0, 6, 'Dancing Ballroom?', f)
+                ws.write(0, 7, 'Dancing Latin?', f)
+                ws.set_column(0, 7, 30)
                 for d in range(0, len(adj)):
                     ws.write(d + 1, 0, adj[d].get_full_name())
                     ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    ws.write(d + 1, 2, adj[d].email)
                     if comp == BALLROOM:
                         wants_to = adj[d].volunteer_info[0].jury_ballroom
                         lic = adj[d].volunteer_info[0].license_jury_ballroom
@@ -478,19 +604,23 @@ def adjudicators_overview():
                         wants_to = adj[d].volunteer_info[0].jury_latin
                         lic = adj[d].volunteer_info[0].license_jury_latin
                         lvl = adj[d].volunteer_info[0].level_latin
-                    ws.write(d + 1, 2, wants_to)
-                    ws.write(d + 1, 3, lic)
-                    ws.write(d + 1, 4, lvl)
+                    ws.write(d + 1, 3, wants_to)
+                    ws.write(d + 1, 4, lic)
+                    ws.write(d + 1, 5, lvl)
+                    dc = get_dancing_categories(adj[d].dancing_info)
+                    ws.write(d + 1, 6, dc[BALLROOM].level)
+                    ws.write(d + 1, 7, dc[LATIN].level)
             else:
-                ws.set_column(0, 2, 30)
+                ws.set_column(0, 3, 30)
                 for d in range(0, len(adj)):
                     ws.write(d + 1, 0, adj[d].get_full_name())
                     ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    ws.write(d + 1, 2, adj[d].email)
                     if comp == SALSA:
                         wants_to = adj[d].volunteer_info[0].jury_salsa
                     else:
                         wants_to = adj[d].volunteer_info[0].jury_polka
-                    ws.write(d + 1, 2, wants_to)
+                    ws.write(d + 1, 3, wants_to)
             ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
@@ -498,3 +628,132 @@ def adjudicators_overview():
     return render_template('organizer/adjudicators_overview.html', ts=ts, data=data,
                            ballroom_adjudicators=ballroom_adjudicators, latin_adjudicators=latin_adjudicators,
                            salsa_adjudicators=salsa_adjudicators, polka_adjudicators=polka_adjudicators)
+
+
+@bp.route('/sleeping_hall', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def sleeping_hall():
+    ts = TournamentState.query.first()
+    all_teams = db.session.query(Team).all()
+    teams = [{'name': team.name, 'dancers': db.session.query(Contestant)
+             .join(ContestantInfo, StatusInfo, AdditionalInfo)
+             .filter(ContestantInfo.team == team, StatusInfo.status == CONFIRMED,
+                     AdditionalInfo.sleeping_arrangements.is_(True))
+             .order_by(ContestantInfo.number).all()} for team in all_teams]
+    for team in teams:
+        team['number_of_dancers'] = len(team['dancers'])
+    total = sum([team['number_of_dancers'] for team in teams])
+    form = request.args
+    if 'download_file' in form:
+        fn = 'sleeping_hall_ETDS_2018.xlsx'
+        output = BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        f = wb.add_format({'text_wrap': True, 'bold': True})
+        la = wb.add_format({'align': 'left'})
+        ws = wb.add_worksheet()
+        ws.write(0, 0, 'Team', f)
+        ws.write(0, 1, 'Dancers in sleeping hall (Total: {total})'.format(total=total), f)
+        for d in range(0, len(teams)):
+            ws.write(d + 1, 0, teams[d]['name'])
+            ws.write(d + 1, 1, teams[d]['number_of_dancers'], la)
+        ws.set_column(0, 0, 30)
+        ws.set_column(1, 1, 40)
+        ws.freeze_panes(1, 0)
+        wb.close()
+        output.seek(0)
+        return send_file(output, as_attachment=True, attachment_filename=fn)
+    return render_template('organizer/sleeping_hall.html', data=data, ts=ts, teams=teams, total=total)
+
+
+@bp.route('/switch_to_bda', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def switch_to_bda():
+    bda = User.query.filter(User.access == ACCESS['blind_date_organizer']).first()
+    logout_user()
+    login_user(bda)
+    return redirect(url_for('main.index'))
+
+
+@bp.route('/tournament_check_in', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+def tournament_check_in():
+    ts = TournamentState.query.first()
+    all_teams = db.session.query(Team).all()
+    teams = [{'name': team.name, 'id': team.name.replace(' ', '-').replace('`', ''),
+              'team_finances': db.session.query(TeamFinances).filter(TeamFinances.team == team).first(),
+              'confirmed_dancers': db.session.query(Contestant).join(ContestantInfo, StatusInfo)
+              .filter(ContestantInfo.team == team, StatusInfo.status == CONFIRMED)
+              .order_by(ContestantInfo.number).all(),
+              'checked_in_dancers': db.session.query(Contestant).join(ContestantInfo, StatusInfo)
+              .filter(ContestantInfo.team == team, StatusInfo.status == CONFIRMED, StatusInfo.checked_in.is_(True))
+              .order_by(ContestantInfo.number).all(),
+              'finances': data.finances_overview(db.session.query(Contestant).join(ContestantInfo, StatusInfo)
+                                                 .filter(ContestantInfo.team == team, StatusInfo.status == CONFIRMED)
+                                                 .order_by(ContestantInfo.number).all())
+              }
+             for team in all_teams]
+    return render_template('organizer/tournament_check_in.html', ts=ts, data=data, teams=teams)
+
+
+@bp.route('/check_in_dancer/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+def check_in_dancer(number):
+    dancer = db.session.query(Contestant).join(StatusInfo, ContestantInfo)\
+        .filter(Contestant.contestant_id == number).first()
+    if dancer.contestant_info[0].team_captain is True and dancer.status_info[0].checked_in is False:
+        dancers_unpaid = db.session.query(Contestant).join(ContestantInfo, StatusInfo)\
+            .filter(ContestantInfo.team == dancer.contestant_info[0].team, StatusInfo.status == CONFIRMED,
+                    StatusInfo.paid.is_(False)).order_by(ContestantInfo.number).all()
+        if len(dancers_unpaid) > 0:
+            flash(Markup('There are dancers that have not paid their entree fee and/or merchandise. '
+                         'Please click <a href="{url}" target="_blank">here</a> to check the finances tab.'
+                         .format(url=url_for('organizer.finances_overview'))), 'alert-danger')
+        else:
+            finances = data.finances_overview(db.session.query(Contestant).join(ContestantInfo, StatusInfo)
+                                              .filter(ContestantInfo.team == dancer.contestant_info[0].team,
+                                                      StatusInfo.status == CONFIRMED)
+                                              .order_by(ContestantInfo.number).all())
+            team_finances = db.session.query(TeamFinances).filter(TeamFinances.team == dancer.contestant_info[0].team) \
+                .first()
+            if team_finances.paid != finances['price_total']:
+                flash(Markup('There is a discrepancy with the total amount owed and total amount received. '
+                      'Please click <a href="{url}" target="_blank">here</a> to check the finances tab.'
+                             .format(url=url_for('organizer.finances_overview'))), 'alert-danger')
+    dancer.status_info[0].checked_in = True if dancer.status_info[0].checked_in is False else False
+    db.session.commit()
+    if dancer.status_info[0].checked_in:
+        flash('{name} from team {team} has been checked in.'
+              .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team), 'alert-success')
+        if not dancer.status_info[0].paid:
+            flash('Payment of the entry fee and/or merchandise for {name} from team {team} has not as marked as paid.'
+                  .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team), 'alert-warning')
+    else:
+        flash('{name} from team {team} has been checked out.'
+              .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team))
+    return redirect(url_for('organizer.tournament_check_in'))
+
+
+@bp.route('/dancer_paid/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+def dancer_paid(number):
+    dancer = db.session.query(Contestant).join(StatusInfo).filter(Contestant.contestant_id == number).first()
+    dancer.status_info[0].paid = True if dancer.status_info[0].paid is False else False
+    db.session.commit()
+    flash('Payment status of {name} from team {team} changed successfully.'
+          .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team))
+    return redirect(url_for('organizer.tournament_check_in'))
+
+
+@bp.route('/switch_to_cia', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def switch_to_cia():
+    cia = User.query.filter(User.access == ACCESS[CHECK_IN_ASSISTANT]).first()
+    logout_user()
+    login_user(cia)
+    return redirect(url_for('main.index'))

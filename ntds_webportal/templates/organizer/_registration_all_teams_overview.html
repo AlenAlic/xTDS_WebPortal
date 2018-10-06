@@ -4,6 +4,7 @@
             <th><b>#</b></th>
             <th><b>Name</b></th>
             <th><b>Team</b></th>
+            <th><b>E-mail</b></th>
             <th><b>Status</b></th>
             <th><b>First time</b></th>
             <th><b>Student</b></th>
@@ -22,6 +23,9 @@
                 </td>
                 <td>
                     {{ dancer.contestant_info[0].team }}
+                </td>
+                <td>
+                    {{ dancer.email }}
                 </td>
                 <td>
                     {{ data.STATUS[dancer.status_info[0].status] }}

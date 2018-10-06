@@ -147,9 +147,9 @@ def populate_registration_form(form, dancer):
             form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
                 .filter(ContestantInfo.team == current_user.team,
                         Contestant.contestant_id == dancing_categories[LATIN].partner).first()
-        if form.ballroom_level.data == 'no':
+        if form.ballroom_level.data == NO:
             form.ballroom_role.data = 'None'
-        if form.latin_level.data == 'no':
+        if form.latin_level.data == NO:
             form.latin_role.data = 'None'
     else:
         form.ballroom_level.data = dancing_categories[BALLROOM].level
@@ -190,7 +190,7 @@ def populate_registration_form(form, dancer):
     return form
 
 
-def contestant_validate_dancing(form):
+def validate_edit_dancing_info(form):
     try:
         form.first_name.data = form.first_name.data.capitalize()
         form.last_name.data = form.last_name.data.capitalize()
@@ -240,8 +240,74 @@ def contestant_validate_dancing(form):
                 elif form.latin_role.data == FOLLOW:
                     form.latin_partner.data = 'same_role_follow'
                     form.latin_role.data = 'same_role_follow'
+    return form
+
+
+def contestant_validate_dancing(form):
+    form = validate_edit_dancing_info(form)
     form.volunteer.data = NO
     form.first_aid.data = NO
+    return form
+
+
+def populate_dancing_info_form(form, dancer, edit_dancing_info=None):
+    ballroom_partners = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(Contestant.contestant_id != dancer.contestant_id,
+                or_(and_(StatusInfo.status != CANCELLED,
+                         DancingInfo.competition == BALLROOM, DancingInfo.partner == dancer.contestant_id),
+                    and_(StatusInfo.status == REGISTERED,
+                         DancingInfo.competition == BALLROOM, DancingInfo.partner.is_(None))),
+                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
+    latin_partners = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
+        .filter(Contestant.contestant_id != dancer.contestant_id,
+                or_(and_(StatusInfo.status != CANCELLED,
+                         DancingInfo.competition == LATIN, DancingInfo.partner == dancer.contestant_id),
+                    and_(StatusInfo.status == REGISTERED,
+                         DancingInfo.competition == LATIN, DancingInfo.partner.is_(None))),
+                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
+    form.full_name.data = dancer.get_full_name()
+    form.team.data = dancer.contestant_info[0].team.name
+    form.ballroom_partner.query = ballroom_partners
+    form.latin_partner.query = latin_partners
+    form.email.data = dancer.email
+    dancing_categories = get_dancing_categories(dancer.dancing_info)
+    if request.method == 'POST':
+        # noinspection PyTypeChecker
+        form = validate_edit_dancing_info(form)
+        if (dancer.status_info[0].status == SELECTED or dancer.status_info[0].status == CONFIRMED) \
+                and edit_dancing_info is None:
+            form.ballroom_level.data = dancing_categories[BALLROOM].level
+            form.ballroom_role.data = dancing_categories[BALLROOM].role
+            form.ballroom_blind_date.data = dancing_categories[BALLROOM].blind_date
+            form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+                .filter(Contestant.contestant_id == dancing_categories[BALLROOM].partner).first()
+            form.latin_level.data = dancing_categories[LATIN].level
+            form.latin_role.data = dancing_categories[LATIN].role
+            form.latin_blind_date.data = dancing_categories[LATIN].blind_date
+            form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+                .filter(Contestant.contestant_id == dancing_categories[LATIN].partner).first()
+        elif edit_dancing_info is True:
+            form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+                .filter(Contestant.contestant_id == dancing_categories[BALLROOM].partner).first()
+            form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+                .filter(Contestant.contestant_id == dancing_categories[LATIN].partner).first()
+        if form.ballroom_level.data == NO:
+            form.ballroom_role.data = 'None'
+        if form.latin_level.data == NO:
+            form.latin_role.data = 'None'
+    else:
+        form.ballroom_level.data = dancing_categories[BALLROOM].level
+        form.ballroom_role.data = dancing_categories[BALLROOM].role
+        form.ballroom_blind_date.data = dancing_categories[BALLROOM].blind_date
+        form.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+            .filter(Contestant.contestant_id == dancing_categories[BALLROOM].partner).first()
+        form.latin_level.data = dancing_categories[LATIN].level
+        form.latin_role.data = dancing_categories[LATIN].role
+        form.latin_blind_date.data = dancing_categories[LATIN].blind_date
+        form.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
+            .filter(Contestant.contestant_id == dancing_categories[LATIN].partner).first()
     return form
 
 
@@ -287,32 +353,7 @@ def submit_contestant(form, contestant=None):
     ci.diet_allergies = form.diet_allergies.data
     dancing_categories[BALLROOM].contestant = contestant
     dancing_categories[LATIN].contestant = contestant
-    if form.ballroom_level.data == NO:
-        dancing_categories[BALLROOM].not_dancing(BALLROOM)
-        db.session.add(dancing_categories[BALLROOM])
-    else:
-        dancing_categories[BALLROOM].level = form.ballroom_level.data
-        dancing_categories[BALLROOM].role = form.ballroom_role.data
-        dancing_categories[BALLROOM].blind_date = form.ballroom_blind_date.data
-        db.session.add(dancing_categories[BALLROOM])
-        db.session.flush()
-        if form.ballroom_partner.data is not None:
-            dancing_categories[BALLROOM].set_partner(form.ballroom_partner.data.contestant_id)
-        else:
-            dancing_categories[BALLROOM].set_partner(None)
-    if form.latin_level.data == NO:
-        dancing_categories[LATIN].not_dancing(LATIN)
-        db.session.add(dancing_categories[LATIN])
-    else:
-        dancing_categories[LATIN].level = form.latin_level.data
-        dancing_categories[LATIN].role = form.latin_role.data
-        dancing_categories[LATIN].blind_date = form.latin_blind_date.data
-        db.session.add(dancing_categories[LATIN])
-        db.session.flush()
-        if form.latin_partner.data is not None:
-            dancing_categories[LATIN].set_partner(form.latin_partner.data.contestant_id)
-        else:
-            dancing_categories[LATIN].set_partner(None)
+    update_dancing_info(form, dancing_categories)
     vi.contestant = contestant
     vi.volunteer = form.volunteer.data
     vi.first_aid = form.first_aid.data
@@ -336,5 +377,42 @@ def submit_contestant(form, contestant=None):
             mi.product_id = [merch for merch in merchandises if merch.product_name == key][0].merchandise_id
             mi.quantity = int(getattr(form, key).data)
             db.session.add(mi)
+    db.session.commit()
+    return contestant.get_full_name()
+
+
+def update_dancing_info(form, dancing_categories):
+    if form.ballroom_level.data == NO:
+        dancing_categories[BALLROOM].not_dancing(BALLROOM)
+        db.session.add(dancing_categories[BALLROOM])
+    else:
+        dancing_categories[BALLROOM].level = form.ballroom_level.data
+        dancing_categories[BALLROOM].role = form.ballroom_role.data
+        dancing_categories[BALLROOM].blind_date = form.ballroom_blind_date.data
+        db.session.add(dancing_categories[BALLROOM])
+        db.session.flush()
+        if form.ballroom_level.data not in BLIND_DATE_LEVELS and form.ballroom_partner.data is not None:
+            dancing_categories[BALLROOM].set_partner(form.ballroom_partner.data.contestant_id)
+        else:
+            dancing_categories[BALLROOM].set_partner(None)
+    if form.latin_level.data == NO:
+        dancing_categories[LATIN].not_dancing(LATIN)
+        db.session.add(dancing_categories[LATIN])
+    else:
+        dancing_categories[LATIN].level = form.latin_level.data
+        dancing_categories[LATIN].role = form.latin_role.data
+        dancing_categories[LATIN].blind_date = form.latin_blind_date.data
+        db.session.add(dancing_categories[LATIN])
+        db.session.flush()
+        if form.latin_level.data not in BLIND_DATE_LEVELS and form.latin_partner.data is not None:
+            dancing_categories[LATIN].set_partner(form.latin_partner.data.contestant_id)
+        else:
+            dancing_categories[LATIN].set_partner(None)
+
+
+def submit_updated_dancing_info(form, contestant):
+    di = contestant.dancing_info
+    dancing_categories = get_dancing_categories(di)
+    update_dancing_info(form, dancing_categories)
     db.session.commit()
     return contestant.get_full_name()

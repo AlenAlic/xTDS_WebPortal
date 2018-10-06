@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block app_content %}
+
+{% if ts.main_raffle_result_visible is sameas true %}
+<h2>Dancers that have checked in at the tournament desk <span style="font-size:x-large" class="badge">{{ checked_in_dancers|length }}/{{ confirmed_dancers|length }}</span></h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th><b>Dancer</b></th>
+            <th><b>Checked in?</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dancer in confirmed_dancers %}
+            <tr class="{% if dancer.status_info[0].checked_in == true %}success{% else %}danger{% endif %}">
+                <td>{{ dancer.get_full_name() }}</td>
+                <td>{{ data.TF[dancer.status_info[0].checked_in] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<h2>The raffle has not taken place yet.</h2>
+{% endif %}
+
+{% endblock %}

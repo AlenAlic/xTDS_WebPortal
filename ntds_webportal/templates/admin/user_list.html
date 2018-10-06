@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block app_content %}
+<h2>Manage accounts</h2>
+<div class="row" style="visibility:hidden">
+    {% if organizer is not none %}
+        {% set organizer_image = 'edit_contestant.png' %}
+    {% else %}
+        {% set organizer_image = 'register_contestant.png' %}
+    {% endif %}
+    {% with url='self_admin.organizer_account', title='Organizer', image=organizer_image %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with url='self_admin.create_team_account', title='Create new Team', image='team.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with url='self_admin.create_team_captain', title='Create new Teamcaptain and Treasurer account', image='register_contestant.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+<h2>Available Teamcaptains and Treasurers</h2>
+<!--<a href="{{ url_for('self_admin.create_team_captain') }}" class="btn btn-primary">Create new Team captain/Treasurer account</a>-->
+<table class="table">
+    <colgroup>
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 30%;">
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 10%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th><b>Username</b></th>
+            <th><b>Team</b></th>
+            <th><b>E-mail</b></th>
+            <th><b>Country</b></th>
+            <th><b>Active</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{% if user.team is not none %}{{ user.team }}{% endif %}</td>
+                <td>{% if user.email is not none %}{{ user.email }}{% endif %}</td>
+                <td>{{ user.team.country }}</td>
+                <td>{{ data.TF[user.is_active] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Available Teams</h2>
+{% if current_user.is_admin() %}
+<!--<a href="{{ url_for('self_admin.create_team_account') }}" class="btn btn-primary">Create new Team</a>-->
+{% endif %}
+<table class="table">
+    <colgroup>
+        <col span="1" style="width: 40%;">
+        <col span="1" style="width: 30%;">
+        <col span="1" style="width: 30%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th><b>Name</b></th>
+            <th><b>City</b></th>
+            <th><b>Country</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for team in teams %}
+            <tr>
+                <td>{{ team.name }}</td>
+                <td>{{ team.city }}</td>
+                <td>{{ team.country }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function onStart() {
+    var maxHeight = 0;
+    $(".thumbnail-same-height").each(function(){
+       if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
+    });
+    $(".thumbnail-same-height").height(maxHeight);
+    $(".row").css('visibility', 'visible');
+}
+</script>
+{% endblock %}

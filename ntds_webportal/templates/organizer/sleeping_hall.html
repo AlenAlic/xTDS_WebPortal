@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block app_content %}
+
+{% if ts.main_raffle_result_visible is sameas true %}
+<h2>Dancers staying in the sleeping hall <span style="font-size:x-large" class="badge">{% if total > 0 %}{{ total }}{% else %}0{% endif %}</span></h2>
+<form method="GET" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list">
+</form>
+<div style="height:10px;"></div>
+<table class="table table-list">
+    <thead>
+        <tr>
+            <th><b>Team</b></th>
+            <th><b>Dancers in sleeping hall</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for team in teams %}
+            <tr>
+                <td>{{ team['name'] }}</td>
+                <td>{{ team['number_of_dancers'] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!--{% for team in teams %}-->
+<!--<h3>{{ team['name'] }}</h3>-->
+<!--<table class="table table-list">-->
+    <!--<thead>-->
+        <!--<tr>-->
+            <!--<th><b>Name</b></th>-->
+        <!--</tr>-->
+    <!--</thead>-->
+    <!--<tbody>-->
+        <!--{% for dancer in team['dancers'] %}-->
+            <!--<tr>-->
+                <!--<td>{{ dancer.get_full_name() }}</td>-->
+            <!--</tr>-->
+        <!--{% endfor %}-->
+    <!--</tbody>-->
+<!--</table>-->
+<!--{% endfor %}-->
+
+{% else %}
+<h2>The raffle has not taken place yet.</h2>
+{% endif %}
+
+{% endblock %}
+

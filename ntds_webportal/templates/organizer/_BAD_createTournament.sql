@@ -75,25 +75,25 @@ INSERT INTO `dance` SET `id` = {{ var.dance_PK }}, `name` = "Polka",          `t
 -- Mode SP: since our couples will remain fixed during each tournament
 -- May link to its qualification tournament, in which case no new starting numbers are needed
 -- Day 1
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `event` = 1, `class` = {{ var.class_Breitensport_qualification }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-03 09:00", `mode` = "SP", `numberl0` = 1, `numberl1` = 199, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_Amateurs }}, `event` = 1, `class` = {{ var.class_Breitensport_Amateurs }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-03 11:00", `mode` = "SP", `quali` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_Professionals }}, `event` = 1, `class` = {{ var.class_Breitensport_Professionals }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-03 12:00", `mode` = "SP", `quali` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_Masters }}, `event` = 1, `class` = {{ var.class_Breitensport_Masters }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-03 13:00", `mode` = "SP", `quali` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_Champions }}, `event` = 1, `class` = {{ var.class_Breitensport_Champions }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-03 14:00", `mode` = "SP", `quali` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_CloseD }}, `event` = 1, `class` = {{ var.class_CloseD }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-03-03 15:00", `mode` = "CP_D", `numberl0` = 200, `numberl1` = 299, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Open_Class }}, `event` = 1, `class` = {{ var.class_Open_Class }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-03-03 15:00", `mode` = "CP_D", `numberl0` = 300, `numberl1` = 399, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Polka }}, `event` = 1, `class` = {{ var.class_Polka }}, `disc` = {{ var.discipline_Polka }}, `when` = "2018-03-03 15:00", `mode` = "SP", `numberl0` = 400, `numberl1` = 599, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `event` = 1, `class` = {{ var.class_Breitensport_qualification }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-10-13 09:00", `mode` = "SP", `numberl0` = 1, `numberl1` = 199, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_Amateurs }}, `event` = 1, `class` = {{ var.class_Breitensport_Amateurs }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-10-13 11:00", `mode` = "SP", `quali` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_Professionals }}, `event` = 1, `class` = {{ var.class_Breitensport_Professionals }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-10-13 12:00", `mode` = "SP", `quali` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_Masters }}, `event` = 1, `class` = {{ var.class_Breitensport_Masters }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-10-13 13:00", `mode` = "SP", `quali` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Breitensport_Champions }}, `event` = 1, `class` = {{ var.class_Breitensport_Champions }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-10-13 14:00", `mode` = "SP", `quali` = {{ var.tournament_Ballroom_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_CloseD }}, `event` = 1, `class` = {{ var.class_CloseD }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-10-13 15:00", `mode` = "CP_D", `numberl0` = 200, `numberl1` = 299, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Open_Class }}, `event` = 1, `class` = {{ var.class_Open_Class }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-10-13 15:00", `mode` = "CP_D", `numberl0` = 300, `numberl1` = 399, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Polka }}, `event` = 1, `class` = {{ var.class_Polka }}, `disc` = {{ var.discipline_Polka }}, `when` = "2018-10-13 15:00", `mode` = "SP", `numberl0` = 400, `numberl1` = 599, `floormin` = 1, `floormax` = 2;
 -- Day 2
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_qualification }}, `event` = 1, `class` = {{ var.class_Breitensport_qualification }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-03-04 09:00", `mode` = "SP", `numberl0` = 1, `numberl1` = 199;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_Amateurs }}, `event` = 1, `class` = {{ var.class_Breitensport_Amateurs }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-03-04 11:00", `mode` = "SP", `quali` = {{ var.tournament_Latin_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_Professionals }}, `event` = 1, `class` = {{ var.class_Breitensport_Professionals }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-03-04 12:00", `mode` = "SP", `quali` = {{ var.tournament_Latin_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_Masters }}, `event` = 1, `class` = {{ var.class_Breitensport_Masters }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-03-04 13:00", `mode` = "SP", `quali` = {{ var.tournament_Latin_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_Champions }}, `event` = 1, `class` = {{ var.class_Breitensport_Champions }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-03-04 14:00", `mode` = "SP", `quali` = {{ var.tournament_Latin_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_CloseD }}, `event` = 1, `class` = {{ var.class_CloseD }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-04 15:00", `mode` = "CP_D", `numberl0` = 200, `numberl1` = 299, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Open_Class }}, `event` = 1, `class` = {{ var.class_Open_Class }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-04 15:00", `mode` = "CP_D", `numberl0` = 300, `numberl1` = 399, `floormin` = 1, `floormax` = 2;
-INSERT INTO `tournament` SET `id` = {{ var.tournament_Salsa }}, `event` = 1, `class` = {{ var.class_Salsa }}, `disc` = {{ var.discipline_Salsa }}, `when` = "2018-03-03 15:00", `mode` = "SP", `numberl0` = 400, `numberl1` = 599, `floormin` = 1, `floormax` = 2;
--- Test to educate judges
-INSERT INTO `tournament` SET `id` = {{ var.tournament_TEST }}, `event` = 1, `class` = {{ var.class_TEST }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-03-03 08:00", `mode` = "SP", `numberl0` = 900, `numberl1` = 999, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_qualification }}, `event` = 1, `class` = {{ var.class_Breitensport_qualification }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-10-14 09:00", `mode` = "SP", `numberl0` = 1, `numberl1` = 199;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_Amateurs }}, `event` = 1, `class` = {{ var.class_Breitensport_Amateurs }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-10-14 11:00", `mode` = "SP", `quali` = {{ var.tournament_Latin_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_Professionals }}, `event` = 1, `class` = {{ var.class_Breitensport_Professionals }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-10-14 12:00", `mode` = "SP", `quali` = {{ var.tournament_Latin_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_Masters }}, `event` = 1, `class` = {{ var.class_Breitensport_Masters }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-10-14 13:00", `mode` = "SP", `quali` = {{ var.tournament_Latin_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Latin_Breitensport_Champions }}, `event` = 1, `class` = {{ var.class_Breitensport_Champions }}, `disc` = {{ var.discipline_Latin }}, `when` = "2018-10-14 14:00", `mode` = "SP", `quali` = {{ var.tournament_Latin_Breitensport_qualification }}, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_CloseD }}, `event` = 1, `class` = {{ var.class_CloseD }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-10-14 15:00", `mode` = "CP_D", `numberl0` = 200, `numberl1` = 299, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Ballroom_Open_Class }}, `event` = 1, `class` = {{ var.class_Open_Class }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-10-14 15:00", `mode` = "CP_D", `numberl0` = 300, `numberl1` = 399, `floormin` = 1, `floormax` = 2;
+INSERT INTO `tournament` SET `id` = {{ var.tournament_Salsa }}, `event` = 1, `class` = {{ var.class_Salsa }}, `disc` = {{ var.discipline_Salsa }}, `when` = "2018-10-14 15:00", `mode` = "SP", `numberl0` = 400, `numberl1` = 599, `floormin` = 1, `floormax` = 2;
+-- Test to educate adjudicators
+INSERT INTO `tournament` SET `id` = {{ var.tournament_TEST }}, `event` = 1, `class` = {{ var.class_TEST }}, `disc` = {{ var.discipline_Ballroom }}, `when` = "2018-10-13 08:00", `mode` = "SP", `numberl0` = 900, `numberl1` = 999, `floormin` = 1, `floormax` = 2;
 
 -- The dances to be danced in tournament, altered in webUI prior to actual rounds
 -- First day
@@ -150,17 +150,23 @@ INSERT INTO `t_dance` SET `tourn` = {{ var.tournament_Salsa }}, `dance` = {{ var
 -- INSERT INTO `t_dance` SET `tourn` = {{ var.tournament_Salsa }}, `dance` = {{ var.dance_BC }};
 -- INSERT INTO `t_dance` SET `tourn` = {{ var.tournament_Salsa }}, `dance` = {{ var.dance_MG }};
 
+{#
 -- TEST Lead and Follows
 {%- for i in range(50) %}
 INSERT INTO `person` SET `id` = {{ 9001 + i }}, `fname` = "Leader{{ i+1 }}", `name` = "Test", `team` = {{ var.team_organization }};
 INSERT INTO `person` SET `id` = {{ 9101 + i }}, `fname` = "Follower{{ i+1 }}", `name` = "Test", `team` = {{ var.team_organization }};
 INSERT INTO `start` (`tourn`,`lead`,`follow`) VALUES ({{ var.tournament_TEST }}, {{ 9001 + i }}, {{ 9101 + i }});
 {%- endfor %}
-
+#}
 -- Dancers
 -- Insert dancers into system:
 {%- for dancer in dancers %}
 INSERT INTO `person` SET `id` = "{{ dancer.contestant_id }}", `fname` = "{{ dancer.first_name }}", `name` = "{{ dancer.get_last_name() }}", `team` = (SELECT `id` FROM `team` WHERE `name` = "{{ dancer.contestant_info[0].team.name }} ({{ dancer.contestant_info[0].team.city }})");
+{%- endfor %}
+
+-- REGISTERD DANCERS, use this to copy queries to import dancers that have been selected by the system after this file was created
+{%- for dancer in registered_dancers %}
+-- INSERT INTO `person` SET `id` = "{{ dancer.contestant_id }}", `fname` = "{{ dancer.first_name }}", `name` = "{{ dancer.get_last_name() }}", `team` = (SELECT `id` FROM `team` WHERE `name` = "{{ dancer.contestant_info[0].team.name }} ({{ dancer.contestant_info[0].team.city }})");
 {%- endfor %}
 
 -- Jury
@@ -169,9 +175,10 @@ INSERT INTO `person` SET `id` = "{{ dancer.contestant_id }}", `fname` = "{{ danc
 or dancer.volunteer_info[0].jury_latin == "yes" or dancer.volunteer_info[0].jury_latin == "maybe"
 or dancer.volunteer_info[0].jury_salsa == "yes" or dancer.volunteer_info[0].jury_salsa == "maybe"
 or dancer.volunteer_info[0].jury_polka == "yes" or dancer.volunteer_info[0].jury_polka == "maybe" %}
-INSERT INTO `staff`      SET `id` = {{ dancer.contestant_id }}, `tag` = "{{ dancer.contestant_info[0].number }}", `password` = SHA1("jury{{ dancer.contestant_info[0].number }}");
+-- {{ dancer.get_full_name() }}
+INSERT INTO `staff`      SET `id` = {{ dancer.contestant_id }}, `tag` = "{{ dancer.first_name[0]+dancer.last_name[0] }}", `password` = SHA1("jury{{ dancer.contestant_info[0].number }}");
 INSERT INTO `employ`     SET `role` = "adjudicator", `who` = {{ dancer.contestant_id }};
-INSERT INTO `employ`     SET `role` = "adjudicator", `who` = {{ dancer.contestant_id }}, `tourn` = {{ var.tournament_TEST }};
+{# INSERT INTO `employ`     SET `role` = "adjudicator", `who` = {{ dancer.contestant_id }}, `tourn` = {{ var.tournament_TEST }}; #}
 {%- endif %}
 {%- endfor %}
 

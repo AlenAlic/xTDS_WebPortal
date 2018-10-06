@@ -1,7 +1,7 @@
 # noinspection PyProtectedMember
 from wtforms.validators import ValidationError
 from ntds_webportal import db
-from ntds_webportal.models import Contestant
+from ntds_webportal.models import Contestant, User
 from ntds_webportal.data import LEAD, FOLLOW
 
 REQUIRED = 'This field is required.'
@@ -83,3 +83,11 @@ class UniqueEmail(object):
         email_list = [i[0] for i in db.session.query(Contestant.email).all()]
         if field.data in email_list:
             raise ValidationError(field.gettext('This e-mail address is already in use.'))
+
+
+class UniqueUsername(object):
+    """Checks if an username is unique."""
+    def __call__(self, form, field):
+        username_list = [i[0] for i in db.session.query(User.username).all()]
+        if field.data in username_list:
+            raise ValidationError(field.gettext('This username already exists.'))

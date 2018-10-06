@@ -18,10 +18,7 @@ f.get_pk_from_identity = get_pk_from_identity
 PARTNER_TEXT = 'No partner / Partner has not signed up yet'
 
 
-class BaseContestantForm(FlaskForm):
-    number = IntegerField('Contestant number', validators=[DataRequired()], render_kw={'disabled': True})
-    team = StringField('Team', validators=[DataRequired()], render_kw={'disabled': True})
-
+class DancingInfoForm(FlaskForm):
     ballroom_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
     ballroom_role = SelectField('Role', validators=[Role('ballroom_level')],
                                 choices=[(k, v) for k, v in ROLES.items()])
@@ -38,6 +35,28 @@ class BaseContestantForm(FlaskForm):
     latin_partner = QuerySelectField(f"Latin partner for {tournament_settings['tournament']}",
                                      validators=[Role('latin_level'), Level()],
                                      allow_blank=True, blank_text=PARTNER_TEXT)
+
+
+class BaseContestantForm(DancingInfoForm):
+    number = IntegerField('Contestant number', validators=[DataRequired()], render_kw={'disabled': True})
+    team = StringField('Team', validators=[DataRequired()], render_kw={'disabled': True})
+
+    # ballroom_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
+    # ballroom_role = SelectField('Role', validators=[Role('ballroom_level')],
+    #                             choices=[(k, v) for k, v in ROLES.items()])
+    # ballroom_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
+    #                                    render_kw={'onclick': "dancingBDGreyOut(id, 'ballroom_partner')"})
+    # ballroom_partner = QuerySelectField(f"Ballroom partner for {tournament_settings['tournament']}",
+    #                                     validators=[Role('ballroom_level'), Level()],
+    #                                     allow_blank=True, blank_text=PARTNER_TEXT)
+    #
+    # latin_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
+    # latin_role = SelectField('Role', validators=[Role('latin_level')], choices=[(k, v) for k, v in ROLES.items()])
+    # latin_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
+    #                                 render_kw={'onclick': "dancingBDGreyOut(id, 'latin_partner')"})
+    # latin_partner = QuerySelectField(f"Latin partner for {tournament_settings['tournament']}",
+    #                                  validators=[Role('latin_level'), Level()],
+    #                                  allow_blank=True, blank_text=PARTNER_TEXT)
 
     volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in VOLUNTEER.items()])
     first_aid = SelectField('First Aid', validators=[SpecificVolunteer('volunteer')],
@@ -71,8 +90,7 @@ class BaseContestantForm(FlaskForm):
 
 for k, value in MERCHANDISE.items():
     setattr(BaseContestantForm, k, IntegerField(value, validators=[NumberRange(0, 99)], default=0,
-                                                  render_kw={"type": "number", "min": "0", "max": "99",
-                                                             "step": "1"}))
+                                                render_kw={"type": "number", "min": "0", "max": "99", "step": "1"}))
 
 
 class RegisterContestantForm(BaseContestantForm):
@@ -123,3 +141,11 @@ class NameChangeRequestForm(FlaskForm):
     prefixes = StringField('Prefixes')
     last_name = StringField('Last name', validators=[DataRequired()])
     submit = SubmitField('Send name change request')
+
+
+class EditDancingInfoForm(DancingInfoForm):
+    full_name = StringField('Full name', validators=[DataRequired()], render_kw={'disabled': True})
+    email = StringField('Email', validators=[DataRequired(), Email()], render_kw={'disabled': True})
+    team = StringField('Team', validators=[DataRequired()], render_kw={'disabled': True})
+
+    submit = SubmitField('Save changes')
