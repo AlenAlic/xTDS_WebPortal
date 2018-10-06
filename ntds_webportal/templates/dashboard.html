@@ -34,6 +34,9 @@ onload="onStart()"
     {% with url='admin.index', title='Database', text='Gives direct access to the database.', image='admin.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% with url='self_admin.user_list', title='Edit Users', text='Manage User accounts of the site.', image='users.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
     {% with url='self_admin.debug_tools', title='Debug Tools', text='Tools to debug the site.', image='debug_tools.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
@@ -43,7 +46,7 @@ onload="onStart()"
 </div>
 <h2>System tools</h2>
 <div class="row" style="visibility:hidden">
-    {% with url='self_admin.switch_user', title='Switch User', text='Log in as a different user.', image='switch_user.png' %}
+    {% with url='self_admin.switch_user', title='Switch User', text='Log in as a different user.', image='change_user.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with url='self_admin.users_lists', title='Users list', text='Download a list of usernames, email, and default passwords.', image='users_list.png' %}
@@ -53,12 +56,21 @@ onload="onStart()"
 {% endif %}
 
 {% if current_user.is_organizer() %}
-<h2>Registration</h2>
+<h2>Pre-registration period</h2>
 <div class="row" style="visibility:hidden">
-    {% with loading_screen=true, url='organizer.registration_overview', title='Registrered dancers', text='List of all registered dancers', image='contestants.png' %}
+    {% with url='organizer.user_list', title='Manage accounts', text='Manage the login accounts of the team captains and treasurers.', image='users.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with count=current_user.open_name_change_requests(), url='organizer.name_change_list', title='Name change requests', text='Requests for name changes of dancers', image='name_change.png' %}
+    {% with url='self_admin.users_lists', title='Users list', text='Download a list of usernames, email, and default passwords for all active team captain accounts.', image='users_list.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+<h2>Registration period</h2>
+<div class="row" style="visibility:hidden">
+    {% with loading_screen=true, url='organizer.registration_overview', title='Registered dancers', text='List of all registered dancers.', image='contestants.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with count=current_user.open_name_change_requests(), url='organizer.name_change_list', title='Name change requests.', text='Requests for name changes of dancers', image='name_change.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -88,10 +100,13 @@ onload="onStart()"
     {% with url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='organizer.tournament_check_in', title='Tournament check-in', text='Check in dancers from teams.', image='checked_in.png' %}
+</div>
+<h2>Switch account</h2>
+<div class="row" style="visibility:hidden">
+    {% with url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistant account. This will log you out of the Organizer account.', image='view_couples.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistant User account. This will log you out of the Organizer account.', image='switch_user.png' %}
+    {% with url='organizer.switch_to_cia', title='Check-In Assistant', text='Switch to the Check-In Assistant account. This will log you out of the Organizer account.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -109,6 +124,17 @@ onload="onStart()"
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=state.main_raffle_result_visible, url='blind_date_assistant.create_couple_polka', title='Polka Blind Date Couples', text='Create new blind date couples for Latin.', image='polka.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+{% endif %}
+
+{% if current_user.is_cia() %}
+<div class="row" style="visibility:hidden">
+    {% with accessible=state.main_raffle_result_visible, url='organizer.tournament_check_in', title='Tournament check-in', text='Check in dancers from teams.', image='checked_in.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=state.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -152,7 +178,7 @@ onload="onStart()"
     {% with accessible=state.main_raffle_result_visible, url='teamcaptains.bus_to_brno', title='Bus to Brno', text='Register dancers to travel to Brno by bus. Organized by team Düsseldorf and Bielefeld.', image='bus.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='teamcaptains.tournament_check_in', title='Tournament check-in', text='Shows who from your team has already checked in at the tournament desk.', image='checked_in.png' %}
+    {% with accessible=state.main_raffle_result_visible, url='teamcaptains.tournament_check_in', title='Tournament check-in', text='Shows who from your team has checked in at the tournament desk.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 {% endif %}

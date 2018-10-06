@@ -1,4 +1,24 @@
-# Tournaments
+# ACCESS
+ADMIN = 'admin'
+ORGANIZER = 'organizer'
+BLIND_DATE_ASSISTANT = 'blind_date_organizer'
+TEAM_CAPTAIN = 'team_captain'
+TREASURER = 'treasurer'
+CHECK_IN_ASSISTANT = 'check_in_assistant'
+ACCESS_LEVELS = {
+    ADMIN: 'Admin',
+    ORGANIZER: 'Tournament organizer',
+    BLIND_DATE_ASSISTANT: 'Blind Date assistant',
+    TEAM_CAPTAIN: 'Team captain',
+    TREASURER: 'Treasurer',
+    CHECK_IN_ASSISTANT: 'Check-in assistant'
+}
+
+# Account Names
+BLIND_DATE_ASSISTANT_ACCOUNT_NAME = 'BlindDateAssistant'
+CHECK_IN_ASSISTANT_ACCOUNT_NAME = 'CheckInAssistant'
+
+#  Tournaments
 NTDS = 'NTDS'
 ETDS = 'ETDS'
 
@@ -10,6 +30,7 @@ CZECH = 'Czech Republic'
 NORWAY = 'Norway'
 UNITED_KINGDOM = 'United Kingdom'
 POLAND = 'Poland'
+COUNTRIES = [NETHERLANDS, GERMANY, BELGIUM, CZECH, NORWAY, UNITED_KINGDOM, POLAND]
 
 # Basic options
 NONE = 'None'

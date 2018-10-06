@@ -3,11 +3,12 @@ from raffle_system.raffle_config import *
 
 # Access levels
 ACCESS = {
-    'admin': 0,
-    'organizer': 1,
-    'blind_date_organizer': 2,
-    'team_captain': 3,
-    'treasurer': 4
+    ADMIN: 0,
+    ORGANIZER: 1,
+    BLIND_DATE_ASSISTANT: 2,
+    TEAM_CAPTAIN: 3,
+    TREASURER: 4,
+    CHECK_IN_ASSISTANT: 5
 }
 
 # All possible teams

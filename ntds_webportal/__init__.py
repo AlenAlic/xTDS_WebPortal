@@ -53,7 +53,7 @@ class UserView(BaseView):
 
     # noinspection PyPep8Naming
     def on_model_change(self, form, User, is_created):
-        if form.password2.data is not None:
+        if form.password2.data != '':
             User.set_password(form.password2.data)
 
 

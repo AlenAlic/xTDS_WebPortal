@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block app_content %}
+<h2>Manage organizational accounts</h2>
+<div class="row" style="visibility:visible">
+    {% if bda is not none %}
+        {% set bda_image = 'edit_contestant.png' %}
+    {% else %}
+        {% set bda_image = 'register_contestant.png' %}
+    {% endif %}
+    {% with url='organizer.blind_date_assistant_account', title='Blind Date Assistant', image=bda_image %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% if chi is not none %}
+        {% set chi_image = 'edit_contestant.png' %}
+    {% else %}
+        {% set chi_image = 'register_contestant.png' %}
+    {% endif %}
+    {% with url='organizer.check_in_assistant_account', title='Check-In Assistant', image=chi_image %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+<h2>Available Teamcaptains and Treasurers accounts</h2>
+<table class="table">
+    <colgroup>
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 25%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th><b>Username</b></th>
+            <th><b>Team</b></th>
+            <th><b>E-mail</b></th>
+            <th><b></b></th>
+            <th><b>Country</b></th>
+            <th><b>Active</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{% if user.team is not none %}{{ user.team }}{% endif %}</td>
+                <td>{% if user.email is not none %}{{ user.email }}{% endif %}</td>
+                <td>{% if user.is_active is sameas true %}<a role="button" class="btn btn-default" href="{{ url_for('organizer.change_email', number=user.user_id) }}">Change e-mail</a>{% endif %}</td>
+                <td>{{ user.team.country }}</td>
+                <td>{{ data.TF[user.is_active] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

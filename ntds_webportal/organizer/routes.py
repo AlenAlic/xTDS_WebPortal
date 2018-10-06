@@ -8,7 +8,8 @@ from ntds_webportal.models import requires_access_level, Team, TeamFinances, Con
     SalsaPartners, PolkaPartners, VolunteerInfo
 from ntds_webportal.functions import uniquify, check_combination, get_combinations_list, submit_updated_dancing_info, \
     get_dancing_categories
-from ntds_webportal.organizer.forms import NameChangeResponse
+from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm
+from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm
 from ntds_webportal.organizer.email import send_raffle_completed_email
 from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
 from ntds_webportal.functions import populate_dancing_info_form
@@ -22,6 +23,87 @@ import random
 import xlsxwriter
 from io import BytesIO, StringIO
 import datetime
+
+
+@bp.route('/user_list', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def user_list():
+    users = User.query.filter(or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]))\
+        .order_by(case({True: 0, False: 1}, value=User.is_active), User.team_id).all()
+    bda = db.session.query(User).filter(User.access == ACCESS[BLIND_DATE_ASSISTANT]).first()
+    chi = db.session.query(User).filter(User.access == ACCESS[CHECK_IN_ASSISTANT]).first()
+    return render_template('organizer/user_list.html', data=data, users=users, bda=bda, chi=chi)
+
+
+def assistant_account(access_level):
+    submit = False
+    user = db.session.query(User).filter(User.access == ACCESS[access_level]).first()
+    if user is None:
+        form = CreateBaseUserWithoutEmailForm()
+        form.username.data = BLIND_DATE_ASSISTANT_ACCOUNT_NAME if access_level == BLIND_DATE_ASSISTANT \
+            else CHECK_IN_ASSISTANT_ACCOUNT_NAME
+        if form.validate_on_submit():
+            user = User()
+            user.username = form.username.data
+            user.set_password(form.password.data)
+            user.access = ACCESS[access_level]
+            user.is_active = True
+            user.send_messages_email = False
+            db.session.add(user)
+            db.session.commit()
+            flash(f"Assistant account \"{user.username}\" created.", 'alert-success')
+            submit = True
+    else:
+        form = EditAssistantAccountForm()
+        form.username.data = user.username
+        if form.validate_on_submit():
+            if form.password.data != '':
+                user.set_password(form.password.data)
+                db.session.commit()
+                flash(f"Assistant account \"{user.username}\" updated.", 'alert-success')
+            else:
+                flash(f"No changes were made to save.", "alert-warning")
+            submit = True
+    return form, user, submit
+
+
+@bp.route('/blind_date_assistant_account', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def blind_date_assistant_account():
+    form, user, submit = assistant_account(BLIND_DATE_ASSISTANT)
+    if submit:
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
+                           assistant=BLIND_DATE_ASSISTANT)
+
+
+@bp.route('/check_in_assistant_account', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def check_in_assistant_account():
+    form, user, submit = assistant_account(CHECK_IN_ASSISTANT)
+    if submit:
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
+                           assistant=CHECK_IN_ASSISTANT)
+
+
+@bp.route('/change_email/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER]])
+def change_email(number):
+    user = User.query.filter(User.user_id == number).first()
+    form = ChangeEmailForm()
+    if request.method == 'GET':
+        form.email.data = user.email
+    if form.validate_on_submit():
+        user.email = form.email.data
+        db.session.commit()
+        flash(f"Changed e-mail of {user.username} to {form.email.data}.", 'alert-success')
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/change_email.html', form=form, user=user)
 
 
 @bp.route('/registration_overview', methods=['GET'])
@@ -47,7 +129,7 @@ def registration_overview():
 
 @bp.route('/finances_overview', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['organizer']])
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 def finances_overview():
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .filter(StatusInfo.payment_required.is_(True)).order_by(ContestantInfo.team_id, ContestantInfo.number).all()
@@ -583,7 +665,7 @@ def switch_to_bda():
 
 @bp.route('/tournament_check_in', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['organizer']])
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 def tournament_check_in():
     ts = TournamentState.query.first()
     all_teams = db.session.query(Team).all()
@@ -605,7 +687,7 @@ def tournament_check_in():
 
 @bp.route('/check_in_dancer/<number>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['organizer']])
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 def check_in_dancer(number):
     dancer = db.session.query(Contestant).join(StatusInfo, ContestantInfo)\
         .filter(Contestant.contestant_id == number).first()
@@ -644,7 +726,7 @@ def check_in_dancer(number):
 
 @bp.route('/dancer_paid/<number>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['organizer']])
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 def dancer_paid(number):
     dancer = db.session.query(Contestant).join(StatusInfo).filter(Contestant.contestant_id == number).first()
     dancer.status_info[0].paid = True if dancer.status_info[0].paid is False else False
@@ -652,3 +734,13 @@ def dancer_paid(number):
     flash('Payment status of {name} from team {team} changed successfully.'
           .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team))
     return redirect(url_for('organizer.tournament_check_in'))
+
+
+@bp.route('/switch_to_cia', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS['organizer']])
+def switch_to_cia():
+    cia = User.query.filter(User.access == ACCESS[CHECK_IN_ASSISTANT]).first()
+    logout_user()
+    login_user(cia)
+    return redirect(url_for('main.index'))

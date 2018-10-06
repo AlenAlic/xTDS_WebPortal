@@ -68,6 +68,9 @@ class User(UserMixin, db.Model):
     def is_bdo(self):
         return self.access == ACCESS['blind_date_organizer']
 
+    def is_cia(self):
+        return self.access == ACCESS[CHECK_IN_ASSISTANT]
+
     def allowed(self, access_level):
         return self.access == access_level
 
@@ -124,7 +127,7 @@ class Team(db.Model):
     country = db.Column(db.String(128), nullable=False)
     city = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128), nullable=False, unique=True)
-    finances = db.relationship('TeamFinances', back_populates='team')
+    finances = db.relationship('TeamFinances', back_populates='team', cascade='all, delete-orphan')
 
     def __repr__(self):
         return '{}'.format(self.name)

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block app_content %}
+<h2>Organizer account</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    {{ my_wtf.form_field(form.username, disabled='') }}
+    {{ my_wtf.form_field(form.email) }}
+    {{ my_wtf.form_field(form.team, **{'onchange': "updateUsername()"}) }}
+    {{ my_wtf.form_field(form.password) }}
+    {{ my_wtf.form_field(form.repeat_password) }}
+    <div class="form-group  required">
+        <label class="control-label" ></label>
+        <div class="input-group">
+            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if edit is sameas false %}Create Team{% else %}Save changes{% endif %}">&nbsp;
+            <a role="button" class="btn btn-default" href="{{ url_for('self_admin.user_list') }}">Cancel</a>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function onStart() {
+    document.getElementById("team").onchange();
+}
+function updateUsername() {
+    document.getElementById("username").value = "Teamcaptain" + getSelectedText('team');
+}
+function getSelectedText(elementId) {
+    var elt = document.getElementById(elementId);
+    if (elt.selectedIndex == -1)
+        return null;
+    return elt.options[elt.selectedIndex].text;
+}
+</script>
+{% endblock %}
