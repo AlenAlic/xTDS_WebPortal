@@ -519,7 +519,9 @@ def bad():
         teams = Team.query.all()
         dancers = Contestant.query.join(StatusInfo)\
             .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED)).all()
-        text = render_template('organizer/_BAD_createTournament.sql', teams=teams, dancers=dancers)
+        registered_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == REGISTERED).all()
+        text = render_template('organizer/_BAD_createTournament.sql', teams=teams, dancers=dancers,
+                               registered_dancers=registered_dancers)
         output = StringIO(text)
         output = BytesIO(output.read().encode('utf-8-sig'))
         return send_file(output, as_attachment=True, attachment_filename="createTournament.sql")
@@ -528,10 +530,21 @@ def bad():
             .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED), DancingInfo.role == LEAD) \
             .all()
         leads = [di for lead in leads for di in lead.dancing_info if di.role == LEAD and di.partner is not None]
+        closed_open_leads = Contestant.query.join(StatusInfo).join(DancingInfo) \
+            .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED), DancingInfo.role == LEAD,
+                    or_(DancingInfo.level == CLOSED, DancingInfo.level == OPEN_CLASS)).all()
+        closed_open_leads = [di for lead in closed_open_leads for di in lead.dancing_info if di.role == LEAD
+                             and (di.level == CLOSED or di.level == OPEN_CLASS)]
+        closed_open_follows = Contestant.query.join(StatusInfo).join(DancingInfo) \
+            .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED), DancingInfo.role == FOLLOW,
+                    or_(DancingInfo.level == CLOSED, DancingInfo.level == OPEN_CLASS)).all()
+        closed_open_follows = [di for follow in closed_open_follows for di in follow.dancing_info if di.role == FOLLOW
+                               and (di.level == CLOSED or di.level == OPEN_CLASS)]
         salsa_couples = SalsaPartners.query.all()
         polka_couples = PolkaPartners.query.all()
         text = render_template('organizer/_BAD_populateCouples.sql', leads=leads,
-                               salsa_couples=salsa_couples, polka_couples=polka_couples)
+                               salsa_couples=salsa_couples, polka_couples=polka_couples,
+                               closed_open_leads=closed_open_leads, closed_open_follows=closed_open_follows)
         output = StringIO(text)
         output = BytesIO(output.read().encode('utf-8-sig'))
         return send_file(output, as_attachment=True, attachment_filename="populateCouples.sql")

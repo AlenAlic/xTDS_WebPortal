@@ -9,7 +9,7 @@ onload="onStart()"
 
 {% if ts.main_raffle_result_visible is sameas true %}
 <h2>Download files for the BAD system</h2>
-<div class="row">
+<div class="row" style="visibility:hidden">
     {% with name='download_createUniverse', title='Master file', text='Master file to import the other files at once (because the site admin is lazy).', image='BAD_download_createUniverse.png' %}
         {% include 'organizer/_BAD_page.html' %}
     {% endwith %}
