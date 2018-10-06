@@ -231,10 +231,9 @@ class DancingInfo(db.Model):
     def __repr__(self):
         return '{competition}: {name}'.format(competition=self.competition, name=self.contestant)
 
-    def valid_match(self, other):
-        #TODO ervoor zorgen dat Open en CloseD blind daters wel met elkaar gematcht kunnen worden
+    def valid_match(self, other, breitensport=True):
         errors = []
-        if self.level in BLIND_DATE_LEVELS or other.level in BLIND_DATE_LEVELS:
+        if breitensport and (self.level in BLIND_DATE_LEVELS or other.level in BLIND_DATE_LEVELS):
             errors.append("At least one of the dancers must blind date.")
         else:
             if self.competition != other.competition:

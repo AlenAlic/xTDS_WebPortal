@@ -270,9 +270,14 @@ def break_up_couple(competition, lead_id, follow_id):
     lead = DancingInfo.query.filter(DancingInfo.competition == competition, DancingInfo.contestant_id == lead_id,
                                     DancingInfo.partner == follow_id).first()
     follow = Contestant.query.filter(Contestant.contestant_id == follow_id).first()
-    lead.set_partner(None)
-    db.session.commit()
-    flash(f'{lead.contestant} and {follow} are not a couple anymore in {competition}.')
+    lead_status = Contestant.query.filter(Contestant.contestant_id == lead_id).first()
+    if lead_status.status_info[0].status == SELECTED or lead_status.status_info[0].status == CONFIRMED \
+            or follow.status_info[0].status == SELECTED or follow.status_info[0].status == CONFIRMED:
+        flash(f"Cannot break up a couple that has been {SELECTED} or {CONFIRMED}.")
+    else:
+        lead.set_partner(None)
+        db.session.commit()
+        flash(f'{lead.contestant} and {follow} are not a couple anymore in {competition}.')
     return redirect(url_for('teamcaptains.couples_list'))
 
 
