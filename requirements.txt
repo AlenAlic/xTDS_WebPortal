@@ -3,7 +3,7 @@ asn1crypto==0.24.0
 blinker==1.4
 cffi==1.11.5
 click==6.7
-cryptography==2.2.2
+cryptography==2.3.1
 dominate==2.3.1
 Flask==1.0.2
 Flask-Admin==1.5.1
@@ -19,7 +19,7 @@ Flask-WTF==0.14.2
 idna==2.6
 itsdangerous==0.24
 Jinja2==2.10
-jwt==0.5.3
+jwt==0.5.4
 Mako==1.0.7
 MarkupSafe==1.0
 pyasn1==0.4.3
