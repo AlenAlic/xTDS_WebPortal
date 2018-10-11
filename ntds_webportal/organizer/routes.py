@@ -530,6 +530,11 @@ def bad():
             .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED), DancingInfo.role == LEAD) \
             .all()
         leads = [di for lead in leads for di in lead.dancing_info if di.role == LEAD and di.partner is not None]
+        breitensport_singles = Contestant.query.join(StatusInfo).join(DancingInfo) \
+            .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED),
+                    DancingInfo.level == BREITENSPORT).all()
+        breitensport_singles = [di for dancer in breitensport_singles for di in dancer.dancing_info
+                                if di.level == BREITENSPORT and di.partner is None]
         closed_open_leads = Contestant.query.join(StatusInfo).join(DancingInfo) \
             .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED), DancingInfo.role == LEAD,
                     or_(DancingInfo.level == CLOSED, DancingInfo.level == OPEN_CLASS)).all()
@@ -544,7 +549,8 @@ def bad():
         polka_couples = PolkaPartners.query.all()
         text = render_template('organizer/_BAD_populateCouples.sql', leads=leads,
                                salsa_couples=salsa_couples, polka_couples=polka_couples,
-                               closed_open_leads=closed_open_leads, closed_open_follows=closed_open_follows)
+                               closed_open_leads=closed_open_leads, closed_open_follows=closed_open_follows,
+                               breitensport_singles=breitensport_singles)
         output = StringIO(text)
         output = BytesIO(output.read().encode('utf-8-sig'))
         return send_file(output, as_attachment=True, attachment_filename="populateCouples.sql")
