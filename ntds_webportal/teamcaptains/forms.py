@@ -1,12 +1,17 @@
 from flask import g
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, SubmitField, IntegerField, SelectField, TextAreaField
-from wtforms.validators import DataRequired, Email, NumberRange
+from wtforms import StringField, SubmitField, IntegerField, SelectField, TextAreaField
+from wtforms.validators import DataRequired, Email
+from ntds_webportal import db
 from ntds_webportal.data import *
-from ntds_webportal.validators import Level, Role, ChoiceMade, SpecificVolunteer, UniqueEmail, IsBoolean
+from ntds_webportal.validators import Level, Role, ChoiceMade, UniqueEmail, IsBoolean
+from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, DancingInfo, Team
 from wtforms_sqlalchemy.fields import QuerySelectField
 import wtforms_sqlalchemy.fields as f
+from flask_select2.form.fields import Select2Field
+from sqlalchemy import and_, or_
+import datetime
 
 
 def get_pk_from_identity(obj):
@@ -16,26 +21,53 @@ def get_pk_from_identity(obj):
 
 f.get_pk_from_identity = get_pk_from_identity
 
-
+# Form text
 PARTNER_TEXT = 'No partner / Partner has not signed up yet'
+LEAD_TEXT = 'Pick a lead'
+FOLLOW_TEXT = 'Pick a follow'
+DANCER_TEXT = 'Pick a dancer'
+
+
+def participating_levels_choices(base_choices=False):
+    levels = g.sc.get_participating_levels()
+    if base_choices:
+        result = [(CHOOSE, 'What level are you dancing?')] + [(level, level) for level in levels] + \
+                 [(NO, 'I\'m not dancing')]
+    else:
+        result = [(level, level) for level in levels]
+    return result
+
+
+def payment_categories_choices():
+    if g.sc.phd_student_category:
+        return [('', 'Are you a (PhD-)student?'), (STUDENT, "Yes, I am a student"),
+                (PHD_STUDENT, "Yes, I am a PhD-student"), (NON_STUDENT, YMN[NO])]
+    else:
+        return [('', 'Are you a student?'), (STUDENT, YMN[YES]), (NON_STUDENT, YMN[NO])]
 
 
 class DancingInfoForm(FlaskForm):
-    ballroom_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        if not g.sc.breitensport_obliged_blind_date:
+            self.latin_blind_date.data = str(False)
+            self.ballroom_blind_date.data = str(False)
+
+    ballroom_level = SelectField('Level', validators=[Level()])
     ballroom_role = SelectField('Role', validators=[Role('ballroom_level')],
                                 choices=[(k, v) for k, v in ROLES.items()])
-    ballroom_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
-                                       render_kw={'onclick': "dancingBDGreyOut(id, 'ballroom_partner')"})
-    ballroom_partner = QuerySelectField(f"Ballroom partner for {tournament_settings['tournament']}",
-                                        validators=[Role('ballroom_level'), Level()],
+    ballroom_blind_date = SelectField('Blind dating', validators=[Role('ballroom_level')],
+                                      choices=[(k, v) for k, v in BLIND_DATE.items()])
+    ballroom_partner = QuerySelectField(validators=[Role('ballroom_level'), Level()],
                                         allow_blank=True, blank_text=PARTNER_TEXT)
 
-    latin_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
+    latin_level = SelectField('Level', validators=[Level()])
     latin_role = SelectField('Role', validators=[Role('latin_level')], choices=[(k, v) for k, v in ROLES.items()])
-    latin_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
-                                    render_kw={'onclick': "dancingBDGreyOut(id, 'latin_partner')"})
-    latin_partner = QuerySelectField(f"Latin partner for {tournament_settings['tournament']}",
-                                     validators=[Role('latin_level'), Level()],
+    latin_blind_date = SelectField('Blind dating', validators=[Role('latin_level')],
+                                   choices=[(k, v) for k, v in BLIND_DATE.items()])
+    latin_partner = QuerySelectField(validators=[Role('latin_level'), Level()],
                                      allow_blank=True, blank_text=PARTNER_TEXT)
     
     def custom_validate(self):
@@ -57,45 +89,45 @@ class DancingInfoForm(FlaskForm):
             self.latin_partner.data = None
 
 
-class BaseContestantForm(DancingInfoForm):
-    number = IntegerField('Contestant number', validators=[DataRequired()], render_kw={'disabled': True})
-    team = StringField('Team', validators=[DataRequired()], render_kw={'disabled': True})
+class VolunteerForm(FlaskForm):
 
-    # ballroom_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
-    # ballroom_role = SelectField('Role', validators=[Role('ballroom_level')],
-    #                             choices=[(k, v) for k, v in ROLES.items()])
-    # ballroom_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
-    #                                    render_kw={'onclick': "dancingBDGreyOut(id, 'ballroom_partner')"})
-    # ballroom_partner = QuerySelectField(f"Ballroom partner for {tournament_settings['tournament']}",
-    #                                     validators=[Role('ballroom_level'), Level()],
-    #                                     allow_blank=True, blank_text=PARTNER_TEXT)
-    #
-    # latin_level = SelectField('Level', validators=[Level()], choices=[(k, v) for k, v in LEVELS.items()])
-    # latin_role = SelectField('Role', validators=[Role('latin_level')], choices=[(k, v) for k, v in ROLES.items()])
-    # latin_blind_date = BooleanField('Mandatory blind date', description='I am obliged to blind date',
-    #                                 render_kw={'onclick': "dancingBDGreyOut(id, 'latin_partner')"})
-    # latin_partner = QuerySelectField(f"Latin partner for {tournament_settings['tournament']}",
-    #                                  validators=[Role('latin_level'), Level()],
-    #                                  allow_blank=True, blank_text=PARTNER_TEXT)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-    volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in VOLUNTEER.items()])
-    first_aid = SelectField('First Aid', validators=[SpecificVolunteer('volunteer')],
+        if not g.sc.ask_first_aid:
+            self.first_aid.data = NO
+        if not g.sc.ask_emergency_response_officer:
+            self.emergency_response_officer.data = NO
+        if not g.sc.ask_adjudicator_certification:
+            self.license_jury_ballroom.data = NO
+            self.license_jury_latin.data = NO
+        if not g.sc.ask_adjudicator_highest_achieved_level:
+            self.level_jury_ballroom.data = BELOW_D
+            self.level_jury_latin.data = BELOW_D
+        if not g.sc.salsa_competition:
+            self.jury_salsa.data = NO
+        if not g.sc.polka_competition:
+            self.jury_polka.data = NO
+
+    first_aid = SelectField('First Aid', validators=[ChoiceMade()],
                             choices=[(k, v) for k, v in FIRST_AID.items()])
-    jury_ballroom = SelectField('Adjudicator Ballroom', validators=[SpecificVolunteer('volunteer'), ChoiceMade()],
+    emergency_response_officer = SelectField('Emergency Response Officer', validators=[ChoiceMade()],
+                                             choices=[(k, v) for k, v in EMERGENCY_RESPONSE_OFFICER.items()])
+    jury_ballroom = SelectField('Adjudicator Ballroom', validators=[ChoiceMade()],
                                 choices=[(k, v) for k, v in JURY_BALLROOM.items()])
-    jury_latin = SelectField('Adjudicator Latin', validators=[SpecificVolunteer('volunteer'), ChoiceMade()],
+    jury_latin = SelectField('Adjudicator Latin', validators=[ChoiceMade()],
                              choices=[(k, v) for k, v in JURY_LATIN.items()])
-    license_jury_ballroom = SelectField('License Ballroom', validators=[DataRequired()],
+    license_jury_ballroom = SelectField('License Ballroom', validators=[ChoiceMade()],
                                         choices=[(k, v) for k, v in LICENSE_BALLROOM.items()])
-    license_jury_latin = SelectField('License Latin', validators=[DataRequired()],
+    license_jury_latin = SelectField('License Latin', validators=[ChoiceMade()],
                                      choices=[(k, v) for k, v in LICENSE_LATIN.items()])
-    level_jury_ballroom = SelectField('Level Ballroom', validators=[DataRequired()],
+    level_jury_ballroom = SelectField('Level Ballroom', validators=[ChoiceMade()],
                                       choices=[(k, v) for k, v in LEVEL_JURY_BALLROOM.items()])
-    level_jury_latin = SelectField('Level Latin', validators=[DataRequired()],
+    level_jury_latin = SelectField('Level Latin', validators=[ChoiceMade()],
                                    choices=[(k, v) for k, v in LEVEL_JURY_LATIN.items()])
-    jury_salsa = SelectField('Adjudicator Salsa', validators=[DataRequired()],
+    jury_salsa = SelectField('Adjudicator Salsa', validators=[ChoiceMade()],
                              choices=[(k, v) for k, v in JURY_SALSA.items()])
-    jury_polka = SelectField('Adjudicator Polka', validators=[DataRequired()],
+    jury_polka = SelectField('Adjudicator Polka', validators=[ChoiceMade()],
                              choices=[(k, v) for k, v in JURY_POLKA.items()])
 
     def custom_validate(self):
@@ -106,19 +138,149 @@ class BaseContestantForm(DancingInfoForm):
             self.license_jury_latin.data = NO
             self.level_jury_latin.data = BELOW_D
 
-    student = SelectField('Student', validators=[IsBoolean()], choices=[(k, v) for k, v in STUDENT.items()])
-    first_time = SelectField('First time', validators=[IsBoolean()],
-                             choices=[(k, v) for k, v in FIRST_TIME.items()])
+
+class BaseContestantForm(DancingInfoForm, VolunteerForm):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.t_shirt.label.text = 'T-shirt - {}'.format(euros(g.sc.t_shirt_price))
+        self.mug.label.text = 'Mug - {}'.format(euros(g.sc.mug_price))
+        self.bag.label.text = 'Bag - {}'.format(euros(g.sc.bag_price))
+        first_time = {'': 'Is this your first time participating in {prefix} {tournament}?'.format(
+            tournament=g.sc.tournament, prefix='a' if g.sc.tournament == NTDS else 'an')}
+        first_time.update(YN)
+        self.first_time.choices = [(k, v) for k, v in first_time.items()]
+        self.ballroom_partner.label.text = f"Ballroom partner for {g.sc.tournament}"
+        self.latin_partner.label.text = f"Latin partner for {g.sc.tournament}"
+        self.ballroom_level.choices = participating_levels_choices(base_choices=True)
+        self.latin_level.choices = participating_levels_choices(base_choices=True)
+        self.student.choices = payment_categories_choices()
+        self.team.query = Team.query.filter(Team.team_id == current_user.team.team_id)
+        self.team.data = self.team.query.first()
+        new_id = db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar()
+        if new_id is None:
+            new_id = 1
+        else:
+            new_id += 1
+        self.number.data = new_id
+
+        if datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp() > g.sc.merchandise_closing_date:
+            self.t_shirt.data = NO
+            self.mug.data = str(False)
+            self.bag.data = str(False)
+        if not g.sc.ask_volunteer:
+            self.volunteer.data = NO
+        if not g.sc.first_time_ask:
+            self.first_time.data = str(False)
+        if not g.sc.t_shirt_sold:
+            self.t_shirt.data = NO
+        if not g.sc.mug_sold:
+            self.mug.data = str(False)
+        if not g.sc.bag_sold:
+            self.bag.data = str(False)
+
+    number = IntegerField('Contestant number', validators=[DataRequired()], render_kw={'disabled': True})
+    team = QuerySelectField('Team', validators=[DataRequired()], render_kw={'disabled': True})
+
+    volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in VOLUNTEER_FORM.items()])
+    student = SelectField('Student', validators=[DataRequired()])
+    first_time = SelectField('First time', validators=[IsBoolean()])
     diet_allergies = StringField('Diet/Allergies')
     sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
                                         choices=[(k, v) for k, v in SLEEPING.items()])
-    t_shirt = SelectField('T-shirt - {}'.format(euros(SHIRT_PRICE)), validators=[DataRequired()],
-                          choices=[(k, v) for k, v in SHIRTS.items()])
+    t_shirt = SelectField('T-shirt', validators=[DataRequired()], choices=[(k, v) for k, v in SHIRTS.items()])
+    mug = SelectField('T-shirt', validators=[IsBoolean()], choices=[(k, v) for k, v in MUG_CHOICES.items()])
+    bag = SelectField('T-shirt', validators=[IsBoolean()], choices=[(k, v) for k, v in BAG_CHOICES.items()])
+    
+    def custom_validate(self):
+        # WISH - Figure out way to call custom_validate() of both DancingInfoForm and VolunteerForm
+        if self.ballroom_level.data == BEGINNERS:
+            self.ballroom_blind_date.data = str(False)
+        if self.ballroom_level.data == CLOSED or self.ballroom_level.data == OPEN_CLASS:
+            self.ballroom_blind_date.data = str(True)
+        if self.latin_level.data == BEGINNERS:
+            self.latin_blind_date.data = str(False)
+        if self.latin_level.data == CLOSED or self.latin_level.data == OPEN_CLASS:
+            self.latin_blind_date.data = str(True)
+        if self.ballroom_level.data == NO:
+            self.ballroom_role.data = NO
+            self.ballroom_blind_date.data = str(False)
+            self.ballroom_partner.data = None
+        if self.latin_level.data == NO:
+            self.latin_role.data = NO
+            self.latin_blind_date.data = str(False)
+            self.latin_partner.data = None
 
+        if self.jury_ballroom.data == NO:
+            self.license_jury_ballroom.data = NO
+            self.level_jury_ballroom.data = BELOW_D
+        if self.jury_latin.data == NO:
+            self.license_jury_latin.data = NO
+            self.level_jury_latin.data = BELOW_D
 
-for k, value in MERCHANDISE.items():
-    setattr(BaseContestantForm, k, IntegerField(value, validators=[NumberRange(0, 99)], default=0,
-                                                render_kw={"type": "number", "min": "0", "max": "99", "step": "1"}))
+        if self.ballroom_level.data == BEGINNERS or self.latin_level.data == BEGINNERS:
+            self.first_time.data = str(True)
+
+        if g.sc.ask_volunteer and self.volunteer.data == NO:
+            self.first_aid.data = NO
+            self.emergency_response_officer.data = NO
+        if self.ballroom_level.data == BEGINNERS or self.ballroom_level.data == BREITENSPORT:
+            self.jury_ballroom.data = NO
+            self.license_jury_ballroom.data = NO
+            self.level_jury_ballroom.data = BELOW_D
+        if self.latin_level.data == BEGINNERS or self.latin_level.data == BREITENSPORT:
+            self.jury_latin.data = NO
+            self.license_jury_latin.data = NO
+            self.level_jury_latin.data = BELOW_D
+        if self.ballroom_blind_date.data == str(True):
+            self.ballroom_partner.data = None
+        if self.latin_blind_date.data == str(True):
+            self.latin_partner.data = None
+
+        if self.ballroom_level.data == NO:
+            self.ballroom_role.data = NO
+            self.ballroom_blind_date.data = str(False)
+            self.ballroom_partner.data = None
+        if self.latin_level.data == NO:
+            self.latin_role.data = NO
+            self.latin_blind_date.data = str(False)
+            self.latin_partner.data = None
+
+    def populate(self, dancer):
+        self.number.data = dancer.contestant_info[0].number
+
+        self.volunteer.data = dancer.volunteer_info[0].volunteer
+        self.student.data = dancer.contestant_info[0].student
+        self.first_time.data = str(dancer.contestant_info[0].first_time)
+        self.diet_allergies.data = dancer.contestant_info[0].diet_allergies
+        self.sleeping_arrangements.data = str(dancer.additional_info[0].sleeping_arrangements)
+        self.t_shirt.data = dancer.merchandise_info[0].t_shirt
+        self.mug.data = str(dancer.merchandise_info[0].mug)
+        self.bag.data = str(dancer.merchandise_info[0].bag)
+
+        self.first_aid.data = dancer.volunteer_info[0].first_aid
+        self.emergency_response_officer.data = dancer.volunteer_info[0].emergency_response_officer
+        self.jury_ballroom.data = dancer.volunteer_info[0].jury_ballroom
+        self.jury_latin.data = dancer.volunteer_info[0].jury_latin
+        self.license_jury_ballroom.data = dancer.volunteer_info[0].license_jury_ballroom
+        self.license_jury_latin.data = dancer.volunteer_info[0].license_jury_latin
+        self.level_jury_ballroom.data = dancer.volunteer_info[0].level_ballroom
+        self.level_jury_latin.data = dancer.volunteer_info[0].level_latin
+        self.jury_salsa.data = dancer.volunteer_info[0].jury_salsa
+        self.jury_polka.data = dancer.volunteer_info[0].jury_polka
+
+        self.ballroom_level.data = dancer.competition(BALLROOM).level
+        self.ballroom_role.data = dancer.competition(BALLROOM).role
+        self.ballroom_blind_date.data = str(dancer.competition(BALLROOM).blind_date)
+        self.ballroom_partner.data = Contestant.query.join(ContestantInfo)\
+            .filter(Contestant.contestant_id == dancer.competition(BALLROOM).partner).first()
+
+        self.latin_level.data = dancer.competition(LATIN).level
+        self.latin_role.data = dancer.competition(LATIN).role
+        self.latin_blind_date.data = str(dancer.competition(LATIN).blind_date)
+        self.latin_partner.data = Contestant.query.join(ContestantInfo)\
+            .filter(Contestant.contestant_id == dancer.competition(LATIN).partner).first()
 
 
 class RegisterContestantForm(BaseContestantForm):
@@ -215,29 +377,54 @@ class EditContestantForm(BaseContestantForm):
 
 class TeamCaptainForm(FlaskForm):
     number = QuerySelectField('Team captain', allow_blank=True)
+    team_captain_one = QuerySelectField('First team captain', allow_blank=True, blank_text='No team captain')
+    team_captain_two = QuerySelectField('Second team captain', allow_blank=True, blank_text='No team captain')
     submit = SubmitField('Set team captain')
 
 
 class CreateCoupleForm(FlaskForm):
-    lead = QuerySelectField('Lead', validators=[DataRequired()])
-    follow = QuerySelectField('Follow', validators=[DataRequired()])
+
+    def __init__(self, sc, **kwargs):
+        super(CreateCoupleForm, self).__init__(**kwargs)
+        choices = [("", "Choose a level")]
+        if sc.beginners_level:
+            choices += [(BEGINNERS, BEGINNERS)]
+        choices += [(BREITENSPORT, BREITENSPORT)]
+        self.level.choices = choices
+
+    lead = QuerySelectField('Lead', validators=[DataRequired()], allow_blank=True, blank_text=LEAD_TEXT)
+    follow = QuerySelectField('Follow', validators=[DataRequired()], allow_blank=True, blank_text=FOLLOW_TEXT)
     competition = SelectField('Competition', validators=[DataRequired()],
-                              choices=[(comp, comp) for comp in ALL_COMPETITIONS])
+                              choices=[(k, v) for k, v in COMPETITION_CHOICE.items()])
+    level = SelectField('Level', validators=[DataRequired()])
     submit = SubmitField('Create couple')
 
 
 class PartnerRequestForm(FlaskForm):
-    dancer = SelectField(label='My dancer', validators=[DataRequired()], coerce=int)
-    other = SelectField(label='Other dancer', validators=[DataRequired()], coerce=int)
-    competition = SelectField('Competition', choices=[(comp, comp) for comp in ALL_COMPETITIONS])
-    level = SelectField('Level', validators=[Level()],
-                        choices=[(k, ALL_LEVELS[k]) for k in PARTICIPATING_LEVELS])
-    remark = TextAreaField(label='remark')
+
+    def __init__(self, sc, other_choices, **kwargs):
+        super(PartnerRequestForm, self).__init__(**kwargs)
+        choices = [("", "Choose a level")]
+        if sc.beginners_level:
+            choices += [(BEGINNERS, BEGINNERS)]
+        choices += [(BREITENSPORT, BREITENSPORT)]
+        self.level.choices = choices
+        self.other.choices = [(str(dancer.contestant_id), dancer.get_full_name() + " - " +
+                               dancer.contestant_info[0].team.name) for dancer in other_choices]
+
+    dancer = QuerySelectField('Dancer from my team', validators=[DataRequired()],
+                              allow_blank=True, blank_text=DANCER_TEXT, render_kw={'data-role': 'select2'})
+    other = Select2Field('Dancer from other team', validators=[DataRequired()],
+                         allow_blank=True, blank_text=DANCER_TEXT)
+    competition = SelectField('Competition', validators=[DataRequired()],
+                              choices=[(k, v) for k, v in COMPETITION_CHOICE.items()])
+    level = SelectField('Level', validators=[DataRequired()])
+    remark = TextAreaField('Remarks', render_kw={"style": "resize:none", "rows": "4", "maxlength": "512"})
     submit = SubmitField('Send partner request')
 
 
 class PartnerRespondForm(FlaskForm):
-    remark = TextAreaField(label='remark')
+    remark = TextAreaField(label='Remarks', render_kw={"style": "resize:none", "rows": "4", "maxlength": "512"})
     accept = SubmitField(label='Accept')
     reject = SubmitField(label='Reject')
 
@@ -250,6 +437,24 @@ class NameChangeRequestForm(FlaskForm):
 
 
 class EditDancingInfoForm(DancingInfoForm):
+
+    def __init__(self, dancer, **kwargs):
+        super().__init__(**kwargs)
+        self.full_name.data = dancer.get_full_name()
+        self.email.data = dancer.email
+        self.team.data = dancer.contestant_info[0].team
+        self.ballroom_level.choices = participating_levels_choices(base_choices=True)
+        self.latin_level.choices = participating_levels_choices(base_choices=True)
+        if not g.sc.breitensport_obliged_blind_date:
+            self.latin_blind_date.data = str(False)
+            self.ballroom_blind_date.data = str(False)
+        self.ballroom_partner.query = Contestant.query.join(ContestantInfo)\
+            .filter(Contestant.contestant_id == dancer.competition(BALLROOM).partner)
+        self.ballroom_partner.data = self.ballroom_partner.query.first()
+        self.latin_partner.query = Contestant.query.join(ContestantInfo) \
+            .filter(Contestant.contestant_id == dancer.competition(LATIN).partner)
+        self.latin_partner.data = self.latin_partner.query.first()
+
     full_name = StringField('Full name', validators=[DataRequired()], render_kw={'disabled': True})
     email = StringField('Email', validators=[DataRequired(), Email()], render_kw={'disabled': True})
     team = StringField('Team', validators=[DataRequired()], render_kw={'disabled': True})

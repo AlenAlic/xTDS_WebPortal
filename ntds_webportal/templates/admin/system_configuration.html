@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block container_style -%}
+visibility:hidden
+{%- endblock %}
+
+{% block app_content %}
+<h2>System configuration</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {% if current_user.is_admin() is sameas true %}
+    <h3>Tournament</h3>
+    {{ my_wtf.form_field(form.tournament) }}
+    {{ my_wtf.form_field(form.year) }}
+    {{ my_wtf.form_field(form.city) }}
+    {{ my_wtf.form_field(form.tournament_starting_date) }}
+    {% elif current_user.is_organizer() is sameas true %}
+    Please fill in this questionnaire to configure the system to your likings.
+    {{ my_wtf.form_field(form.tournament, disabled=true) }}
+    {{ my_wtf.form_field(form.year, disabled=true) }}
+    {{ my_wtf.form_field(form.city, disabled=true) }}
+    {{ my_wtf.form_field(form.tournament_starting_date, disabled=true) }}
+    {% endif%}
+    <h3>Website links</h3>
+    {{ my_wtf.form_field(form.main_page_link) }}
+    {{ my_wtf.form_field(form.terms_and_conditions_link) }}
+    <h3>Team captains</h3>
+    {{ my_wtf.form_field(form.number_of_teamcaptains) }}
+    <h3>Tournament levels</h3>
+    {{ my_wtf.form_field(form.beginners_level) }}
+    {{ my_wtf.form_field(form.champions_level) }}
+    {{ my_wtf.form_field(form.closed_level) }}
+    {{ my_wtf.form_field(form.breitensport_obliged_blind_date) }}
+    {{ my_wtf.form_field(form.salsa_competition) }}
+    {{ my_wtf.form_field(form.polka_competition) }}
+    <h3>Pricing categories</h3>
+    {{ my_wtf.form_field(form.student_price) }}
+    {{ my_wtf.form_field(form.non_student_price) }}
+    {{ my_wtf.form_field(form.phd_student_category, **{'onchange': "Price(this)", 'onkeyup': "Price(this)"}) }}
+    {{ my_wtf.form_field(form.phd_student_price) }}
+    <h3>Finances</h3>
+    {{ my_wtf.form_field(form.finances_full_refund, **{'onchange': "fullRefund()", 'onkeyup': "fullRefund()"}) }}
+    {{ my_wtf.form_field(form.finances_partial_refund, **{'onchange': "partialRefund()", 'onkeyup': "partialRefund()"}) }}
+    {{ my_wtf.form_field(form.finances_partial_refund_percentage) }}
+    {{ my_wtf.form_field(form.finances_refund_date) }}
+    <h3>Registration questions</h3>
+    {{ my_wtf.form_field(form.first_time_ask) }}
+    {{ my_wtf.form_field(form.ask_diet_allergies) }}
+    {{ my_wtf.form_field(form.ask_volunteer) }}
+    {{ my_wtf.form_field(form.ask_first_aid) }}
+    {{ my_wtf.form_field(form.ask_emergency_response_officer) }}
+    {{ my_wtf.form_field(form.ask_adjudicator_highest_achieved_level) }}
+    {{ my_wtf.form_field(form.ask_adjudicator_certification) }}
+    <h3>Merchandise</h3>
+    {{ my_wtf.form_field(form.t_shirt_sold, **{'onchange': "Price(this)", 'onkeyup': "Price(this)"}) }}
+    {{ my_wtf.form_field(form.t_shirt_price) }}
+    {{ my_wtf.form_field(form.mug_sold, **{'onchange': "Price(this)", 'onkeyup': "Price(this)"}) }}
+    {{ my_wtf.form_field(form.mug_price) }}
+    {{ my_wtf.form_field(form.bag_sold, **{'onchange': "Price(this)", 'onkeyup': "Price(this)"}) }}
+    {{ my_wtf.form_field(form.bag_price) }}
+    {{ my_wtf.form_field(form.merchandise_link) }}
+    {{ my_wtf.form_field(form.merchandise_closing_date) }}
+    <div class="form-group required">
+        <label class="control-label" ></label>
+        <div class="input-group">
+            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Configure System">&nbsp;
+            <a role="button" class="btn btn-default" href="{{ url_for('main.index') }}">Cancel</a>
+        </div>
+    </div>
+</form>
+{#my_wtf.quick_form(form)#}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function onStart() {
+    document.getElementById('phd_student_category').onchange();
+    document.getElementById('finances_full_refund').onchange();
+    document.getElementById('t_shirt_sold').onchange();
+    document.getElementById('mug_sold').onchange();
+    document.getElementById('bag_sold').onchange();
+    var container = document.getElementById('container-hidden').style.visibility = "visible";
+}
+function Price(question) {
+    var name = ""
+    switch (question.name) {
+        case "phd_student_category":
+            name = "phd_student_price";
+            break;
+        case "t_shirt_sold":
+            name = "t_shirt_price";
+            break;
+        case "mug_sold":
+            name = "mug_price";
+            break;
+        case "bag_sold":
+            name = "bag_price";
+            break;
+    }
+    var price = document.getElementById(name)
+    if (question.value == "True") {
+        price.removeAttribute('disabled');
+    } else {
+        price.setAttribute('disabled', true);
+    }
+    merchandiseDate()
+}
+function merchandiseDate() {
+    let merchandise_date = document.getElementById("merchandise_closing_date")
+    if ((document.getElementById('t_shirt_sold').value == "False") && (document.getElementById('mug_sold').value == "False") && (document.getElementById('bag_sold').value == "False")) {
+        merchandise_date.setAttribute('disabled', true);
+    } else {
+        merchandise_date.removeAttribute('disabled');
+    }
+}
+
+function fullRefund() {
+    let refund = document.getElementById('finances_full_refund')
+    let partial = document.getElementById('finances_partial_refund')
+
+    if (refund.value == "False") {
+        partial.removeAttribute('disabled');
+    } else {
+        partial.setAttribute('disabled', true);
+        partial.value = "False"
+    }
+    partialRefund()
+}
+function partialRefund() {
+    refundPercentage()
+    refundDate()
+}
+function refundPercentage() {
+    let partial = document.getElementById('finances_partial_refund')
+    let refund_percentage = document.getElementById("finances_partial_refund_percentage")
+    if (partial.value == "True") {
+        refund_percentage.removeAttribute('disabled');
+    } else {
+        refund_percentage.setAttribute('disabled', true);
+    }
+}
+function refundDate() {
+    let refund_date = document.getElementById("finances_refund_date")
+    if (document.getElementById('finances_full_refund').value == "True" || document.getElementById('finances_partial_refund').value == "True") {
+        refund_date.removeAttribute('disabled');
+    } else {
+        refund_date.setAttribute('disabled', true);
+    }
+}
+</script>
+{% endblock %}

@@ -2,7 +2,7 @@
 from wtforms.validators import ValidationError
 from ntds_webportal import db
 from ntds_webportal.models import Contestant, User
-from ntds_webportal.data import LEAD, FOLLOW
+from ntds_webportal.data import LEAD, FOLLOW, CHOOSE, NO, NONE
 
 REQUIRED = 'This field is required.'
 SAME_ROLE = 'You can not dance as a {role} with that partner, the selected partner already is a {role}. ' \
@@ -16,7 +16,7 @@ MUST_BLIND_DATE = 'You cannot have a partner at this level.'
 class Level(object):
     """Checks if a dancing level is selected."""
     def __call__(self, form, field):
-        if field.data == 'choose':
+        if field.data == CHOOSE:
             raise ValidationError(field.gettext('Please choose a level to dance at for this category.'))
         if field.data == 'diff_levels_no_level':
             raise ValidationError(field.gettext(NO_LEVEL))
@@ -36,11 +36,11 @@ class Role(object):
             other = form[self.field_name]
         except KeyError:
             raise ValidationError(field.gettext("Invalid field name '%s'.") % self.field_name)
-        if field.data == 'None' and other.data == 'choose':
+        if field.data == NONE and other.data == CHOOSE:
             raise ValidationError(
                 field.gettext('Please select a role or indicate that you are not dancing for this category.'))
-        if other.data != 'choose' and other.data != 'no':
-            if field.data == 'None':
+        if other.data != CHOOSE and other.data != NO:
+            if field.data == NONE:
                 raise ValidationError(field.gettext('Please select a role to dance as for this category.'))
             if field.data == 'same_role_lead':
                 raise ValidationError(field.gettext(SAME_ROLE.format(role=LEAD)))
@@ -51,7 +51,7 @@ class Role(object):
 class ChoiceMade(object):
     """Checks if a choice is selected from a list."""
     def __call__(self, form, field):
-        if field.data == 'choose' or field.data == str(None):
+        if field.data == CHOOSE or field.data == NONE:
             raise ValidationError(field.gettext(REQUIRED))
 
 
@@ -72,7 +72,7 @@ class SpecificVolunteer(object):
             other = form[self.fieldname]
         except KeyError:
             raise ValidationError(field.gettext("Invalid field name '%s'.") % self.fieldname)
-        if field.data == 'None' and other.data != 'no':
+        if field.data == NONE and other.data != NO:
             raise ValidationError(
                 field.gettext(REQUIRED))
 
@@ -81,6 +81,7 @@ class UniqueEmail(object):
     """Checks if an e-mail address is unique."""
     def __call__(self, form, field):
         email_list = [i[0] for i in db.session.query(Contestant.email).all()]
+        email_list = [mail.lower() for mail in email_list]
         if field.data in email_list:
             raise ValidationError(field.gettext('This e-mail address is already in use.'))
 

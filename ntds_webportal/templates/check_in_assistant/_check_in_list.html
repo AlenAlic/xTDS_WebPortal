@@ -8,16 +8,15 @@
                 <col span="1" style="width: 30%;">
                 <col span="1" style="width: 10%;">
                 <col span="1" style="width: 15%;">
-                <col span="1" style="width: 15%;">
-                <col span="1" style="width: 10%;">
                 <col span="1" style="width: 20%;">
+                <col span="1" style="width: 25%;">
             </colgroup>
             <thead>
                 <tr>
                     <th><b>Name</b></th>
-                    <th colspan="2"><b>Has paid?</b></th>
-                    <th><b>Ordered t-shirt?</b></th>
-                    <th><b>Ordered stickers?</b></th>
+                    <th colspan="2"><b>Is everything paid?</b></th>
+                    <th><b>Ordered merchandise?</b></th>
+                    <th><b></b></th>
                 </tr>
             </thead>
             <tbody>
@@ -26,26 +25,19 @@
                         <td>
                             {{ dancer.get_full_name() }}
                         </td>
-                        <td class="{% if dancer.status_info[0].paid == false %}danger{% endif %}">
-                            {{ data.TF[dancer.status_info[0].paid] }}
+                        <td class="{% if dancer.payment_info[0].all_paid() == false %}danger{% endif %}">
+                            {{ g.data.TF[dancer.payment_info[0].all_paid()] }}
                         </td>
-                        <td class="{% if dancer.status_info[0].paid == false %}danger{% endif %}" align="left">
-                            <a role="button" class="btn btn-default" href="{{ url_for('organizer.dancer_paid', number=dancer.contestant_id) }}">
-                                {% if dancer.status_info[0].paid == false %}Confirm payment{% else %}Cancel payment{% endif %}
+                        <td class="{% if dancer.payment_info[0].all_paid() == false %}danger{% endif %}" align="left">
+                            <a role="button" class="btn btn-default" href="{{ url_for('check_in_assistant.dancer_paid', number=dancer.contestant_id) }}">
+                                {% if dancer.payment_info[0].all_paid() == false %}Confirm payment{% else %}Cancel payment{% endif %}
                             </a>
                         </td>
                         <td>
-                            {% if dancer.additional_info[0].t_shirt != data.NO %}
-                                {{ data.SHIRT_SIZES[dancer.additional_info[0].t_shirt] }}
-                            {% else %}
-                                {{ dancer.additional_info[0].t_shirt }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ dancer.merchandise_info|sum(attribute='quantity') }}
+                            {{ g.data.TF[dancer.merchandise_info[0].ordered_merchandise()] }}
                         </td>
                         <td align="right">
-                            <a role="button" class="btn {% if dancer.status_info[0].checked_in == false %}btn-primary{% else %}btn-info{% endif %}" href="{{ url_for('organizer.check_in_dancer', number=dancer.contestant_id) }}">
+                            <a role="button" class="btn {% if dancer.status_info[0].checked_in == false %}btn-primary{% else %}btn-info{% endif %}" href="{{ url_for('check_in_assistant.check_in_dancer', number=dancer.contestant_id) }}">
                                 {% if dancer.status_info[0].checked_in == false %}Check in{% else %}Check out{% endif %}
                             </a>
                         </td>

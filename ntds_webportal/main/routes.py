@@ -1,10 +1,9 @@
-from flask import render_template, url_for, redirect, flash
+from flask import render_template, url_for, redirect, flash, g
 from flask_login import current_user, login_user, login_required, logout_user
 from ntds_webportal import db
 from ntds_webportal.main import bp
-from ntds_webportal.models import User, TournamentState
+from ntds_webportal.models import User
 from ntds_webportal.auth.forms import LoginForm, ChangePasswordForm
-import ntds_webportal.data as data
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -18,8 +17,18 @@ def index():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'alert-danger')
             return redirect(url_for('main.index'))
-        login_user(user)
-        return redirect(url_for('main.dashboard'))
+        if not user.is_admin() and not g.sc.website_accessible:
+            flash('The xTDS WebPortal is currently being prepared for the next tournament.'
+                  'All accounts are temporarily disabled.')
+            return render_template('inactive.html', title='Inactive', login_form=form)
+        if user.is_active:
+            login_user(user)
+            return redirect(url_for('main.dashboard'))
+        else:
+            flash("Your account is currently inactive. It will become active again when the next tournament starts.")
+            return redirect(url_for('main.index'))
+    if not g.sc.website_accessible:
+        return render_template('inactive.html', title='Inactive', login_form=form)
     return render_template('index.html', title='Home', login_form=form)
 
 
@@ -33,22 +42,26 @@ def logout():
 @bp.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
-    state = TournamentState.query.first()
-    if current_user.is_tc():
-        raffle_config = state.get_raffle_config()
-        dancers_registered = current_user.has_dancers_registered()
-        num_teamcaptains = current_user.teamcaptains_selected()
-        return render_template('dashboard.html', state=state, max_tc=raffle_config['max_teamcaptains'],
-                               dancers_registered=dancers_registered,
-                               num_teamcaptains=num_teamcaptains)
     if current_user.is_treasurer():
-        return redirect(url_for('teamcaptains.edit_finances'))
-    return render_template('dashboard.html', state=state, data=data)
+        if g.ts.main_raffle_result_visible:
+            return redirect(url_for('teamcaptains.edit_finances'))
+        else:
+            return redirect(url_for('teamcaptains.treasurer_inaccessible'))
+    if current_user.is_dancer():
+        return render_template('dashboard.html', dancer=current_user.dancer)
+    return render_template('dashboard.html')
 
 
 @bp.route('/todo', methods=['GET'])
 @login_required
 def todo():
+    # ADMIN
+    # LONG TERM - Change so that teams and team captain/treasurer accounts are made at the same time
+    # WISH - Make "Tournament" section in system setup throw warnings when doing something stupid
+
+    # ORGANIZER
+    # NEXT TOURNAMENT - Allow organizer to select what team captain to activate
+    # NEXT TOURNAMENT - Allow organizer to enable/disable accounts
     return render_template('todo.html', title='#TODO')
 
 

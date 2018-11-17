@@ -19,8 +19,8 @@
             <th><b>Name</b></th>
             <th><b>E-mail</b></th>
             <th><b>Status</b></th>
-            <th><b>First time</b></th>
             <th><b>Student</b></th>
+            <th><b>First time</b></th>
             <th><b>Ballroom</b></th>
             <th><b>Latin</b></th>
             <th></th>
@@ -28,7 +28,7 @@
     </thead>
     <tbody>
         {% for dancer in dancers %}
-            <tr>
+            <tr class="{% if dancer.status_info[0].status != g.data.CANCELLED and dancer.status_info[0].feedback_about_information is not none %}warning{% endif %}">
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ dancer.contestant_info[0].number }}
                 </td>
@@ -42,31 +42,48 @@
                     {{ data.STATUS[dancer.status_info[0].status] }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+                    {{ data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
+                </td>
+                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ data.TF[dancer.contestant_info[0].first_time] }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ data.TF[dancer.contestant_info[0].student] }}
+                    {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {% if dancer.dancing_info[0].level != data.NO %}
-                    {{ data.LEVELS[dancer.dancing_info[0].level] }}
-                    {% else %} - {% endif %}
-                </td>
-                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {% if dancer.dancing_info[1].level != data.NO %}
-                    {{ data.LEVELS[dancer.dancing_info[1].level] }}
-                    {% else %} - {% endif %}
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
                 </td>
                 <td align="right">
-                    {% if dancer.status_info[0].status == data.REGISTERED or dancer.status_info[0].status == data.CANCELLED %}
-                        <a id="{{ dancer.contestant_id }}" name="{{ dancer.contestant_id }}" role="button"
-                        {% if dancer.status_info[0].status == data.REGISTERED %} class="btn btn-warning" href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}">Cancel registration
-                        {% elif dancer.status_info[0].status == data.CANCELLED %} class="btn btn-info" href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">Re-register
-                        </a>
-                        {% endif %}
+                    {% if dancer.status_info[0].status == data.REGISTERED  %}
+                        <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-warning"
+                           href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}">
+                            Cancel registration</a>
                     {% endif %}
-                    {% if dancer.status_info[0].status == data.SELECTED or dancer.status_info[0].status == data.CONFIRMED %}
-                        <button class="btn btn-danger confirm-cancellation" data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, send_message=true, wide=wide) }}" data-title="WARNING!" data-text="{% if dancer.status_info[0].status == data.CONFIRMED %}{{ dancer.get_full_name() }} is obliged to pay the admission fee, even upon cancelling.<br><br>{% endif %}Cancelling the registration will remove {% if dancer.status_info[0].status == data.CONFIRMED %}{{ dancer.first_name }}{% else %}{{ dancer.get_full_name() }}{% endif %} completely from the tournament.<br><br>Are you sure you want to cancel the registration of {{ dancer.first_name }}?" data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}" data-confirm="cancelRegistration('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')" data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
+                    {% if dancer.status_info[0].status == data.CANCELLED %}
+                        <a name="{{ dancer.contestant_id }}" role="button"  class="btn btn-info"
+                           href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">
+                            Re-register</a>
+                    {% endif %}
+                    {% if dancer.status_info[0].status == data.SELECTED %}
+                        <button class="btn btn-danger confirm-cancellation"
+                                data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, send_message=true, wide=wide) }}"
+                                data-title="WARNING!"
+                                data-text="Cancelling the registration will remove {{ dancer.get_full_name() }} completely from the tournament.<br><br>
+                                Are you sure you want to cancel the registration of {{ dancer.first_name }}?"
+                                data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}"
+                                data-confirm="cancelSelected('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')"
+                                data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
+                    {% endif %}
+                    {% if dancer.status_info[0].status == data.CONFIRMED %}
+                        <button class="btn btn-danger confirm-cancellation"
+                                data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, send_message=true, wide=wide) }}"
+                                data-title="WARNING!"
+                                data-text="{{ dancer.get_full_name() }} is obliged to pay the admission fee, even upon cancelling.<br><br>
+                                Cancelling the registration will remove {{ dancer.first_name }} completely from the tournament.<br><br>
+                                Are you sure you want to cancel the registration of {{ dancer.first_name }}?"
+                                data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}"
+                                data-confirm="cancelRegistration('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')"
+                                data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
                     {% endif %}
                 </td>
             </tr>
@@ -78,23 +95,31 @@
 <table class="table table-striped table-responsive">
     <thead>
         <tr>
+            <th colspan="7"><b>Personal</b></th>
+            <th colspan="3"><b>Ballroom</b></th>
+            <th colspan="3"><b>Latin</b></th>
+            <th colspan="4"><b>Volunteering</b></th>
+        </tr>
+        <tr>
             <th><b>#</b></th>
             <th><b>Name</b></th>
             <th><b>E-mail</b></th>
             <th><b>Status</b></th>
-            <th><b>First time</b></th>
             <th><b>Student</b></th>
-            <th><b>Ballroom level</b></th>
-            <th><b>Ballroom role</b></th>
-            <th><b>Latin level</b></th>
-            <th><b>Latin role</b></th>
+            <th><b>First time</b></th>
             <th><b>Sleeping spot</b></th>
+            <th><b>Level</b></th>
+            <th><b>Role</b></th>
+            <th><b>Partner</b></th>
+            <th><b>Level</b></th>
+            <th><b>Role</b></th>
+            <th><b>Partner</b></th>
             <!--<th><b>Diet/Allergies</b></th>-->
-            <th><b>T-shirt</b></th>
-            <!--<th><b>Volunteer</b></th>-->
-            <!--<th><b>First Aid</b></th>-->
-            <!--<th><b>Jury Ballroom</b></th>-->
-            <!--<th><b>Jury Latin</b></th>-->
+            <!--<th><b>T-shirt</b></th>-->
+            <th><b>Volunteer</b></th>
+            <th><b>First Aid</b></th>
+            <th><b>Jury Ballroom</b></th>
+            <th><b>Jury Latin</b></th>
         </tr>
     </thead>
     <tbody>
@@ -116,51 +141,49 @@
                     {{ data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
                 </td>
                 <td>
-                    {{ data.TF[dancer.contestant_info[0].student] }}
-                </td>
-                <td>
-                    {% if dancer.dancing_info[0].level != data.NO %}
-                    {{ data.LEVELS[dancer.dancing_info[0].level] }}
-                    {% else %} - {% endif %}
-                </td>
-                <td>
-                    {% if dancer.dancing_info[0].role != data.NO %}
-                    {{ data.ROLES[dancer.dancing_info[0].role] }}
-                    {% else %} - {% endif %}
-                </td>
-                <td>
-                    {% if dancer.dancing_info[1].level != data.NO %}
-                    {{ data.LEVELS[dancer.dancing_info[1].level] }}
-                    {% else %} - {% endif %}
-                </td>
-                <td>
-                    {% if dancer.dancing_info[1].role != data.NO %}
-                    {{ data.ROLES[dancer.dancing_info[1].role] }}
-                    {% else %} - {% endif %}
+                    {{ data.TF[dancer.contestant_info[0].first_time] }}
                 </td>
                 <td>
                     {{ data.TF[dancer.additional_info[0].sleeping_arrangements] }}
+                </td>
+                <td>
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
+                </td>
+                <td>
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}
+                </td>
+                <td>
+                    {{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner) }}
+                </td>
+                <td>
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
+                </td>
+                <td>
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}
+                </td>
+                <td>
+                    {{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}
                 </td>
                 <!--<td>-->
                     <!--{% if dancer.contestant_info[0].diet_allergies != None %}-->
                         <!--{{ dancer.contestant_info[0].diet_allergies }}-->
                     <!--{% endif %}-->
                 <!--</td>-->
+                <!--<td>-->
+                    <!--{{ data.SHIRTS[dancer.additional_info[0].t_shirt] }}-->
+                <!--</td>-->
                 <td>
-                    {{ data.SHIRTS[dancer.additional_info[0].t_shirt] }}
+                    {{ data.YMN[dancer.volunteer_info[0].volunteer] }}
                 </td>
-                <!--<td>-->
-                    <!--{{ data.YMN[dancer.volunteer_info[0].volunteer] }}-->
-                <!--</td>-->
-                <!--<td>-->
-                    <!--{{ data.YMN[dancer.volunteer_info[0].first_aid] }}-->
-                <!--</td>-->
-                <!--<td>-->
-                    <!--{{ data.YMN[dancer.volunteer_info[0].jury_ballroom] }}-->
-                <!--</td>-->
-                <!--<td>-->
-                    <!--{{ data.YMN[dancer.volunteer_info[0].jury_latin] }}-->
-                <!--</td>-->
+                <td>
+                    {{ data.YMN[dancer.volunteer_info[0].first_aid] }}
+                </td>
+                <td>
+                    {{ data.YMN[dancer.volunteer_info[0].jury_ballroom] }}
+                </td>
+                <td>
+                    {{ data.YMN[dancer.volunteer_info[0].jury_latin] }}
+                </td>
             </tr>
         {% endfor %}
     </tbody>
@@ -192,18 +215,15 @@ $(document).ready(function($) {
         window.location = $(this).data("href");
     });
 });
-function cancelSelected(url, full_name, first_name) {
-    if (confirm(`Cancelling the registration will remove ${full_name} completely from the tournament.\n\nAre you sure you want to cancel the registration of ${first_name}?`)) {
+function cancelSelected(url) {
+    if (confirm()) {
         window.location.href = url;
     }
 };
-function cancelConfirmed(url, full_name, first_name) {
-    if (confirm(`WARNING! ${first_name} is obliged to pay the admission fee, even upon cancelling.\n\nCancelling the registration will remove ${full_name} completely from the tournament.\n\nAre you sure you want to cancel the registration of ${first_name}?`)) {
+function cancelConfirmed(url) {
+    if (confirm()) {
         window.location.href = url;
     }
 };
-function cancelRegistration(url) {
-    window.location.href = url;
-}
 </script>
 {% endblock %}

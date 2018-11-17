@@ -1,21 +1,28 @@
 from ntds_webportal import db, login
-from flask import current_app, url_for, redirect, render_template
+from flask import current_app, url_for, redirect, render_template, g, flash
 from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from ntds_webportal.data import *
-from raffle_system.raffle_config import *
+from ntds_webportal.data import ACCESS, PROFILE_ACCESS, MESSAGES_ACCESS
+from ntds_webportal.values import *
 from functools import wraps
 from time import time
-from datetime import datetime
+from datetime import datetime as dt
+import datetime
 import jwt
-import json
+from ntds_webportal.base_functions import str2bool
 
 
 USERS = 'users'
 TEAMS = 'teams'
 TEAM_FINANCES = 'team_finances'
+TOURNAMENT_STATE = 'tournament_state'
+SYSTEM_CONFIGURATION = 'system_configuration'
+RAFFLE_CONFIGURATION = 'raffle_configuration'
 NOTIFICATIONS = 'notifications'
-EXCLUDED_FROM_CLEARING = [USERS, TEAMS, TEAM_FINANCES, NOTIFICATIONS]
+ATTENDED_PREVIOUS_TOURNAMENT_CONTESTANT = 'attended_previous_tournament_contestant'
+NOT_SELECTED_CONTESTANT = 'not_selected_contestant'
+EXCLUDED_FROM_CLEARING = [USERS, TEAMS, TEAM_FINANCES, TOURNAMENT_STATE, SYSTEM_CONFIGURATION, RAFFLE_CONFIGURATION,
+                          ATTENDED_PREVIOUS_TOURNAMENT_CONTESTANT, NOT_SELECTED_CONTESTANT]
 
 
 @login.user_loader
@@ -28,10 +35,33 @@ def requires_access_level(access_levels):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if current_user.access not in access_levels:
+                flash("Page inaccessible.")
                 return redirect(url_for('main.index'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
+
+
+def requires_tournament_state(state):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not g.ts.state() >= state:
+                flash("Page currently inaccessible.")
+                return redirect(url_for('main.index'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+
+def requires_testing_environment(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_app.config.get('ENV') not in TESTING_ENVIRONMENTS:
+            flash("Cannot access this page in production.", "alert-warning")
+            return redirect(url_for('main.index'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 # noinspection PyUnresolvedReferences
@@ -40,12 +70,17 @@ class User(UserMixin, db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True)
-    password_hash = db.Column(db.String(128), index=True)
+    password_hash = db.Column(db.String(128))
     access = db.Column(db.Integer, index=True, nullable=False)
     is_active = db.Column(db.Boolean, index=True, nullable=False, default=False)
     send_new_messages_email = db.Column(db.Boolean, nullable=False, default=True)
+    activate = db.Column(db.Boolean, nullable=False, default=False)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
     team = db.relationship('Team')
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
+    dancer = db.relationship('Contestant')
+    volunteer_id = db.Column(db.Integer, db.ForeignKey('super_volunteer.volunteer_id'))
+    super_volunteer = db.relationship('SuperVolunteer')
 
     def __repr__(self):
         return '{}'.format(self.username)
@@ -54,22 +89,31 @@ class User(UserMixin, db.Model):
         return self.user_id
 
     def is_admin(self):
-        return self.access == ACCESS['admin']
+        return self.access == ACCESS[ADMIN]
 
     def is_organizer(self):
-        return self.access == ACCESS['organizer']
+        return self.access == ACCESS[ORGANIZER]
 
     def is_tc(self):
-        return self.access == ACCESS['team_captain']
+        return self.access == ACCESS[TEAM_CAPTAIN]
 
     def is_treasurer(self):
-        return self.access == ACCESS['treasurer']
+        return self.access == ACCESS[TREASURER]
 
-    def is_bdo(self):
-        return self.access == ACCESS['blind_date_organizer']
+    def is_bda(self):
+        return self.access == ACCESS[BLIND_DATE_ASSISTANT]
 
     def is_cia(self):
         return self.access == ACCESS[CHECK_IN_ASSISTANT]
+
+    def is_ada(self):
+        return self.access == ACCESS[ADJUDICATOR_ASSISTANT]
+
+    def is_dancer(self):
+        return self.access == ACCESS[DANCER]
+
+    def is_super_volunteer(self):
+        return self.access == ACCESS[SUPER_VOLUNTEER]
 
     def allowed(self, access_level):
         return self.access == access_level
@@ -107,18 +151,43 @@ class User(UserMixin, db.Model):
             return 'error'
         return User.query.get(user_id)
 
-    def teamcaptains_selected(self):
+    def team_captains_selected(self):
         if self.has_dancers_registered():
-            return raffle_settings[MAX_TEAMCAPTAINS] - \
+            return g.sc.number_of_teamcaptains - \
                    len(db.session.query(ContestantInfo).filter(ContestantInfo.team == current_user.team,
                                                                ContestantInfo.team_captain.is_(True)).all())
         else:
             return 0
 
-    @staticmethod
-    def has_dancers_registered():
-        return len(db.session.query(Contestant).join(ContestantInfo)
-                   .filter(ContestantInfo.team == current_user.team).all()) > 0
+    def has_dancers_registered(self):
+        return self.registered_dancers() > 0
+
+    def number_of_dancers_with_status(self, status):
+        count = 0
+        if self.is_tc():
+            count += Contestant.query.join(StatusInfo, ContestantInfo) \
+                .filter(ContestantInfo.team == current_user.team, StatusInfo.status == status).count()
+        return count
+
+    def registered_dancers(self):
+        return self.number_of_dancers_with_status(REGISTERED) + self.number_of_dancers_with_status(NO_GDPR)
+
+    def selected_dancers(self):
+        return self.number_of_dancers_with_status(SELECTED)
+
+    def dancers_with_feedback(self):
+        count = 0
+        if self.is_tc():
+            count += Contestant.query.join(StatusInfo, ContestantInfo) \
+                .filter(ContestantInfo.team == current_user.team, StatusInfo.status != CANCELLED,
+                        StatusInfo.feedback_about_information != "").count()
+        return count
+
+    def has_profile_access(self):
+        return self.access in PROFILE_ACCESS
+
+    def has_messages_access(self):
+        return self.access in MESSAGES_ACCESS
 
 
 class Team(db.Model):
@@ -127,23 +196,13 @@ class Team(db.Model):
     country = db.Column(db.String(128), nullable=False)
     city = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128), nullable=False, unique=True)
-    finances = db.relationship('TeamFinances', back_populates='team', cascade='all, delete-orphan')
+    amount_paid = db.Column(db.Integer, nullable=False, default=0)
 
     def __repr__(self):
         if g.sc.tournament == NTDS:
             return '{}'.format(self.name)
         else:
             return '{}'.format(self.city)
-
-
-class TeamFinances(db.Model):
-    __tablename__ = TEAM_FINANCES
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), primary_key=True)
-    team = db.relationship('Team', back_populates='finances')
-    paid = db.Column(db.Integer, nullable=False, default=0)
-
-    def __repr__(self):
-        return '{}'.format(self.team)
 
 
 class Contestant(db.Model):
@@ -158,6 +217,7 @@ class Contestant(db.Model):
     volunteer_info = db.relationship('VolunteerInfo', back_populates='contestant', cascade='all, delete-orphan')
     additional_info = db.relationship('AdditionalInfo', back_populates='contestant', cascade='all, delete-orphan')
     status_info = db.relationship('StatusInfo', back_populates='contestant', cascade='all, delete-orphan')
+    payment_info = db.relationship('PaymentInfo', back_populates='contestant', cascade='all, delete-orphan')
     merchandise_info = db.relationship('MerchandiseInfo', back_populates='contestant', cascade='all, delete-orphan')
 
     def __repr__(self):
@@ -200,6 +260,11 @@ class Contestant(db.Model):
     def get_dancing_info(self, competition):
         return next((di for di in self.dancing_info if di.competition == competition), None)
 
+    def dancing_information(self, competition):
+        for di in self.dancing_info:
+            if di.competition == competition:
+                return di
+
 
 class ContestantInfo(db.Model):
     __tablename__ = 'contestant_info'
@@ -207,7 +272,7 @@ class ContestantInfo(db.Model):
     contestant = db.relationship('Contestant', back_populates='contestant_info')
     number = db.Column(db.Integer, nullable=False)
     team_captain = db.Column(db.Boolean, nullable=False, default=False)
-    student = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    student = db.Column(db.String(128), index=True, nullable=False, default=STUDENT)
     first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     diet_allergies = db.Column('Diet/Allergies', db.String(512), nullable=True, default=None)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=False)
@@ -216,13 +281,13 @@ class ContestantInfo(db.Model):
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
-    def set_teamcaptain(self):
-        current_tc = db.session.query(Contestant).join(ContestantInfo) \
-            .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).first()
-        if current_tc is not None:
-            current_tc.contestant_info[0].team_captain = False
-        self.team_captain = True
-        db.session.commit()
+    # def set_teamcaptain(self):
+    #     current_tc = db.session.query(Contestant).join(ContestantInfo) \
+    #         .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).all()
+    #     if current_tc is not None:
+    #         current_tc.contestant_info[0].team_captain = False
+    #     self.team_captain = True
+    #     db.session.commit()
 
 
 class DancingInfo(db.Model):
@@ -242,7 +307,7 @@ class DancingInfo(db.Model):
 
     def valid_match(self, other, breitensport=True):
         errors = []
-        if breitensport and (self.level in BLIND_DATE_LEVELS or other.level in BLIND_DATE_LEVELS):
+        if breitensport and (self.blind_date or other.blind_date):
             errors.append("At least one of the dancers must blind date.")
         else:
             if self.competition != other.competition:
@@ -284,16 +349,17 @@ class VolunteerInfo(db.Model):
     __tablename__ = 'volunteer_info'
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
     contestant = db.relationship('Contestant', back_populates='volunteer_info')
-    volunteer = db.Column(db.String(16), nullable=False)
-    first_aid = db.Column(db.String(16), nullable=False)
-    jury_ballroom = db.Column(db.String(16), nullable=False)
-    jury_latin = db.Column(db.String(16), nullable=False)
-    level_ballroom = db.Column(db.String(16), nullable=False)
-    level_latin = db.Column(db.String(16), nullable=False)
-    license_jury_ballroom = db.Column(db.String(16), nullable=False)
-    license_jury_latin = db.Column(db.String(16), nullable=False)
-    jury_salsa = db.Column(db.String(16), nullable=False)
-    jury_polka = db.Column(db.String(16), nullable=False)
+    volunteer = db.Column(db.String(16), nullable=False, default=NO)
+    first_aid = db.Column(db.String(16), nullable=False, default=NO)
+    emergency_response_officer = db.Column(db.String(16), nullable=False, default=NO)
+    jury_ballroom = db.Column(db.String(16), nullable=False, default=NO)
+    jury_latin = db.Column(db.String(16), nullable=False, default=NO)
+    level_ballroom = db.Column(db.String(16), nullable=False, default=BELOW_D)
+    level_latin = db.Column(db.String(16), nullable=False, default=BELOW_D)
+    license_jury_ballroom = db.Column(db.String(16), nullable=False, default=NO)
+    license_jury_latin = db.Column(db.String(16), nullable=False, default=NO)
+    jury_salsa = db.Column(db.String(16), nullable=False, default=NO)
+    jury_polka = db.Column(db.String(16), nullable=False, default=NO)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
@@ -301,6 +367,7 @@ class VolunteerInfo(db.Model):
     def not_volunteering(self):
         self.volunteer = NO
         self.first_aid = NO
+        self.emergency_response_officer = NO
         self.jury_ballroom = NO
         self.jury_latin = NO
         self.license_jury_ballroom = NO
@@ -310,13 +377,18 @@ class VolunteerInfo(db.Model):
         self.jury_salsa = NO
         self.jury_polka = NO
 
+    def volunteering(self):
+        return self.volunteer != NO or self.first_aid != NO or self.emergency_response_officer != NO
+
+    def adjudicating(self):
+        return self.jury_ballroom != NO or self.jury_latin != NO or self.jury_salsa != NO or self.jury_polka != NO
+
 
 class AdditionalInfo(db.Model):
     __tablename__ = 'additional_info'
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
     contestant = db.relationship('Contestant', back_populates='additional_info')
-    sleeping_arrangements = db.Column(db.Boolean, nullable=False)
-    t_shirt = db.Column(db.String(128), nullable=False)
+    sleeping_arrangements = db.Column(db.Boolean, nullable=False, default=False)
     bus_to_brno = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
@@ -329,10 +401,11 @@ class StatusInfo(db.Model):
     contestant = db.relationship('Contestant', back_populates='status_info')
     status = db.Column(db.String(16), index=True, default=REGISTERED)
     payment_required = db.Column(db.Boolean, index=True, nullable=False, default=False)
-    paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
     raffle_status = db.Column(db.String(16), index=True, default=REGISTERED)
     guaranteed_entry = db.Column(db.Boolean, nullable=False, default=False)
     checked_in = db.Column(db.Boolean, nullable=False, default=False)
+    received_starting_number = db.Column(db.Boolean, nullable=False, default=False)
+    feedback_about_information = db.Column(db.String(512), nullable=True, default=None)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
@@ -347,27 +420,145 @@ class StatusInfo(db.Model):
             self.payment_required = False
 
 
+class PaymentInfo(db.Model):
+    __tablename__ = 'payment_info'
+    contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'), primary_key=True)
+    contestant = db.relationship('Contestant', back_populates='payment_info')
+    entry_paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    full_refund = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    partial_refund = db.Column(db.Boolean, index=True, nullable=False, default=False)
+
+    def __repr__(self):
+        return '{name}'.format(name=self.contestant)
+
+    def all_paid(self, set_paid=None):
+        if set_paid is not None:
+            if set_paid:
+                return self.set_all_paid()
+            elif not set_paid:
+                return self.set_all_unpaid()
+        else:
+            m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
+            if m_info.ordered_merchandise():
+                return m_info.merchandise_paid() and self.entry_paid
+            else:
+                return self.entry_paid
+
+    def set_all_paid(self):
+        m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
+        if m_info.ordered_merchandise():
+            m_info.set_merchandise_paid()
+        self.entry_paid = True
+        db.session.commit()
+        return True
+
+    def partially_paid(self):
+        m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
+        if m_info.ordered_merchandise():
+            return m_info.merchandise_paid() or self.entry_paid
+        else:
+            return self.entry_paid
+
+    def set_all_unpaid(self):
+        m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
+        if m_info.ordered_merchandise():
+            m_info.set_merchandise_unpaid()
+        self.entry_paid = False
+        db.session.commit()
+        return False
+
+
 class MerchandiseInfo(db.Model):
     __tablename__ = 'merchandise_info'
     order_id = db.Column(db.Integer, primary_key=True)
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     contestant = db.relationship('Contestant', back_populates='merchandise_info')
-    product_id = db.Column(db.Integer, nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+    t_shirt = db.Column(db.String(128), nullable=False, default=NO)
+    mug = db.Column(db.Boolean, nullable=False, default=False)
+    bag = db.Column(db.Boolean, nullable=False, default=False)
+    t_shirt_paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    mug_paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    bag_paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    merchandise_received = db.Column(db.Boolean, index=True, nullable=False, default=False)
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
+    def ordered_merchandise(self):
+        return self.t_shirt != NO or self.mug or self.bag
 
-class Merchandise(db.Model):
-    __tablename__ = 'merchandise'
-    merchandise_id = db.Column(db.Integer, primary_key=True)
-    product_name = db.Column(db.String(128), nullable=False)
-    product_description = db.Column(db.String(256), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    def merchandise_paid(self):
+        t_shirt_paid = self.t_shirt_paid
+        mug_paid = self.mug_paid
+        bag_paid = self.bag_paid
+        if self.t_shirt == NO:
+            t_shirt_paid = True
+        if not self.mug:
+            mug_paid = True
+        if not self.bag:
+            bag_paid = True
+        return t_shirt_paid and mug_paid and bag_paid
 
-    def __repr__(self):
-        return '{name}'.format(name=self.product_name)
+    def set_merchandise_paid(self):
+        if self.ordered_merchandise():
+            if g.sc.t_shirt_sold and self.t_shirt != NO:
+                self.t_shirt_paid = True
+            if g.sc.mug_sold and self.mug:
+                self.mug_paid = True
+            if g.sc.bag_sold and self.bag:
+                self.bag_paid = True
+            db.session.commit()
+
+    def set_merchandise_unpaid(self):
+        if self.ordered_merchandise():
+            if g.sc.t_shirt_sold and self.t_shirt:
+                self.t_shirt_paid = False
+            if g.sc.mug_sold and self.mug:
+                self.mug_paid = False
+            if g.sc.bag_sold and self.bag:
+                self.bag_paid = False
+            db.session.commit()
+
+    def merchandise_price(self):
+        total_price = 0
+        if self.ordered_merchandise():
+            if self.t_shirt != NO:
+                total_price += g.sc.t_shirt_price
+            if self.mug:
+                total_price += g.sc.mug_price
+            if self.bag:
+                total_price += g.sc.bag_price
+        return total_price
+
+
+class AttendedPreviousTournamentContestant(db.Model):
+    __tablename__ = ATTENDED_PREVIOUS_TOURNAMENT_CONTESTANT
+    contestant_id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(128), nullable=False)
+    prefixes = db.Column(db.String(128), nullable=True)
+    last_name = db.Column(db.String(128), nullable=False)
+    email = db.Column(db.String(128), nullable=False, unique=True)
+    tournaments = db.Column(db.String(8192), nullable=False)
+
+    def set_tournaments(self, new_tournament):
+        if self.tournaments is not None:
+            old_tournaments = self.tournaments.split(",")
+            if new_tournament not in old_tournaments:
+                old_tournaments.append(new_tournament)
+                self.tournaments = ",".join(old_tournaments)
+        else:
+            self.tournaments = new_tournament
+        db.session.commit()
+
+
+class NotSelectedContestant(db.Model):
+    __tablename__ = NOT_SELECTED_CONTESTANT
+    contestant_id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(128), nullable=False)
+    prefixes = db.Column(db.String(128), nullable=True)
+    last_name = db.Column(db.String(128), nullable=False)
+    email = db.Column(db.String(128), nullable=False)
+    tournament = db.Column(db.String(16), nullable=False)
 
 
 class Notification(db.Model):
@@ -377,7 +568,7 @@ class Notification(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
     unread = db.Column(db.Boolean, index=True, default=True)
     archived = db.Column(db.Boolean, index=True, default=False)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=dt.utcnow)
     title = db.Column(db.String(128))
     text = db.Column(db.Text())
     destination = db.Column(db.String(256))
@@ -401,7 +592,7 @@ class PartnerRequest(db.Model):
 
     __tablename__ = 'partner_request'
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=dt.utcnow)
     remark = db.Column(db.Text())
     response = db.Column(db.Text())
     level = db.Column(db.String(128), nullable=False, default=NO)
@@ -426,7 +617,7 @@ class PartnerRequest(db.Model):
         db.session.commit()
 
     def notify(self):
-        recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team, access=ACCESS['team_captain'])
+        recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team, access=ACCESS[TEAM_CAPTAIN])
         for u in recipients:
             n = Notification()
             n.title = f"{self.state_name()} - Partner request: {self.dancer.get_full_name()} with " \
@@ -466,7 +657,7 @@ class NameChangeRequest(db.Model):
         self.notify()
 
     def notify(self):
-        recipients = User.query.filter_by(team=self.contestant.contestant_info[0].team, access=ACCESS['team_captain'])
+        recipients = User.query.filter_by(team=self.contestant.contestant_info[0].team, access=ACCESS[TEAM_CAPTAIN])
         for u in recipients:
             n = Notification()
             n.title = f"{self.state_name()} - Name change request: " \
@@ -491,51 +682,49 @@ class NameChangeRequest(db.Model):
 
 
 class TournamentState(db.Model):
-    __tablename__ = 'tournament_state'
+    __tablename__ = TOURNAMENT_STATE
     lock = db.Column(db.Integer, primary_key=True)
+    organizer_account_set = db.Column(db.Boolean, nullable=False, default=False)
+    system_configured = db.Column(db.Boolean, nullable=False, default=False)
+    website_accessible_to_teamcaptains = db.Column(db.Boolean, nullable=False, default=False)
+    registration_period_started = db.Column(db.Boolean, nullable=False, default=False)
+    registration_open = db.Column(db.Boolean, nullable=False, default=False)
+    raffle_system_configured = db.Column(db.Boolean, nullable=False, default=False)
     main_raffle_taken_place = db.Column(db.Boolean, nullable=False, default=False)
     main_raffle_result_visible = db.Column(db.Boolean, nullable=False, default=False)
     numbers_rearranged = db.Column(db.Boolean, nullable=False, default=False)
     raffle_completed_message_sent = db.Column(db.Boolean, nullable=False, default=False)
-    tournament_config = db.Column(db.String(2048), nullable=False)
-    raffle_config = db.Column(db.String(2048), nullable=False)
 
-    def __repr__(self):
-        return 'Tournament config'
+    def state(self):
+        if self.main_raffle_result_visible:
+            return RAFFLE_CONFIRMED
+        if self.main_raffle_taken_place:
+            return RAFFLE_COMPLETED
+        if self.registration_open:
+            return REGISTRATION_OPEN
+        if self.registration_period_started and not self.registration_open:
+            return REGISTRATION_CLOSED
+        if self.registration_period_started:
+            return REGISTRATION_STARTED
+        if self.website_accessible_to_teamcaptains:
+            return TEAM_CAPTAINS_HAVE_ACCESS
+        if self.system_configured:
+            return SYSTEM_CONFIGURED
+        if self.organizer_account_set:
+            return ORGANIZERS_NOTIFIED
+        return 0
 
-    def set_raffle_config(self, c):
-        self.raffle_config = json.dumps(c)
-
-    def get_raffle_config(self):
-        rc = json.loads(self.raffle_config)
-        for k, v in rc.items():
-            try:
-                rc[k] = int(v)
-            except ValueError:
-                pass
-        return rc
-    
-    def update_raffle_config(self, key, value):
-        tc = self.get_raffle_config()
-        tc[key] = value
-        db.session.commit()
-
-    def get_raffle_config_value(self, key):
-        return self.get_raffle_config()[key]
-    
-    def set_tournament_config(self, c):
-        self.tournament_config = json.dumps(c)
-
-    def get_tournament_config(self):
-        return json.loads(self.tournament_config)
-
-    def update_tournament_config(self, key, value):
-        tc = self.get_tournament_config()
-        tc[key] = value
-        db.session.commit()
-
-    def get_tournament_config_value(self, key):
-        return self.get_tournament_config()[key]
+    # def state_flash_message(self):
+    #     if not self.system_configured:
+    #         return WEBSITE_NOT_CONFIGURED_TEXT
+    #     if not self.website_accessible_to_teamcaptains:
+    #         return TEAM_CAPTAINS_DO_NOT_HAVE_ACCESS_TEXT
+    #     if not self.registration_period_started:
+    #         return REGISTRATION_NOT_STARTED_TEXT
+    #     if self.registration_period_started and not self.registration_open:
+    #         return REGISTRATION_NOT_OPEN_TEXT
+    #     if not self.main_raffle_result_visible:
+    #         return RAFFLE_NOT_CONFIRMED_TEXT
 
 
 class SalsaPartners(db.Model):
@@ -556,3 +745,184 @@ class PolkaPartners(db.Model):
 
     def __repr__(self):
         return 'Lead: {} - Follow {}'.format(self.lead_id, self.follow_id)
+
+
+class SystemConfiguration(db.Model):
+    __tablename__ = SYSTEM_CONFIGURATION
+    id = db.Column(db.Integer, primary_key=True)
+
+    website_accessible = db.Column(db.Boolean, nullable=False, default=True)
+
+    system_configuration_accessible = db.Column(db.Boolean, nullable=False, default=False)
+    tournament = db.Column(db.String(4), nullable=False, default=NTDS)
+    year = db.Column(db.Integer, nullable=False, default=2018)
+    city = db.Column(db.String(128), nullable=False, default=ENSCHEDE)
+    tournament_starting_date = db.Column(db.Integer, nullable=False, default=1538449200)
+
+    number_of_teamcaptains = db.Column(db.Integer, nullable=False, default=1)
+
+    beginners_level = db.Column(db.Boolean, nullable=False, default=True)
+    champions_level = db.Column(db.Boolean, nullable=False, default=True)
+    closed_level = db.Column(db.Boolean, nullable=False, default=True)
+    breitensport_obliged_blind_date = db.Column(db.Boolean, nullable=False, default=True)
+    salsa_competition = db.Column(db.Boolean, nullable=False, default=False)
+    polka_competition = db.Column(db.Boolean, nullable=False, default=False)
+
+    student_price = db.Column(db.Integer, nullable=False, default=DEFAULT_STUDENT_PRICE)
+    non_student_price = db.Column(db.Integer, nullable=False, default=DEFAULT_NON_STUDENT_PRICE)
+    phd_student_category = db.Column(db.Boolean, nullable=False, default=False)
+    phd_student_price = db.Column(db.Integer, nullable=False, default=DEFAULT_PHD_STUDENT_PRICE)
+
+    first_time_ask = db.Column(db.Boolean, nullable=False, default=True)
+    ask_diet_allergies = db.Column(db.Boolean, nullable=False, default=True)
+    ask_volunteer = db.Column(db.Boolean, nullable=False, default=True)
+    ask_first_aid = db.Column(db.Boolean, nullable=False, default=True)
+    ask_emergency_response_officer = db.Column(db.Boolean, nullable=False, default=True)
+    ask_adjudicator_highest_achieved_level = db.Column(db.Boolean, nullable=False, default=True)
+    ask_adjudicator_certification = db.Column(db.Boolean, nullable=False, default=True)
+
+    t_shirt_sold = db.Column(db.Boolean, nullable=False, default=True)
+    t_shirt_price = db.Column(db.Integer, nullable=False, default=0)
+    mug_sold = db.Column(db.Boolean, nullable=False, default=True)
+    mug_price = db.Column(db.Integer, nullable=False, default=0)
+    bag_sold = db.Column(db.Boolean, nullable=False, default=True)
+    bag_price = db.Column(db.Integer, nullable=False, default=0)
+    merchandise_link = db.Column(db.String(1028), nullable=True)
+    merchandise_closing_date = db.Column(db.Integer, nullable=False, default=1538449200)
+
+    finances_full_refund = db.Column(db.Boolean, nullable=False, default=False)
+    finances_partial_refund = db.Column(db.Boolean, nullable=False, default=True)
+    finances_partial_refund_percentage = db.Column(db.Integer, nullable=False, default=70)
+    finances_refund_date = db.Column(db.Integer, nullable=False, default=1538449200)
+
+    main_page_link = db.Column(db.String(1028), nullable=True)
+    terms_and_conditions_link = db.Column(db.String(1028), nullable=True)
+    
+    def get_participating_levels(self):
+        participating_levels = []
+        if self.beginners_level:
+            participating_levels.append(BEGINNERS)
+        participating_levels.append(BREITENSPORT)
+        if self.closed_level:
+            participating_levels.append(CLOSED)
+        participating_levels.append(OPEN_CLASS)
+        return participating_levels
+
+    def get_participating_levels_including_not_dancing(self):
+        participating_levels = self.get_participating_levels()
+        participating_levels.append(NO)
+        return participating_levels
+
+    def check_in_accessible(self):
+        return int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) > \
+                              self.tournament_starting_date
+
+    def merchandise(self):
+        return self.t_shirt_sold or self.mug_sold or self.bag_sold
+
+    def number_of_merchandise(self):
+        counter = 0
+        if self.t_shirt_sold:
+            counter += 1
+        if self.mug_sold:
+            counter += 1
+        if self.bag_sold:
+            counter += 1
+        return counter
+
+
+class RaffleConfiguration(db.Model):
+    __tablename__ = RAFFLE_CONFIGURATION
+    id = db.Column(db.Integer, primary_key=True)
+
+    maximum_number_of_dancers = db.Column(db.Integer, nullable=False, default=400)
+    selection_buffer = db.Column(db.Integer, nullable=False, default=40)
+
+    beginners_guaranteed_entry_cutoff = db.Column(db.Boolean, nullable=False, default=False)
+    beginners_guaranteed_cutoff = db.Column(db.Integer, nullable=False, default=0)
+    beginners_guaranteed_per_team = db.Column(db.Boolean, nullable=False, default=False)
+    beginners_minimum_entry_per_team = db.Column(db.Integer, nullable=False, default=0)
+    beginners_increased_chance = db.Column(db.Boolean, nullable=False, default=False)
+
+    first_time_guaranteed_entry = db.Column(db.Boolean, nullable=False, default=False)
+    first_time_increased_chance = db.Column(db.Boolean, nullable=False, default=False)
+
+    guaranteed_team_size = db.Column(db.Boolean, nullable=False, default=False)
+    minimum_team_size = db.Column(db.Integer, nullable=False, default=0)
+
+    lions_guaranteed_per_team = db.Column(db.Boolean, nullable=False, default=False)
+    closed_lion = db.Column(db.Boolean, nullable=False, default=False)
+    open_class_lion = db.Column(db.Boolean, nullable=False, default=False)
+    lions_minimum_entry_per_team = db.Column(db.Integer, nullable=False, default=0)
+
+    def get_lion_levels(self):
+        lion_levels = [BEGINNERS, BREITENSPORT]
+        if self.closed_lion:
+            lion_levels.append(CLOSED)
+        if self.open_class_lion:
+            lion_levels.append(OPEN_CLASS)
+        return lion_levels
+
+
+class SuperVolunteer(db.Model):
+    __tablename__ = 'super_volunteer'
+    volunteer_id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(128), nullable=False)
+    prefixes = db.Column(db.String(128), nullable=True)
+    last_name = db.Column(db.String(128), nullable=False)
+    email = db.Column(db.String(128), nullable=False, unique=True)
+    diet_allergies = db.Column('Diet/Allergies', db.String(512), nullable=True, default=None)
+    sleeping_arrangements = db.Column(db.Boolean, nullable=False, default=False)
+    remark = db.Column(db.String(512), nullable=True, default=None)
+    first_aid = db.Column(db.String(16), nullable=False, default=NO)
+    emergency_response_officer = db.Column(db.String(16), nullable=False, default=NO)
+    jury_ballroom = db.Column(db.String(16), nullable=False, default=NO)
+    jury_latin = db.Column(db.String(16), nullable=False, default=NO)
+    level_ballroom = db.Column(db.String(16), nullable=False, default=BELOW_D)
+    level_latin = db.Column(db.String(16), nullable=False, default=BELOW_D)
+    license_jury_ballroom = db.Column(db.String(16), nullable=False, default=NO)
+    license_jury_latin = db.Column(db.String(16), nullable=False, default=NO)
+    jury_salsa = db.Column(db.String(16), nullable=False, default=NO)
+    jury_polka = db.Column(db.String(16), nullable=False, default=NO)
+
+    def get_full_name(self):
+        if self.prefixes is None or self.prefixes == '':
+            return ' '.join((self.first_name, self.last_name))
+        else:
+            return ' '.join((self.first_name, self.prefixes, self.last_name))
+
+    def get_last_name(self):
+        if self.prefixes is None or self.prefixes == '':
+            return self.last_name
+        else:
+            return ' '.join((self.prefixes, self.last_name))
+
+    def capitalize_name(self):
+        self.first_name.title()
+        self.last_name.title()
+
+    def volunteering(self):
+        return self.first_aid != NO or self.emergency_response_officer != NO
+
+    def adjudicating(self):
+        return self.jury_ballroom != NO or self.jury_latin != NO or self.jury_salsa != NO or self.jury_polka != NO
+    
+    def update_data(self, form):
+        self.first_name = form.first_name.data
+        self.prefixes = form.prefixes.data if form.prefixes.data.replace(' ', '') != '' else None
+        self.last_name = form.last_name.data
+        self.capitalize_name()
+        self.email = form.email.data
+        self.sleeping_arrangements = str2bool(form.sleeping_arrangements.data)
+        self.diet_allergies = form.diet_allergies.data
+        self.first_aid = form.first_aid.data
+        self.emergency_response_officer = form.emergency_response_officer.data
+        self.jury_ballroom = form.jury_ballroom.data
+        self.jury_latin = form.jury_latin.data
+        self.license_jury_ballroom = form.license_jury_ballroom.data
+        self.license_jury_latin = form.license_jury_latin.data
+        self.level_ballroom = form.level_jury_ballroom.data
+        self.level_latin = form.level_jury_latin.data
+        self.jury_salsa = form.jury_salsa.data
+        self.jury_polka = form.jury_polka.data
+        self.remark = form.remark.data

@@ -2,13 +2,15 @@
 <div class="tab-pane fade" role=tabpanel id={{team['id']}} aria-labelledby={{team['id']}}-tab>
     {% if (team['confirmed_dancers']|length + team['cancelled_dancers']|length) > 0 %}
     {% with finances=team['finances'] %}
-        {% include 'organizer/_finances_summary.html' %}
+        {% include 'teamcaptains/_finances_summary.html' %}
     {% endwith %}
-    {% with status='Confirmed dancers', dancers=team['confirmed_dancers'] %}
-        {% include 'organizer/_finances_list.html' %}
+    <h2>Received by organization:</h2>
+    <div style="font-size:x-large">{{ data.euros(team['team'].amount_paid) }} / {{ data.euros(team['finances']['price_total']) }}</div>
+    {% with status='Confirmed dancers', finances=team['finances'], dancers=team['confirmed_dancers'] %}
+        {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
-    {% with status='Cancelled dancers', dancers=team['cancelled_dancers'], cancelable=true %}
-        {% include 'organizer/_finances_list.html' %}
+    {% with status='Cancelled dancers', finances=team['finances'], dancers=team['cancelled_dancers'], cancelable=true %}
+        {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
     {% with status='Refunds', finances=team['finances'], dancers=team['refund_dancers'] %}
         {% include 'teamcaptains/_refund_list.html' %}
