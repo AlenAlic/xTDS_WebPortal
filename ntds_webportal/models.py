@@ -3,6 +3,7 @@ from flask import current_app, url_for, redirect, render_template, g, flash
 from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from ntds_webportal.data import ACCESS, PROFILE_ACCESS, MESSAGES_ACCESS
+from ntds_webportal.email import send_email
 from ntds_webportal.values import *
 from functools import wraps
 from time import time
@@ -561,6 +562,20 @@ class NotSelectedContestant(db.Model):
     tournament = db.Column(db.String(16), nullable=False)
 
 
+def send_new_messages_email(sender, recipient):
+    send_email('New message - xTDS WebPortal',
+               recipients=[recipient.email],
+               text_body=render_template('email/new_message.txt', sender=sender, recipient=recipient),
+               html_body=render_template('email/new_message.html', sender=sender, recipient=recipient))
+
+
+def send_new_automated_message_email(recipient):
+    send_email('New automated message - xTDS WebPortal',
+               recipients=[recipient.email],
+               text_body=render_template('email/new_automated_message.txt', recipient=recipient),
+               html_body=render_template('email/new_automated_message.html', recipient=recipient))
+
+
 class Notification(db.Model):
     __tablename__ = NOTIFICATIONS
     notification_id = db.Column(db.Integer, primary_key=True)
@@ -584,6 +599,22 @@ class Notification(db.Model):
             return 'xTDS - automated message'
         else:
             return self.sender
+
+    def get_sender_email(self):
+        if not self.sender:
+            return 'xTDS system'
+        else:
+            return self.sender
+
+    def send(self):
+        if dt.utcnow().timestamp() < g.sc.tournament_starting_date:
+            if self.user.send_new_messages_email:
+                if self.sender is not None:
+                    send_new_messages_email(sender=self.sender, recipient=self.user)
+                else:
+                    send_new_automated_message_email(recipient=self.user)
+        db.session.add(self)
+        db.session.commit()
 
 
 class PartnerRequest(db.Model):
@@ -624,8 +655,7 @@ class PartnerRequest(db.Model):
                       f"{self.other.get_full_name()} in {self.competition}"
             n.user = u
             n.text = render_template('notifications/partner_request.html', request=self)
-            db.session.add(n)
-        db.session.commit()
+            n.send()
 
     def state_name(self):
         return self.STATE_NAMES[self.state]
@@ -664,8 +694,7 @@ class NameChangeRequest(db.Model):
                       f"{self.contestant.get_full_name()} to {self.get_full_name()}"
             n.user = u
             n.text = render_template('notifications/name_change_request.html', request=self)
-            db.session.add(n)
-        db.session.commit()
+            n.send()
 
     def get_full_name(self):
         if self.prefixes is None or self.prefixes == '':

@@ -150,7 +150,7 @@ def system_setup():
 @login_required
 @requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER]])
 def system_configuration():
-    if current_user.is_organizer() and g.ts.system_configured:
+    if current_user.is_organizer() and g.ts.registration_period_started:
         flash('Page currently inaccessible. The registration has started. For emergency access, contact the admin.')
         return redirect(url_for('main.dashboard'))
     form = SystemSetupForm()

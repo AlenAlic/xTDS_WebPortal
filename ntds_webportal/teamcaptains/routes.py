@@ -144,7 +144,6 @@ def register_dancer(number):
         flash("Cannot enter page right now. Register at least one dancer first to access the page.")
         return redirect(url_for('main.dashboard'))
     register = request.args.get('register', None, type=int)
-    send_message = request.args.get('send_message', False, type=bool)
     changed_dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number).first()
     if register == 0:
@@ -152,13 +151,11 @@ def register_dancer(number):
         changed_dancer.cancel_registration()
         db.session.commit()
         flash('The registration of {} has been cancelled.'.format(changed_dancer.get_full_name()), 'alert-info')
-        if send_message:
-            text = f"{changed_dancer.get_full_name()} from team {changed_dancer.contestant_info[0].team.name} " \
-                   f"has cancelled his/her registration.\n"
-            n = Notification(title=f"Cancelled registration, previously {status}", text=text,
-                             user=User.query.filter(User.access == ACCESS[ORGANIZER]).first())
-            db.session.add(n)
-            db.session.commit()
+        text = f"{changed_dancer.get_full_name()} from team {changed_dancer.contestant_info[0].team.name} " \
+               f"has cancelled his/her registration.\n"
+        n = Notification(title=f"Cancelled registration, previously {status}", text=text,
+                         user=User.query.filter(User.access == ACCESS[ORGANIZER]).first())
+        n.send()
     elif register == 1:
         changed_dancer.status_info[0].set_status(REGISTERED)
         db.session.commit()
@@ -326,8 +323,7 @@ def break_up_couple(competition, lead_id, follow_id):
                    f"({old_partner.contestant_info[0].team}) in {competition}."
             n = Notification(title=f"{dancer.get_full_name()} - no partner in {competition}",
                              text=text.format(dancer=dancer.get_full_name(), comp=competition), user=other_team_captain)
-            db.session.add(n)
-            db.session.commit()
+            n.send()
     return redirect(url_for('teamcaptains.couples_list'))
 
 

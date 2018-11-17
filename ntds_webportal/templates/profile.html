@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
+{% import 'my_wtf.html' as wtf %}
+
 
 {% block app_content %}
 
@@ -14,6 +15,13 @@
     {{ wtf.form_field(form.password) }}
     {{ wtf.form_field(form.password2) }}
     {{ wtf.form_field(form.submit) }}
+</form>
+
+<h2>E-mail notifications</h2>
+<form action="{{ url_for('main.profile') }}" class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ send_email_form.hidden_tag() }}
+    {{ wtf.form_field(send_email_form.send_email) }}
+    {{ wtf.form_field(send_email_form.email_submit) }}
 </form>
 {% endblock %}
 

@@ -24,15 +24,14 @@ def notify_teamcaptains_couple_created(lead, follow, competition):
                      text=text.format(dancer=lead.get_full_name(), comp=competition,
                                       partner=follow.get_full_name(), team=follow.contestant_info[0].team.name),
                      user=teamcaptain_lead)
-    db.session.add(n)
+    n.send()
     teamcaptain_follow = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
                                            User.team == follow.contestant_info[0].team).first()
     n2 = Notification(title=f"{follow} found a dancing partner for {competition}",
                       text=text.format(dancer=follow.get_full_name(), comp=competition,
                                        partner=lead.get_full_name(), team=lead.contestant_info[0].team.name),
                       user=teamcaptain_follow)
-    db.session.add(n2)
-    db.session.commit()
+    n2.send()
 
 
 def notify_teamcaptains_broken_up_couple(lead, follow, competition):
@@ -41,13 +40,12 @@ def notify_teamcaptains_broken_up_couple(lead, follow, competition):
     text = "{dancer} no longer has a partner in {comp}."
     n = Notification(title=f"{lead.get_full_name()} no longer has a partner for {competition}",
                      text=text.format(dancer=lead.get_full_name(), comp=competition), user=teamcaptain_lead)
-    db.session.add(n)
+    n.send()
     teamcaptain_follow = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
                                            User.team == follow.contestant_info[0].team).first()
     n2 = Notification(title=f"{follow.get_full_name()} no longer has a partner for {competition}",
                       text=text.format(dancer=follow.get_full_name(), comp=competition), user=teamcaptain_follow)
-    db.session.add(n2)
-    db.session.commit()
+    n2.send()
 
 
 def reset_tournament_state():

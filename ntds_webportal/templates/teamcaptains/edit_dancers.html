@@ -66,7 +66,7 @@
                     {% endif %}
                     {% if dancer.status_info[0].status == data.SELECTED %}
                         <button class="btn btn-danger confirm-cancellation"
-                                data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, send_message=true, wide=wide) }}"
+                                data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
                                 data-title="WARNING!"
                                 data-text="Cancelling the registration will remove {{ dancer.get_full_name() }} completely from the tournament.<br><br>
                                 Are you sure you want to cancel the registration of {{ dancer.first_name }}?"
@@ -76,7 +76,7 @@
                     {% endif %}
                     {% if dancer.status_info[0].status == data.CONFIRMED %}
                         <button class="btn btn-danger confirm-cancellation"
-                                data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, send_message=true, wide=wide) }}"
+                                data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
                                 data-title="WARNING!"
                                 data-text="{{ dancer.get_full_name() }} is obliged to pay the admission fee, even upon cancelling.<br><br>
                                 Cancelling the registration will remove {{ dancer.first_name }} completely from the tournament.<br><br>

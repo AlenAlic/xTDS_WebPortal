@@ -101,13 +101,13 @@ def create():
                 u = User.query.filter_by(user_id=recipient).first()
                 n = Notification(title=form.title.data, text=form.body.data,
                                  user=u, sender=current_user)
-                db.session.add(n)
+                n.send()
                 if u.access == ACCESS[TREASURER] and current_user.team != u.team:
                     tc = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True),
                                            User.team == u.team).first()
                     n = Notification(title=form.title.data, text='Message sent to your treasurer:\n\n'+form.body.data,
                                      user=tc, sender=current_user)
-                    db.session.add(n)
+                    n.send()
             else:
                 users = []
                 if recipient == 'tc':
@@ -117,8 +117,7 @@ def create():
                 for u in users:
                     n = Notification(title=form.title.data, text=form.body.data,
                                      user=u, sender=current_user)
-                    db.session.add(n)
-        db.session.commit()
+                    n.send()
         flash('Message(s) submitted')
         return redirect(url_for('notifications.messages'))
     return render_template('notifications/create.html', title="Send message", form=form)

@@ -1,7 +1,6 @@
 from flask import render_template, request, flash, redirect, url_for, g, current_app
 from flask_login import login_required, current_user
 from ntds_webportal import db
-from ntds_webportal.main.email import send_new_messages_email
 from ntds_webportal.raffle import bp
 from ntds_webportal.models import requires_access_level, requires_tournament_state, Team, Contestant, \
     User, Notification, requires_testing_environment
@@ -160,9 +159,7 @@ def confirmed():
                 text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
                 n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
                                  user=teamcaptain)
-                db.session.add(n)
-                if teamcaptain.send_new_messages_email:
-                    send_new_messages_email(current_user, teamcaptain)
+                n.send()
         elif 'remove_marked_dancers' in form:
             marked_dancers = [d for d in raffle_sys.all_dancers if str(d.contestant_id) in form]
             for dancer in marked_dancers:
@@ -192,13 +189,10 @@ def cancel_dancer(number):
                                      User.team == changed_dancer.contestant_info[0].team).first()
     db.session.commit()
     flash('The registration of {} has been cancelled.'.format(changed_dancer.get_full_name()), 'alert-info')
-    send_message = team_captain.send_new_messages_email
-    if send_message:
-        text = f"{changed_dancer.get_full_name()}' registration has been cancelled by the organization.\n"
-        n = Notification(title=f"Cancelled registration of {changed_dancer.get_full_name()}", text=text,
-                         user=team_captain)
-        db.session.add(n)
-        db.session.commit()
+    text = f"{changed_dancer.get_full_name()}' registration has been cancelled by the organization.\n"
+    n = Notification(title=f"Cancelled registration of {changed_dancer.get_full_name()}", text=text,
+                     user=team_captain)
+    n.send()
     return redirect(url_for('raffle.system'))
 
 
@@ -213,12 +207,9 @@ def confirm_dancer(number):
                                      User.team == changed_dancer.contestant_info[0].team).first()
     db.session.commit()
     flash(f"{changed_dancer.get_full_name()} has been confirmed.", 'alert-info')
-    send_message = team_captain.send_new_messages_email
-    if send_message:
-        text = f"{changed_dancer.get_full_name()}' has been confirmed by the organization.\n"
-        n = Notification(title=f"Confirmation of {changed_dancer.get_full_name()}", text=text, user=team_captain)
-        db.session.add(n)
-        db.session.commit()
+    text = f"{changed_dancer.get_full_name()}' has been confirmed by the organization.\n"
+    n = Notification(title=f"Confirmation of {changed_dancer.get_full_name()}", text=text, user=team_captain)
+    n.send()
     return redirect(url_for('raffle.system'))
 
 
@@ -358,9 +349,7 @@ def test_confirmed():
                 text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
                 n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
                                  user=teamcaptain)
-                db.session.add(n)
-                if teamcaptain.send_new_messages_email:
-                    send_new_messages_email(current_user, teamcaptain)
+                n.send()
         elif 'remove_marked_dancers' in form:
             marked_dancers = [d for d in raffle_sys.all_dancers if str(d.contestant_id) in form]
             for dancer in marked_dancers:
