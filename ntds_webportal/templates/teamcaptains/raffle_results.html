@@ -48,25 +48,40 @@
 function printPage() {
     window.print();
 }
+$(document).ready(function() {
+    $('.table-clickable-checkbox tr').click(function(event) {
+        if (event.target.type !== 'checkbox') {
+            $(':checkbox', this).trigger('click');
+        }
+    });
+});
+$(document).ready(function($) {
+    $(".checkbox").change(function() {
+        $(this).parents("tr:first").toggleClass('info');
+    });
+});
+function changeColor(elem) {
+    let row = elem.closest("tr");
+    if (elem.checked) {row.classList.add("info");}
+    else {row.classList.remove("info");}
+}
 function checkAll(ele) {
-     var checkboxes = document.getElementsByTagName('input');
+     var checkboxes = document.getElementsByClassName('dancer');
      if (ele.checked) {
          for (var i = 0; i < checkboxes.length; i++) {
              if (checkboxes[i].type == 'checkbox') {
                  checkboxes[i].checked = true;
-                 <!--checkboxes[i].parents("tr:first").toggleClass('success ');-->
+                 changeColor(checkboxes[i])
              }
          }
      } else {
          for (var i = 0; i < checkboxes.length; i++) {
              if (checkboxes[i].type == 'checkbox') {
                  checkboxes[i].checked = false;
+                 changeColor(checkboxes[i])
              }
          }
      }
  }
-$('#select_all').change(function() {
-    $('.dancer').trigger('click');
-});
 </script>
 {% endblock %}

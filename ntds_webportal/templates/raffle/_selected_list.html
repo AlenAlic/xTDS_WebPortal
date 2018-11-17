@@ -1,0 +1,61 @@
+<h2>Selected dancers <span class="badge" style="font-size:x-large">{{ raffle_sys.selected_dancers|length }}</span></h2>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+{% for team in teams %}
+{% if team['selected_dancers']|length > 0 %}
+<div class="panel panel-default {% if team['guaranteed_dancers']|length > 0 %}panel-danger{% endif %}">
+    <div class="panel-heading" role="button" id="{{ team['id_title'] }}-selected" data-toggle="collapse"
+         data-parent="#accordion" href="#{{ team['id'] }}-selected" aria-expanded="false" aria-controls="{{ team['id'] }}-selected">
+        <h4 class="panel-title">{{ team['team'].country }} - {{ team['team'].name }}
+            <span class="badge" style="font-size:large;">{{ team['selected_dancers']|length }}/{{ team['available_dancers']|length + team['selected_dancers']|length }}</span>
+        </h4>
+    </div>
+    <div id="{{ team['id'] }}-selected" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ team['id_title'] }}-selected">
+
+        <table class="table list-group">
+            <colgroup>
+                <col span="1" style="width: 40%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 10%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th colspan="2">
+                        Ballroom
+                    </th>
+                    <th colspan="2">
+                        Latin
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for dancer in team['selected_dancers'] %}
+                <tr class="{% if dancer.status_info[0].guaranteed_entry is sameas true %}success{% elif dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
+                    <td>
+                        {{ dancer.get_full_name() }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class=panel-footer><small style="visibility: hidden">Footer</small></div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+</div>

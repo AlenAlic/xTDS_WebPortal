@@ -1,0 +1,17 @@
+Dear {{name}},
+<br/><br/><br/>
+You have registered for the the {{g.sc.year}} {{g.sc.tournament}} in {{g.sc.city}} as a Super Volunteer.
+<br/>
+An account for the xTDS WebPortal has been created for you.
+<br/><br/>
+Use the following credentials to log in:
+<br/>
+Username: {{ super_volunteer.email }}
+<br/>
+Password: {{ password }}
+<br/><br/>
+Click <a href="{{ url_for('main.index', _external=True) }}">here</a> to visit the site.
+<br/><br/><br/>
+Sincerely,
+<br/><br/>
+The xTDS WebPortal Admin

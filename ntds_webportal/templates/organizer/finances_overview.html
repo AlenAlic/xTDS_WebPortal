@@ -12,12 +12,14 @@
     {% with teams=dutch_teams, dropdown_title='Dutch teams', dropdown_name='dutch' %}
         {% include 'organizer/_finances_teams_dropdown_menu.html' %}
     {% endwith %}
-    {% with teams=german_teams, dropdown_title='German teams', dropdown_name='german' %}
-        {% include 'organizer/_finances_teams_dropdown_menu.html' %}
-    {% endwith %}
-    {% with teams=other_teams, dropdown_title='Other teams', dropdown_name='other' %}
-        {% include 'organizer/_finances_teams_dropdown_menu.html' %}
-    {% endwith %}
+    {% if g.sc.tournament == g.data.ETDS %}
+        {% with teams=german_teams, dropdown_title='German teams', dropdown_name='german' %}
+            {% include 'organizer/_finances_teams_dropdown_menu.html' %}
+        {% endwith %}
+        {% with teams=other_teams, dropdown_title='Other teams', dropdown_name='other' %}
+            {% include 'organizer/_finances_teams_dropdown_menu.html' %}
+        {% endwith %}
+    {% endif %}
 </ul>
 <div class=tab-content id=myTabContent>
 	<div class="tab-pane fade in active" role=tabpanel id=all_teams aria-labelledby=all_teams-tab>
@@ -28,11 +30,13 @@
     {% with teams=dutch_teams %}
         {% include 'organizer/_finances_teams_dropdown_table.html' %}
     {% endwith %}
-    {% with teams=german_teams %}
-        {% include 'organizer/_finances_teams_dropdown_table.html' %}
-    {% endwith %}
-    {% with teams=other_teams %}
-        {% include 'organizer/_finances_teams_dropdown_table.html' %}
-    {% endwith %}
+    {% if g.sc.tournament == g.data.ETDS %}
+        {% with teams=german_teams %}
+            {% include 'organizer/_finances_teams_dropdown_table.html' %}
+        {% endwith %}
+        {% with teams=other_teams %}
+            {% include 'organizer/_finances_teams_dropdown_table.html' %}
+        {% endwith %}
+    {% endif %}
 </div>
 {% endblock %}

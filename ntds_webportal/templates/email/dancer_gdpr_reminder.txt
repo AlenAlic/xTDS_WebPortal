@@ -1,0 +1,16 @@
+Dear {{dancer.get_full_name()}},
+
+
+This is a reminder that you have not accepted the privacy terms for the {{year}} {{tournament}} in {{city}} yet.
+
+If you have not accepted the terms by the time the raffle takes place, your registration will automatically be cancelled.
+
+
+You can click the link below to visit the site. Here you can log in to your personal account and accept the terms.
+
+{{ url_for('main.index', _external=True) }}
+
+
+Sincerely,
+
+The xTDS WebPortal Admin

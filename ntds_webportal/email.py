@@ -9,11 +9,11 @@ def send_async_email(app, msg):
         mail.send(msg)
 
 
-def send_email(subject, recipients, text_body, html_body):
+def send_email(subject, recipients, text_body, html_body, cc=None, bcc=None):
     if recipients == [None]:
         recipients = current_app.config['ADMINS'][0]
     sender = current_app.config['ADMINS'][0]
-    msg = Message(subject, sender=sender, recipients=recipients)
+    msg = Message(subject, sender=sender, recipients=recipients, cc=cc, bcc=bcc)
     msg.body = text_body
     msg.html = html_body
     # noinspection PyProtectedMember

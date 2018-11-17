@@ -3,24 +3,28 @@
 <h2>{{title}}</h2>
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
     <h3>Personal information</h3>
     {{ reg_wtf.form_field(form.full_name, disabled=true) }}
     {{ reg_wtf.form_field(form.email, disabled=true) }}
     {{ reg_wtf.form_field(form.team, disabled=true) }}
 
     <h3>Ballroom</h3>
-    {{ reg_wtf.form_field(form.ballroom_level, **{'onchange': "dancingLevelGreyOut(id, 'ballroom_role', 'ballroom_blind_date')"}) }}
-    {{ reg_wtf.form_field(form.ballroom_role) }}
-    <!--{{ reg_wtf.form_field(form.ballroom_blind_date) }}-->
+    {{ reg_wtf.form_field(form.ballroom_level, disabled=false, **{'onchange': "dancingLevel(id, 'ballroom_role', 'ballroom_blind_date')", 'onkeyup': "dancingLevel(id, 'ballroom_role', 'ballroom_blind_date')"}) }}
+    {{ reg_wtf.form_field(form.ballroom_role, disabled=true, **{'onchange': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date')", 'onkeyup': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date')"}) }}
+    {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        {{ reg_wtf.form_field(form.ballroom_blind_date, disabled=true) }}
+    {% endif %}
     {{ reg_wtf.form_field(form.ballroom_partner, disabled=true) }}
 
-    <h3>Latin</h3>
-    {{ reg_wtf.form_field(form.latin_level, **{'onchange': "dancingLevelGreyOut(id, 'latin_role', 'latin_blind_date')"} ) }}
-    {{ reg_wtf.form_field(form.latin_role) }}
-    <!--{{ reg_wtf.form_field(form.latin_blind_date) }}-->
+   <h3>Latin</h3>
+    {{ reg_wtf.form_field(form.latin_level, disabled=false, **{'onchange': "dancingLevel(id, 'latin_role', 'latin_blind_date')", 'onkeyup': "dancingLevel(id, 'latin_role', 'latin_blind_date')"}) }}
+    {{ reg_wtf.form_field(form.latin_role, disabled=true, **{'onchange': "dancingRole('latin_level', 'latin_role', 'latin_blind_date')", 'onkeyup': "dancingRole('latin_level', 'latin_role', 'latin_blind_date')"}) }}
+    {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        {{ reg_wtf.form_field(form.latin_blind_date, disabled=true) }}
+    {% endif %}
     {{ reg_wtf.form_field(form.latin_partner, disabled=true) }}
-    <div class="form-group  required">
+
+    <div class="form-group required">
         <label class="control-label col-xs-2" ></label>
         <div class="col-xs-10">
             <div class="input-group">

@@ -2,3 +2,4 @@ logs/
 ntds_webportal/__pycache__
 __pycache__
 000_test_statistics/
+.idea/

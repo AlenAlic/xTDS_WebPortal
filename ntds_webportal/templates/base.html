@@ -13,6 +13,7 @@
 <meta name="msapplication-TileColor" content="#da532c">
 <meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
 <meta name="theme-color" content="#ffffff">
+<meta charset="UTF-8">
 {% endblock %}
 
 
@@ -23,11 +24,16 @@ xTDS WebPortal
 
 {% block styles %}
 {{ super() }}
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <style>
     body { padding-top: 60px;}
     .navbar-default{background-color:#f8f8f8;}
+    body { background-color:#ffffff;}
+    {% if g.sc.website_accessible is sameas false and current_user.is_authenticated is sameas true %}
+    .navbar-default{background-color:#ffa6a6;}
+    body { background-color:#ffdcdc;}
+    {% endif %}
     @media (min-width:1440px){.container{width:1410px}}
+    @media (min-width:768px){.navbar-form .form-control {width:170px}}
     .pagebreak { page-break-before: always; }
     .print-friendly { page-break-inside:avoid; page-break-after:auto }
     tr    { page-break-inside:avoid; page-break-after:auto }
@@ -35,6 +41,15 @@ xTDS WebPortal
     thead { display:table-header-group }
     tfoot { display:table-footer-group }
     @media print {.no-print, .no-print * {display: none !important; } }
+    checkbox {cursor: pointer}
+    .decorative-checkbox {cursor: default !important}
+    .checkbox-row {cursor: pointer}
+</style>
+<style>
+    .api-pending {background-color: #d9edf7 !important;}
+    .api-success {background-color: #dff0d8 !important;}
+    .api-warning {background-color: #fcf8e3 !important;}
+    .api-failed {background-color: #f2dede !important;}
 </style>
 {% endblock %}
 
@@ -54,15 +69,18 @@ xTDS WebPortal
         <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
             {% if not current_user.is_anonymous %}
                 <ul class="nav navbar-nav navbar-left">
+                    {% if current_user.has_profile_access() is sameas true %}
                     <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
+                    {% endif %}
+                    {% if current_user.has_messages_access() is sameas true %}
                     <li><a href="{{ url_for('notifications.messages') }}">Messages <span class="badge">{{current_user.unread_notifications()}}</span></a></li>
+                    {% endif %}
                 </ul>
             {% endif %}
             {% if current_user.is_anonymous %}
                 {% if login_form %}
                     <form class="navbar-form navbar-right" method="POST" enctype="multipart/form-data">
                         {{ login_form.hidden_tag() }}
-                        {{ login_form.csrf_token }}
                         <div class="form-group">
                             {{ login_form.username(class_='form-control', placeholder='Username') }}
                         </div>
@@ -90,17 +108,20 @@ xTDS WebPortal
 
 
 {% block content %}
-<div class="container" style="padding-bottom:20px">
+<div id="container-hidden" class="container" style="padding-bottom:20px; {% block container_style %}{% endblock %}">
+    {% if g.sc.website_accessible is sameas false and current_user.is_authenticated is sameas true %}
+    <h1 style="color:#000000; text-align:center;">MAINTENANCE MODE</h1>
+    {% endif %}
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert {% if category=='message' %}alert-info{% else %}{{ category }}{% endif %} alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+            {% for category, message in messages %}
+                <div class="alert {% if category=='message' %}alert-info{% else %}{{ category }}{% endif %} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     {% block app_content %}
     {% endblock %}
@@ -117,22 +138,15 @@ xTDS WebPortal
 {{ super() }}
 {{ moment.include_moment() }}
 <script src="/static/loading.js"></script>
-<script>
-$(document).ready(function() {
-    $('.table-clickable-checkbox tr').click(function(event) {
-        if (event.target.type !== 'checkbox') {
-            $(':checkbox', this).trigger('click');
-        }
-    });
-});
-$(document).ready(function($) {
-    $(".checkbox-row").css("cursor", "pointer")
-    $(".checkbox").css("cursor", "pointer")
-});
-$(document).ready(function($) {
-    $(".checkbox").change(function() {
-        $(this).parents("tr:first").toggleClass('success ');
-    });
-});
-</script>
 {% endblock %}
+
+
+{% macro t_shirt_icon() %}
+&#x1F455;
+{% endmacro %}
+{% macro mug_icon() %}
+&#x2615;
+{% endmacro %}
+{% macro bag_icon() %}
+&#x1f45c;
+{% endmacro %}

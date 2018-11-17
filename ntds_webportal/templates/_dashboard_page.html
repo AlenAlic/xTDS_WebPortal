@@ -1,7 +1,7 @@
 {# set accessible = true #}
 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 {% if accessible is sameas false %}opaque{% endif %}">
     <a {% if accessible is sameas false %}{% else %}href="{{url_for( url )}}"{% endif %} style="text-decoration:none">
-        <div class="thumbnail thumbnail-same-height {% if accessible is sameas false %}inaccessible{% endif %} {% if loading_screen %}loading-btn{% endif %}" >
+        <div class="thumbnail thumbnail-same-height {% if accessible is sameas false %}inaccessible{% endif %} {% if loading_screen and accessible is sameas true %}loading-btn{% endif %}" >
             {% if count is defined %}
                 {% if count%}
                     <div style="margin-bottom:-4em;height:4em">

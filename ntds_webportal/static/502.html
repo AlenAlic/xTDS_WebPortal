@@ -14,6 +14,8 @@ xTDS WebPortal
 <style>
     body { padding-top: 60px;}
     .navbar-default{background-color:#f8f8f8;}
+    body { background-color:#ffffff;}
+    
     @media (min-width:1440px){.container{width:1410px}}
     .pagebreak { page-break-before: always; }
     .print-friendly { page-break-inside:avoid; page-break-after:auto }
@@ -30,7 +32,7 @@ xTDS WebPortal
 <!--}-->
 @font-face {
     font-family: 'BDCartoonShoutRegular';
-    src: url('custom_js/Pacman_font.ttf') format('truetype');
+    src: url(/static/custom_js/Pacman_font.ttf) format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -63,6 +65,10 @@ body {
     margin: 0 auto;
 }
 </style>
+<style>
+    .navbar-default{background-color:#f8f8f8;}
+    body { background-color:#ffffff;}
+</style>
 
 <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
@@ -88,32 +94,29 @@ body {
             </button>
             <a class="navbar-brand" href="/index">xTDS WebPortal</a>
         </div>
+        
     </div>
 </nav>
 
     
 <div class="container" style="padding-bottom:20px">
     
+    
         
-        
+    
 
     
-<!--<div class="center-me" style="display:inline-block">-->
-    <!--<h1 class="pacman-title" style="margin-bottom:0px">Pacman</h1>-->
-    <!--<div id="pacman"></div>-->
-<!--</div>-->
-<h2 class="centered-text">Server maintenance</h2>
 <div class="centered-text">
-    <p >The server is currently undergoing maintenance and therefor offline.</p>
-    <p >It should be back up soon (we guaranteed it will be up somewhere before the end of time at the very least).</p>
+    <p >The server is currently undergoing maintenance and therefore offline.</p>
+    <p >It should be back up soon (we guarantee it will be up somewhere before the end of time at the very least).</p>
     <p >In the meantime, you can enjoy some Pacman to pass the time.</p>
     <div style="height:20px"></div>
     <p>Enjoy!</p>
     <div style="height:30px"></div>
 </div>
 <div id="pacman"></div>
-<script src="custom_js/pacman.js"></script>
-<script src="custom_js/modernizr-1.5.min.js"></script>
+<script src="/static/custom_js/pacman.js"></script>
+<script src="/static/custom_js/modernizr-1.5.min.js"></script>
 
 
 </div>

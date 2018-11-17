@@ -88,7 +88,7 @@ def goto(notification):
 
 @bp.route('/create', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['admin'], ACCESS['organizer'], ACCESS['team_captain'], ACCESS['treasurer']])
+@requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER], ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER]])
 def create():
     form = NotificationForm()
     choices = [('tc', 'All Teamcaptains'), ('tr', 'All Treasurers')]
@@ -102,17 +102,18 @@ def create():
                 n = Notification(title=form.title.data, text=form.body.data,
                                  user=u, sender=current_user)
                 db.session.add(n)
-                if u.access == ACCESS['treasurer'] and current_user.team != u.team:
-                    tc = User.query.filter(User.access == ACCESS['team_captain'], User.team == u.team).first()
+                if u.access == ACCESS[TREASURER] and current_user.team != u.team:
+                    tc = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True),
+                                           User.team == u.team).first()
                     n = Notification(title=form.title.data, text='Message sent to your treasurer:\n\n'+form.body.data,
                                      user=tc, sender=current_user)
                     db.session.add(n)
             else:
                 users = []
                 if recipient == 'tc':
-                    users = User.query.filter_by(access=ACCESS['team_captain']).all()
+                    users = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)).all()
                 if recipient == 'tr':
-                    users = User.query.filter_by(access=ACCESS['treasurer']).all()
+                    users = User.query.filter(User.access == ACCESS[TREASURER], User.is_active.is_(True)).all()
                 for u in users:
                     n = Notification(title=form.title.data, text=form.body.data,
                                      user=u, sender=current_user)

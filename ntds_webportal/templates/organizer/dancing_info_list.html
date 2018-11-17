@@ -42,17 +42,13 @@
                     {{ dancer.contestant_info[0].team }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
-                    {{ dancer.status_info[0].status }}
+                    {{ data.STATUS[dancer.status_info[0].status] }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
-                    {% if dancer.dancing_info[0].level != data.NO %}
-                    {{ data.LEVELS[dancer.dancing_info[0].level] }}
-                    {% else %} - {% endif %}
+                    {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
-                    {% if dancer.dancing_info[1].level != data.NO %}
-                    {{ data.LEVELS[dancer.dancing_info[1].level] }}
-                    {% else %} - {% endif %}
+                    {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
                 </td>
             </tr>
         {% endfor %}

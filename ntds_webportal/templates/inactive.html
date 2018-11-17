@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<style>
+.centered-text {
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="container">
+    <h1 style="color:#000000; text-align:center;">xTDS WebPortal inactive</h1>
+    <div class="centered-text">
+        <p>The xTDS WebPortal is currently inactive, and is being prepared for the next tournament.</p>
+        <p>Team captains will be notified when the website will be available again.</p>
+    </div>
+</div>
+{% endblock %}

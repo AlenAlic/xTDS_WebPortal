@@ -20,12 +20,16 @@
     {% with type=data.LATIN, adjudicators=latin_adjudicators %}
         {% include 'organizer/_adjudicator_list.html' %}
     {% endwith %}
-    {% with type=data.SALSA, adjudicators=salsa_adjudicators %}
-        {% include 'organizer/_adjudicator_list.html' %}
-    {% endwith %}
-    {% with type=data.POLKA, adjudicators=polka_adjudicators %}
-        {% include 'organizer/_adjudicator_list.html' %}
-    {% endwith %}
+    {% if g.sc.salsa_competition is sameas true %}
+        {% with type=data.SALSA, adjudicators=salsa_adjudicators %}
+            {% include 'organizer/_adjudicator_list.html' %}
+        {% endwith %}
+    {% endif %}
+    {% if g.sc.polka_competition is sameas true %}
+        {% with type=data.POLKA, adjudicators=polka_adjudicators %}
+            {% include 'organizer/_adjudicator_list.html' %}
+        {% endwith %}
+    {% endif %}
 </div>
 {% else %}
 <h2>The raffle has not taken place yet.</h2>

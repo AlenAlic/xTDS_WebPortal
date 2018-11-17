@@ -1,0 +1,46 @@
+{% if title %}<h2>{{ title }}</h2>{% endif %}
+{% if desc %}<p>{{ desc }}</p>{% endif %}
+<table class="table table-striped">
+    <colgroup>
+        <col span="1" style="width: 30%;">
+        <col span="1" style="width: 25%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th align="bottom" colspan="2">
+                <b>{% if subtitle %}{{ subtitle }}{% endif %}
+                {% if dancers %}<span id="{{ list_id }}-total-badge" class="badge">{{ dancers|length }}</span>{% endif %}
+                </b>
+            </th>
+            <th><b>Leaders</b></th>
+            <th><b>Followers</b></th>
+            <th><b>Difference</b></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for comp, lvl in stats.items() %}
+        {% for cat, roles in lvl.items() %}
+        <tr>
+            <td>
+                {{ comp }}
+            </td>
+            <td>
+                {{ cat }}
+            </td>
+            <td>
+                {{ roles[g.data.LEAD] }}{% if second_stats %} / {{ second_stats[comp][cat][g.data.LEAD] }}{% endif %}
+            </td>
+            <td>
+                {{ roles[g.data.FOLLOW] }} {% if second_stats %} / {{ second_stats[comp][cat][g.data.FOLLOW] }}{% endif %}
+            </td>
+            <td>
+                {{ roles[g.data.DIFF] }} {% if second_stats %} / {{ second_stats[comp][cat][g.data.DIFF] }}{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    {% endfor %}
+    </tbody>
+</table>

@@ -14,7 +14,6 @@
 
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
     <div class="form-group ">
         <label class="control-label" for="remark">Remarks for the other teamcaptain (optional)</label>
         <textarea class="form-control" id="remark" name="remark" type="text"></textarea>

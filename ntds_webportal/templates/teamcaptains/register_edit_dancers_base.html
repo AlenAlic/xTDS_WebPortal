@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% import 'registration_wtf.html' as reg_wtf %}
+
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block container_style -%}
+visibility:visisble
+{%- endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function onStart() {
+    document.getElementById('ballroom_level').onchange();
+    document.getElementById('latin_level').onchange();
+    {% if g.sc.ask_volunteer is sameas true -%}
+        document.getElementById('volunteer').onchange();
+    {%- endif %}
+    document.getElementById('jury_ballroom').onchange();
+    document.getElementById('jury_latin').onchange();
+    {% if (mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR) -%}
+        document.getElementById('privacy_checkbox').onclick();
+    {%- endif %}
+    var container = document.getElementById('container-hidden').style.visibility = "visible";
+}
+function dummy() {}
+
+{% if current_user.is_dancer() is sameas true %}
+function dancingLevel(level, role, partner, bd, jury) {}
+function dancingRole(level, role, bd, partner) {}
+function dancingBD(level, role, partner, bd) {}
+function setPartners(competition, partner, level, role) {}
+function volunteerGreyOut() {}
+function adjudicatorGreyOut(jury, license, level) {}
+function privacyPolicy(checkbox) {
+    var div_submit = document.getElementById('submit');
+
+    if (checkbox.checked) {
+        div_submit.removeAttribute('disabled');
+    } else {
+        div_submit.setAttribute('disabled', true);
+    }
+}
+{% else %}
+
+var possible_partners = {{ possible_partners | tojson }};
+var ballroom_jury_value = "{{ form.jury_ballroom.data }}";
+var latin_jury_value = "{{ form.jury_latin.data }}";
+
+function dancingLevel(level, role, partner, bd, jury) {
+    var div_level = document.getElementById(level);
+    var div_role = document.getElementById(role);
+    var div_partner = document.getElementById(partner);
+    {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+    var div_bd = document.getElementById(bd);
+    {% endif %}
+    var div_jury = document.getElementById(jury);
+
+    var bd_list = ["{{ g.data.OPEN_CLASS }}"];
+    {% if g.sc.closed_level is sameas true -%}
+    bd_list.push("{{ g.data.CLOSED }}");
+    {%- endif %}
+
+    val_level = div_level.options[div_level.selectedIndex].value;
+
+    if (val_level == "{{ g.data.NO }}") {
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.value = "{{ g.data.NONE }}";
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+        div_role.setAttribute('disabled', true);
+        if (level == 'ballroom_level') {div_jury.value = ballroom_jury_value;} else {div_jury.value = latin_jury_value;}
+        div_jury.removeAttribute('disabled');
+    } else if (val_level == "{{ g.data.BEGINNERS }}") {
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.value = "False";
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+        div_role.removeAttribute('disabled');
+        div_jury.value = "{{ g.data.NO }}"
+        div_jury.setAttribute('disabled', true);
+    } else if (val_level == "{{ g.data.BREITENSPORT }}") {
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        if (div_bd.value != "True") {div_bd.setAttribute('disabled', true);}
+        div_bd.removeAttribute('disabled');
+        {% endif %}
+        div_role.removeAttribute('disabled');
+        div_jury.value = "{{ g.data.NO }}"
+        div_jury.setAttribute('disabled', true);
+    } else if(bd_list.includes(val_level)) {
+        div_partner.value = "__None"
+        div_partner.setAttribute('disabled', true);
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.value = "True";
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+        div_role.removeAttribute('disabled');
+        if (level == 'ballroom_level') {div_jury.value = ballroom_jury_value;} else {div_jury.value = latin_jury_value;}
+        div_jury.removeAttribute('disabled');
+    } else {
+        div_role.setAttribute('disabled', true);
+        div_role.value = "{{ g.data.NONE }}";
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.value = "{{ g.data.NONE }}";
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+        div_partner.value = "__None"
+        div_partner.setAttribute('disabled', true);
+        if (level == 'ballroom_level') {div_jury.value = ballroom_jury_value;} else {div_jury.value = latin_jury_value;}
+        div_jury.removeAttribute('disabled');
+    }
+    div_role.onchange();
+    div_jury.onchange();
+    if (div_level.disabled) {
+        div_role.setAttribute('disabled', true);
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+        div_partner.setAttribute('disabled', true);
+    }
+}
+
+function dancingRole(level, role, bd, partner) {
+
+    var div_level = document.getElementById(level);
+    {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+    var div_role = document.getElementById(role);
+    var div_bd = document.getElementById(bd);
+
+    val_level = div_level.options[div_level.selectedIndex].value;
+    val_role = div_role.options[div_role.selectedIndex].value;
+
+    if (val_role == "{{g.data.LEAD}}" || val_role == "{{g.data.FOLLOW}}") {
+        if (val_level == "{{g.data.BREITENSPORT}}") {div_bd.removeAttribute('disabled');}
+    } else {
+        div_bd.setAttribute('disabled', true);
+    }
+    div_bd.onchange();
+    {% else %}
+    var div_level = document.getElementById(level);
+    var div_role = document.getElementById(role);
+    var div_partner = document.getElementById(partner);
+
+    val_role = div_role.options[div_role.selectedIndex].value;
+
+    if (val_role == "{{g.data.LEAD}}" || val_role == "{{g.data.FOLLOW}}") {
+        div_partner.removeAttribute('disabled');
+    } else {
+        div_partner.setAttribute('disabled', true);
+    }
+    if (level == 'ballroom_level') {
+        setPartners('{{g.data.BALLROOM}}', partner, level, role)
+    } else {
+        setPartners('{{g.data.LATIN}}', partner, level, role)
+    }
+    {% endif %}
+}
+
+function dancingBD(level, role, partner, bd) {
+    var div_level = document.getElementById(level);
+    var div_role = document.getElementById(role);
+    var div_partner = document.getElementById(partner);
+    var div_bd = document.getElementById(bd);
+
+    val_bd = div_bd.options[div_bd.selectedIndex].value;
+
+    if (val_bd == "True") {
+        div_partner.setAttribute('disabled', true);
+    } else if (val_bd == "False") {
+        div_partner.removeAttribute('disabled');
+    } else {
+        div_partner.setAttribute('disabled', true);
+    }
+    if (level == 'ballroom_level') {
+        setPartners('{{g.data.BALLROOM}}', partner, level, role)
+    } else {
+        setPartners('{{g.data.LATIN}}', partner, level, role)
+    }
+}
+
+function setPartners(competition, partner, level, role) {
+    var div_partner = document.getElementById(partner);
+    var div_level = document.getElementById(level);
+    var div_role = document.getElementById(role);
+
+    var old_partner = div_partner.selectedOptions[0]
+    var selectedList = $("#"+partner)
+    selectedList.find("option:gt(0)").remove();
+
+    if ((div_level.value == "{{g.data.BEGINNERS}}" || div_level.value == "{{g.data.BREITENSPORT}}") && div_role.value != "{{g.data.CHOOSE}}") {
+        var selectValues = possible_partners[competition][div_level.value][div_role.value]
+        for(var i in selectValues) {
+            var newOption = document.createElement('option')
+            newOption.value = selectValues[i][0];
+            newOption.text = selectValues[i][1];
+            div_partner.appendChild(newOption);
+        }
+        if ($("#"+partner+" option").filter(function (i, o) { return o.value === old_partner.value; }).length > 0) {
+            div_partner.value = old_partner.value;
+        }
+    }
+
+}
+
+function volunteerGreyOut() {
+    {% if g.sc.ask_volunteer is sameas true -%}
+        var div_volunteer = document.getElementById('volunteer');
+
+        {% if g.sc.ask_first_aid is sameas true -%}
+        var div_first_aid = document.getElementById('first_aid');
+        if (div_volunteer.value == "{{ g.data.NO }}") {
+            div_first_aid.setAttribute('disabled', true);
+        } else {
+            div_first_aid.removeAttribute('disabled');
+        }
+        {%- endif %}
+        {% if g.sc.ask_emergency_response_officer is sameas true -%}
+        var div_emergency_response_officer = document.getElementById('emergency_response_officer');
+        if (div_volunteer.value == "{{ g.data.NO }}") {
+            div_emergency_response_officer.setAttribute('disabled', true);
+        } else {
+            div_emergency_response_officer.removeAttribute('disabled');
+        }
+        {%- endif %}
+
+        <!--var div_jury_ballroom = document.getElementById('jury_ballroom');-->
+        <!--{% if g.sc.ask_adjudicator_certification is sameas true -%}-->
+        <!--var div_license_jury_ballroom = document.getElementById('license_jury_ballroom');-->
+        <!--if (div_volunteer.value == "{{ g.data.NO }}") {-->
+            <!--div_license_jury_ballroom.setAttribute('disabled', true);-->
+        <!--} else {-->
+            <!--div_license_jury_ballroom.removeAttribute('disabled');-->
+        <!--}-->
+        <!--{%- endif %}-->
+        <!--{% if g.sc.ask_adjudicator_highest_achieved_level is sameas true -%}-->
+        <!--var div_level_jury_ballroom = document.getElementById('level_jury_ballroom');-->
+        <!--if (div_volunteer.value == "{{ g.data.NO }}") {-->
+            <!--div_level_jury_ballroom.setAttribute('disabled', true);-->
+        <!--} else {-->
+            <!--div_level_jury_ballroom.removeAttribute('disabled');-->
+        <!--}-->
+        <!--{%- endif %}-->
+
+        <!--var div_jury_latin = document.getElementById('jury_latin');-->
+        <!--{% if g.sc.ask_adjudicator_certification is sameas true -%}-->
+        <!--var div_license_jury_latin = document.getElementById('license_jury_latin');-->
+        <!--if (div_volunteer.value == "{{ g.data.NO }}") {-->
+            <!--div_license_jury_latin.setAttribute('disabled', true);-->
+        <!--} else {-->
+            <!--div_license_jury_latin.removeAttribute('disabled');-->
+        <!--}-->
+        <!--{%- endif %}-->
+        <!--{% if g.sc.ask_adjudicator_highest_achieved_level is sameas true -%}-->
+        <!--var div_level_jury_latin = document.getElementById('level_jury_latin');-->
+        <!--if (div_volunteer.value == "{{ g.data.NO }}") {-->
+            <!--div_level_jury_latin.setAttribute('disabled', true);-->
+        <!--} else {-->
+            <!--div_level_jury_latin.removeAttribute('disabled');-->
+        <!--}-->
+        <!--{%- endif %}-->
+
+        <!--{% if g.sc.salsa_competition is sameas true -%}-->
+        <!--var div_jury_salsa = document.getElementById('jury_salsa');-->
+        <!--if (div_volunteer.value == "{{ g.data.NO }}") {-->
+            <!--div_jury_salsa.setAttribute('disabled', true);-->
+        <!--} else {-->
+            <!--div_jury_salsa.removeAttribute('disabled');-->
+        <!--}-->
+        <!--{%- endif %}-->
+        <!--{% if g.sc.polka_competition is sameas true -%}-->
+        <!--var div_jury_polka = document.getElementById('jury_polka');-->
+        <!--if (div_volunteer.value == "{{ g.data.NO }}") {-->
+            <!--div_jury_polka.setAttribute('disabled', true);-->
+        <!--} else {-->
+            <!--div_jury_polka.removeAttribute('disabled');-->
+        <!--}-->
+        <!--{%- endif %}-->
+
+        <!--if (div_volunteer.value == "{{ g.data.NO }}") {-->
+            <!--div_jury_ballroom.setAttribute('disabled', true);-->
+            <!--div_jury_latin.setAttribute('disabled', true);-->
+        <!--} else {-->
+            <!--div_jury_ballroom.removeAttribute('disabled');-->
+            <!--div_jury_latin.removeAttribute('disabled');-->
+        <!--}-->
+    {%- endif %}
+}
+function adjudicatorGreyOut(jury, license, level) {
+    var div_jury = document.getElementById(jury);
+    {% if g.sc.ask_adjudicator_certification is sameas true -%}
+        var div_license = document.getElementById(license);
+    {%- endif %}
+    {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true -%}
+        var div_level = document.getElementById(level);
+    {%- endif %}
+
+    if (div_jury.value == "{{ g.data.NO }}") {
+        {% if g.sc.ask_adjudicator_certification is sameas true -%}
+            div_license.setAttribute('disabled', true);
+        {%- endif %}
+        {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true -%}
+            div_level.setAttribute('disabled', true);
+        {%- endif %}
+    } else {
+        {% if g.sc.ask_adjudicator_certification is sameas true -%}
+            div_license.removeAttribute('disabled');
+        {%- endif %}
+        {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true -%}
+            div_level.removeAttribute('disabled');
+        {%- endif %}
+    }
+}
+<!--function privacyPolicy(checkbox) {}-->
+{% endif %}
+</script>
+{% endblock %}

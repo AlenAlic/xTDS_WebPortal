@@ -1,0 +1,131 @@
+<h2>Summary</h2>
+<table class="table">
+    <colgroup>
+        <col span="1" style="width: 30%;">
+        <col span="1" style="width: 10%;">
+        <col span="1" style="width: 10%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 10%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 10%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th><b>Dancers</b></th>
+            <th style="text-align:right"><b>#</b></th>
+            <th style="text-align:right"><b>Owed</b></th>
+            <th style="text-align:right"><b>#</b></th>
+            <th style="text-align:right"><b>Recieved</b></th>
+            <th style="text-align:right"><b>#</b></th>
+            <th style="text-align:right"><b>Remaining</b></th>
+        </tr>
+    </thead>
+    <tbody class="">
+        <tr>
+            <td>Students:</td>
+            <td style="text-align:right">{{finances['number_of_students']}}</td>
+            <td style="text-align:right">{{g.data.euros(finances['price_students'])}}</td>
+            <td style="text-align:right">{{finances['number_of_students_paid']}}</td>
+            <td style="text-align:right">{{g.data.euros(finances['price_students_paid'])}}</td>
+            <td style="text-align:right">{{finances['number_of_students_unpaid']}}</td>
+            <td style="text-align:right">{{g.data.euros(finances['price_students_unpaid'])}}</td>
+        </tr>
+        {% if g.sc.phd_student_category is sameas true %}
+        <tr>
+            <td>PhD-students:</td>
+            <td style="text-align:right">{{finances['number_of_phd_students']}}</td>
+            <td style="text-align:right">{{g.data.euros(finances['price_phd_students'])}}</td>
+            <td style="text-align:right">{{finances['number_of_phd_students_paid']}}</td>
+            <td style="text-align:right">{{g.data.euros(finances['price_phd_students_paid'])}}</td>
+            <td style="text-align:right">{{finances['number_of_phd_students_unpaid']}}</td>
+            <td style="text-align:right">{{g.data.euros(finances['price_phd_students_unpaid'])}}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Non-students:</td>
+            <td style="text-align:right">{{finances['number_of_non_students']}}</td>
+            <td style="text-align:right">{{g.data.euros(finances['price_non_students'])}}</td>
+            <td style="text-align:right">{{finances['number_of_non_students_paid']}}</td>
+            <td style="text-align:right">{{g.data.euros(finances['price_non_students_paid'])}}</td>
+            <td style="text-align:right">{{finances['number_of_non_students_unpaid']}}</td>
+            <td style="text-align:right">{{g.data.euros(finances['price_non_students_unpaid'])}}</td>
+        </tr>
+        {% if g.sc.merchandise() is sameas true and g.sc.number_of_merchandise() > 1 %}
+            <tr>
+                <td style="text-align:right"><i>Subtotal</i></td>
+                <td style="text-align:right"><i>{{finances['number_of_dancers']}}</i></td>
+                <td style="text-align:right"><i>{{g.data.euros(finances['price_dancers'])}}</i></td>
+                <td style="text-align:right"><i>{{finances['number_of_dancers_paid']}}</i></td>
+                <td style="text-align:right"><i>{{g.data.euros(finances['price_dancers_paid'])}}</i></td>
+                <td style="text-align:right"><i>{{finances['number_of_dancers_unpaid']}}</i></td>
+                <td style="text-align:right"><i>{{g.data.euros(finances['price_dancers_unpaid'])}}</i></td>
+            </tr>
+            <tr>
+                <td><b>Merchandise</b></td>
+                <!--<td style="text-align:right"><b>#</b></td>-->
+                <!--<td style="text-align:right"><b>Owed</b></td>-->
+                <!--<td style="text-align:right"><b>#</b></td>-->
+                <!--<td style="text-align:right"><b>Recieved</b></td>-->
+                <!--<td style="text-align:right"><b>#</b></td>-->
+                <!--<td style="text-align:right"><b>Remaining</b></td>-->
+                <td style="text-align:right"><b></b></td>
+                <td style="text-align:right"><b></b></td>
+                <td style="text-align:right"><b></b></td>
+                <td style="text-align:right"><b></b></td>
+                <td style="text-align:right"><b></b></td>
+                <td style="text-align:right"><b></b></td>
+            </tr>
+            {% if g.sc.t_shirt_sold is sameas true %}
+            <tr>
+                <td>T-shirts</td>
+                <td style="text-align:right">{{finances['number_of_t-shirts']}}</td>
+                <td style="text-align:right">{{g.data.euros(finances['price_t-shirts'])}}</td>
+                <td style="text-align:right">{{finances['number_of_t-shirts_paid']}}</td>
+                <td style="text-align:right">{{g.data.euros(finances['price_t-shirts_paid'])}}</td>
+                <td style="text-align:right">{{finances['number_of_t-shirts_unpaid']}}</td>
+                <td style="text-align:right">{{g.data.euros(finances['price_t-shirts_unpaid'])}}</td>
+            </tr>
+            {% endif %}
+            {% if g.sc.mug_sold is sameas true %}
+            <tr>
+                <td>Mugs</td>
+                <td style="text-align:right">{{finances['number_of_mugs']}}</td>
+                <td style="text-align:right">{{g.data.euros(finances['price_mugs'])}}</td>
+                <td style="text-align:right">{{finances['number_of_mugs_paid']}}</td>
+                <td style="text-align:right">{{g.data.euros(finances['price_mugs_paid'])}}</td>
+                <td style="text-align:right">{{finances['number_of_mugs_unpaid']}}</td>
+                <td style="text-align:right">{{g.data.euros(finances['price_mugs_unpaid'])}}</td>
+            </tr>
+            {% endif %}
+            {% if g.sc.bag_sold is sameas true %}
+            <tr>
+                <td>Bags</td>
+                <td style="text-align:right">{{finances['number_of_bags']}}</td>
+                <td style="text-align:right">{{g.data.euros(finances['price_bags'])}}</td>
+                <td style="text-align:right">{{finances['number_of_bags_paid']}}</td>
+                <td style="text-align:right">{{g.data.euros(finances['price_bags_paid'])}}</td>
+                <td style="text-align:right">{{finances['number_of_bags_unpaid']}}</td>
+                <td style="text-align:right">{{g.data.euros(finances['price_bags_unpaid'])}}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td style="text-align:right"><i>Subtotal</i></td>
+                <td style="text-align:right"><i>{{finances['number_of_merchandise']}}</i></td>
+                <td style="text-align:right"><i>{{g.data.euros(finances['price_merchandise'])}}</i></td>
+                <td style="text-align:right"><i>{{finances['number_of_merchandise_paid']}}</i></td>
+                <td style="text-align:right"><i>{{g.data.euros(finances['price_merchandise_paid'])}}</i></td>
+                <td style="text-align:right"><i>{{finances['number_of_merchandise_unpaid']}}</i></td>
+                <td style="text-align:right"><i>{{g.data.euros(finances['price_merchandise_unpaid'])}}</i></td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td style="text-align:right"><b>Total</b></td>
+            <td><b></b></td>
+            <td style="text-align:right"><b>{{g.data.euros(finances['price_total_unpaid']+finances['price_total_paid'])}}</b></td>
+            <td><b></b></td>
+            <td style="text-align:right"><b>{{g.data.euros(finances['price_total_paid'])}}</b></td>
+            <td><b></b></td>
+            <td style="text-align:right"><b>{{g.data.euros(finances['price_total_unpaid'])}}</b></td>
+        </tr>
+    </tbody>
+</table>

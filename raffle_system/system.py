@@ -72,18 +72,32 @@ def raffle_add_neutral_group(raffle_sys):
             try:
                 dancer = raffle_sys.registered_dancers[r[i]]
             except IndexError:
-                pass
-            else:
-                if raffle_sys.check_availability(dancer):
-                    group = find_partners(raffle_sys.registered_dancers, dancer)
-                    if group.check():
-                        raffle_sys.add_group(group)
-                        group.select_dancers()
-                        return 'Selected {}.'.format(group.get_dancers_summary())
-        return 'Could not find a neutral group.'
-    else:
-        return f"The maximum number of dancers ({raffle_sys.raffle_config[MAX_DANCERS]}) has been reached. " \
-               f"You cannot add more dancers."
+                combination = None
+            if combination is not None:
+                dancers = [d for d in self.registered_dancers if check_combination(d, combination)]
+                original_groups = self.find_dancers_groups(dancers, REGISTERED)
+                r = list(range(0, len(original_groups)))
+                shuffle(r)
+                for i in r:
+                    try:
+                        group = original_groups[i]
+                    except IndexError:
+                        pass
+                    else:
+                        if self.check_group_availability(group):
+                            if group.check():
+                                groups = [group]
+                            else:
+                                groups = self.find_partners_group(group)
+                            if not self.exceed_max(groups) and self.check_list_of_groups(groups):
+                                self.add_groups(groups)
+                                self.update_states()
+                                message = 'Selected {}.'.format(group.get_dancers_summary())
+                                break
+        else:
+            message = f"The maximum number of dancers ({self.config.maximum_number_of_dancers}) has been reached. " \
+                      f"You cannot add more dancers."
+        return message
 
 
 def test_raffle(guaranteed_dancers=None):

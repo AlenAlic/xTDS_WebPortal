@@ -1,0 +1,21 @@
+<h2>All available groups in the system</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Dancers</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in raffle_sys.registered_groups %}
+            {% if group.balance_sum() > 0 or group.balance_sum() == 0 %}
+            <tr>
+                <td>{{ group.dancers }}</td>
+                <td>{{ group.balance }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</form>

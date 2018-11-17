@@ -1,17 +1,97 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block container_style -%}
+visibility:hidden
+{%- endblock %}
+
+{% block styles %}
+{{ super() }}
+<style type="text/css">
+    option:disabled {color:#e2e2e2}
+</style>
+{% endblock %}
+
 {% block app_content %}
-    {% if current_tc != None %}
-        <h2>Current team captain</h2>
-        <p>The current team captain is: {{current_tc.get_full_name()}}</p>
+{% if current_tc != None %}
+    {% if current_tcs|length == 2 %}
+    <h2>Current team captains</h2>
+    <p>The current team captains are {{current_tcs[0].get_full_name()}} and {{current_tcs[1].get_full_name()}}</p>
+    {% elif current_tcs|length == 1 %}
+    <h2>Current team captain</h2>
+    <p>{{current_tcs[0].get_full_name()}} is the current team captain</p>
     {% endif %}
-    <h2>Set team captain</h2>
-    <p>You can change who the team captain is below.</p>
-    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        {{ wtf.form_field(form.number) }}
-        {{ wtf.form_field(form.submit) }}
-    </form>
+{% endif %}
+{% if g.sc.number_of_teamcaptains == 2 %}
+<h2>Set team captains</h2>
+<p>You can change who the team captains are below.</p>
+{% elif g.sc.number_of_teamcaptains == 1 %}
+<h2>Set team captain</h2>
+<p>You can change who the team captain is below.</p>
+{% endif %}
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.team_captain_one, **{'onchange': "setTeamCaptain()", 'onkeyup': "setTeamCaptain()"}) }}
+    {{ wtf.form_field(form.team_captain_two, disabled=true, **{'onchange': "setTeamCaptain()", 'onkeyup': "setTeamCaptain()"}) }}
+    <div class="form-group">
+        <div class="input-group">
+            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Set team captain{% if g.sc.number_of_teamcaptains > 1 %}s{% endif %}{% endif %}">&nbsp;
+            <a role="button" class="btn btn-default" href="{{ url_for('main.dashboard') }}">Cancel</a>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function onStart() {
+    setTeamCaptain()
+    var container = document.getElementById('container-hidden').style.visibility = "visible";
+}
+
+var disabled_i = 0
+var disabled_k = 0
+
+function setTeamCaptain() {
+    var div_team_captain_one = document.getElementById('team_captain_one');
+    var div_team_captain_two = document.getElementById('team_captain_two');
+
+    val_one = div_team_captain_one.options[div_team_captain_one.selectedIndex].value;
+    val_two = div_team_captain_two.options[div_team_captain_two.selectedIndex].value;
+
+    if (val_one == "__None") {
+        div_team_captain_two.setAttribute('disabled', true);
+        div_team_captain_two.value = "__None";
+    } else {
+        if (disabled_i != 0) {
+            div_team_captain_two.options[disabled_i].disabled = false;
+            disabled_i = 0;
+        }
+        for (var i=0; i<div_team_captain_two.length; i++){
+            if (div_team_captain_two.options[i].value == val_one ) {
+                disabled_i = i
+                div_team_captain_two.options[i].disabled = true;
+            }
+        }
+        div_team_captain_two.removeAttribute('disabled');
+    }
+    if (val_two != "__None") {
+        if (disabled_k != 0) {
+            div_team_captain_one.options[disabled_k].disabled = false;
+            disabled_k = 0;
+        }
+        for (var k=0; k<div_team_captain_one.length; k++){
+            if (div_team_captain_one.options[k].value == val_two ) {
+                disabled_k = k
+                div_team_captain_one.options[k].disabled = true;
+            }
+        }
+    }
+}
+</script>
 {% endblock %}

@@ -29,27 +29,47 @@ onload="onStart()"
 {% block app_content %}
 
 {% if current_user.is_admin() %}
-<h2>Website tools</h2>
+<h2>Website management</h2>
 <div class="row" style="visibility:hidden">
     {% with url='admin.index', title='Database', text='Gives direct access to the database.', image='admin.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% with url='self_admin.user_list', title='Edit Users', text='Manage User accounts of the site.', image='users.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% with url='self_admin.debug_tools', title='Debug Tools', text='Tools to debug the site.', image='debug_tools.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with url='self_admin.maintenance', title='Maintenance', text='Tools for maintenance the site.', image='maintenance.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% with url='self_admin.debug_tools', title='Debug Tools', text='Tools to debug the site.', image='debug_tools.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {#
+    {% with url='self_admin.users_lists', title='Users list', text='Download a list of usernames, email, and default passwords.', image='users_list.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    #}
 </div>
-<h2>System tools</h2>
+<h2>System management</h2>
 <div class="row" style="visibility:hidden">
+    {% with url='self_admin.system_setup', title='System Setup', text='Controls to get website working.', image='setup.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with url='self_admin.system_configuration', title='System Control Panel', text='Manage system variables.', image='control_panel.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
     {% with url='self_admin.switch_user', title='Switch User', text='Log in as a different user.', image='change_user.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with url='self_admin.users_lists', title='Users list', text='Download a list of usernames, email, and default passwords.', image='users_list.png' %}
+    {% with url='self_admin.user_list', title='Edit Users', text='Manage User accounts of the site.', image='users.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+<h2>Test Raffle system</h2>
+<div class="row" style="visibility:hidden">
+    {% with url='self_admin.test_populate', title='Test data', text='Populate database with test data from previous tournaments.', image='populate_world.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with url='raffle.configuration', title='Raffle system configuration', text='Raffle system configuration.', image='raffle_config.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.registration_period_started, loading_screen=true, url='raffle.test_system', title='Test raffle system', text='Raffle system.', image='raffle.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -58,72 +78,111 @@ onload="onStart()"
 {% if current_user.is_organizer() %}
 <h2>Pre-registration period</h2>
 <div class="row" style="visibility:hidden">
-    {% with url='organizer.user_list', title='Manage accounts', text='Manage the login accounts of the team captains and treasurers.', image='users.png' %}
+    {% with accessible=g.sc.system_configuration_accessible, url='self_admin.system_configuration', title='System Configuration', text='Configure the website for the next tournament. This will become inaccessible after the registration has first opened.', image='control_panel.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with url='self_admin.users_lists', title='Users list', text='Download a list of usernames, email, and default passwords for all active team captain accounts.', image='users_list.png' %}
+    {% with accessible=g.ts.system_configured, url='organizer.user_list', title='Manage accounts', text='Manage the login accounts of the team captains and treasurers. Team captain accounts can be activated from here.', image='users.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
 <h2>Registration period</h2>
 <div class="row" style="visibility:hidden">
-    {% with loading_screen=true, url='organizer.registration_overview', title='Registered dancers', text='List of all registered dancers.', image='contestants.png' %}
+    {% if not g.ts.registration_period_started and not g.ts.registration_open %}
+        {% set registration_management_text = 'Manage when the registration period is active. The registration period has not started yet.' %}
+        {% set registration_image = 'start_registration.png' %}
+    {% elif g.ts.registration_open %}
+        {% set registration_management_text = 'Manage when the registration period is active. New registrations are currently accepted.' %}
+        {% set registration_image = 'registration_open.png' %}
+    {% else %}
+        {% set registration_management_text = 'Manage when the registration period is active. New registrations are currently not possible.' %}
+        {% set registration_image = 'registration_closed.png' %}
+    {% endif %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url='organizer.registration_management', title='Registration management', text=registration_management_text, image=registration_image %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with count=current_user.open_name_change_requests(), url='organizer.name_change_list', title='Name change requests.', text='Requests for name changes of dancers', image='name_change.png' %}
+    {% with accessible=g.ts.registration_period_started, loading_screen=true, url='organizer.registration_overview', title='Registered dancers', text='List of all registered dancers.', image='contestants.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.registration_period_started, count=current_user.open_name_change_requests(), url='organizer.name_change_list', title='Name change requests.', text='Requests for name changes of dancers', image='name_change.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
-<h2>Raffle</h2>
+<h2>Raffle system</h2>
 <div class="row" style="visibility:hidden">
-    {% with loading_screen=true, url='organizer.raffle_system', title='Raffle system', text='Raffle system.', image='raffle.png' %}
+    {% with accessible=g.ts.system_configured, url='raffle.configuration', title='Raffle system configuration', text='Raffle system configuration.', image='raffle_config.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
+    {% with accessible=(g.ts.registration_period_started and g.ts.raffle_system_configured), loading_screen=true, url='raffle.system', title='Raffle system', text='Raffle system.', image='raffle.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='organizer.merchandise', title='Merchandise', text='Overview of ordered merchandise.', image='merchandise.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
-<h2>Tournament</h2>
+<h2>Pre-tournament</h2>
 <div class="row" style="visibility:hidden">
-    {% with accessible=state.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Download files to setup BAD. (In essence done, but might be changed a bit due to input from Marek)', image='BAD.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
+    {% if g.sc.merchandise() is sameas true %}
+        {% with accessible=g.ts.main_raffle_result_visible, url='organizer.merchandise', title='Merchandise', text='Overview of ordered merchandise.', image='merchandise.png' %}
+            {% include '_dashboard_page.html' %}
+        {% endwith %}
+    {% endif %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
+</div>
+<h2>Volunteering system</h2>
+<div class="row" style="visibility:hidden">
+    {% with accessible=g.ts.system_configured, url='volunteering.register', title='Registration for Super-volunteers/external adjudicators', text='Work in progress.', image='register_contestant.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.system_configured, url='volunteering.volunteers', title='Volunteers', text='Overview of Super-volunteers and confirmed volunteering dancers.', image='volunteers.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=false, url='main.todo', title='Volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+<h2>Adjudication</h2>
+<div class="row" style="visibility:hidden">
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+<h2>BAD</h2>
+<div class="row" style="visibility:hidden">
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Download files to setup BAD. (In essence done, but might be changed a bit due to input from Marek)', image='BAD.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
 <h2>Switch account</h2>
 <div class="row" style="visibility:hidden">
-    {% with url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistant account. This will log you out of the Organizer account.', image='view_couples.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistant account. This will log you out of the Organizer account.', image='view_couples.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with url='organizer.switch_to_cia', title='Check-In Assistant', text='Switch to the Check-In Assistant account. This will log you out of the Organizer account.', image='checked_in.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_cia', title='Check-In Assistant', text='Switch to the Check-In Assistant account. This will log you out of the Organizer account.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    <!--{% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_ada', title='Adjudicator Assistant', text='Switch to the Adjudicator Assistant account. This will log you out of the Organizer account.', image='adjudicators.png' %}-->
+        <!--{% include '_dashboard_page.html' %}-->
+    <!--{% endwith %}-->
 </div>
 {% endif %}
 
-{% if current_user.is_bdo() %}
+{% if current_user.is_bda() %}
 <div class="row" style="visibility:hidden">
-    {% with accessible=state.main_raffle_result_visible, url='blind_date_assistant.create_couple', title='Ballroom Blind Date Couples', text='Create new blind date couples for Standard and Latin.', image='view_couples.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple', title='Ballroom Blind Date Couples', text='Create new blind date couples for Standard and Latin.', image='view_couples.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='blind_date_assistant.create_couple_salsa', title='Salsa Blind Date Couples', text='Create new blind date couples for Salsa.', image='salsa.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_salsa', title='Salsa Blind Date Couples', text='Create new blind date couples for Salsa.', image='salsa.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='blind_date_assistant.create_couple_polka', title='Polka Blind Date Couples', text='Create new blind date couples for Latin.', image='polka.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_polka', title='Polka Blind Date Couples', text='Create new blind date couples for Latin.', image='polka.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -131,57 +190,86 @@ onload="onStart()"
 
 {% if current_user.is_cia() %}
 <div class="row" style="visibility:hidden">
-    {% with accessible=state.main_raffle_result_visible, url='organizer.tournament_check_in', title='Tournament check-in', text='Check in dancers from teams.', image='checked_in.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='check_in_assistant.tournament_check_in', title='Tournament check-in', text='Check in dancers from teams.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
 {% endif %}
 
 {% if current_user.is_tc() or current_user.is_treasurer() %}
+{% if not g.ts.registration_period_started %}
 <div class="row" style="visibility:hidden">
-{% if current_user.is_tc() %}
-    {% if max_tc > 1 %}
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2>Registration has not opened yet.</h2>
+    </div>
+</div>
+{% endif %}
+<div class="row" style="visibility:hidden">
+{% if current_user.is_tc() is sameas true %}
+    {% if g.sc.number_of_teamcaptains > 1 %}
         {% set tc_title = 'Set Teamcaptains' %}
         {% set tc_text = 'Set who the team captains are.' %}
     {% else %}
         {% set tc_title = 'Set Teamcaptain' %}
         {% set tc_text = 'Set who the team captains is.' %}
     {% endif %}
-    {% with url='teamcaptains.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
+    {% with accessible=g.ts.registration_open, url='teamcaptains.register_dancers', title='Register Dancers', text='Register dancers for the tournament.', image='register_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=dancers_registered, url='teamcaptains.edit_dancers', title='Edit Dancers', text='View and edit information of registered dancers.', image='edit_contestant.png' %}
+    {% with accessible=g.ts.registration_period_started and current_user.has_dancers_registered(), count=current_user.dancers_with_feedback(), url='teamcaptains.edit_dancers', title='Edit Dancers', text='View and edit information of registered dancers.', image='edit_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=dancers_registered, url='teamcaptains.couples_list', title='Couples', text='View all registered couples, and create new couples.', image='view_couples.png' %}
+    {% with accessible=g.ts.registration_period_started and current_user.has_dancers_registered(), url='teamcaptains.couples_list', title='Couples', text='View all registered couples, and create new couples.', image='view_couples.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=dancers_registered, count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dancing Partner Request', text='Create couples with dancers from another team', image='partner_request.png' %}
+    {% with accessible=g.ts.registration_period_started and current_user.has_dancers_registered(), count=current_user.open_partner_requests(), url='teamcaptains.partner_request_list', title='Dancing Partner Request', text='Create couples with dancers from another team', image='partner_request.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=dancers_registered, count=num_teamcaptains, url='teamcaptains.set_teamcaptains', title=tc_title, text=tc_text, image='captain.png' %}
+    {% with accessible=g.ts.registration_period_started and current_user.has_dancers_registered(), count=current_user.team_captains_selected(), url='teamcaptains.set_teamcaptains', title=tc_title, text=tc_text, image='captain.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='teamcaptains.raffle_result', title='Raffle results', text='Manage dancers that have been selected or confirmed for the tournament.', image='raffle_results.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='teamcaptains.raffle_result', title='Raffle results', text='Manage dancers that have been selected or confirmed for the tournament.', image='raffle_results.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 {% endif %}
 {% if current_user.is_tc() or current_user.is_treasurer() %}
-    {% with accessible=state.main_raffle_result_visible, url='teamcaptains.edit_finances', title='Finances', text='Manage payment information dancers that have been confirmed for the tournament.', image='euro.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='teamcaptains.edit_finances', title='Finances', text='Manage payment information dancers that have been confirmed for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 {% endif %}
 {% if current_user.is_tc() %}
-    {% with accessible=state.main_raffle_result_visible, url='teamcaptains.bus_to_brno', title='Bus to Brno', text='Register dancers to travel to Brno by bus. Organized by team Düsseldorf and Bielefeld.', image='bus.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% with accessible=state.main_raffle_result_visible, url='teamcaptains.tournament_check_in', title='Tournament check-in', text='Shows who from your team has checked in at the tournament desk.', image='checked_in.png' %}
+    <!--{% with accessible=g.ts.main_raffle_result_visible, url='teamcaptains.bus_to_brno', title='Bus to Brno', text='Register dancers to travel to Brno by bus. Organized by team Düsseldorf and Bielefeld.', image='bus.png' %}-->
+        <!--{% include '_dashboard_page.html' %}-->
+    <!--{% endwith %}-->
+    {% with accessible=g.sc.check_in_accessible(), url='teamcaptains.tournament_check_in', title='Tournament check-in', text='Shows who from your team has checked in at the tournament desk.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 {% endif %}
+</div>
+{% endif %}
+
+{% if current_user.is_dancer() %}
+<div class="row" style="visibility:hidden">
+    {% with url='dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=false, url='main.todo', title='My volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+{% endif %}
+
+{% if current_user.is_super_volunteer() %}
+<div class="row" style="visibility:hidden">
+    {% with url='volunteering.super_volunteer_data', title='My signup information', text='View your signup information.', image='dancer_profile.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=false, url='main.todo', title='My volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
 </div>
 {% endif %}
 

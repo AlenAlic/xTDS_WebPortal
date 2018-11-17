@@ -2,6 +2,7 @@
 {% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
+<h2>New request</h2>
 <a href="{{url_for('teamcaptains.partner_request')}}" class="btn btn-primary navbar-btn no-print">Create new request</a>
 <h2>Partner requests</h2>
 {% if other_requests %}
@@ -26,14 +27,14 @@
     </thead>
     <tbody>
     {% for req in other_requests %}
-    <tr>
+    <tr class="{% if req.state == req.STATE['Open'] %}info{% elif req.state == req.STATE['Accepted'] %}success{% elif req.state == req.STATE['Rejected'] %}danger{% endif %}">
         <td>{{req.other.get_full_name()}}</td>
         <td>{{req.competition}}</td>
         <td>{{req.dancer.get_full_name()}}</td>
         <td>{{req.dancer.contestant_info[0].team.name}}</td>
         <td>{{req.state_name()}}</td>
         <td>
-            <a href="{{url_for('teamcaptains.request_respond',req=req.id)}}">
+            <a class="btn btn-primary {% if req.state != 1 %}disabled{% endif %}" href="{{url_for('teamcaptains.request_respond',req=req.id)}}">
                 <span class="glyphicon glyphicon-edit"></span>
             </a>
         </td>
@@ -70,7 +71,7 @@ There are no open partner requests.
     </thead>
     <tbody>
     {% for req in my_requests %}
-    <tr>
+    <tr class="{% if req.state == req.STATE['Open'] %}info{% elif req.state == req.STATE['Accepted'] %}success{% elif req.state == req.STATE['Rejected'] %}danger{% endif %}">
         <td>{{req.dancer.get_full_name()}}</td>
         <td>{{req.competition}}</td>
         <td>{{req.other.get_full_name()}}</td>

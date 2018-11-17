@@ -16,20 +16,81 @@ onload="onStart()"
 function onStart() {
     document.getElementById('ballroom_level').onchange();
     document.getElementById('latin_level').onchange();
+    var container = document.getElementById('container-hidden').style.visibility = "visible";
 }
-function dancingLevelGreyOut(level, role, bd) {
+function dummy() {}
+
+function dancingLevel(level, role, bd) {
     var div_level = document.getElementById(level);
+    var div_role = document.getElementById(role);
+    {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+    var div_bd = document.getElementById(bd);
+    {% endif %}
+
+    var bd_list = ["{{ g.data.OPEN_CLASS }}"];
+    {% if g.sc.closed_level is sameas true -%}
+    bd_list.push("{{ g.data.CLOSED }}");
+    {%- endif %}
+
+    val_level = div_level.options[div_level.selectedIndex].value;
+
+    if (val_level == "{{ g.data.NO }}") {
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.value = "{{ g.data.NONE }}";
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+        div_role.setAttribute('disabled', true);
+    } else if (val_level == "{{ g.data.BEGINNERS }}") {
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.value = "False";
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+        div_role.removeAttribute('disabled');
+    } else if (val_level == "{{ g.data.BREITENSPORT }}") {
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        if (div_bd.value != "True") {div_bd.setAttribute('disabled', true);}
+        div_bd.removeAttribute('disabled');
+        {% endif %}
+        div_role.removeAttribute('disabled');
+    } else if(bd_list.includes(val_level)) {
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.value = "True";
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+        div_role.removeAttribute('disabled');
+    } else {
+        div_role.setAttribute('disabled', true);
+        div_role.value = "{{ g.data.NONE }}";
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.value = "{{ g.data.NONE }}";
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+    }
+    div_role.onchange();
+    if (div_level.disabled) {
+        div_role.setAttribute('disabled', true);
+        {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+        div_bd.setAttribute('disabled', true);
+        {% endif %}
+    }
+}
+
+function dancingRole(level, role, bd) {
+
+    var div_level = document.getElementById(level);
+    {% if g.sc.breitensport_obliged_blind_date is sameas true %}
     var div_role = document.getElementById(role);
     var div_bd = document.getElementById(bd);
 
     val_level = div_level.options[div_level.selectedIndex].value;
-    if (val_level == "{{data.NO}}") {
-        div_role.setAttribute('disabled', true);
-        <!--div_bd.setAttribute('disabled', true);-->
+    val_role = div_role.options[div_role.selectedIndex].value;
+
+    if (val_role == "{{g.data.LEAD}}" || val_role == "{{g.data.FOLLOW}}") {
+        if (val_level == "{{g.data.BREITENSPORT}}") {div_bd.removeAttribute('disabled');}
     } else {
-        div_role.removeAttribute('disabled');
-        <!--div_bd.removeAttribute('disabled');-->
+        div_bd.setAttribute('disabled', true);
     }
+    {% endif %}
 }
 </script>
 {% endblock %}

@@ -1,0 +1,52 @@
+{% extends "raffle/raffle_base.html" %}
+
+{% block app_content %}
+<ul class="nav nav-tabs" id=myTabs role=tablist>
+	<li role=presentation class=active>
+		<a href=#system id=system-tab role=tab data-toggle=tab aria-controls=system aria-expanded=true>System</a>
+	</li>
+    <li role=presentation>
+        <a href=#overview class=dropdown-toggle id=overview-tab data-toggle=tab aria-controls=overview-contents>Overview Dancers</a>
+    </li>
+</ul>
+<div class=tab-content id=myTabContent>
+	<div class="tab-pane fade in active" role=tabpanel id=system aria-labelledby=system-tab>
+        <div style="width:100%">
+            <div style="display: table; margin: 0 auto; text-align: center;">
+                <h2>Raffle confirmation</h2>
+                <p>The raffle is only visible for you so far.</p>
+                <p>Click the button below to confirm the raffle, and make the results visible to the teamcaptains.</p>
+                <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                    <button type="submit" id="submit-confirm_raffle" name="confirm_raffle" class="btn btn-success loading-btn">Confirm Raffle</button>
+                    <button type="submit" id="submit-cancel_raffle" name="cancel_raffle" class="btn btn-warning loading-btn">Cancel Raffle</button>
+                </form>
+            </div>
+        </div>
+        {% with raffle_sys=raffle_sys %}
+            {% include 'raffle/_summary.html' %}
+        {% endwith %}
+        <h2>Overview</h2>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                {% with subtitle='Selected', dancers=raffle_sys.selected_dancers, stats=raffle_sys.get_stats(g.data.SELECTED) %}
+                    {% include 'raffle/_stats.html' %}
+                {% endwith %}
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                {% with subtitle='Available', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
+                    {% include 'raffle/_stats.html' %}
+                {% endwith %}
+            </div>
+        </div>
+
+        {% include 'raffle/_controls.html' %}
+	</div>
+
+    <div class="tab-pane fade" role=tabpanel id=overview aria-labelledby=overview-tab>
+        {% with teams=teams %}
+            {% include 'raffle/_selected_list.html' %}
+        {% endwith %}
+    </div>
+
+</div>
+{% endblock %}

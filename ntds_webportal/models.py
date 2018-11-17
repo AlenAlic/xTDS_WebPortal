@@ -130,7 +130,10 @@ class Team(db.Model):
     finances = db.relationship('TeamFinances', back_populates='team', cascade='all, delete-orphan')
 
     def __repr__(self):
-        return '{}'.format(self.name)
+        if g.sc.tournament == NTDS:
+            return '{}'.format(self.name)
+        else:
+            return '{}'.format(self.city)
 
 
 class TeamFinances(db.Model):
@@ -158,7 +161,6 @@ class Contestant(db.Model):
     merchandise_info = db.relationship('MerchandiseInfo', back_populates='contestant', cascade='all, delete-orphan')
 
     def __repr__(self):
-        # return '{id} - {name}'.format(id=self.contestant_id, name=self.get_full_name())
         return '{name}'.format(name=self.get_full_name())
 
     def get_full_name(self):
@@ -178,7 +180,7 @@ class Contestant(db.Model):
         self.last_name.title()
 
     def competition(self, competition):
-        return DancingInfo.query.filter_by(contestant_id=self.contestant_id, competition=competition).first()
+        return [di for di in self.dancing_info if di.competition == competition][0]
 
     def cancel_registration(self):
         self.status_info[0].set_status(CANCELLED)
@@ -186,6 +188,13 @@ class Contestant(db.Model):
             di.set_partner(None)
         self.contestant_info[0].team_captain = False
         self.additional_info[0].bus_to_brno = False
+        if self.status_info[0].payment_required:
+            if int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) < \
+                    g.sc.finances_refund_date:
+                if g.sc.finances_full_refund:
+                    self.payment_info[0].full_refund = True
+                if g.sc.finances_partial_refund:
+                    self.payment_info[0].partial_refund = True
         db.session.commit()
 
     def get_dancing_info(self, competition):
@@ -249,17 +258,18 @@ class DancingInfo(db.Model):
         return not errors, errors
 
     def set_partner(self, contestant_id):
-        partner = db.session.query(DancingInfo) \
-            .filter_by(contestant_id=contestant_id if contestant_id is not None else self.partner,
-                       competition=self.competition).first()
-        if contestant_id is not None:
-            if partner is not None:
-                partner.partner = self.contestant_id
-                self.partner = partner.contestant_id
-        else:
-            if partner is not None:
-                partner.partner = None
+        if contestant_id is None:
             self.partner = None
+            other_dancer = DancingInfo.query.filter(DancingInfo.competition == self.competition,
+                                                    DancingInfo.partner == self.contestant_id).first()
+            if other_dancer is not None:
+                other_dancer.partner = None
+        else:
+            other_dancer = DancingInfo.query.filter(DancingInfo.competition == self.competition,
+                                                    DancingInfo.contestant_id == contestant_id).first()
+            if other_dancer is not None:
+                self.partner = other_dancer.contestant_id
+                other_dancer.partner = self.contestant_id
         db.session.commit()
 
     def not_dancing(self, competition):
@@ -327,12 +337,10 @@ class StatusInfo(db.Model):
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
-    def set_status(self, status=None):
+    def set_status(self, status):
         if status is not None:
             self.status = status
             self.raffle_status = status
-        else:
-            self.status = self.raffle_status
         if self.status == CONFIRMED:
             self.payment_required = True
         elif self.status == REGISTERED:

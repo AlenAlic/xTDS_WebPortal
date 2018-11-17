@@ -1,0 +1,22 @@
+{% extends "raffle/raffle_base.html" %}
+
+{% block app_content %}
+{% if g.ts.main_raffle_taken_place is sameas false %}
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <h2>Dancers overview</h2>
+    {% with subtitle='Registered', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
+        {% include 'raffle/_stats.html' %}
+    {% endwith %}
+    <button style="display: block; margin: auto;" type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success btn-lg loading-btn">Start Raffle</button>
+    {% if g.rc.beginners_guaranteed_entry_cutoff is sameas true or g.rc.beginners_guaranteed_per_team is sameas true or g.rc.beginners_increased_chance is sameas true %}
+        <h2>Beginners that have signed up: <span class="badge" style="font-size:x-large">{{ raffle_sys.number_of_beginners() }}</span></h2>
+    {% endif %}
+    {% if g.rc.first_time_guaranteed_entry is sameas true or g.rc.first_time_increased_chance is sameas true %}
+        <h2>First time attendees: <span class="badge" style="font-size:x-large">{{ raffle_sys.number_of_first_time_dancers() }}</span></h2>
+    {% endif %}
+    {% with teams=teams %}
+        {% include 'raffle/_guaranteed_list.html' %}
+    {% endwith %}
+</form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,142 @@
+{% if raffle_sys.number_of_newly_selected_dancers() > 0 %}
+<h2>Selected by system, but not yet visible to teamcaptain</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <table class="table table-clickable-checkbox">
+        <colgroup>
+            <col span="1" style="width: 5%;">
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 20%;">
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 8%;">
+            <col span="1" style="width: 7%;">
+            <col span="1" style="width: 9%;">
+            <col span="1" style="width: 8%;">
+            <col span="1" style="width: 7%;">
+            <col span="1" style="width: 5%;">
+            <col span="1" style="width: 1%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th colspan="4">Personal</th>
+                <th colspan="3">Ballroom</th>
+                <th colspan="3">Latin</th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>ID</th>
+                <th>Dancer</th>
+                <th>Email</th>
+                <th>Team</th>
+                <th>Level</th>
+                <th>Role</th>
+                <th>Partner</th>
+                <th>Level</th>
+                <th>Role</th>
+                <th>Partner</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for dancer in raffle_sys.newly_selected_dancers() %}
+            <tr class="checkbox-row">
+                <td>{{ dancer.contestant_id }}</td>
+                <td>{{ dancer.get_full_name() }}</td>
+                <td>{{ dancer.email }}</td>
+                <td>{{ dancer.contestant_info[0].team }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
+                <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner, show_number=True) }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
+                <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner, show_number=True) }}</td>
+                <td><input class="checkbox confirmed-checkbox" type="checkbox" value="y" style="visibility:hidden" id="{{ dancer.contestant_id }}" name="{{ dancer.contestant_id }}"></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" id="submit-select_marked_dancers" name="select_marked_dancers" class="btn btn-primary loading-btn">Add marked dancers</button>
+    <button type="submit" id="submit-remove_marked_dancers" name="remove_marked_dancers" class="btn btn-warning loading-btn">Remove marked dancers</button>
+</form>
+{% endif %}
+
+<h2>Automatically add dancers to tournament</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+<table class="table table-no-top">
+    <colgroup>
+        <col span="1" style="width: 80%;">
+        <col span="1" style="width: 20%;">
+    </colgroup>
+    <tbody>
+        <tr>
+            <td>Balance out the selected dancers by reducing all the differences to 0 (if possible). The system will stop adding dancers when it is done.</td>
+            <td align="right"><button type="submit" id="submit-balance_raffle" name="balance_raffle" class="btn btn-primary btn-xs loading-btn">Balance raffle</button></td>
+        </tr>
+        <tr>
+            <td>Add random dancers until all the tournament spots are taken. This will attempt to balance the raffle first.</td>
+            <td align="right"><button type="submit" id="submit-finish_raffle" name="finish_raffle" class="btn btn-primary btn-xs loading-btn">Fill raffle</button></td>
+        </tr>
+        <tr>
+            <td>Add random dancers that are not staying in the sleeping hall, until all the tournament spots are taken. This will <b>not</b> attempt to balance the raffle first.</td>
+            <td align="right"><button type="submit" id="submit-finish_raffle_with_sleeping_spots" name="finish_raffle_with_sleeping_spots" class="btn btn-primary btn-xs loading-btn">Fill raffle (no sleeping hall)</button></td>
+        </tr>
+    </tbody>
+</table>
+</form>
+
+<h2>Manually add dancers to tournament</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <table class="table table-striped table-vertical-lines-head">
+        <colgroup>
+            {% for n in range(g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) %}
+            <col span="1" style="width: {{ 80 / (g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) }}%;">
+            {% endfor %}
+            <col span="1" style="width: 5%;">
+            <col span="1" style="width: 15%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <td colspan="{{ 1 + g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length}}">
+                    These controls allow you to select a group of dancers or a single random dancer. Adding a single dancer will <b>change the differences indicated above</b> (adding a group will not).
+                </td>
+                <td align="right"><button type="submit" id="submit-select_random_group" name="select_random_group" class="btn btn-primary btn-xs loading-btn">Add random group</button></td>
+            </tr>
+            <tr>
+                {% for comp in g.data.ALL_COMPETITIONS %}
+                <th colspan="{{ g.sc.get_participating_levels_including_not_dancing()|length}}">
+                    {{ comp }}
+                </th>
+                {% endfor %}
+                <th colspan="2">Available dancers</th>
+            </tr>
+            <tr>
+                {% for comp in g.data.ALL_COMPETITIONS %}
+                    {% for level in g.sc.get_participating_levels_including_not_dancing() %}
+                    <th>{% if level == g.data.NO %}{{ g.data.NOT_DANCING }}{% else %}{{ level }}{% endif %}
+                        <input class="checkbox filter-checkbox {{comp}}-checkbox" type="checkbox" onclick="filterLevels(this)" value="y"></th>
+                    {% endfor %}
+                {% endfor %}
+                <th colspan="2"># dancers available</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comb, val in raffle_sys.available_combinations(partners=true).items() %}
+            <tr class="checkbox-filter">
+                {% for comp in g.data.ALL_COMPETITIONS %}
+                    {% for level in g.sc.get_participating_levels_including_not_dancing() %}
+                        {% if comp == g.data.BALLROOM %}
+                            {% set lvl, rl = 1, 2 %}
+                        {% else %}
+                            {% set lvl, rl = 4, 5 %}
+                        {% endif %}
+                        <td class="vertical-line">{% if comb[lvl] == level %}{% if level == g.data.NO %}x{% else %}{{ comb[rl] }}{% endif %}{% endif %}</td>
+                    {% endfor %}
+                {% endfor %}
+                <td class="vertical-line-bottom">{{ val }}</td>
+                <td align="right" class="vertical-line-right vertical-line-bottom">
+                    <button type="submit" id="{{comb}}" name="{{comb}}" class="btn btn-info btn-xs loading-btn">Add random dancer</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>

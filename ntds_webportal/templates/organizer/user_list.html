@@ -1,9 +1,19 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
+
+{% block head %}
+{{ super() }}
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/jquery.confirm.min.js"></script>
+{% endblock %}
+
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
 
 {% block app_content %}
 <h2>Manage organizational accounts</h2>
-<div class="row" style="visibility:visible">
+<div class="row" style="visibility:hidden">
     {% if bda is not none %}
         {% set bda_image = 'edit_contestant.png' %}
     {% else %}
@@ -20,16 +30,53 @@
     {% with url='organizer.check_in_assistant_account', title='Check-In Assistant', image=chi_image %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% if ada is not none %}
+        {% set ada_image = 'edit_contestant.png' %}
+    {% else %}
+        {% set ada_image = 'register_contestant.png' %}
+    {% endif %}
+    {% with url='organizer.adjudicator_assistant_account', title='Adjudicator Assistant', image=ada_image %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
 </div>
-<h2>Available Teamcaptains and Treasurers accounts</h2>
+<h2>Activate team captain accounts</h2>
+{% if not g.ts.website_accessible_to_teamcaptains %}
+<p>Click the button below to activate the team captains accounts for the xTDS WebPortal.
+    Activating the accounts will also automatically send out an e-mail (with login credentials) to the team captains, alerting them that the website is accessible to them.</p>
+<p></p>
+<p>This wil <b>NOT</b> open the registration yet.</p>
+<p>Before activating the accounts, please make sure that the e-mails of the team captain accounts are correct.</p>
+<button class="btn btn-primary confirm-activation"
+        data-url="{{url_for('organizer.user_list')}}?activate_teamcaptains"
+        data-title="Activate team captain accounts"
+        data-text="Are you sure you want to activate the team captain accounts?"
+        data-confirm-button="Yes, activate team captain accounts"
+        data-cancel-button="No, do not activate team captain accounts yet"><b>Activate team captain accounts</b></button>
+<script>
+$.confirm.options = {
+    confirmButtonClass: "btn-primary",
+    cancelButtonClass: "btn-default",
+    dialogClass: "modal-dialog modal-lg"
+}
+$(".confirm-activation").confirm({
+    confirm: function(button) {
+        window.location.href = button.data('url');
+    },
+    cancel: function(button) {}
+});
+</script>
+{% else %}
+<p>Team captains have access to the xTDS WebPortal.</p>
+{% endif %}
+<h2>Available Teamcaptains{% if g.ts.website_accessible_to_teamcaptains is sameas true %} and Treasurers accounts{% endif %}</h2>
 <table class="table">
     <colgroup>
         <col span="1" style="width: 15%;">
-        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 20%;">
         <col span="1" style="width: 25%;">
-        <col span="1" style="width: 15%;">
-        <col span="1" style="width: 15%;">
-        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 10%;">
+        <col span="1" style="width: 10%;">
     </colgroup>
     <thead>
         <tr>
@@ -38,7 +85,7 @@
             <th><b>E-mail</b></th>
             <th><b></b></th>
             <th><b>Country</b></th>
-            <th><b>Active</b></th>
+            <th style="text-align:right;"><b>Active</b></th>
         </tr>
     </thead>
     <tbody>
@@ -47,11 +94,30 @@
                 <td>{{ user.username }}</td>
                 <td>{% if user.team is not none %}{{ user.team }}{% endif %}</td>
                 <td>{% if user.email is not none %}{{ user.email }}{% endif %}</td>
-                <td>{% if user.is_active is sameas true %}<a role="button" class="btn btn-default" href="{{ url_for('organizer.change_email', number=user.user_id) }}">Change e-mail</a>{% endif %}</td>
+                <td>
+                    {% if (user.is_active and user.is_treasurer()) or user.is_tc() %}
+                    <a role="button" class="btn btn-default" href="{{ url_for('organizer.change_email', number=user.user_id) }}">Change e-mail</a>
+                    {% endif %}
+                </td>
                 <td>{{ user.team.country }}</td>
-                <td>{{ data.TF[user.is_active] }}</td>
+                <td align="right">{{ data.TF[user.is_active] }}</td>
+
             </tr>
         {% endfor %}
     </tbody>
 </table>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function onStart() {
+    var maxHeight = 0;
+    $(".thumbnail-same-height").each(function(){
+       if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
+    });
+    $(".thumbnail-same-height").height(maxHeight);
+    $(".row").css('visibility', 'visible');
+}
+</script>
 {% endblock %}

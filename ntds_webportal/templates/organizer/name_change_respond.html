@@ -8,7 +8,6 @@ The teamcaptain of {{req.contestant.contestant_info[0].team}} want to make the f
 
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
 
     <div class="form-group ">
         <label class="control-label" for="remark">Remarks for the teamcaptain (optional)</label>

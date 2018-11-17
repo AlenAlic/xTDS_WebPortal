@@ -28,23 +28,19 @@
                     {{ dancer.email }}
                 </td>
                 <td>
-                    {{ data.STATUS[dancer.status_info[0].status] }}
+                    {{ g.data.STATUS[dancer.status_info[0].status] }}
                 </td>
                 <td>
-                    {{ data.TF[dancer.contestant_info[0].first_time] }}
+                    {{ g.data.TF[dancer.contestant_info[0].first_time] }}
                 </td>
                 <td>
-                    {{ data.TF[dancer.contestant_info[0].student] }}
+                    {{ data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
                 </td>
                 <td>
-                    {% if dancer.dancing_info[0].level != data.NO %}
-                    {{ data.LEVELS[dancer.dancing_info[0].level] }}
-                    {% else %} - {% endif %}
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
                 </td>
                 <td>
-                    {% if dancer.dancing_info[1].level != data.NO %}
-                    {{ data.LEVELS[dancer.dancing_info[1].level] }}
-                    {% else %} - {% endif %}
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
                 </td>
             </tr>
         {% endfor %}

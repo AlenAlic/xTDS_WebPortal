@@ -10,7 +10,6 @@
 <h2>Compose message</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
     <div class="form-group {% if form.recipients.errors|length > 0%}has-error{% endif %} required ">
         <!--suppress XmlInvalidId -->
         <label class="control-label" for="{{form.recipients.name}}">{{form.recipients.label}}</label>

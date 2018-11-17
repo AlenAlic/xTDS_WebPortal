@@ -1,0 +1,48 @@
+{% extends "raffle/raffle_base.html" %}
+
+{% block app_content %}
+<div style="width:100%">
+    <div style="display: table; margin: 0 auto; text-align: center;">
+        <h1>ADMIN VIEW</h1>
+        <h2>Reset raffle</h2>
+        <p><strong>Warning!</strong> Doing this will redo the raffle entirely, without any way of getting this configuration back.</p>
+        <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+            <button type="submit" id="submit-reset_raffle" name="reset_raffle" class="btn btn-danger loading-btn">RESET Raffle</button>
+        </form>
+    </div>
+</div>
+
+{% with raffle_sys=raffle_sys %}
+    {% include 'raffle/_summary.html' %}
+{% endwith %}
+
+{% set width = 0 %}
+{% if raffle_sys.selected_dancers|length > 0 %}{% set width = width + 1 %}{% endif %}
+{% if raffle_sys.confirmed_dancers|length > 0 %}{% set width = width + 1 %}{% endif %}
+{% if raffle_sys.registered_dancers|length > 0 %}{% set width = width + 1 %}{% endif %}
+{% if raffle_sys.selected_dancers|length > 0 and raffle_sys.confirmed_dancers|length > 0 %}{% set width_md = true %}{% else %}{% set width_md = false %}{% endif %}
+
+<h2>Overview</h2>
+<div class="row">
+    {% if raffle_sys.selected_dancers|length > 0 %}
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-{{ 12//width }}">
+        {% with subtitle='Selected', dancers=raffle_sys.selected_dancers, stats=raffle_sys.get_stats(g.data.SELECTED) %}
+            {% include 'raffle/_stats.html' %}
+        {% endwith %}
+    </div>
+    {% endif %}
+    {% if raffle_sys.confirmed_dancers|length > 0 %}
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-{{ 12//width }}">
+        {% with subtitle='Confirmed', dancers=raffle_sys.confirmed_dancers, stats=raffle_sys.get_stats(g.data.CONFIRMED) %}
+            {% include 'raffle/_stats.html' %}
+        {% endwith %}
+    </div>
+    {% endif %}
+    <div class="col-xs-12 col-sm-12 col-md-{%if width_md%}12{%else%}6{%endif%} col-lg-{{ 12//width }}">
+        {% with subtitle='Available', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
+            {% include 'raffle/_stats.html' %}
+        {% endwith %}
+    </div>
+</div>
+{% include 'raffle/_controls.html' %}
+{% endblock %}

@@ -110,6 +110,8 @@ def change_email(number):
 @login_required
 @requires_access_level([ACCESS['organizer']])
 def registration_overview():
+    # TODO - WISH - Add filter bars
+    # TODO - WISH - Make clicking dancer redirect to page (in new window) with dancer information
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .order_by(ContestantInfo.team_id,
                   case({CONFIRMED: 0, SELECTED: 1, REGISTERED: 2, CANCELLED: 3}, value=StatusInfo.status),
@@ -421,6 +423,7 @@ def cancel_dancer(number):
 @login_required
 @requires_access_level([ACCESS['organizer'], ACCESS['blind_date_organizer']])
 def dancing_info_list():
+    # TODO - PRIORITY - Add role to list
     dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == SELECTED)).order_by(ContestantInfo.number)\
         .all()
@@ -431,9 +434,14 @@ def dancing_info_list():
 @login_required
 @requires_access_level([ACCESS['organizer'], ACCESS['blind_date_organizer']])
 def edit_dancing_info(number):
-    form = EditDancingInfoForm()
     dancer = db.session.query(Contestant).join(DancingInfo).filter(Contestant.contestant_id == number).first()
-    form = populate_dancing_info_form(form, dancer, edit_dancing_info=True)
+    form = EditDancingInfoForm(dancer)
+    # TODO - PRIORITY - Notify teamcaptains when partner gone due to switch in level or blind date
+    # TODO - PRIORITY - Add JS for partner update
+    if request.method == GET:
+        form.populate(dancer)
+    if request.method == POST:
+        form.custom_validate()
     if form.validate_on_submit():
         flash('{} data has been changed successfully.'.format(submit_updated_dancing_info(form, contestant=dancer)),
               'alert-success')
@@ -445,6 +453,9 @@ def edit_dancing_info(number):
 @login_required
 @requires_access_level([ACCESS['organizer']])
 def merchandise():
+    # TODO - PRIORITY - Rework to include other merchandise
+    # TODO - PRIORITY - Change cancel status to take into account merchandise closing date
+    # TODO - PRIORITY - Add option to confirm order as is and remove all registered dancers merchandise
     ts = TournamentState.query.first()
     dancers = Contestant.query.join(StatusInfo).join(ContestantInfo).join(AdditionalInfo).join(MerchandiseInfo)\
         .join(Team).filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == CANCELLED),
@@ -555,6 +566,9 @@ def bad():
 @login_required
 @requires_access_level([ACCESS['organizer']])
 def adjudicators_overview():
+    # TODO - PRIORITY - Add text to web page
+    # TODO - PRIORITY - Remove Salsa and Polka when not needed
+    # TODO - LONG TERM - Completely new system
     ts = TournamentState.query.first()
     ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo)\
         .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_ballroom != NO)\

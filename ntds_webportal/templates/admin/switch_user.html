@@ -5,7 +5,6 @@
 <h2>Switch to a different user</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
     {{ wtf.form_field(form.user) }}
     {{ wtf.form_field(form.submit) }}
 </form>

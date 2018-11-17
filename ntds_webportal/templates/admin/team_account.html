@@ -5,11 +5,10 @@
 <h2>Organizer account</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
     {{ my_wtf.form_field(form.name) }}
     {{ my_wtf.form_field(form.city) }}
     {{ my_wtf.form_field(form.country) }}
-    <div class="form-group  required">
+    <div class="form-group required">
         <label class="control-label" ></label>
         <div class="input-group">
             <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if edit is sameas false %}Create Team{% else %}Save changes{% endif %}">&nbsp;

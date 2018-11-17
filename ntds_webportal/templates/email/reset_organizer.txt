@@ -1,0 +1,17 @@
+Dear organization of the {{year}} {{tournament}} in {{city}},
+
+
+Your account for the xTDS WebPortal has been activated.
+
+Use the following credentials to log in:
+Username: {{ username }}
+Password: {{ password }}
+
+You can click the link below to visit the site.
+
+{{ url_for('main.index', _external=True) }}
+
+
+Sincerely,
+
+The xTDS WebPortal Admin

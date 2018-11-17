@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/jquery.confirm.min.js"></script>
+{% endblock %}
+
+{% block app_content %}
+<h2>Registration period</h2>
+{% if not g.ts.registration_period_started and not g.ts.registration_open %}
+    <p>The registration period has not started yet. Starting the registration period will alert the team captains by sending an e-mail that the registration period has started.</p>
+    <button class="btn btn-primary btn-lg confirm-modal"
+            data-url="{{url_for('organizer.registration_management')}}?start_registration_period"
+            data-title="Start registration period"
+            data-text="Are you sure you want to start the registration period?<br><br>This will automatically send out e-mail to the team captains that the registration has started."
+            data-confirm-button="Yes, start registration period"
+            data-cancel-button="No, do not start registration period yet">
+        <b>Start registration period</b>
+    </button>
+{% elif g.ts.registration_open %}
+    <p>The registration is currently <b>open</b>. New dancers can be registered at the moment.</p>
+    <button class="btn btn-primary btn-lg confirm-modal"
+            data-url="{{url_for('organizer.registration_management')}}?close_registration"
+            data-title="Close registration"
+            data-text="Are you sure you want to close the registration?"
+            data-confirm-button="Yes, close the registration"
+            data-cancel-button="No, keep the registration open">
+        <b>Close registration</b>
+    </button>
+{% else %}
+<p>The registration is currently <b>closed</b>.</p>
+    <button class="btn btn-primary btn-lg confirm-modal"
+            data-url="{{url_for('organizer.registration_management')}}?open_registration"
+            data-title="Open registration"
+            data-text="Are you sure you want to open the registration?"
+            data-confirm-button="Yes, open the registration"
+            data-cancel-button="No, keep registration period yet">
+        <b>Open registration</b>
+    </button>
+{% endif %}
+{% if no_gdpr_dancers|length > 0 %}
+<h2>Dancers that have not accepted the GDPR <span class="badge" style="font-size:x-large">{{ no_gdpr_dancers|length }}</span></h2>
+<table class="table" style="margin-bottom:0;">
+    <colgroup>
+        <col span="1" style="width: 70%;">
+        <col span="1" style="width: 30%;">
+    </colgroup>
+    <tbody>
+        <tr>
+            <td style="border: none;">You can send an e-mail reminder to all the dancers that have not accepted the privacy statement.</td>
+            <td style="border: none; text-align:right;">
+                <button class="btn btn-info confirm-modal"
+                        data-url="{{url_for('organizer.registration_management')}}?notify_no_gdpr"
+                        data-title="Notify registered dancers"
+                        data-text="Are you sure you want to e-mail a reminder to all the dancers in the list?"
+                        data-confirm-button="Yes, send e-mail"
+                        data-cancel-button="No, do not send">
+                    <b>Send reminder</b>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th><b>Name</b></th>
+            <th><b>E-mail</b></th>
+            <th><b>Team</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dancer in no_gdpr_dancers %}
+            <tr>
+                <td>{{ dancer.get_full_name() }}</td>
+                <td>{{ dancer.email }}</td>
+                <td>{{ dancer.contestant_info[0].team.name }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+<script>
+$.confirm.options = {
+    confirmButtonClass: "btn-primary",
+    cancelButtonClass: "btn-default",
+    dialogClass: "modal-dialog modal-lg"
+}
+$(".confirm-modal").confirm({
+    confirm: function(button) {
+        window.location.href = button.data('url');
+    },
+    cancel: function(button) {}
+});
+</script>
+{% endblock %}

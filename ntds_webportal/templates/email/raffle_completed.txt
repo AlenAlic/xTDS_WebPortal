@@ -1,9 +1,11 @@
 Dear teamcaptain,
 
 
-The raffle for this tournament has been completed.
+The main raffle for this tournament has been completed.
 
-Please log in at xtds.nl to see the results.
+You can click the link below to visit the site and see the results.
+
+{{ url_for('main.index', _external=True) }}
 
 
 Sincerely,

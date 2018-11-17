@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .table-vertical-lines td {border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd;}
+    .table-vertical-lines-head th {border-left: 1px solid #ddd; border-right: 1px solid #ddd;}
+    .vertical-line {border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;}
+    .vertical-line-left {border-left: 1px solid #ddd;}
+    .vertical-line-right {border-right: 1px solid #ddd;}
+    .vertical-line-top {border-top: 1px solid #ddd;}
+    .vertical-line-bottom {border-bottom: 1px solid #ddd;}
+    .table-no-top > tbody > tr:first-child > td {border: none;}
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    $('.table-clickable-checkbox tr').click(function(event) {
+        if (event.target.type !== 'checkbox') {
+            $(':checkbox', this).trigger('click');
+        }
+    });
+});
+$(document).ready(function($) {
+    $(".confirmed-checkbox").change(function() {
+        $(this).parents("tr:first").toggleClass('success ');
+    });
+});
+$(document).ready(function($) {
+    $(".guaranteed-checkbox").change(function() {
+        $(this).parents("tr:first").toggleClass('success ');
+    });
+});
+function disableCheckboxes(checkboxes, disable) {
+    for (i = 0; i < checkboxes.length; i++) {
+        if (disable) {
+            checkboxes[i].setAttribute("disabled","disabled");
+            checkboxes[i].style.cursor = "not-allowed";
+        } else {
+            checkboxes[i].removeAttribute("disabled");
+            checkboxes[i].style.cursor = "pointer";
+        }
+    }
+}
+function filterLevels(clicked_checkbox) {
+    var rows = document.getElementsByClassName("checkbox-filter");
+    var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox")
+    var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox")
+    var all_checkboxes = document.getElementsByClassName("filter-checkbox")
+
+    if (clicked_checkbox.classList.contains("{{g.data.BALLROOM}}-checkbox")) {
+        if (clicked_checkbox.checked) {
+            disableCheckboxes(ballroom_checkboxes, true)
+        } else {
+            disableCheckboxes(ballroom_checkboxes, false)
+        }
+    } else {
+        if (clicked_checkbox.checked) {
+            disableCheckboxes(latin_checkboxes, true)
+        } else {
+            disableCheckboxes(latin_checkboxes, false)
+        }
+    }
+    clicked_checkbox.removeAttribute("disabled");
+    clicked_checkbox.style.cursor = "pointer";
+
+    for (i = 0; i < rows.length; i++) {
+        rows[i].style.display = 'table-row';
+    }
+
+    var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox")
+    var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox")
+    var checkboxes = document.querySelectorAll(".filter-checkbox:checked")
+
+    if (checkboxes.length > 0) {
+        for (j = 0; j < checkboxes.length; j++) {
+            var checkbox = checkboxes[j];
+
+            var col = checkbox.closest("th");
+            for (i = 0; i < rows.length; i++) {
+                if (checkbox.checked) {
+                    if (rows[i].children[col.cellIndex].innerHTML == "") {
+                        rows[i].style.display = 'none';
+                    }
+                } else {
+                    rows[i].style.display = 'table-row';
+                }
+            }
+        }
+    } else {
+        for (i = 0; i < rows.length; i++) {
+            rows[i].style.display = 'table-row';
+        }
+    }
+
+    window.scrollTo(0,document.body.scrollHeight);
+}
+</script>
+<script>
+function guaranteedEntry(checkbox) {
+    let row = checkbox.closest("tr");
+    updateCheckboxRowApiCall("/api/status_info/guaranteed_entry/", "PATCH", row);
+}
+function clearApiState(elem) {
+    elem.classList.remove("api-pending");
+    elem.classList.remove("api-success");
+    elem.classList.remove("api-warning");
+    elem.classList.remove("api-failed");
+}
+function apiPending(elem) {
+    clearApiState(elem);
+    elem.classList.add("api-pending");
+}
+function apiSuccess(elem) {
+    clearApiState(elem);
+    elem.classList.add("api-success");
+}
+function apiWarning(elem) {
+    clearApiState(elem);
+    elem.classList.add("api-warning");
+}
+function apiFailed(elem) {
+    clearApiState(elem);
+    elem.classList.add("api-failed");
+}
+function updateCheckboxRowApiCall(api, method, row) {
+    apiPending(row)
+    fetch(api + row.id, {method: method})
+    .then(function(response) {return response.json();})
+    .then(function(result) {
+        if (result) {
+            apiSuccess(row);
+        } else {
+            clearApiState(row);
+        }
+        updateTeamGuaranteedDancersApiCall("/api/team/guaranteed_dancers/", "GET", row)
+    })
+    .catch(function(error) {
+        console.log('Error: \n', error);
+    });
+}
+function updateTeamGuaranteedDancersApiCall(api, method, source) {
+    let panel = source.closest(".panel");
+    let total = panel.querySelector('.panel-heading > .panel-title > .badge > .team-guaranteed-dancers');
+    fetch(api + total.dataset.teamId, {method: method})
+    .then(function(response) {return response.json();})
+    .then(function(result) {
+        if (result) {total.innerHTML = result}
+    })
+    .catch(function(error) {
+        console.log('Error: \n', error);
+    });
+}
+</script>
+<script>
+function sendRaffleNotificationEmail(api, method) {
+    fetch(api, {method: method})
+    .then(function(response) {return response;})
+    .then(function(result) {if (result) {clearNotifyDiv();} })
+    .catch(function(error) {console.log('Error: \n', error); });
+}
+function clearNotifyDiv() {
+    let div = document.getElementById('send-message-to-team-captains')
+    while (div.firstChild) {div.firstChild.remove();}
+}
+</script>
+{% endblock %}

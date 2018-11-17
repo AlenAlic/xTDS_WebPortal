@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h2>Clear tables</h2>
+<a class="btn btn-warning" href="{{url_for('self_admin.test_populate')}}?clear_tables" style="text-decoration:none">Clear tables</a>
+<h2>Populate with test data</h2>
+<h3>2018</h3>
+<div class="btn-group btn-group-lg">
+    <a class="btn btn-primary" href="{{url_for('self_admin.test_populate')}}?NTDS2018ENSCHEDE" style="text-decoration:none">NTDS 2018 Enschede</a>
+    <a class="btn btn-primary" href="{{url_for('self_admin.test_populate')}}?ETDS2018BRNO" style="text-decoration:none">ETDS 2018 Brno</a>
+</div>
+{% endblock %}

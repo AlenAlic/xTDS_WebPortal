@@ -5,11 +5,11 @@
 
 {% if ts.main_raffle_result_visible is sameas true %}
 {% with finances=finances %}
-    {% include 'organizer/_finances_summary.html' %}
+    {% include 'teamcaptains/_finances_summary.html' %}
 {% endwith %}
 
 <h2>Received by organization:</h2>
-<div style="font-size:x-large">{{ data.euros(team_finances.paid) }} / {{ data.euros(finances['price_total']) }}</div>
+<div style="font-size:x-large">{{ g.data.euros(current_user.team.amount_paid) }} / {{ g.data.euros(finances['price_total']) }}</div>
 <form method="GET" enctype="multipart/form-data" novalidate>
     <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list">
 </form>
@@ -17,12 +17,15 @@
     {% with status='Confirmed dancers', dancers=confirmed_dancers %}
         {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
-
     {% with status='Cancelled dancers', dancers=cancelled_dancers %}
         {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
     <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
+    <a role="button" class="btn btn-default btn-loading" href="{{ url_for('main.dashboard') }}">Cancel</a>
 </form>
+{% with status='Refunds', dancers=refund_dancers %}
+    {% include 'teamcaptains/_refund_list.html' %}
+{% endwith %}
 {% else %}
 <h2>The raffle has not taken place yet.</h2>
 {% endif %}
@@ -32,10 +35,75 @@
 {% block scripts %}
 {{ super() }}
 <script>
-    $(document).ready(function($) {
-    $(".checkbox").change(function() {
-        $(this).parents("tr:first").toggleClass('info ');
+function allPaid(checkbox) {
+    var row = checkbox.closest("tr")
+    <!--removeColors(row)-->
+    <!--row.classList.add("info");-->
+    <!--row.classList.add("success");-->
+    var entry = row.querySelector(".entry-fee-checkbox");
+    var merchandise = row.querySelector(".merchandise-checkbox");
+    entry.checked = checkbox.checked;
+    merchandise.checked = checkbox.checked
+    <!--apiAllPaid("/api/payment_info/all_paid/", "PUT", row, checkbox)-->
+    checkRow(checkbox)
+}
+function removeColors(elem) {
+    elem.classList.remove("warning");
+    elem.classList.remove("success");
+    elem.classList.remove("info");
+}
+
+function checkRow(checkbox) {
+    var row = checkbox.closest("tr")
+    var entry = row.querySelector(".entry-fee-checkbox");
+    var merchandise = row.querySelector(".merchandise-checkbox");
+    var total = row.querySelector(".total-paid-checkbox");
+    var prev_entry = entry.value == "True"
+    var prev_merchandise = merchandise.value == "True"
+    var prev_total = total.value == "True"
+
+    if (merchandise.style.visibility == "") {
+        if (entry.checked && merchandise.checked) {total.checked = true;} else {total.checked = false;}
+        changeColor(row, entry.checked == prev_entry && merchandise.checked == prev_merchandise && total.checked == prev_total)
+    } else {
+        if (entry.checked) {total.checked = true;} else {total.checked = false;}
+        changeColor(row, entry.checked == prev_entry && total.checked == prev_total)
+    }
+}
+function changeColor(elem, toggle) {
+    if (toggle) {
+        if (elem.classList.contains("dummy-warning")) {
+            elem.classList.remove("dummy-warning");
+            elem.classList.add("warning");
+        }
+        elem.classList.remove("info");
+    } else {
+        if (elem.classList.contains("warning")) {
+            elem.classList.remove("warning");
+            elem.classList.add("dummy-warning");
+        }
+        elem.classList.add("info");
+    }
+}
+$(document).ready(function() {
+    $('.table-finances tr').click(function(event) {
+        if (event.target.type !== 'checkbox') {
+            $('.total-paid-checkbox', this).trigger('click');
+        }
     });
 });
+function apiAllPaid(api, method, row, checkbox) {
+    fetch(api + row.id, {method: method, body: JSON.stringify({set_paid: checkbox.checked})})
+    .then(function(response) {return response.json();})
+    .then(function(result) {
+        row.classList.remove("info");
+        if (result) {
+            row.classList.add("success");
+        }
+    })
+    .catch(function(error) {
+        console.log('Looks like there was a problem: \n', error);
+    });
+}
 </script>
 {% endblock %}

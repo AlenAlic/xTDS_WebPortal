@@ -1,0 +1,36 @@
+{% if dancers|length > 0 %}
+<table class="table table-striped table-responsive table-finances">
+    <colgroup>
+        {% if current_user.is_organizer() %}
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 50%;">
+        <col span="1" style="width: 30%;">
+        {% else %}
+        <col span="1" style="width: 30%;">
+        <col span="1" style="width: 60%;">
+        <col span="1" style="width: 10%;">
+        {% endif %}
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="3" style="font-size:x-large">{{status}}</th>
+        </tr>
+        <tr>
+            <th>Dancer</th>
+            <th style="text-align:right">Refund</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for dancer in dancers %}
+        <tr>
+            <td>{{ dancer.get_full_name() }}</td>
+            <td style="text-align:right">
+                {{ g.data.euros(finances[dancer.contestant_info[0].student]*g.sc.finances_partial_refund_percentage/100) }}
+            </td>
+            <td></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}

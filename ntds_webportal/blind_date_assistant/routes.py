@@ -14,7 +14,7 @@ import itertools
 
 @bp.route('/create_couple', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['blind_date_organizer']])
+@requires_access_level([ACCESS[BLIND_DATE_ASSISTANT]])
 def create_couple():
     form = CreateCoupleForm()
     leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
@@ -85,7 +85,7 @@ def create_couple():
 
 @bp.route('/break_up_couple/<competition>/<couple_lead>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['blind_date_organizer']])
+@requires_access_level([ACCESS[BLIND_DATE_ASSISTANT]])
 def break_up_couple(couple_lead, competition):
     lead = DancingInfo.query.filter_by(contestant_id=couple_lead, competition=competition)\
         .first()
@@ -101,7 +101,7 @@ def break_up_couple(couple_lead, competition):
 
 @bp.route('/create_couple_salsa', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['blind_date_organizer']])
+@requires_access_level([ACCESS[BLIND_DATE_ASSISTANT]])
 def create_couple_salsa():
     form = CreateCoupleExtraCompetitionForm()
     dancers = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
@@ -142,7 +142,7 @@ def create_couple_salsa():
 
 @bp.route('/break_up_salsa_couple/<couple_id>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['blind_date_organizer']])
+@requires_access_level([ACCESS[BLIND_DATE_ASSISTANT]])
 def break_up_salsa_couple(couple_id):
     couple = SalsaPartners.query.filter(SalsaPartners.couple_id == couple_id).first()
     lead = Contestant.query.filter_by(contestant_id=couple.lead_id).first()
@@ -156,7 +156,7 @@ def break_up_salsa_couple(couple_id):
 
 @bp.route('/create_couple_polka', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['blind_date_organizer']])
+@requires_access_level([ACCESS[BLIND_DATE_ASSISTANT]])
 def create_couple_polka():
     form = CreateCoupleExtraCompetitionForm()
     dancers = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
@@ -197,7 +197,7 @@ def create_couple_polka():
 
 @bp.route('/break_up_polka_couple/<couple_id>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS['blind_date_organizer']])
+@requires_access_level([ACCESS[BLIND_DATE_ASSISTANT]])
 def break_up_polka_couple(couple_id):
     couple = PolkaPartners.query.filter(PolkaPartners.couple_id == couple_id).first()
     lead = Contestant.query.filter_by(contestant_id=couple.lead_id).first()

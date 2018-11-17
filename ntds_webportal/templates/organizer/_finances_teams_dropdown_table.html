@@ -10,6 +10,9 @@
     {% with status='Cancelled dancers', dancers=team['cancelled_dancers'], cancelable=true %}
         {% include 'organizer/_finances_list.html' %}
     {% endwith %}
+    {% with status='Refunds', finances=team['finances'], dancers=team['refund_dancers'] %}
+        {% include 'teamcaptains/_refund_list.html' %}
+    {% endwith %}
     {% else %}
     <h2>Team {{team['name']}} has no registered dancers.</h2>
     {% endif %}

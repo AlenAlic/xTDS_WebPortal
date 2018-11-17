@@ -13,7 +13,6 @@
 <h2>Create couple for Polka</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
     <div class="form-group {% if form.lead.errors|length > 0  %} has-error {% endif %} required">
         <label class="control-label" for="{{form.lead.name}}">{{form.lead.label}}</label>
         <div class="select">

@@ -4,66 +4,33 @@
 {% block app_content %}
 {% if ts.main_raffle_result_visible is sameas true %}
 <h2>Merchandise quantities</h2>
-<div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-        <table class="table table-striped">
-            <colgroup>
-                <col span="1" style="width: 70%;">
-                <col span="1" style="width: 30%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th colspan="2"><b>T-shirts</b></th>
-                </tr>
-                <tr>
-                    <th><b>Size</b></th>
-                    <th style="text-align:right"><b>Quantity</b></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for shirt, quantity in shirts.items() %}
-                <tr>
-                    <td>{{ shirt }}</td>
-                    <td align="right">{{ quantity }}</td>
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td style="font-weight:bold">Total</td>
-                    <td  align="right">{{ total_shirts }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-        <table class="table table-striped">
-            <colgroup>
-                <col span="1" style="width: 70%;">
-                <col span="1" style="width: 30%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th colspan="2"><b>Stickers</b></th>
-                </tr>
-                <tr>
-                    <th><b>Sticker</b></th>
-                    <th style="text-align:right"><b>Quantity</b></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for sticker, quantity in stickers.items() %}
-                <tr>
-                    <td>{{ sticker }}</td>
-                    <td  align="right">{{ quantity }}</td>
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td style="font-weight:bold">Total</td>
-                    <td  align="right">{{ total_stickers }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+<table class="table table-striped">
+    <!--<colgroup>-->
+        <!--<col span="1" style="width: 70%;">-->
+        <!--<col span="1" style="width: 30%;">-->
+    <!--</colgroup>-->
+    <thead>
+        <tr>
+            <th colspan="2"><b>T-shirts</b></th>
+        </tr>
+        <tr>
+            <th><b>Size</b></th>
+            <th style="text-align:right"><b>Quantity</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for shirt, quantity in shirts.items() %}
+        <tr>
+            <td>{{ shirt }}</td>
+            <td align="right">{{ quantity }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td style="font-weight:bold">Total</td>
+            <td  align="right">{{ total_shirts }}</td>
+        </tr>
+    </tbody>
+</table>
 <h2>Dancers that have ordered merchandise</h2>
 <form method="GET" enctype="multipart/form-data" novalidate>
     <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list of dancers">

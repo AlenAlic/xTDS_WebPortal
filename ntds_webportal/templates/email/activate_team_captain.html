@@ -1,0 +1,17 @@
+Dear team captain of {% if tournament == g.data.NTDS %}{{user.team.name}}{% else %}{{user.team.city}}{%endif%},
+<br/><br/><br/>
+The xTDS WebPortal has been activated for the {{year}} {{tournament}} in {{city}}.
+<br/>
+Your account for the xTDS WebPortal has been activated by the organization.
+<br/><br/>
+Use the following credentials to log in:
+<br/>
+Username: {{ username }}
+<br/>
+Password: {% if password is not none %}{{ password }}{% else %}Your password is the same as the last {{tournament}} that you used the xTDS WebPortal for.{%endif%}
+<br/><br/>
+Click <a href="{{ url_for('main.index', _external=True) }}">here</a> to visit the site.
+<br/><br/><br/>
+Sincerely,
+<br/><br/>
+The xTDS WebPortal Admin

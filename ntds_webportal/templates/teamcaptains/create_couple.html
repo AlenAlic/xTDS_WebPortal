@@ -1,16 +1,106 @@
 {% extends "base.html" %}
 {% import 'my_wtf.html' as wtf %}
 
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block container_style -%}
+visibility:hidden
+{%- endblock %}
+
 {% block app_content %}
 <h2>Create couple</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
-    {{ wtf.form_field(form.competition) }}
-    {{ wtf.form_field(form.lead) }}
-    {{ wtf.form_field(form.follow) }}
+    {{ wtf.form_field(form.competition, **{'onchange': "dancingCompetition()", 'onkeyup': "dancingCompetition()"}) }}
+    {{ wtf.form_field(form.level, disabled=true, **{'onchange': "dancingLevel()", 'onkeyup': "dancingLevel()"}) }}
+    {{ wtf.form_field(form.lead, disabled=true) }}
+    {{ wtf.form_field(form.follow, disabled=true) }}
     {{ wtf.form_field(form.submit) }}
     <a role="button" class="btn btn-default" href="{{ url_for('teamcaptains.couples_list') }}">Cancel</a>
 </form>
 
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script>
+function onStart() {
+    document.getElementById('competition').onchange();
+    var container = document.getElementById('container-hidden').style.visibility = "visible";
+}
+
+var possible_partners = {{ possible_partners | tojson }};
+
+function dancingCompetition() {
+    var div_competition = document.getElementById('competition');
+    var div_level = document.getElementById('level');
+
+    val_competition = div_competition.options[div_competition.selectedIndex].value;
+
+    if (val_competition == "") {
+        div_level.setAttribute('disabled', true);
+    } else {
+        div_level.removeAttribute('disabled');
+    }
+    div_level.onchange()
+}
+
+function dancingLevel() {
+    var div_level = document.getElementById('level');
+    var div_lead = document.getElementById('lead');
+    var div_follow = document.getElementById('follow');
+
+    val_level = div_level.options[div_level.selectedIndex].value;
+
+    if (val_level == "") {
+        div_lead.setAttribute('disabled', true);
+        div_follow.setAttribute('disabled', true);
+    } else {
+        div_lead.removeAttribute('disabled');
+        div_follow.removeAttribute('disabled');
+    }
+    setPartners()
+}
+
+function setPartners() {
+    var div_competition = document.getElementById('competition');
+    var div_level = document.getElementById('level');
+    var div_lead = document.getElementById('lead');
+    var div_follow = document.getElementById('follow');
+
+    var old_lead = div_lead.selectedOptions[0]
+    var leadList = $("#lead")
+    leadList.find("option:gt(0)").remove();
+
+    var old_follow = div_follow.selectedOptions[0]
+    var followList = $("#follow")
+    followList.find("option:gt(0)").remove();
+
+    if ((div_level.value == "{{g.data.BEGINNERS}}" || div_level.value == "{{g.data.BREITENSPORT}}") && div_competition.value != "") {
+        var leadValues = possible_partners[div_competition.value][div_level.value]["{{g.data.FOLLOW}}"]
+        for(var i in leadValues) {
+            var newOption = document.createElement('option')
+            newOption.value = leadValues[i][0];
+            newOption.text = leadValues[i][1];
+            div_lead.appendChild(newOption);
+        }
+        if ($("#lead option").filter(function (i, o) { return o.value === old_lead.value; }).length > 0) {
+            div_lead.value = old_lead.value;
+        }
+        var followValues = possible_partners[div_competition.value][div_level.value]["{{g.data.LEAD}}"]
+        for(var i in followValues) {
+            var newOption = document.createElement('option')
+            newOption.value = followValues[i][0];
+            newOption.text = followValues[i][1];
+            div_follow.appendChild(newOption);
+        }
+        if ($("#follow option").filter(function (i, o) { return o.value === old_follow.value; }).length > 0) {
+            div_follow.value = old_follow.value;
+        }
+    }
+}
+</script>
 {% endblock %}

@@ -1,0 +1,110 @@
+<h2>Selected and confirmed dancers <span class="badge" style="font-size:x-large">{{ raffle_sys.confirmed_dancers|length }} / {{ raffle_sys.selected_dancers|length + raffle_sys.confirmed_dancers|length }}</span></h2>
+{% if raffle_sys.selected_dancers|length > 0 %}<p>Teams marked in yellow have selected dancers that have not been confirmed yet.</p>{% endif %}
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+{% for team in teams %}
+{% if team['selected_dancers']|length > 0 or team['confirmed_dancers']|length > 0 %}
+<div class="panel panel-default {% if team['selected_dancers']|length > 0 %}panel-warning{% endif %}">
+    <div class="panel-heading" role="button" id="{{ team['id_title'] }}-confirmed" data-toggle="collapse"
+         data-parent="#accordion" href="#{{ team['id'] }}-confirmed" aria-expanded="false" aria-controls="{{ team['id'] }}-confirmed">
+        <h4 class="panel-title">{{ team['team'].country }} - {{ team['team'].name }}
+            <span class="badge" style="font-size:large;">{{ team['confirmed_dancers']|length }}/{{ team['selected_dancers']|length + team['confirmed_dancers']|length }}</span>
+        </h4>
+    </div>
+    <div id="{{ team['id'] }}-confirmed" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ team['id_title'] }}-confirmed">
+        <table class="table list-group">
+            <colgroup>
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 15%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 15%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 30%;">
+            </colgroup>
+            <thead>
+                <tr style="vertical-align:bottom">
+                    <th style="font-size: x-large">{{ g.data.STATUS[g.data.CONFIRMED] }}</th>
+                    <th colspan="2">
+                        Ballroom
+                    </th>
+                    <th colspan="2">
+                        Latin
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if team['confirmed_dancers']|length > 0 %}
+                <!--<tr><td><b style="font-size: x-large">{{ g.data.STATUS[g.data.CONFIRMED] }}</b></td></tr>-->
+                {% for dancer in team['confirmed_dancers'] %}
+                <tr class="{% if dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
+                    <td>
+                        {{ dancer.get_full_name() }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}
+                    </td>
+                    <td align="right">
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td>There are no confirmed dancers</td></tr>
+            {% endif %}
+            {% if team['selected_dancers']|length > 0 %}
+                <tr style="vertical-align:bottom">
+                    <th style="font-size: x-large">
+                        {{ g.data.STATUS[g.data.SELECTED] }}
+                    </th>
+                    <th colspan="2">
+                            Ballroom
+                    </th>
+                    <th colspan="2">
+                        Latin
+                    </th>
+                    <th></th>
+                </tr>
+                {% for dancer in team['selected_dancers'] %}
+                <tr class="{% if dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
+                    <td>
+                        {{ dancer.get_full_name() }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
+                    </td>
+                    <td>
+                        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}
+                    </td>
+                    <td align="right">
+                        <!--<div class="btn-group">-->
+                            <a role="button" class="btn btn-info" href="{{ url_for('raffle.confirm_dancer', number=dancer.contestant_id) }}">Confirm registration</a>
+                            <a role="button" class="btn btn-danger" href="{{ url_for('raffle.cancel_dancer', number=dancer.contestant_id) }}">Cancel registration</a>
+                        <!--</div>-->
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td>There are no selected dancers</td></tr>
+            {% endif %}
+            </tbody>
+        </table>
+        <div class=panel-footer><small style="visibility: hidden">Footer</small></div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+</div>

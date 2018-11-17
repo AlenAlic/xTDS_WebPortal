@@ -1,0 +1,50 @@
+{%- if g.sc.tournament == g.data.NTDS -%}
+{%- set long_tournament_name, location = "Nederlands Toernooi voor Dansende Studenten", g.data.NETHERLANDS -%}
+{%- else -%}
+{%- set long_tournament_name, location = "European Tournament for Dancing Students", "Europe" -%}
+{%- endif -%}
+<h2>Privacy policy</h2>
+By signing up for the {{long_tournament_name}} ({{g.sc.tournament}}) {{g.sc.year}} in {{g.sc.city}}, either as a participant, team captain or volunteer, you agree to the following:
+<br/><br/>
+<b>Who are we?</b><br/>
+We are the organization of the {{g.sc.tournament}}. The {{g.sc.tournament}} is {% if g.sc.tournament == g.data.NTDS %}an annual{% else %}a{% endif %} Ballroom dancing competition between different teams from {{location}}. Every {{g.sc.tournament}} is organized by a different team. This tournament will be organized by the team from {{g.sc.city}}.
+<br/><br/><br/>
+<b>What personal information do we collect?</b><br/>
+We will collect the following personal data from every contestant:
+<ul>
+    <li>Name</li>
+    <li>Email address</li>
+    <li>If you are a student</li>
+</ul>
+<br/><br/>
+<b>Who has access to your data?</b><br/>
+Your data will <strong>not</strong> be shared with any third parties.<br/>
+The following people do have access to your personal data:<br/><br/>
+<i>The organization of the {{g.sc.tournament}}</i><br/>
+Within the organization, not everyone within our team has access to your personal data. Access to your personal data is only given to a select few that need to use that data for the organization of the tournament.<br/><br/>
+<i>Your team captain</i><br/>
+All data you share can be accessed by your own team captain, as he/she is the one registering you to the tournament.
+<br/><br/><br/>
+<b>How can I request a copy of my personal data?</b><br/>
+There is no need. All the data that we have from you is visible to you on your personal account.
+<br/><br/><br/>
+<b>Where is my data stored?</b><br/>
+The data is stored in three main locations:<br/>
+<ul>
+    <li>Data from the registration system is stored on the servers of hosting provider TransIP BV in the Netherlands. The hosting provider does not have access to your data.</li>
+    <li>Some data will also be stored in a private Google Drive folder of the organization.</li>
+</ul>
+<br/><br/>
+<b>Changing my data</b><br/>
+You can request your Team Captain to change incorrect and/or outdated data through your own account.
+<br/><br/><br/>
+<b>How long will my data be stored?</b><br/>
+Your data will be stored for at least the duration of the tournament.<br/>
+After the tournament has taken place, and before the next tournament starts, the rest of your data will either be anonymised and saved for statistical analysis, or it will be destroyed.
+<br/><br/><br/>
+<b>Can my data be removed?</b><br/>
+Organizers can decide to give first time participants an increased chance to get through the raffle, or other benefits during a tournament. For this end, a record of attendance for each tournament will be kept. If you have attended the tournament, this data will not be removable. All other data will be removed as stated in the section above.
+<br/><br/><br/>
+<b>Content published online</b><br/>
+After the tournament is over, names and placements of the tournament participants will be placed online at <a href="{{g.sc.main_page_link}}" target="_blank">{{g.sc.main_page_link}}</a>. Your email address will always be kept private.<br/>
+During the tournament there will be attendees volunteering as event photographer. These pictures taken during the tournament can be placed online by other attendees of the tournament.

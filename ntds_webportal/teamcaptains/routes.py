@@ -48,33 +48,8 @@ def teamcaptain_profile():
 @requires_access_level([ACCESS['team_captain']])
 def register_dancers():
     form = RegisterContestantForm()
-    new_id = db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar()
-    if new_id is None:
-        new_id = 1
-    else:
-        new_id += 1
-    form.number.data = new_id
-    form.team.data = current_user.team.name
-    ballroom_dancers = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
-                DancingInfo.partner.is_(None), DancingInfo.competition == BALLROOM,
-                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
-    latin_dancers = Contestant.query.join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
-                DancingInfo.partner.is_(None), DancingInfo.competition == LATIN,
-                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                    DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
-    form.ballroom_partner.query = ballroom_dancers
-    form.latin_partner.query = latin_dancers
-    merchandise = Merchandise.query.all()
-    if request.method == 'POST':
-        # noinspection PyTypeChecker
-        form = contestant_validate_dancing(form)
-        ts = TournamentState.query.first()
-        tc = ts.get_tournament_config()
-        if int(datetime.datetime.now().timestamp()) > tc['merchandise_closing_date']:
-            form.t_shirt.data = NO
+    if request.method == POST:
+        form.custom_validate()
     if form.validate_on_submit():
         if 'privacy_checkbox' in request.values:
             flash('{} has been registered successfully.'.format(submit_contestant(form)), 'alert-success')
@@ -84,6 +59,7 @@ def register_dancers():
     else:
         if form.is_submitted():
             flash('Not all fields of the form have been filled in (correctly).', 'alert-danger')
+    possible_partners = TeamPossiblePartners(current_user, include_gdpr=True).possible_partners()
     return render_template('teamcaptains/register_dancers.html', form=form, data=data,
                            timestamp=datetime.datetime.now().timestamp(), merchandise=merchandise)
 
@@ -108,9 +84,12 @@ def edit_dancer(number):
     dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number) \
         .order_by(Contestant.contestant_id).first_or_404()
-    state = TournamentState.query.first()
-    form = EditContestantForm()
-    form = populate_registration_form(form, dancer)
+    possible_partners = TeamPossiblePartners(current_user, include_external_partners_of=dancer).possible_partners()
+    form = EditContestantForm(dancer)
+    if request.method == GET:
+        form.populate(dancer)
+    if request.method == POST:
+        form.custom_validate(dancer)
     if form.validate_on_submit():
         flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
               'alert-success')
@@ -208,8 +187,7 @@ def couples_list():
                              get_dancing_categories(dancer.dancing_info)[LATIN].partner is not None]
     ballroom_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                         list(itertools.product(ballroom_couples_leads, ballroom_couples_follows)) if
-                        couple[0].contestant_id == get_dancing_categories(
-                            couple[1].dancing_info)[BALLROOM].partner]
+                        couple[0].contestant_id == get_dancing_categories(couple[1].dancing_info)[BALLROOM].partner]
     ballroom_couples = [couple for couple in ballroom_couples if
                         couple['lead'].contestant_info[0].team == current_user.team
                         or couple['follow'].contestant_info[0].team == current_user.team]
@@ -278,6 +256,20 @@ def break_up_couple(competition, lead_id, follow_id):
         lead.set_partner(None)
         db.session.commit()
         flash(f'{lead.contestant} and {follow} are not a couple anymore in {competition}.')
+        dancer = None
+        if lead_status.contestant_info[0].team != current_user.team:
+            dancer, old_partner = lead_status, follow
+        elif follow.contestant_info[0].team != current_user.team:
+            dancer, old_partner = follow, lead_status
+        if dancer is not None:
+            other_team_captain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
+                                                   User.team == dancer.contestant_info[0].team).first()
+            text = f"{dancer.get_full_name()} is no longer dancing with {old_partner.get_full_name()} " \
+                   f"({old_partner.contestant_info[0].team}) in {competition}."
+            n = Notification(title=f"{dancer.get_full_name()} - no partner in {competition}",
+                             text=text.format(dancer=dancer.get_full_name(), comp=competition), user=other_team_captain)
+            db.session.add(n)
+            db.session.commit()
     return redirect(url_for('teamcaptains.couples_list'))
 
 
@@ -421,6 +413,7 @@ def set_teamcaptains():
 @login_required
 @requires_access_level([ACCESS['team_captain']])
 def raffle_result():
+    # TODO - PRIORITY - Update page after reworked Check-In page
     ts = TournamentState.query.first()
     if ts.main_raffle_result_visible:
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -515,6 +508,7 @@ def raffle_result():
 @requires_access_level([ACCESS['team_captain'], ACCESS['treasurer']])
 def edit_finances():
     ts = TournamentState.query.first()
+    finances, confirmed_dancers, cancelled_dancers, refund_dancers = None, None, None, None
     if ts.main_raffle_result_visible:
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required.is_(True)) \
@@ -534,7 +528,8 @@ def edit_finances():
             output.seek(0)
             output = BytesIO(output.read().encode('utf-8-sig'))
             return send_file(output, as_attachment=True,
-                             attachment_filename=f"Payment_list_ETDS_Brno_2018_{current_user.team.city}.csv")
+                             attachment_filename=f"payment_list_{g.sc.tournament}_{g.sc.city}_{g.sc.year}_"
+                                                 f"{current_user.team.city}.csv")
         if request.method == 'POST':
             changes = False
             for dancer in all_dancers:
