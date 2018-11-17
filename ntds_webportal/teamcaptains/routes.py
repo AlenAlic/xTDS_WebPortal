@@ -8,7 +8,7 @@ from ntds_webportal.teamcaptains.email import send_dancer_user_account_email
 from ntds_webportal.models import User, requires_access_level, Contestant, ContestantInfo, DancingInfo, \
     StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification, AdditionalInfo, Team, \
     requires_tournament_state
-from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm
+from ntds_webportal.auth.forms import ChangePasswordForm, TreasurerForm, SendEmailForNotificationsForm
 from ntds_webportal.auth.email import send_treasurer_activation_email
 from ntds_webportal.functions import get_dancing_categories, submit_contestant, \
     get_total_dancer_price_list, random_password
@@ -58,8 +58,16 @@ def teamcaptain_profile():
         flash('Your treasurer now has access to the xTDS WebPortal. '
               'Login credentials have been sent to the e-mail provided.', 'alert-info')
         return redirect(url_for('main.profile'))
+    send_email_form = SendEmailForNotificationsForm()
+    if request.method == 'GET':
+        send_email_form.send_email.data = current_user.send_new_messages_email
+    if send_email_form.validate_on_submit():
+        current_user.send_new_messages_email = send_email_form.send_email.data
+        db.session.commit()
+        flash('E-mail notification preference changed.', 'alert-success')
+        return redirect(url_for('main.profile'))
     return render_template('teamcaptains/tc_profile.html', form=form, treasurer_form=treasurer_form,
-                           treasurer_active=treasurer.is_active)
+                           treasurer_active=treasurer.is_active, send_email_form=send_email_form)
 
 
 @bp.route('/register_dancers', methods=['GET', 'POST'])
