@@ -253,7 +253,7 @@ onload="onStart()"
 
 {% if current_user.is_dancer() %}
 <div class="row" style="visibility:hidden">
-    {% with url='dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
+    {% with feedback=dancer.status_info[0].feedback_about_information, url='dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=false, url='main.todo', title='My volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}

@@ -16,7 +16,7 @@ import time
 @login_required
 @requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER]])
 def configuration():
-    # TODO - WISH - Make form dependant on System configuration settings (eg. no Beginners) - (fix JS for Beginners)
+    # WISH - Make form dependant on System configuration settings (eg. no Beginners) - (fix JS for Beginners)
     form = RaffleConfigurationForm()
     if request.method == 'GET':
         form.populate()
@@ -53,8 +53,8 @@ def system():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(REGISTRATION_STARTED)
 def start():
-    # TODO - WISH - Non-interactive table overview of available combinations (like on next pages)
-    # TODO - WISH - Make stats (eg. first time dancers) only show up when relevant
+    # WISH - Non-interactive table overview of available combinations (like on next pages)
+    # WISH - Make stats (eg. first time dancers) only show up when relevant
     if g.ts.main_raffle_taken_place:
         return redirect(url_for('raffle.completed'))
     raffle_sys = RaffleSystem()
@@ -151,7 +151,7 @@ def confirmed():
     if request.method == 'POST':
         form = request.form
         if 'select_marked_dancers' in form:
-            # TODO - PRIORITY - Make it impossible to select someone without their partner
+            # PRIORITY - Make it impossible to select someone without their partner
             marked_dancers = [d for d in raffle_sys.all_dancers if str(d.contestant_id) in form]
             for dancer in marked_dancers:
                 dancer.status_info[0].set_status(SELECTED)

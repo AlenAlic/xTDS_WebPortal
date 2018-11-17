@@ -413,7 +413,7 @@ def set_teamcaptains():
 @login_required
 @requires_access_level([ACCESS['team_captain']])
 def raffle_result():
-    # TODO - PRIORITY - Update page after reworked Check-In page
+    # PRIORITY - Update page after reworked Check-In page
     ts = TournamentState.query.first()
     if ts.main_raffle_result_visible:
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \

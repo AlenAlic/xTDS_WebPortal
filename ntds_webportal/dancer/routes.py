@@ -13,6 +13,7 @@ import datetime
 @login_required
 @requires_access_level([ACCESS[DANCER]])
 def dancer_data():
+    # PRIORITY - Show when feedback is not processed yet
     dancer = current_user.dancer
     feedback_form = FeedbackForm()
     form = EditContestantForm(dancer)

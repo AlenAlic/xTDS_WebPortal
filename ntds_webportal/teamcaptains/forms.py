@@ -143,6 +143,9 @@ class RegisterContestantForm(BaseContestantForm):
                     or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                         DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
 
+    def custom_validate(self):
+        super().custom_validate()
+
     def populate(self, dancer):
         super().populate(dancer)
         self.first_name.data = dancer.first_name
@@ -201,7 +204,7 @@ class EditContestantForm(BaseContestantForm):
             self.latin_blind_date.data = dancer.competition(LATIN).blind_date
             self.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
                 .filter(Contestant.contestant_id == dancer.competition(LATIN).partner).first()
-        super().custom_validate(dancer)
+        super().custom_validate()
         self.full_name.data = dancer.get_full_name()
     
     def populate(self, dancer):
