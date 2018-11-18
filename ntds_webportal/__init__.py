@@ -72,7 +72,6 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:'))
-    # migrate.init_app(app, db)
     login.init_app(app)
     login.login_view = 'main.index'
     bootstrap.init_app(app)

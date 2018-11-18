@@ -29,6 +29,8 @@ def create_super_volunteer_user_account(form, super_volunteer):
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     form = SuperVolunteerForm()
+    if request.method == 'POST':
+        form.custom_validate()
     if form.validate_on_submit():
         if 'privacy_checkbox' in request.values:
             super_volunteer = SuperVolunteer()
