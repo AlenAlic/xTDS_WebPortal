@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, flash
+from flask import render_template, url_for, redirect, flash, request
 from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.notifications import bp
@@ -18,6 +18,45 @@ def messages():
         .order_by(Notification.notification_id.desc()).all()
     return render_template('notifications/messages.html', title="Notifications", inbox_messages=inbox_messages,
                            archived_messages=archived_messages, sent_messages=sent_messages)
+
+
+@bp.route('/create', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER], ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER]])
+def create():
+    form = NotificationForm()
+    choices = [('tc', 'All Teamcaptains'), ('tr', 'All Treasurers')]
+    for user in User.query.filter(User.is_active.is_(True)).all():
+        choices.append(('{}'.format(user.user_id), user.username))
+    form.recipients.choices = choices
+    if request.method == 'GET':
+        form.recipients.data = [request.args.get('user_id')]
+    if form.validate_on_submit():
+        for recipient in form.recipients.data:
+            if recipient.isdigit():
+                u = User.query.filter_by(user_id=recipient).first()
+                n = Notification(title=form.title.data, text=form.body.data,
+                                 user=u, sender=current_user)
+                n.send()
+                if u.access == ACCESS[TREASURER] and current_user.team != u.team:
+                    tc = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True),
+                                           User.team == u.team).first()
+                    n = Notification(title=form.title.data, text='Message sent to your treasurer:\n\n'+form.body.data,
+                                     user=tc, sender=current_user)
+                    n.send()
+            else:
+                users = []
+                if recipient == 'tc':
+                    users = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)).all()
+                if recipient == 'tr':
+                    users = User.query.filter(User.access == ACCESS[TREASURER], User.is_active.is_(True)).all()
+                for u in users:
+                    n = Notification(title=form.title.data, text=form.body.data,
+                                     user=u, sender=current_user)
+                    n.send()
+        flash('Message(s) submitted')
+        return redirect(url_for('notifications.messages'))
+    return render_template('notifications/create.html', title="Send message", form=form)
 
 
 @bp.route('/read/<notification>', methods=['GET'])
@@ -84,40 +123,3 @@ def goto(notification):
     else:
         flash('Notification not found or inaccessible!'.format(notification))
         return redirect(url_for('notifications.messages'))
-
-
-@bp.route('/create', methods=['GET', 'POST'])
-@login_required
-@requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER], ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER]])
-def create():
-    form = NotificationForm()
-    choices = [('tc', 'All Teamcaptains'), ('tr', 'All Treasurers')]
-    for user in User.query.filter(User.is_active.is_(True)).all():
-        choices.append(('{}'.format(user.user_id), user.username))
-    form.recipients.choices = choices
-    if form.validate_on_submit():
-        for recipient in form.recipients.data:
-            if recipient.isdigit():
-                u = User.query.filter_by(user_id=recipient).first()
-                n = Notification(title=form.title.data, text=form.body.data,
-                                 user=u, sender=current_user)
-                n.send()
-                if u.access == ACCESS[TREASURER] and current_user.team != u.team:
-                    tc = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True),
-                                           User.team == u.team).first()
-                    n = Notification(title=form.title.data, text='Message sent to your treasurer:\n\n'+form.body.data,
-                                     user=tc, sender=current_user)
-                    n.send()
-            else:
-                users = []
-                if recipient == 'tc':
-                    users = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)).all()
-                if recipient == 'tr':
-                    users = User.query.filter(User.access == ACCESS[TREASURER], User.is_active.is_(True)).all()
-                for u in users:
-                    n = Notification(title=form.title.data, text=form.body.data,
-                                     user=u, sender=current_user)
-                    n.send()
-        flash('Message(s) submitted')
-        return redirect(url_for('notifications.messages'))
-    return render_template('notifications/create.html', title="Send message", form=form)
