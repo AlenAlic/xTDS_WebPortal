@@ -159,6 +159,7 @@ def submit_contestant(form, contestant=None):
 def update_dancing_info(form, di_ballroom, di_latin):
     di_ballroom.level = form.ballroom_level.data
     di_ballroom.role = form.ballroom_role.data
+    di_ballroom.blind_date = str2bool(form.ballroom_blind_date.data)
     db.session.add(di_ballroom)
     db.session.flush()
     if not str2bool(form.ballroom_blind_date.data) and form.ballroom_partner.data is not None:
@@ -167,6 +168,7 @@ def update_dancing_info(form, di_ballroom, di_latin):
         di_ballroom.set_partner(None)
     di_latin.level = form.latin_level.data
     di_latin.role = form.latin_role.data
+    di_latin.blind_date = str2bool(form.latin_blind_date.data)
     db.session.add(di_latin)
     db.session.flush()
     if not str2bool(form.latin_blind_date.data) and form.latin_partner.data is not None:

@@ -110,9 +110,11 @@
             <th><b>Sleeping spot</b></th>
             <th><b>Level</b></th>
             <th><b>Role</b></th>
+            <th><b>Blind Date</b></th>
             <th><b>Partner</b></th>
             <th><b>Level</b></th>
             <th><b>Role</b></th>
+            <th><b>Blind Date</b></th>
             <th><b>Partner</b></th>
             <!--<th><b>Diet/Allergies</b></th>-->
             <!--<th><b>T-shirt</b></th>-->
@@ -153,6 +155,9 @@
                     {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}
                 </td>
                 <td>
+                    {{ data.TF[dancer.dancing_information(g.data.BALLROOM).blind_date] }}
+                </td>
+                <td>
                     {{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner) }}
                 </td>
                 <td>
@@ -160,6 +165,9 @@
                 </td>
                 <td>
                     {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}
+                </td>
+                <td>
+                    {{ data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}
                 </td>
                 <td>
                     {{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}
