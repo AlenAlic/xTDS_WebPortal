@@ -58,6 +58,7 @@ def todo():
     # ADMIN
     # LONG TERM - Change so that teams and team captain/treasurer accounts are made at the same time
     # WISH - Make "Tournament" section in system setup throw warnings when doing something stupid
+    # NEXT TOURNAMENT - number of allowed team captains based on size of teams?
 
     # ORGANIZER
     # NEXT TOURNAMENT - Allow organizer to select what team captain to activate

@@ -281,7 +281,7 @@ def edit_dancing_info(number):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def finances_overview():
-    # WISH - Discuss with "Penny" for what to add
+    # WISH - Discuss with "Penny" for what to add - downloads for total page and summary pages
     # WISH - Remove clickable pointer from team lists
     all_teams = db.session.query(Team)
     if g.sc.tournament == NTDS:
@@ -441,7 +441,7 @@ def sleeping_hall():
 def adjudicators_overview():
     # PRIORITY - Add text to web page
     # PRIORITY - Remove Salsa and Polka when not needed
-    # LONG TERM - Completely new system
+    # LONG TERM - Completely new system - Print login sheets - schedule available on personal page - assignment system
     ts = TournamentState.query.first()
     ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo)\
         .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_ballroom != NO)\

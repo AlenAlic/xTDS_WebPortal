@@ -11,6 +11,7 @@ from sqlalchemy import or_
 @bp.route('/messages', methods=['GET'])
 @login_required
 def messages():
+    # WISH - Filter messages based on title
     inbox_messages = Notification.query.filter_by(user=current_user, archived=False)\
         .order_by(Notification.notification_id.desc(), Notification.unread.desc()).all()
     archived_messages = Notification.query.filter_by(user=current_user, archived=True) \
@@ -37,9 +38,10 @@ def create():
         form.recipients.data = [request.args.get('user_id')]
         notification_id = request.args.get('notification_id', default=None, type=int)
         if notification_id is not None:
-            original_message = "\r\n\r\n\r\n====== Original Message ======\r\n\r\n"
-            original_message += Notification.query.filter(Notification.notification_id == notification_id).first().text
-            form.body.data = original_message
+            n = Notification.query.filter(Notification.notification_id == notification_id).first()
+            if n is not None:
+                form.body.data = "\r\n\r\n\r\n====== Original Message ======\r\n\r\n" + n.text
+                form.title.data = 'Re: ' + n.title
     if form.validate_on_submit():
         for recipient in form.recipients.data:
             if recipient.isdigit():
