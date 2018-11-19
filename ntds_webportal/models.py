@@ -324,12 +324,13 @@ class DancingInfo(db.Model):
         return not errors, errors
 
     def set_partner(self, contestant_id):
+        other_dancer = DancingInfo.query.filter(DancingInfo.competition == self.competition,
+                                                DancingInfo.partner == self.contestant_id).first()
+        if other_dancer is not None:
+            other_dancer.partner = None
+
         if contestant_id is None:
             self.partner = None
-            other_dancer = DancingInfo.query.filter(DancingInfo.competition == self.competition,
-                                                    DancingInfo.partner == self.contestant_id).first()
-            if other_dancer is not None:
-                other_dancer.partner = None
         else:
             other_dancer = DancingInfo.query.filter(DancingInfo.competition == self.competition,
                                                     DancingInfo.contestant_id == contestant_id).first()
