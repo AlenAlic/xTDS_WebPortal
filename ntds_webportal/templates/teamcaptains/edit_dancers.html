@@ -15,14 +15,16 @@
 <table class="table table-striped table-responsive">
     <thead>
         <tr>
-            <th><b>#</b></th>
-            <th><b>Name</b></th>
-            <th><b>E-mail</b></th>
-            <th><b>Status</b></th>
-            <th><b>Student</b></th>
-            <th><b>First time</b></th>
-            <th><b>Ballroom</b></th>
-            <th><b>Latin</b></th>
+            <th>#</th>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Status</th>
+            <th>Student</th>
+            {% if g.sc.ask_first_time %}
+            <th>First time</th>
+            {% endif %}
+            <th>Ballroom</th>
+            <th>Latin</th>
             <th></th>
         </tr>
     </thead>
@@ -44,9 +46,11 @@
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
                 </td>
+                {% if g.sc.ask_first_time %}
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ data.TF[dancer.contestant_info[0].first_time] }}
                 </td>
+                {% endif %}
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
                 </td>
@@ -95,103 +99,72 @@
 <table class="table table-striped table-responsive">
     <thead>
         <tr>
-            <th colspan="7"><b>Personal</b></th>
-            <th colspan="3"><b>Ballroom</b></th>
-            <th colspan="3"><b>Latin</b></th>
-            <th colspan="4"><b>Volunteering</b></th>
+            {% if g.sc.ask_first_time %}
+            <th colspan="7">Personal</th>
+            {% else %}
+            <th colspan="6">Personal</th>
+            {% endif %}
+            {% if g.sc.breitensport_obliged_blind_date %}
+            <th colspan="4">Ballroom</th>
+            <th colspan="4">Latin</th>
+            {% else %}
+            <th colspan="3">Ballroom</th>
+            <th colspan="3">Latin</th>
+            {% endif %}
+            <th colspan="4">Volunteering</th>
         </tr>
         <tr>
-            <th><b>#</b></th>
-            <th><b>Name</b></th>
-            <th><b>E-mail</b></th>
-            <th><b>Status</b></th>
-            <th><b>Student</b></th>
-            <th><b>First time</b></th>
-            <th><b>Sleeping spot</b></th>
-            <th><b>Level</b></th>
-            <th><b>Role</b></th>
-            <th><b>Blind Date</b></th>
-            <th><b>Partner</b></th>
-            <th><b>Level</b></th>
-            <th><b>Role</b></th>
-            <th><b>Blind Date</b></th>
-            <th><b>Partner</b></th>
-            <!--<th><b>Diet/Allergies</b></th>-->
-            <!--<th><b>T-shirt</b></th>-->
-            <th><b>Volunteer</b></th>
-            <th><b>First Aid</b></th>
-            <th><b>Jury Ballroom</b></th>
-            <th><b>Jury Latin</b></th>
+            <th>#</th>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Status</th>
+            <th>Student</th>
+            {% if g.sc.ask_first_time %}
+            <th>First time</th>
+            {% endif %}
+            <th>Sleeping spot</th>
+            <th>Level</th>
+            <th>Role</th>
+            {% if g.sc.breitensport_obliged_blind_date %}
+            <th>Blind Date</th>
+            {% endif %}
+            <th>Partner</th>
+            <th>Level</th>
+            <th>Role</th>
+            {% if g.sc.breitensport_obliged_blind_date %}
+            <th>Blind Date</th>
+            {% endif %}
+            <th>Partner</th>
+            <th>Volunteer</th>
+            <th>First Aid</th>
+            <th>Jury Ballroom</th>
+            <th>Jury Latin</th>
         </tr>
     </thead>
     <tbody>
         {% for dancer in dancers %}
             <tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                <td>
-                    {{ dancer.contestant_info[0].number }}
-                </td>
-                <td>
-                    {{ dancer.get_full_name() }}
-                </td>
-                <td>
-                    {{ dancer.email }}
-                </td>
-                <td>
-                    {{ data.STATUS[dancer.status_info[0].status] }}
-                </td>
-                <td>
-                    {{ data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
-                </td>
-                <td>
-                    {{ data.TF[dancer.contestant_info[0].first_time] }}
-                </td>
-                <td>
-                    {{ data.TF[dancer.additional_info[0].sleeping_arrangements] }}
-                </td>
-                <td>
-                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
-                </td>
-                <td>
-                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}
-                </td>
-                <td>
-                    {{ data.TF[dancer.dancing_information(g.data.BALLROOM).blind_date] }}
-                </td>
-                <td>
-                    {{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner) }}
-                </td>
-                <td>
-                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
-                </td>
-                <td>
-                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}
-                </td>
-                <td>
-                    {{ data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}
-                </td>
-                <td>
-                    {{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}
-                </td>
-                <!--<td>-->
-                    <!--{% if dancer.contestant_info[0].diet_allergies != None %}-->
-                        <!--{{ dancer.contestant_info[0].diet_allergies }}-->
-                    <!--{% endif %}-->
-                <!--</td>-->
-                <!--<td>-->
-                    <!--{{ data.SHIRTS[dancer.additional_info[0].t_shirt] }}-->
-                <!--</td>-->
-                <td>
-                    {{ data.YMN[dancer.volunteer_info[0].volunteer] }}
-                </td>
-                <td>
-                    {{ data.YMN[dancer.volunteer_info[0].first_aid] }}
-                </td>
-                <td>
-                    {{ data.YMN[dancer.volunteer_info[0].jury_ballroom] }}
-                </td>
-                <td>
-                    {{ data.YMN[dancer.volunteer_info[0].jury_latin] }}
-                </td>
+                <td>{{ dancer.contestant_info[0].number }}</td>
+                <td>{{ dancer.get_full_name() }}</td>
+                <td>{{ dancer.email }}</td>
+                <td>{{ data.STATUS[dancer.status_info[0].status] }}</td>
+                <td>{{ data.STUDENT_TEXT[dancer.contestant_info[0].student] }}</td>
+                {% if g.sc.ask_first_time %}
+                <td>{{ data.TF[dancer.contestant_info[0].first_time] }}</td>
+                {% endif %}
+                <td>{{ data.TF[dancer.additional_info[0].sleeping_arrangements] }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
+                <td>{{ data.TF[dancer.dancing_information(g.data.BALLROOM).blind_date] }}</td>
+                <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner) }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
+                <td>{{ data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}</td>
+                <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}</td>
+                <td>{{ data.YMN[dancer.volunteer_info[0].volunteer] }}</td>
+                <td>{{ data.YMN[dancer.volunteer_info[0].first_aid] }}</td>
+                <td>{{ data.YMN[dancer.volunteer_info[0].jury_ballroom] }}</td>
+                <td>{{ data.YMN[dancer.volunteer_info[0].jury_latin] }}</td>
             </tr>
         {% endfor %}
     </tbody>
