@@ -18,6 +18,8 @@ def dancer_data():
     form = EditContestantForm(dancer)
     if request.method == GET:
         form.populate(dancer)
+        if dancer.status_info[0].feedback_about_information is not None:
+            feedback_form.feedback.data = dancer.status_info[0].feedback_about_information
     if 'privacy_checkbox' in request.values:
         flash('Privacy policy accepted.', 'alert-success')
         dancer.status_info[0].set_status(REGISTERED)
