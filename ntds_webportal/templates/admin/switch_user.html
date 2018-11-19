@@ -44,7 +44,7 @@ onload="onStart()"
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
 </div>
-{% if g.sc.tournament == g.data.NTDS %}
+{% if g.sc.tournament == g.data.ETDS %}
 <!--<h3>Switch to a different team captain</h3>-->
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
