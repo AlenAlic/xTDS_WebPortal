@@ -289,14 +289,61 @@ def system_configuration():
 @requires_access_level([ACCESS[ADMIN]])
 def switch_user():
     form = SwitchUserForm()
-    users = User.query.filter(User.is_active.is_(True), User.user_id != current_user.user_id).all()
+    form.user.label.text = 'Switch to a non-Dutch team captain'
+    form.submit.label.text = 'Switch to team captain'
+    users = User.query.join(Team).filter(User.is_active.is_(True), User.user_id != current_user.user_id,
+                                         or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]),
+                                         Team.country != NETHERLANDS).order_by(Team.city).all()
     form.user.choices = map(lambda user_map: (user_map.user_id, user_map.username), users)
+    dancer_super_volunteer_form = SwitchUserForm()
+    dancer_super_volunteer_form.user.label.text = 'Switch to a dancer or Super Volunteer User account'
+    dancer_super_volunteer_users = User.query.join(Team)\
+        .filter(User.is_active.is_(True), or_(User.access == ACCESS[DANCER], User.access == ACCESS[SUPER_VOLUNTEER]))\
+        .all()
+    dancer_super_volunteer_choices = [(u.user_id, u.dancer.get_full_name()) for u in dancer_super_volunteer_users
+                                      if u.dancer is not None]
+    dancer_super_volunteer_choices += [(u.user_id, u.super_volunteer.get_full_name()) for u
+                                       in dancer_super_volunteer_users if u.super_volunteer is not None]
+    dancer_super_volunteer_choices.sort(key=lambda x: x[1])
+    dancer_super_volunteer_form.user.choices = dancer_super_volunteer_choices
     if form.validate_on_submit():
         user = User.query.filter(User.user_id == form.user.data).first()
         logout_user()
         login_user(user)
         return redirect(url_for('main.index'))
-    return render_template('admin/switch_user.html', form=form)
+    if dancer_super_volunteer_form.validate_on_submit():
+        user = User.query.filter(User.user_id == form.user.data).first()
+        logout_user()
+        login_user(user)
+        return redirect(url_for('main.index'))
+    return render_template('admin/switch_user.html', form=form, dancer_super_volunteer_form=dancer_super_volunteer_form)
+
+
+@bp.route('/switch_to_organizer', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ADMIN]])
+def switch_to_organizer():
+    user = User.query.filter(User.is_active.is_(True), User.access == ACCESS[ORGANIZER]).first()
+    if user is not None:
+        logout_user()
+        login_user(user)
+    else:
+        flash('User account is not active.')
+    return redirect(url_for('main.index'))
+
+
+@bp.route('/switch_to_team_captain/<name>', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ADMIN]])
+def switch_to_team_captain(name):
+    user = User.query.join(Team).filter(User.is_active.is_(True), User.access == ACCESS[TEAM_CAPTAIN],
+                                        Team.name == name).first()
+    if user is not None:
+        logout_user()
+        login_user(user)
+    else:
+        flash('User account is not active.')
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/user_list', methods=['GET', 'POST'])

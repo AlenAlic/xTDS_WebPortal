@@ -5,6 +5,7 @@ from ntds_webportal.notifications import bp
 from ntds_webportal.models import Notification, User, requires_access_level
 from ntds_webportal.notifications.forms import NotificationForm
 from ntds_webportal.data import *
+from sqlalchemy import or_
 
 
 @bp.route('/messages', methods=['GET'])
@@ -22,15 +23,19 @@ def messages():
 
 @bp.route('/create', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER], ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER]])
+@requires_access_level(MESSAGES_ACCESS)
 def create():
     form = NotificationForm()
     choices = [('tc', 'All Teamcaptains'), ('tr', 'All Treasurers')]
-    for user in User.query.filter(User.is_active.is_(True)).all():
+    for user in User.query.filter(User.is_active.is_(True), User.user_id != current_user.user_id,
+                                  or_(User.access == ACCESS[ADMIN], User.access == ACCESS[ORGANIZER],
+                                      User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER],
+                                      User.access == ACCESS[TREASURER])).order_by(User.username).all():
         choices.append(('{}'.format(user.user_id), user.username))
     form.recipients.choices = choices
-    if request.method == 'GET':
-        form.recipients.data = [request.args.get('user_id')]
+    # WISH - Select2 Multiselct for form and reply button
+    # if request.method == 'GET':
+    #     form.recipients.data = [request.args.get('user_id')]
     if form.validate_on_submit():
         for recipient in form.recipients.data:
             if recipient.isdigit():

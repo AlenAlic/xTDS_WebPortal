@@ -914,6 +914,9 @@ class SuperVolunteer(db.Model):
     jury_salsa = db.Column(db.String(16), nullable=False, default=NO)
     jury_polka = db.Column(db.String(16), nullable=False, default=NO)
 
+    def __repr__(self):
+        return '{}'.format(self.get_full_name())
+
     def get_full_name(self):
         if self.prefixes is None or self.prefixes == '':
             return ' '.join((self.first_name, self.last_name))
