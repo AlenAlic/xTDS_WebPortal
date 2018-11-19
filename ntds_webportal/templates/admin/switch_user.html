@@ -1,11 +1,76 @@
 {% extends "base.html" %}
 {% import 'my_wtf.html' as wtf %}
 
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
 {% block app_content %}
-<h2>Switch to a different user</h2>
+<div class="row" style="visibility:hidden">
+    {% with url='self_admin.switch_to_organizer', title='Organization: ' + g.sc.tournament + ' ' + g.sc.city + ' ' + g.sc.year|string, image='logo_organization.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='4 happy feet'), title='4 happy feet', text='Enschede', image='logo_4_happy_feet.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='AmsterDance'), title='AmsterDance', text='Amsterdam', image='logo_amsterdance.svg' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='Blue Suede Shoes'), title='Blue Suede Shoes', text='Delft', image='logo_blue_suede_shoes.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='Dance Fever'), title='Dance Fever', text='Nijmegen', image='logo_dance_fever.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='Erasmus Dance Society'), title='Erasmus Dance Society', text='Rotterdam', image='logo_erasmus_dance_society.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='Footloose'), title='Footloose', text='Eindhoven', image='logo_footloose.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='LeiDance'), title='LeiDance', text='Leiden', image='logo_leidance.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='Let`s Dance'), title='Let`s Dance', text='Maastricht', image='logo_lets_dance.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='The Blue Toes'), title='The Blue Toes', text='Groningen', image='logo_the_blue_toes.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='U Dance'), title='U Dance', text='Utrecht', image='logo_u_dance.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+    {% with url=url_for('self_admin.switch_to_team_captain', name='WuBDA'), title='WuBDA', text='Wageningen', image='logo_wubda.png' %}
+        {% include 'admin/_switch_user_subpage.html' %}
+    {% endwith %}
+</div>
+{% if g.sc.tournament == g.data.NTDS %}
+<!--<h3>Switch to a different team captain</h3>-->
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ wtf.form_field(form.user) }}
     {{ wtf.form_field(form.submit) }}
 </form>
+<div style="margin-top: 20px;"></div>
+{% endif %}
+<!--<h3>Switch to a dancer or Super Volunteer</h3>-->
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ dancer_super_volunteer_form.hidden_tag() }}
+    {{ wtf.form_field(dancer_super_volunteer_form.user) }}
+    {{ wtf.form_field(dancer_super_volunteer_form.submit) }}
+</form>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function onStart() {
+    var maxHeight = 0;
+    $(".thumbnail-same-height").each(function(){
+       if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
+    });
+    $(".thumbnail-same-height").height(maxHeight);
+    $(".row").css('visibility', 'visible');
+}
+</script>
 {% endblock %}
