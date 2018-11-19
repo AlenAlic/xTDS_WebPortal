@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
+{% import "select2_lib.html" as select2 %}
 
 {% block styles %}
 {{ super() }}
  	<link rel="stylesheet" href="/static/jquery.dropdown.min.css">
+    {{ select2.form_css() }}
 {% endblock %}
+
 
 {% block app_content %}
 <h2>Compose message</h2>
@@ -40,7 +43,5 @@
         // options here
     });
 </script>
-
-
 
 {% endblock %}

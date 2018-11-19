@@ -377,9 +377,9 @@ def partner_request():
         flash(f"There are currently no dancers registered in the other teams that require a partner.", 'alert-warning')
         return redirect(url_for('teamcaptains.partner_request_list'))
     form = PartnerRequestForm(g.sc, other_choices)
+    form.dancer.query = dancer_choices
     my_dancers = TeamPossiblePartners(current_user).possible_partners()
     possible_partners = TeamPossiblePartners(current_user, other_teams=True).possible_partners()
-    form.dancer.query = dancer_choices
     if form.validate_on_submit():
         di1 = DancingInfo.query.filter_by(contestant_id=form.dancer.data.contestant_id,
                                           competition=form.competition.data).first()

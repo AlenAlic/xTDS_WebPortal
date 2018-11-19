@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% import 'my_wtf.html' as wtf %}
+{% import "select2_lib.html" as select2 %}
 
 {% block body_attribs %}
 onload="onStart()"
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+{{ select2.form_css() }}
 {% endblock %}
 
 {% block app_content %}
@@ -64,6 +70,7 @@ onload="onStart()"
 
 {% block scripts %}
 {{ super() }}
+{{ select2.form_js() }}
 <script>
 function onStart() {
     var maxHeight = 0;

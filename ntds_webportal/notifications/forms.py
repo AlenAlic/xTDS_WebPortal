@@ -6,6 +6,6 @@ from wtforms.validators import DataRequired
 class NotificationForm(FlaskForm):
     title = StringField(label="Title", validators=[DataRequired()])
     body = TextAreaField(label="Message content", validators=[DataRequired()],
-                         render_kw={"style": "resize:none", "rows": "12", "maxlength": "512"})
+                         render_kw={"style": "resize:none", "rows": "16", "maxlength": "2048"})
     recipients = SelectMultipleField(label="Recipients", validators=[DataRequired()])
     submit = SubmitField('Send message')

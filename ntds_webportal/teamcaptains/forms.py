@@ -58,14 +58,14 @@ class DancingInfoForm(FlaskForm):
     ballroom_level = SelectField('Level', validators=[Level()])
     ballroom_role = SelectField('Role', validators=[Role('ballroom_level')],
                                 choices=[(k, v) for k, v in ROLES.items()])
-    ballroom_blind_date = SelectField('Blind dating', validators=[Role('ballroom_level')],
+    ballroom_blind_date = SelectField('Mandatory blind dating', validators=[Role('ballroom_level')],
                                       choices=[(k, v) for k, v in BLIND_DATE.items()])
     ballroom_partner = QuerySelectField(validators=[Role('ballroom_level'), Level()],
                                         allow_blank=True, blank_text=PARTNER_TEXT)
 
     latin_level = SelectField('Level', validators=[Level()])
     latin_role = SelectField('Role', validators=[Role('latin_level')], choices=[(k, v) for k, v in ROLES.items()])
-    latin_blind_date = SelectField('Blind dating', validators=[Role('latin_level')],
+    latin_blind_date = SelectField('Mandatory blind dating', validators=[Role('latin_level')],
                                    choices=[(k, v) for k, v in BLIND_DATE.items()])
     latin_partner = QuerySelectField(validators=[Role('latin_level'), Level()],
                                      allow_blank=True, blank_text=PARTNER_TEXT)

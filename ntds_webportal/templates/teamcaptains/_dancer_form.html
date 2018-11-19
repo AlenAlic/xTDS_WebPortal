@@ -109,6 +109,14 @@
     {% endif %}
     {% if current_user.is_dancer() is sameas true %}</fieldset>{% endif %}
     {% if mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR %}
+    <div class="form-group required">
+        <label class="control-label col-xs-2" ></label>
+        <div class="col-xs-10">
+            <h3>You can give feedback to your team captain after accepting the terms.</h3>
+        </div>
+    </div>
+    {% endif %}
+    {% if mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR %}
         {% include 'privacy/checkbox.html' %}
     {% endif %}
     {% if (mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR) or mode != 'view' %}

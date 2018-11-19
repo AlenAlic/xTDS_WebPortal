@@ -306,16 +306,23 @@ def switch_user():
     dancer_super_volunteer_choices += [(u.user_id, u.super_volunteer.get_full_name()) for u
                                        in dancer_super_volunteer_users if u.super_volunteer is not None]
     dancer_super_volunteer_choices.sort(key=lambda x: x[1])
+    dancer_super_volunteer_choices = [(0, 'Choose an account to switch to.')] + dancer_super_volunteer_choices
     dancer_super_volunteer_form.user.choices = dancer_super_volunteer_choices
     if form.validate_on_submit():
         user = User.query.filter(User.user_id == form.user.data).first()
-        logout_user()
-        login_user(user)
+        if user is not None:
+            logout_user()
+            login_user(user)
+        else:
+            flash('User account is not active.')
         return redirect(url_for('main.index'))
     if dancer_super_volunteer_form.validate_on_submit():
         user = User.query.filter(User.user_id == form.user.data).first()
-        logout_user()
-        login_user(user)
+        if user is not None:
+            logout_user()
+            login_user(user)
+        else:
+            flash('User account is not active.')
         return redirect(url_for('main.index'))
     return render_template('admin/switch_user.html', form=form, dancer_super_volunteer_form=dancer_super_volunteer_form)
 
