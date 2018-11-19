@@ -4,8 +4,15 @@
 
 {% block styles %}
 {{ super() }}
- 	<link rel="stylesheet" href="/static/jquery.dropdown.min.css">
-    {{ select2.form_css() }}
+{{ select2.form_css() }}
+{% endblock %}
+
+{% block container_style -%}
+visibility:hidden
+{%- endblock %}
+
+{% block body_attribs %}
+onload="onStart()"
 {% endblock %}
 
 
@@ -13,21 +20,7 @@
 <h2>Compose message</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    <div class="form-group {% if form.recipients.errors|length > 0%}has-error{% endif %} required ">
-        <!--suppress XmlInvalidId -->
-        <label class="control-label" for="{{form.recipients.name}}">{{form.recipients.label}}</label>
-        <div class="multiselect">
-            <select style="display:none" name="{{form.recipients.name}}" multiple>
-            {% for choice in form.recipients.choices %}
-            <option value="{{choice[0]}}">{{choice[1]}}</option>
-            {% endfor %}
-        </select>
-        </div>
-        {%- for error in form.recipients.errors %}
-            <p class="help-block">{{error}}</p>
-        {%- endfor %}
-    </div>
-    <!--{{ wtf.form_field(form.recipients) }}-->
+    {{ wtf.form_field(form.recipients) }}
     {{ wtf.form_field(form.title) }}
     {{ wtf.form_field(form.body) }}
     {{ wtf.form_field(form.submit) }}
@@ -37,11 +30,10 @@
 
 {% block scripts %}
 {{ super() }}
-<script src="/static/jquery.dropdown.js"></script>
+{{ select2.form_js() }}
 <script>
-    $('.multiselect').dropdown({
-        // options here
-    });
+function onStart() {
+    var container = document.getElementById('container-hidden').style.visibility = "visible";
+}
 </script>
-
 {% endblock %}

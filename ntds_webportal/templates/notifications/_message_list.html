@@ -41,14 +41,14 @@
                     </button>
                 </a>
                 {% endif%}
-                <!--&nbsp;&nbsp;&nbsp;&nbsp;-->
-                <!--{% if notification.sender is not none %}-->
-                <!--<a href="{{url_for('notifications.create',user_id=notification.sender_id)}}">-->
-                    <!--<button type="button" class="btn btn-default">-->
-                        <!--<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;Reply-->
-                    <!--</button>-->
-                <!--</a>-->
-                <!--{% endif %}-->
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                {% if notification.sender is not none %}
+                <a href="{{url_for('notifications.create', user_id=notification.sender_id, notification_id=notification.notification_id)}}">
+                    <button type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;Reply
+                    </button>
+                </a>
+                {% endif %}
 
                 {% if notification.destination %}
                 <a style="float: right" href="{{url_for('notifications.goto',notification=notification.notification_id)}}">

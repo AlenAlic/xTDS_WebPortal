@@ -33,9 +33,13 @@ def create():
                                       User.access == ACCESS[TREASURER])).order_by(User.username).all():
         choices.append(('{}'.format(user.user_id), user.username))
     form.recipients.choices = choices
-    # WISH - Select2 Multiselct for form and reply button
-    # if request.method == 'GET':
-    #     form.recipients.data = [request.args.get('user_id')]
+    if request.method == 'GET' and len(request.args) > 0:
+        form.recipients.data = [request.args.get('user_id')]
+        notification_id = request.args.get('notification_id', default=None, type=int)
+        if notification_id is not None:
+            original_message = "\r\n\r\n\r\n====== Original Message ======\r\n\r\n"
+            original_message += Notification.query.filter(Notification.notification_id == notification_id).first().text
+            form.body.data = original_message
     if form.validate_on_submit():
         for recipient in form.recipients.data:
             if recipient.isdigit():
@@ -52,9 +56,11 @@ def create():
             else:
                 users = []
                 if recipient == 'tc':
-                    users = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)).all()
+                    users = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True),
+                                              User.user_id != current_user.user_id).all()
                 if recipient == 'tr':
-                    users = User.query.filter(User.access == ACCESS[TREASURER], User.is_active.is_(True)).all()
+                    users = User.query.filter(User.access == ACCESS[TREASURER], User.is_active.is_(True),
+                                              User.user_id != current_user.user_id).all()
                 for u in users:
                     n = Notification(title=form.title.data, text=form.body.data,
                                      user=u, sender=current_user)
