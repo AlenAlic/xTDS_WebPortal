@@ -26,18 +26,18 @@
         </thead>
         <tbody>
             {% for couple in couples %}
-            {% if show_break_up_button is sameas false or couple['lead'].status_info[0].status == g.data.REGISTERED %}
+            {% if show_break_up_button is sameas false or couple['lead'].status_info[0].status == g.data.REGISTERED or couple['lead'].status_info[0].status == g.data.NO_GDPR %}
                 <tr class="{% if show_break_up_button is sameas false and couple['lead'].status_info[0].received_starting_number == true %}success{% endif %}">
-                    <td class="{% if couple['lead'].contestant_info[0].team.name != current_user.team.name %}active{% endif %}">
+                    <td class="{% if couple['lead'].status_info[0].status == g.data.NO_GDPR %}danger{%endif%} {% if couple['lead'].contestant_info[0].team.name != current_user.team.name %}active{% endif %}">
                         {{ couple['lead'].contestant_info[0].number }}
                     </td>
-                    <td class="{% if couple['lead'].contestant_info[0].team.name != current_user.team.name %}active{% endif %}">
+                    <td class="{% if couple['lead'].status_info[0].status == g.data.NO_GDPR %}danger{%endif%} {% if couple['lead'].contestant_info[0].team.name != current_user.team.name %}active{% endif %}">
                         {{ couple['lead'].get_full_name() }}{% if couple['lead'].contestant_info[0].team.name != current_user.team.name %} - {{ couple['lead'].contestant_info[0].team.name }}{% endif %}
                     </td>
-                    <td class="{% if couple['follow'].contestant_info[0].team.name != current_user.team.name %}active{% endif %}">
+                    <td class="{% if couple['follow'].status_info[0].status == g.data.NO_GDPR %}danger{%endif%} {% if couple['follow'].contestant_info[0].team.name != current_user.team.name %}active{% endif %}">
                         {{ couple['follow'].contestant_info[0].number }}
                     </td>
-                    <td class="{% if couple['follow'].contestant_info[0].team.name != current_user.team.name %}active{% endif %}">
+                    <td class="{% if couple['follow'].status_info[0].status == g.data.NO_GDPR %}danger{%endif%} {% if couple['follow'].contestant_info[0].team.name != current_user.team.name %}active{% endif %}">
                         {{ couple['follow'].get_full_name() }}{% if couple['follow'].contestant_info[0].team.name != current_user.team.name %} - {{ couple['follow'].contestant_info[0].team.name }}{% endif %}
                     </td>
                     <td>

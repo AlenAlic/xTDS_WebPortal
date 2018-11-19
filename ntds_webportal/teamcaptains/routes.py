@@ -264,12 +264,14 @@ def create_couple():
         return redirect(url_for('main.dashboard'))
     form = CreateCoupleForm(g.sc)
     leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
+        .filter(ContestantInfo.team == current_user.team,
+                or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
                 DancingInfo.role == LEAD, DancingInfo.partner.is_(None),
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
+        .filter(ContestantInfo.team == current_user.team,
+                or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
                 DancingInfo.role == FOLLOW, DancingInfo.partner.is_(None),
                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
@@ -277,7 +279,7 @@ def create_couple():
         flash(f"There are currently {len(leads.all())} available Leads and {len(follows.all())} available Follows "
               f"registered. Cannot create new couples.", 'alert-warning')
         return redirect(url_for('teamcaptains.couples_list'))
-    possible_partners = TeamPossiblePartners(current_user).possible_partners()
+    possible_partners = TeamPossiblePartners(current_user, include_gdpr=True).possible_partners()
     form.lead.query = leads
     form.follow.query = follows
     if form.validate_on_submit():
