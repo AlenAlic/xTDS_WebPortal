@@ -6,7 +6,7 @@
 
 <h2>Change Password</h2>
 <p>You can change your own password below.</p>
-<form action="{{ url_for('main.profile') }}" class="form" method="POST" enctype="multipart/form-data" novalidate>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ wtf.form_field(form.current_password) }}
     {{ wtf.form_field(form.password) }}
@@ -15,14 +15,29 @@
 </form>
 
 <h2>E-mail notifications</h2>
-<form action="{{ url_for('main.profile') }}" class="form" method="POST" enctype="multipart/form-data" novalidate>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ send_email_form.hidden_tag() }}
     {{ wtf.form_field(send_email_form.send_email) }}
     {{ wtf.form_field(send_email_form.email_submit) }}
 </form>
 
-{% block treasurer_form %}
-{% endblock %}
+{% if current_user.is_tc() %}
+<h2>Add treasurer</h2>
+{% if treasurer_active == false %}
+<p>You can add the treasurer of your organization as a separate user to the xTDS WebPortal,
+    so that he/she can handle the payments required for the tournament.</p>
+<p>If you want to do this, please fill out the the form below, and the treasurer will receive his/her credentials
+through the e-mail address provided.</p>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ treasurer_form.hidden_tag() }}
+    {{ wtf.form_field(treasurer_form.email) }}
+    {{ wtf.form_field(treasurer_form.message) }}
+    {{ wtf.form_field(treasurer_form.tr_submit) }}
+</form>
+{% else %}
+<p>An e-mail has already been sent out to your treasurer.</p>
+{% endif %}
+{% endif %}
 
 {% endblock %}
 

@@ -3,7 +3,10 @@ from flask_login import current_user, login_user, login_required, logout_user
 from ntds_webportal import db
 from ntds_webportal.main import bp
 from ntds_webportal.models import User
-from ntds_webportal.auth.forms import LoginForm, ChangePasswordForm, SendEmailForNotificationsForm
+from ntds_webportal.auth.forms import LoginForm, ChangePasswordForm, SendEmailForNotificationsForm, TreasurerForm
+from ntds_webportal.auth.email import send_treasurer_activation_email
+from ntds_webportal.data import *
+from ntds_webportal.functions import random_password
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -73,21 +76,38 @@ def profile():
     send_email_form = SendEmailForNotificationsForm()
     if request.method == 'GET':
         send_email_form.send_email.data = current_user.send_new_messages_email
-    if send_email_form.validate_on_submit():
-        current_user.send_new_messages_email = send_email_form.send_email.data
-        db.session.commit()
-        flash('E-mail notification preference changed.', 'alert-success')
-        return redirect(url_for('main.profile'))
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=current_user.username).first()
-        if not user.check_password(form.current_password.data):
-            flash('Invalid username or password', 'alert-danger')
+    if send_email_form.email_submit.data:
+        if send_email_form.validate_on_submit():
+            current_user.send_new_messages_email = send_email_form.send_email.data
+            db.session.commit()
+            flash('E-mail notification preference changed.', 'alert-success')
             return redirect(url_for('main.profile'))
-        current_user.set_password(form.password.data)
-        db.session.commit()
-        flash('Your password has been changed.', 'alert-success')
-        return redirect(url_for('main.profile'))
+    if form.submit.data:
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=current_user.username).first()
+            if not user.check_password(form.current_password.data):
+                flash('Invalid username or password', 'alert-danger')
+                return redirect(url_for('main.profile'))
+            current_user.set_password(form.password.data)
+            db.session.commit()
+            flash('Your password has been changed.', 'alert-success')
+            return redirect(url_for('main.profile'))
     if current_user.is_tc():
-        return redirect(url_for('teamcaptains.teamcaptain_profile'))
+        treasurer_form = TreasurerForm()
+        treasurer = db.session.query(User).filter_by(team=current_user.team, access=ACCESS[TREASURER]).first()
+        if treasurer_form.tr_submit.data:
+            if treasurer_form.validate_on_submit():
+                tr_pass = random_password()
+                treasurer.set_password(tr_pass)
+                treasurer.email = treasurer_form.email.data
+                treasurer.is_active = True
+                db.session.commit()
+                send_treasurer_activation_email(treasurer_form.email.data, treasurer.username, tr_pass,
+                                                treasurer_form.message.data)
+                flash('Your treasurer now has access to the xTDS WebPortal. '
+                      'Login credentials have been sent to the e-mail provided.', 'alert-info')
+                return redirect(url_for('main.profile'))
+        return render_template('profile.html', form=form, treasurer_form=treasurer_form,
+                               treasurer_active=treasurer.is_active, send_email_form=send_email_form)
     else:
         return render_template('profile.html', form=form, send_email_form=send_email_form)
