@@ -55,11 +55,17 @@ visibility:hidden
 {% if not g.ts.main_raffle_taken_place %}
 <script>
 function onStart() {
+    {% if g.sc.beginners_level is sameas true %}
     document.getElementById('beginners_guaranteed_per_team').onchange();
     document.getElementById('beginners_guaranteed_entry_cutoff').onchange();
+    {% endif %}
+    {% if g.sc.first_time_ask is sameas true %}
     document.getElementById('first_time_guaranteed_entry').onchange();
+    {% endif %}
     document.getElementById('guaranteed_team_size').onchange();
+    {% if g.sc.tournament == g.data.NTDS %}
     document.getElementById('lions_guaranteed_per_team').onchange();
+    {% endif %}
     var container = document.getElementById('container-hidden').style.visibility = "visible";
 }
 

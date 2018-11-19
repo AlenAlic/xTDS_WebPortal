@@ -298,7 +298,7 @@ def switch_user():
     form.user.choices = map(lambda user_map: (user_map.user_id, user_map.username), users)
     dancer_super_volunteer_form = SwitchUserForm()
     dancer_super_volunteer_form.user.label.text = 'Switch to a dancer or Super Volunteer User account'
-    dancer_super_volunteer_users = User.query.join(Team)\
+    dancer_super_volunteer_users = User.query\
         .filter(User.is_active.is_(True), or_(User.access == ACCESS[DANCER], User.access == ACCESS[SUPER_VOLUNTEER]))\
         .all()
     dancer_super_volunteer_choices = [(u.user_id, u.dancer.get_full_name()) for u in dancer_super_volunteer_users
