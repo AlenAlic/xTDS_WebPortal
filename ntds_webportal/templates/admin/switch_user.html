@@ -6,7 +6,7 @@ onload="onStart()"
 {% endblock %}
 
 {% block app_content %}
-<h2>Switch account</h2>
+<h2 style="text-align: center;">Switch account</h2>
 <div class="row" style="visibility:hidden">
     {% with url='self_admin.switch_to_organizer', title='Organization: ' + g.sc.tournament + ' ' + g.sc.city + ' ' + g.sc.year|string, image='logo_organization.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
