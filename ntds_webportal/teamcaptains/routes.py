@@ -123,7 +123,7 @@ def edit_dancer(number):
     dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number) \
         .order_by(Contestant.contestant_id).first_or_404()
-    possible_partners = TeamPossiblePartners(current_user, include_external_partners_of=dancer).possible_partners()
+    possible_partners = TeamPossiblePartners(current_user, dancer=dancer, include_gdpr=True).possible_partners()
     form = EditContestantForm(dancer)
     if request.method == GET:
         form.populate(dancer)

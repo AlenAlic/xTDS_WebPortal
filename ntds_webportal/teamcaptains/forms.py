@@ -323,36 +323,31 @@ class EditContestantForm(BaseContestantForm):
 
     def __init__(self, dancer, **kwargs):
         super().__init__(**kwargs)
+        ballroom_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
+            .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
+                    DancingInfo.competition == BALLROOM,
+                    or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                        DancingInfo.level == BEGINNERS))
         if dancer.competition(BALLROOM).partner is not None:
-            self.ballroom_partner.query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
-                        DancingInfo.competition == BALLROOM,
-                        or_(and_(ContestantInfo.team != current_user.team, DancingInfo.partner == dancer.contestant_id),
-                            and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None),
-                                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                                     DancingInfo.level == BEGINNERS)))).order_by(Contestant.first_name)
+            ballroom_query.filter(or_(and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)),
+                                      DancingInfo.partner == dancer.contestant_id)).order_by(Contestant.first_name)
         else:
-            self.ballroom_partner.query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
-                        DancingInfo.competition == BALLROOM,
-                        and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None),
-                             or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                                 DancingInfo.level == BEGINNERS))).order_by(Contestant.first_name)
-        if dancer.competition(LATIN).partner is not None:
-            self.latin_partner.query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
-                        DancingInfo.competition == LATIN,
-                        or_(and_(ContestantInfo.team != current_user.team, DancingInfo.partner == dancer.contestant_id),
-                            and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None),
-                                 or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                                     DancingInfo.level == BEGINNERS)))).order_by(Contestant.first_name)
+            ballroom_query.filter(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None))\
+                .order_by(Contestant.first_name)
+        self.ballroom_partner.query = ballroom_query
+
+        latin_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
+            .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
+                    DancingInfo.competition == LATIN,
+                    or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                        DancingInfo.level == BEGINNERS))
+        if dancer.competition(BALLROOM).partner is not None:
+            latin_query.filter(or_(and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)),
+                                   DancingInfo.partner == dancer.contestant_id)).order_by(Contestant.first_name)
         else:
-            self.latin_partner.query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
-                        DancingInfo.competition == LATIN,
-                        and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None),
-                             or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                                 DancingInfo.level == BEGINNERS))).order_by(Contestant.first_name)
+            latin_query.filter(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)) \
+                .order_by(Contestant.first_name)
+        self.latin_partner.query = latin_query
 
     def custom_validate(self, dancer):
         if dancer.status_info[0].status == SELECTED or dancer.status_info[0].status == CONFIRMED:
