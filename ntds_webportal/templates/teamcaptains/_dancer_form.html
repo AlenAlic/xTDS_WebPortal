@@ -40,7 +40,7 @@
     <h3>Ballroom</h3>
     {{ reg_wtf.form_field(form.ballroom_level, disabled=not editable, **{'onchange': "dancingLevel(id, 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date', 'jury_ballroom')", 'onkeyup': "dancingLevel(id, 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date', 'jury_ballroom')"}) }}
     {{ reg_wtf.form_field(form.ballroom_role, disabled=true, **{'onchange': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date', 'ballroom_partner')", 'onkeyup': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date', 'ballroom_partner')"}) }}
-    {% if (mode == 'view' and form.ballroom_role.data == g.data.BREITENSPORT) or mode == 'edit' or mode == 'register' %}
+    {% if (mode == 'view' and form.ballroom_level.data == g.data.BREITENSPORT) or mode == 'edit' or mode == 'register' %}
     {% if g.sc.breitensport_obliged_blind_date is sameas true %}
         {{ reg_wtf.form_field(form.ballroom_blind_date, disabled=true, **{'onchange': "dancingBD('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')", 'onkeyup': "dancingBD('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')"}) }}
     {% endif %}
@@ -50,7 +50,7 @@
     <h3>Latin</h3>
     {{ reg_wtf.form_field(form.latin_level, disabled=not editable, **{'onchange': "dancingLevel(id, 'latin_role', 'latin_partner', 'latin_blind_date', 'jury_latin')", 'onkeyup': "dancingLevel(id, 'latin_role', 'latin_partner', 'latin_blind_date', 'jury_latin')"}) }}
     {{ reg_wtf.form_field(form.latin_role, disabled=true, **{'onchange': "dancingRole('latin_level', 'latin_role', 'latin_blind_date', 'latin_partner')", 'onkeyup': "dancingRole('latin_level', 'latin_role', 'latin_blind_date', 'latin_partner')"}) }}
-    {% if (mode == 'view' and form.latin_role.data == g.data.BREITENSPORT) or mode == 'edit' or mode == 'register' %}
+    {% if (mode == 'view' and form.latin_level.data == g.data.BREITENSPORT) or mode == 'edit' or mode == 'register' %}
     {% if g.sc.breitensport_obliged_blind_date is sameas true %}
         {{ reg_wtf.form_field(form.latin_blind_date, disabled=true, **{'onchange': "dancingBD('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')", 'onkeyup': "dancingBD('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')"}) }}
     {% endif %}
