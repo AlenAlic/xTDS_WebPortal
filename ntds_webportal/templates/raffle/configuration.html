@@ -52,7 +52,6 @@ visibility:hidden
 
 {% block scripts %}
 {{ super() }}
-{% if not g.ts.main_raffle_taken_place %}
 <script>
 function onStart() {
     {% if g.sc.beginners_level is sameas true %}
@@ -176,5 +175,4 @@ function LionsPerTeam(lions_guaranteed_per_team) {
     }
 }
 </script>
-{% endif %}
 {% endblock %}

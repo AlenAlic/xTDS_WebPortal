@@ -256,6 +256,10 @@ class Contestant(db.Model):
                     self.payment_info[0].full_refund = True
                 if g.sc.finances_partial_refund:
                     self.payment_info[0].partial_refund = True
+        if int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) < \
+                g.sc.merchandise_closing_date:
+            self.merchandise_info[0].cancel_merchandise()
+            pass
         db.session.commit()
 
     def get_dancing_info(self, competition):
@@ -281,14 +285,6 @@ class ContestantInfo(db.Model):
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
-
-    # def set_teamcaptain(self):
-    #     current_tc = db.session.query(Contestant).join(ContestantInfo) \
-    #         .filter(ContestantInfo.team == current_user.team, ContestantInfo.team_captain.is_(True)).all()
-    #     if current_tc is not None:
-    #         current_tc.contestant_info[0].team_captain = False
-    #     self.team_captain = True
-    #     db.session.commit()
 
 
 class DancingInfo(db.Model):
@@ -532,6 +528,12 @@ class MerchandiseInfo(db.Model):
                 total_price += g.sc.bag_price
         return total_price
 
+    def cancel_merchandise(self):
+        self.t_shirt = NO
+        self.mug = False
+        self.bag = False
+        db.session.commit()
+
 
 class AttendedPreviousTournamentContestant(db.Model):
     __tablename__ = ATTENDED_PREVIOUS_TOURNAMENT_CONTESTANT
@@ -724,6 +726,7 @@ class TournamentState(db.Model):
     main_raffle_result_visible = db.Column(db.Boolean, nullable=False, default=False)
     numbers_rearranged = db.Column(db.Boolean, nullable=False, default=False)
     raffle_completed_message_sent = db.Column(db.Boolean, nullable=False, default=False)
+    merchandise_finalized = db.Column(db.Boolean, nullable=False, default=False)
 
     def state(self):
         if self.main_raffle_result_visible:
@@ -850,9 +853,18 @@ class SystemConfiguration(db.Model):
     def merchandise(self):
         return self.t_shirt_sold or self.mug_sold or self.bag_sold
 
-    def number_of_merchandise(self):
+    @staticmethod
+    def merchandise_name(number):
+        order = {0: 'T-shirt', 1: 'Mug', 2: 'Bag'}
+        return order[number]
+
+    def merchandise_sold(self, number):
+        order = {0: self.t_shirt_sold, 1: self.mug_sold, 2: self.bag_sold}
+        return order[number]
+
+    def number_of_merchandise(self, exclude_t_shirt=False):
         counter = 0
-        if self.t_shirt_sold:
+        if self.t_shirt_sold and not exclude_t_shirt:
             counter += 1
         if self.mug_sold:
             counter += 1

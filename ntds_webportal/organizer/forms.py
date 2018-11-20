@@ -12,3 +12,7 @@ class NameChangeResponse(FlaskForm):
 
 class ChangeEmailForm(FlaskForm):
     email = StringField('E-mail', validators=[Email(), UniqueEmail()])
+
+
+class FinalizeMerchandiseForm(FlaskForm):
+    submit = SubmitField('Finalize orders')

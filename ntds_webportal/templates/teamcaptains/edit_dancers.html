@@ -32,23 +32,23 @@
         {% for dancer in dancers %}
             <tr class="{% if dancer.status_info[0].status != g.data.CANCELLED and dancer.status_info[0].feedback_about_information is not none %}warning{% endif %}">
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ dancer.contestant_info[0].number }}
+                    {{ g.dancer.contestant_info[0].number }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ dancer.get_full_name() }}
+                    {{ g.dancer.get_full_name() }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ dancer.email }}
+                    {{ g.dancer.email }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ data.STATUS[dancer.status_info[0].status] }}
+                    {{ g.data.STATUS[dancer.status_info[0].status] }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
+                    {{ g.data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
                 </td>
                 {% if g.sc.ask_first_time %}
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ data.TF[dancer.contestant_info[0].first_time] }}
+                    {{ g.data.TF[dancer.contestant_info[0].first_time] }}
                 </td>
                 {% endif %}
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
@@ -147,24 +147,24 @@
                 <td>{{ dancer.contestant_info[0].number }}</td>
                 <td>{{ dancer.get_full_name() }}</td>
                 <td>{{ dancer.email }}</td>
-                <td>{{ data.STATUS[dancer.status_info[0].status] }}</td>
-                <td>{{ data.STUDENT_TEXT[dancer.contestant_info[0].student] }}</td>
+                <td>{{ g.data.STATUS[dancer.status_info[0].status] }}</td>
+                <td>{{ g.data.STUDENT_TEXT[dancer.contestant_info[0].student] }}</td>
                 {% if g.sc.ask_first_time %}
-                <td>{{ data.TF[dancer.contestant_info[0].first_time] }}</td>
+                <td>{{ g.data.TF[dancer.contestant_info[0].first_time] }}</td>
                 {% endif %}
-                <td>{{ data.TF[dancer.additional_info[0].sleeping_arrangements] }}</td>
+                <td>{{ g.data.TF[dancer.additional_info[0].sleeping_arrangements] }}</td>
                 <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
                 <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
-                <td>{{ data.TF[dancer.dancing_information(g.data.BALLROOM).blind_date] }}</td>
+                <td>{{ g.data.TF[dancer.dancing_information(g.data.BALLROOM).blind_date] }}</td>
                 <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner) }}</td>
                 <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
                 <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
-                <td>{{ data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}</td>
+                <td>{{ g.data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}</td>
                 <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}</td>
-                <td>{{ data.YMN[dancer.volunteer_info[0].volunteer] }}</td>
-                <td>{{ data.YMN[dancer.volunteer_info[0].first_aid] }}</td>
-                <td>{{ data.YMN[dancer.volunteer_info[0].jury_ballroom] }}</td>
-                <td>{{ data.YMN[dancer.volunteer_info[0].jury_latin] }}</td>
+                <td>{{ g.data.YMN[dancer.volunteer_info[0].volunteer] }}</td>
+                <td>{{ g.data.YMN[dancer.volunteer_info[0].first_aid] }}</td>
+                <td>{{ g.data.YMN[dancer.volunteer_info[0].jury_ballroom] }}</td>
+                <td>{{ g.data.YMN[dancer.volunteer_info[0].jury_latin] }}</td>
             </tr>
         {% endfor %}
     </tbody>

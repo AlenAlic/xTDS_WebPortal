@@ -7,6 +7,7 @@ from ntds_webportal.auth.forms import LoginForm, ChangePasswordForm, SendEmailFo
 from ntds_webportal.auth.email import send_treasurer_activation_email
 from ntds_webportal.data import *
 from ntds_webportal.functions import random_password
+import datetime
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -52,6 +53,10 @@ def dashboard():
             return redirect(url_for('teamcaptains.treasurer_inaccessible'))
     if current_user.is_dancer():
         return render_template('dashboard.html', dancer=current_user.dancer)
+    if current_user.is_organizer():
+        finalize_merchandise = int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) > \
+                g.sc.merchandise_closing_date and not g.ts.merchandise_finalized
+        return render_template('dashboard.html', finalize_merchandise=finalize_merchandise)
     return render_template('dashboard.html')
 
 

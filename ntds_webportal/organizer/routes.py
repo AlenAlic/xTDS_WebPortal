@@ -6,7 +6,7 @@ from ntds_webportal.models import requires_access_level, Team, Contestant, Conte
     StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, TournamentState, \
     SalsaPartners, PolkaPartners, VolunteerInfo, requires_tournament_state
 from ntds_webportal.functions import submit_updated_dancing_info, get_dancing_categories, random_password
-from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm
+from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm
 from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm
 from ntds_webportal.organizer.email import send_registration_open_email, send_gdpr_reminder_email
 from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
@@ -349,33 +349,49 @@ def remove_payment_requirement(number):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def merchandise():
-    # PRIORITY - Rework to include other merchandise
-    # PRIORITY - Change cancel status to take into account merchandise closing date
     # PRIORITY - Add option to confirm order as is and remove all registered dancers merchandise
-    ts = TournamentState.query.first()
+    current_timestamp = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
+    form = FinalizeMerchandiseForm()
+    if form.is_submitted() and form.validate_on_submit():
+        if not g.ts.merchandise_finalized:
+            registered_dancers = Contestant.query.join(StatusInfo)\
+                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR,
+                            StatusInfo.status == CANCELLED)).all()
+            registered_dancers = [d for d in registered_dancers if d.merchandise_info[0].ordered_merchandise()]
+            for dancer in registered_dancers:
+                dancer.merchandise_info[0].cancel_merchandise()
+            g.ts.merchandise_finalized = True
+            flash("Merchandise finalized.", "alert-success")
+            db.session.commit()
     dancers = Contestant.query.join(StatusInfo).join(ContestantInfo).join(AdditionalInfo).join(MerchandiseInfo)\
         .join(Team).filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == CANCELLED))\
-        .order_by(Team.city).all()
+        .order_by(Team.city, Contestant.first_name).all()
     dancers = [dancer for dancer in dancers if dancer.merchandise_info[0].ordered_merchandise()]
     shirts = {shirt_size: 0 for shirt_size in SHIRT_SIZES}
+    mugs, bags = 0, 0
     for dancer in dancers:
         try:
             shirts[dancer.merchandise_info[0].t_shirt] += 1
         except KeyError:
             pass
+        mugs += 1 if dancer.merchandise_info[0].mug else 0
+        bags += 1 if dancer.merchandise_info[0].bag else 0
     shirts = {SHIRT_SIZES[shirt]: quantity for shirt, quantity in shirts.items()}
     total_shirts = sum([quantity for size, quantity in shirts.items()])
-    form = request.args
-    if 'download_file' in form:
+    download = request.args
+    if 'download_file' in download:
+        header = {'Name': 0, 'E-mail': 1, 'Team': 2}
+        base_len = len(header)
+        for i in range(0, 3):
+            if g.sc.merchandise_sold(i):
+                header.update({g.sc.merchandise_name(i): len(header)})
         fn = f'merchandise_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
         output = BytesIO()
         wb = xlsxwriter.Workbook(output, {'in_memory': True})
         f = wb.add_format({'text_wrap': True, 'bold': True})
         ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
-        ws.write(0, 0, 'Dancer', f)
-        ws.write(0, 1, 'Email', f)
-        ws.write(0, 2, 'Team', f)
-        ws.write(0, 3, 'T-shirt', f)
+        for name, index in header.items():
+            ws.write(0, index, name, f)
         ws.set_column(0, 0, 30)
         ws.set_column(1, 1, 40)
         ws.set_column(2, 3, 20)
@@ -383,18 +399,26 @@ def merchandise():
             ws.write(d + 1, 0, dancers[d].get_full_name())
             ws.write(d + 1, 1, dancers[d].email)
             ws.write(d + 1, 2, dancers[d].contestant_info[0].team.city)
-            try:
-                ws.write(d + 1, 3, SHIRT_SIZES[dancers[d].merchandise_info[0].t_shirt])
-            except KeyError:
-                ws.write(d + 1, 3, NONE)
-            for m in range(0, len(dancers[d].merchandise_info)):
-                ws.write(d + 1, m + 4, dancers[d].merchandise_info[m].quantity)
+            for i in range(base_len, len(header)):
+                counter = base_len
+                if g.sc.t_shirt_sold:
+                    try:
+                        ws.write(d + 1, counter, SHIRT_SIZES[dancers[d].merchandise_info[0].t_shirt])
+                    except KeyError:
+                        ws.write(d + 1, counter, NONE)
+                    counter += 1
+                if g.sc.mug_sold:
+                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info[0].mug])
+                    counter += 1
+                if g.sc.bag_sold:
+                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info[0].bag])
+                    counter += 1
         ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
-    return render_template('organizer/merchandise.html', ts=ts, data=data, shirts=shirts, total_shirts=total_shirts,
-                           dancers=dancers)
+    return render_template('organizer/merchandise.html', dancers=dancers, current_timestamp=current_timestamp,
+                           form=form, shirts=shirts, total_shirts=total_shirts, mugs=mugs, bags=bags)
 
 
 @bp.route('/sleeping_hall', methods=['GET'])

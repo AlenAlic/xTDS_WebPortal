@@ -104,7 +104,7 @@ onload="onStart()"
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% if g.sc.merchandise() is sameas true %}
-        {% with accessible=g.ts.main_raffle_result_visible, url='organizer.merchandise', title='Merchandise', text='Overview of ordered merchandise.', image='merchandise.png' %}
+        {% with accessible=g.ts.main_raffle_result_visible, url='organizer.merchandise', wants_attention=finalize_merchandise, title='Merchandise', text='Overview of ordered merchandise.', image='merchandise.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}
@@ -232,7 +232,7 @@ onload="onStart()"
 
 {% if current_user.is_dancer() %}
 <div class="row" style="visibility:hidden">
-    {% with feedback=dancer.status_info[0].feedback_about_information, url='dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
+    {% with wants_attention=dancer.status_info[0].feedback_about_information, url='dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=false, url='main.todo', title='My volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}

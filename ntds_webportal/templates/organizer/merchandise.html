@@ -2,21 +2,26 @@
 {% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
-{% if ts.main_raffle_result_visible is sameas true %}
-<h2>Merchandise quantities</h2>
+{% if g.ts.main_raffle_result_visible is sameas true %}
+{% if current_timestamp > g.sc.merchandise_closing_date and not g.ts.merchandise_finalized %}
+<div id="finalize-merchandise" style="width:100%">
+    <div style="display: table; margin: 0 auto; text-align: center;">
+        <h2>Finalize merchandise</h2>
+        <p>This will cancel the orders of all dancers that are currently not selected.</p>
+        <p>No new orders will be accepted, and all currently active orders will remain.</p>
+        <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+            {{ wtf.form_field(form.submit) }}
+        </form>
+    </div>
+</div>
+{% endif %}
+<h2>Merchandise</h2>
+{% if g.sc.t_shirt_sold is sameas true %}
 <table class="table table-striped">
-    <!--<colgroup>-->
-        <!--<col span="1" style="width: 70%;">-->
-        <!--<col span="1" style="width: 30%;">-->
-    <!--</colgroup>-->
     <thead>
-        <tr>
-            <th colspan="2"><b>T-shirts</b></th>
-        </tr>
-        <tr>
-            <th><b>Size</b></th>
-            <th style="text-align:right"><b>Quantity</b></th>
-        </tr>
+    <tr><th colspan="2"><b>T-shirts</b></th></tr>
+    <tr><th><b>Size</b></th><th style="text-align:right"><b>Quantity</b></th></tr>
     </thead>
     <tbody>
         {% for shirt, quantity in shirts.items() %}
@@ -31,7 +36,22 @@
         </tr>
     </tbody>
 </table>
-<h2>Dancers that have ordered merchandise</h2>
+{% endif %}
+{% if g.sc.number_of_merchandise(exclude_t_shirt=True) > 0 %}
+<div class="row">
+    {% if g.sc.mug_sold is sameas true %}
+    <div class="col-xs-{{(12/g.sc.number_of_merchandise(exclude_t_shirt=True))|round|int}}">
+        <b>Mugs:</b> {{mugs}}
+    </div>
+    {% endif %}
+    {% if g.sc.mug_sold is sameas true %}
+    <div class="col-xs-{{(12/g.sc.number_of_merchandise(exclude_t_shirt=True))|round|int}}">
+        <b>Bags:</b> {{bags}}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+<h2>Overview</h2>
 <form method="GET" enctype="multipart/form-data" novalidate>
     <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list of dancers">
 </form>
@@ -39,21 +59,23 @@
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
         <div class="panel-heading" role="button" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            <b class="panel-title">Dancers that have ordered a t-shirt or at least one sticker <span class="badge">{% if dancers|length > 0 %}{{ dancers|length }}{% else %}0{% endif %}</span></b>
+            <b class="panel-title">Dancers that have ordered merchandise <span style="font-size:large" class="badge">{% if dancers|length > 0 %}{{ dancers|length }}{% else %}0{% endif %}</span></b>
         </div>
         <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
             {% if dancers|length > 0 %}
             <table class="table list-group">
                 <colgroup>
+                    <col span="1" style="width: 20%;">
                     <col span="1" style="width: 30%;">
-                    <col span="1" style="width: 40%;">
                     <col span="1" style="width: 30%;">
+                    <col span="1" style="width: 20%;">
                 </colgroup>
                 <thead>
                 <tr>
-                    <th><b>Dancer</b></th>
-                    <th><b>Email</b></th>
-                    <th><b>Team</b></th>
+                    <th>Dancer</th>
+                    <th>Email</th>
+                    <th>Team</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -62,6 +84,7 @@
                     <td>{{ dancer.get_full_name() }}</td>
                     <td>{{ dancer.email }}</td>
                     <td>{{ dancer.contestant_info[0].team.city }}</td>
+                    <td>{{ g.data.STATUS[dancer.status_info[0].status] }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
