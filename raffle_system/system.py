@@ -1,6 +1,6 @@
 from flask import g, flash
 from ntds_webportal import db
-from ntds_webportal.models import User, Contestant, ContestantInfo, StatusInfo, RaffleConfiguration
+from ntds_webportal.models import User, Contestant, ContestantInfo, StatusInfo, RaffleConfiguration, Notification
 from ntds_webportal.functions import get_dancing_categories
 from ntds_webportal.strings import *
 from ntds_webportal.data import *
@@ -690,6 +690,30 @@ class RaffleSystem(Balance):
             message = f"The maximum number of dancers ({self.config.maximum_number_of_dancers}) has been reached. " \
                       f"You cannot add more dancers."
         return message
+
+    def confirm_selection(self, dancers):
+        groups = self.find_dancers_groups(dancers, SELECTED)
+        for grp in groups:
+            self.add_groups(groups)
+            for dancer in grp.dancers:
+                dancer.status_info[0].set_status(SELECTED)
+                teamcaptain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
+                                                User.team == dancer.contestant_info[0].team).first()
+                text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
+                n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
+                                 user=teamcaptain)
+                n.send()
+        flash('Marked dancers are now selected and this is visible to the team captains.')
+        db.session.commit()
+
+    def cancel_selection(self, dancers):
+        groups = self.find_dancers_groups(dancers, SELECTED)
+        for grp in groups:
+            self.reset_group(grp)
+            for dancer in grp.dancers:
+                dancer.status_info[0].set_status(REGISTERED)
+        flash('Marked dancers are put back into the raffle selection pool.')
+        db.session.commit()
 
     def find_dancers_groups(self, dancers, status):
         groups = []

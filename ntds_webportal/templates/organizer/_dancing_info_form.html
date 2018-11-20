@@ -12,7 +12,7 @@
     {{ reg_wtf.form_field(form.ballroom_level, disabled=false, **{'onchange': "dancingLevel(id, 'ballroom_role', 'ballroom_blind_date')", 'onkeyup': "dancingLevel(id, 'ballroom_role', 'ballroom_blind_date')"}) }}
     {{ reg_wtf.form_field(form.ballroom_role, disabled=true, **{'onchange': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date')", 'onkeyup': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date')"}) }}
     {% if g.sc.breitensport_obliged_blind_date is sameas true %}
-        {{ reg_wtf.form_field(form.ballroom_blind_date, disabled=true) }}
+        {{ reg_wtf.form_field(form.ballroom_blind_date, disabled=true, **{'onchange': "dancingBD('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')", 'onkeyup': "dancingBD('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')"}) }}
     {% endif %}
     {{ reg_wtf.form_field(form.ballroom_partner, disabled=true) }}
 
@@ -20,7 +20,7 @@
     {{ reg_wtf.form_field(form.latin_level, disabled=false, **{'onchange': "dancingLevel(id, 'latin_role', 'latin_blind_date')", 'onkeyup': "dancingLevel(id, 'latin_role', 'latin_blind_date')"}) }}
     {{ reg_wtf.form_field(form.latin_role, disabled=true, **{'onchange': "dancingRole('latin_level', 'latin_role', 'latin_blind_date')", 'onkeyup': "dancingRole('latin_level', 'latin_role', 'latin_blind_date')"}) }}
     {% if g.sc.breitensport_obliged_blind_date is sameas true %}
-        {{ reg_wtf.form_field(form.latin_blind_date, disabled=true) }}
+        {{ reg_wtf.form_field(form.latin_blind_date, disabled=true, **{'onchange': "dancingBD('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')", 'onkeyup': "dancingBD('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')"}) }}
     {% endif %}
     {{ reg_wtf.form_field(form.latin_partner, disabled=true) }}
 

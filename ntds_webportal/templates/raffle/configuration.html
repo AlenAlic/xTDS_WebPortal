@@ -67,7 +67,7 @@ function onStart() {
     {% endif %}
     var container = document.getElementById('container-hidden').style.visibility = "visible";
 }
-
+{% if not g.ts.main_raffle_taken_place %}
 var old_beginners_increased_chance = "{{form.beginners_increased_chance.data}}"
 var old_beginners_guaranteed_cutoff = {{form.beginners_guaranteed_cutoff.data}}
 function BeginnersCutoff(beginners_guaranteed_entry_cutoff) {
@@ -174,5 +174,12 @@ function LionsPerTeam(lions_guaranteed_per_team) {
         open_class_lion.value = old_open_class_lion;
     }
 }
+{% else %}
+function BeginnersCutoff(beginners_guaranteed_entry_cutoff) {}
+function BeginnersPerTeam(beginners_guaranteed_per_team) {}
+function FirstTime(first_time_guaranteed_entry) {}
+function TeamSize(guaranteed_team_size) {}
+function LionsPerTeam(lions_guaranteed_per_team) {}
+{% endif %}
 </script>
 {% endblock %}

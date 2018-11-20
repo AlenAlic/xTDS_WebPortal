@@ -249,7 +249,6 @@ def name_change_respond(req):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[BLIND_DATE_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def dancing_info_list():
-    # PRIORITY - Add role to list
     dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == SELECTED))\
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
@@ -263,8 +262,6 @@ def dancing_info_list():
 def edit_dancing_info(number):
     dancer = db.session.query(Contestant).join(DancingInfo).filter(Contestant.contestant_id == number).first()
     form = EditDancingInfoForm(dancer)
-    # PRIORITY - Notify teamcaptains when partner gone due to switch in level or blind date
-    # PRIORITY - Add JS for partner update
     if request.method == GET:
         form.populate(dancer)
     if request.method == POST:
@@ -349,7 +346,6 @@ def remove_payment_requirement(number):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def merchandise():
-    # PRIORITY - Add option to confirm order as is and remove all registered dancers merchandise
     current_timestamp = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
     form = FinalizeMerchandiseForm()
     if form.is_submitted() and form.validate_on_submit():

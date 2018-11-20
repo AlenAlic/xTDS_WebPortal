@@ -150,20 +150,9 @@ def confirmed():
     if request.method == 'POST':
         form = request.form
         if 'select_marked_dancers' in form:
-            # PRIORITY - Make it impossible to select someone without their partner
-            marked_dancers = [d for d in raffle_sys.all_dancers if str(d.contestant_id) in form]
-            for dancer in marked_dancers:
-                dancer.status_info[0].set_status(SELECTED)
-                teamcaptain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
-                                                User.team == dancer.contestant_info[0].team).first()
-                text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
-                n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
-                                 user=teamcaptain)
-                n.send()
+            raffle_sys.confirm_selection([d for d in raffle_sys.selected_dancers if str(d.contestant_id) in form])
         elif 'remove_marked_dancers' in form:
-            marked_dancers = [d for d in raffle_sys.all_dancers if str(d.contestant_id) in form]
-            for dancer in marked_dancers:
-                dancer.status_info[0].set_status(REGISTERED)
+            raffle_sys.cancel_selection([d for d in raffle_sys.all_dancers if str(d.contestant_id) in form])
         elif 'balance_raffle' in form:
             raffle_sys.balance_raffle()
         elif 'finish_raffle' in form:
@@ -341,19 +330,9 @@ def test_confirmed():
             g.ts.raffle_completed_message_sent = False
             flash('Raffle results cleared.', 'alert-info')
         elif 'select_marked_dancers' in form:
-            marked_dancers = [d for d in raffle_sys.all_dancers if str(d.contestant_id) in form]
-            for dancer in marked_dancers:
-                dancer.status_info[0].set_status(SELECTED)
-                teamcaptain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
-                                                User.team == dancer.contestant_info[0].team).first()
-                text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
-                n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
-                                 user=teamcaptain)
-                n.send()
+            raffle_sys.confirm_selection([d for d in raffle_sys.selected_dancers if str(d.contestant_id) in form])
         elif 'remove_marked_dancers' in form:
-            marked_dancers = [d for d in raffle_sys.all_dancers if str(d.contestant_id) in form]
-            for dancer in marked_dancers:
-                dancer.status_info[0].set_status(REGISTERED)
+            raffle_sys.cancel_selection([d for d in raffle_sys.all_dancers if str(d.contestant_id) in form])
         elif 'balance_raffle' in form:
             raffle_sys.balance_raffle()
         elif 'finish_raffle' in form:

@@ -180,9 +180,49 @@ def update_dancing_info(form, di_ballroom, di_latin):
 def submit_updated_dancing_info(form, contestant):
     di_ballroom = contestant.competition(BALLROOM)
     di_latin = contestant.competition(LATIN)
+    ballroom_parner, latin_partner = di_ballroom.partner, di_latin.partner
     update_dancing_info(form, di_ballroom, di_latin)
     db.session.commit()
+    print(ballroom_parner)
+    print(di_ballroom.partner)
+    print(latin_partner)
+    print(di_latin.partner)
+    if di_ballroom.partner != ballroom_parner:
+        send_lost_partner_notification(di_ballroom.contestant_id, BALLROOM, partner_id=ballroom_parner)
+    if di_latin.partner != latin_partner:
+        send_lost_partner_notification(di_ballroom.contestant_id, LATIN, partner_id=latin_partner)
     return contestant.get_full_name()
+
+
+def send_lost_partner_notification(changed_id, competition, partner_id):
+    dancer = Contestant.query.filter(Contestant.contestant_id == changed_id).first()
+    partner = Contestant.query.filter(Contestant.contestant_id == partner_id).first()
+    teamcaptain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
+                                    User.team == dancer.contestant_info[0].team).first()
+    if dancer.contestant_info[0].team == partner.contestant_info[0].team:
+        teamcaptain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
+                                        User.team == dancer.contestant_info[0].team).first()
+        text = f"The organization has made changes to the dancing information of {dancer.get_full_name()}, and due " \
+               f"to that, {dancer.first_name} and {partner.get_full_name()} are no longer dancing together " \
+               f"in {competition}."
+        n = Notification(title=f"Changed {competition} information of {dancer.get_full_name()} and "
+                               f"{partner.get_full_name()}", text=text, user=teamcaptain)
+        n.send()
+    else:
+        text_dancer = f"The organization has made changes to the dancing information of {dancer.get_full_name()}, " \
+                      f"and due to that, {dancer.first_name} and {partner.get_full_name()} " \
+                      f"({partner.contestant_info[0].team}) are no longer dancing together in {competition}."
+        n = Notification(title=f"Changed {competition} information of {dancer.get_full_name()}",
+                         text=text_dancer, user=teamcaptain)
+        n.send()
+        teamcaptain_partner = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
+                                                User.team == partner.contestant_info[0].team).first()
+        text_partner = f"The organization has made changes to the dancing information of {dancer.get_full_name()} " \
+                       f"({dancer.contestant_info[0].team}), and due to that, {dancer.first_name} and " \
+                       f"{partner.get_full_name()} are no longer dancing together in {competition}."
+        n = Notification(title=f"Changed {competition} information of {partner.get_full_name()}",
+                         text=text_partner, user=teamcaptain_partner)
+        n.send()
 
 
 def generate_maintenance_page():
