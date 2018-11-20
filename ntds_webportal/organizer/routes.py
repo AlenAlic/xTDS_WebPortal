@@ -454,6 +454,14 @@ def sleeping_hall():
     return render_template('organizer/sleeping_hall.html', data=data, ts=ts, teams=teams, total=total)
 
 
+@bp.route('/diet_allergies', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def diet_allergies():
+    return render_template('organizer/diet_allergies.html')
+
+
 @bp.route('/adjudicators_overview', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[ADJUDICATOR_ASSISTANT]])

@@ -32,13 +32,13 @@
         {% for dancer in dancers %}
             <tr class="{% if dancer.status_info[0].status != g.data.CANCELLED and dancer.status_info[0].feedback_about_information is not none %}warning{% endif %}">
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ g.dancer.contestant_info[0].number }}
+                    {{ dancer.contestant_info[0].number }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ g.dancer.get_full_name() }}
+                    {{ dancer.get_full_name() }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ g.dancer.email }}
+                    {{ dancer.email }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
                     {{ g.data.STATUS[dancer.status_info[0].status] }}
