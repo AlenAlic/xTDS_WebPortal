@@ -5,9 +5,9 @@
         <div style="background-color:{% if notification.unread %}#fff{%else%}#f5f5f5{%endif%}" class="panel-heading" role="button" id="heading-{{notification.notification_id}}" data-toggle="collapse" href="#collapse-{{notification.notification_id}}" aria-expanded="false" aria-controls="collapse-{{notification.notification_id}}">
             <div class="panel-title" style="font-size:small; {% if notification.unread %}font-weight:bold{% endif %}">
                 <div class="row">
-                    <div class="col-xs-3">{{notification.get_sender()}}</div>
-                    <div class="col-xs-7">{{notification.title}}</div>
-                    <div class="col-xs-2" style="text-align: right;">{{moment(notification.timestamp).fromNow()}}</div>
+                    <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3">{{notification.get_sender()}}</div>
+                    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-6">{{notification.title}}</div>
+                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2" style="text-align: right;">{{moment(notification.timestamp).fromNow()}}</div>
                 </div>
             </div>
         </div>
