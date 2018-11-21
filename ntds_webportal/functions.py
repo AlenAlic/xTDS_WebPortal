@@ -6,7 +6,15 @@ from ntds_webportal.models import Contestant, ContestantInfo, DancingInfo, Volun
     StatusInfo, PaymentInfo, MerchandiseInfo, User, Notification, SystemConfiguration
 from ntds_webportal.data import *
 from ntds_webportal.helper_classes import TeamFinancialOverview
+import sqlalchemy as alchemy
 import os
+
+
+def database_is_empty():
+    table_names = alchemy.inspect(db.engine).get_table_names()
+    is_empty = table_names == []
+    print('Database empty: {is_empty}.'.format(is_empty=is_empty))
+    return is_empty
 
 
 def get_dancing_categories(dancing_info):
