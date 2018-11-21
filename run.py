@@ -1,4 +1,4 @@
-from ntds_webportal import create_app, db
+from ntds_webportal import create_app
 from instance.populate import create_admin, create_organization, create_teams
 
 

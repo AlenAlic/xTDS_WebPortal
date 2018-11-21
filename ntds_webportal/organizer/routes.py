@@ -4,7 +4,7 @@ from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, TournamentState, \
-    SalsaPartners, PolkaPartners, VolunteerInfo, requires_tournament_state
+    SalsaPartners, PolkaPartners, VolunteerInfo, requires_tournament_state, SuperVolunteer
 from ntds_webportal.functions import submit_updated_dancing_info, get_dancing_categories, random_password
 from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm
 from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm
@@ -422,16 +422,14 @@ def merchandise():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def sleeping_hall():
-    # PRIORITY - Add Super Volunteers
-    # PRIORITY - Add similar page for diets/allergies
-    ts = TournamentState.query.first()
     team_captains = db.session.query(User).filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True))\
         .order_by(User.username).all()
     teams = [{'city': team_captain.team.city,
               'number_of_dancers': db.session.query(Contestant).join(ContestantInfo, StatusInfo, AdditionalInfo)
              .filter(ContestantInfo.team == team_captain.team, StatusInfo.status == CONFIRMED,
                      AdditionalInfo.sleeping_arrangements.is_(True)).count()} for team_captain in team_captains]
-    total = sum([team['number_of_dancers'] for team in teams])
+    super_volunteers = len(SuperVolunteer.query.all())
+    total = sum([team['number_of_dancers'] for team in teams]) + super_volunteers
     form = request.args
     if 'download_file' in form:
         fn = f'sleeping_hall_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
@@ -441,17 +439,19 @@ def sleeping_hall():
         la = wb.add_format({'align': 'left'})
         ws = wb.add_worksheet()
         ws.write(0, 0, 'Team', f)
-        ws.write(0, 1, 'Dancers in sleeping hall (Total: {total})'.format(total=total), f)
+        ws.write(0, 1, 'People in sleeping hall (Total: {total})'.format(total=total), f)
         for d in range(0, len(teams)):
             ws.write(d + 1, 0, teams[d]['city'])
             ws.write(d + 1, 1, teams[d]['number_of_dancers'], la)
+        ws.write(len(teams) + 1, 0, 'Super Volunteers')
+        ws.write(len(teams) + 1, 1, super_volunteers, la)
         ws.set_column(0, 0, 30)
         ws.set_column(1, 1, 40)
         ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
-    return render_template('organizer/sleeping_hall.html', data=data, ts=ts, teams=teams, total=total)
+    return render_template('organizer/sleeping_hall.html', teams=teams, super_volunteers=super_volunteers, total=total)
 
 
 @bp.route('/diet_allergies', methods=['GET'])
@@ -459,7 +459,38 @@ def sleeping_hall():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def diet_allergies():
-    return render_template('organizer/diet_allergies.html')
+    dancers = Contestant.query.join(ContestantInfo, StatusInfo).filter(StatusInfo.status == CONFIRMED,
+                                                                       ContestantInfo.diet_allergies != "").all()
+    dancers = [d for d in dancers if d.contestant_info[0].diet_allergies.strip() != ""
+               and d.contestant_info[0].diet_allergies != "-"]
+    people = [{'name': d.get_full_name(), 'diet': d.contestant_info[0].diet_allergies} for d in dancers]
+    super_volunteers = SuperVolunteer.query.filter(SuperVolunteer.diet_allergies != "").all()
+    super_volunteers = [sv for sv in super_volunteers if sv.diet_allergies.strip() != "" and sv.diet_allergies != "-"]
+    people.extend([{'name': sv.get_full_name(), 'diet': sv.diet_allergies} for sv in super_volunteers])
+    people.sort(key=lambda x: x['name'])
+    all_confirmed_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == CONFIRMED).all()
+    all_super_volunteers = SuperVolunteer.query.all()
+    total = len(all_confirmed_dancers) + len(all_super_volunteers)
+    no_special_diet = total - len(people)
+    form = request.args
+    if 'download_file' in form:
+        fn = f'diet_allergies_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
+        output = BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        f = wb.add_format({'text_wrap': True, 'bold': True})
+        ws = wb.add_worksheet()
+        ws.write(0, 0, 'Who?', f)
+        ws.write(0, 1, 'Diet/Allergies (Total: {total})'.format(total=len(people)), f)
+        for p in range(0, len(people)):
+            ws.write(p + 1, 0, people[p]['name'])
+            ws.write(p + 1, 1, people[p]['diet'])
+        ws.set_column(0, 0, 30)
+        ws.set_column(1, 1, 80)
+        ws.freeze_panes(1, 0)
+        wb.close()
+        output.seek(0)
+        return send_file(output, as_attachment=True, attachment_filename=fn)
+    return render_template('organizer/diet_allergies.html', people=people, total=total, no_special_diet=no_special_diet)
 
 
 @bp.route('/adjudicators_overview', methods=['GET', 'POST'])

@@ -111,7 +111,7 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=false, url='organizer.diet_allergies', title='Diet/Allergies', text='Get a list of all allergies and dietary wishes of dancers and Super Volunteers. Work in progress. Coming in a future build.', image='food.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.diet_allergies', title='Diet/Allergies', text='Get a list of all allergies and dietary wishes of dancers and Super Volunteers. Work in progress. Coming in a future build.', image='food.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -161,12 +161,16 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% if g.sc.salsa_competition is sameas true %}
     {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_salsa', title='Salsa Blind Date Couples', text='Create new blind date couples for Salsa.', image='salsa.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% endif %}
+    {% if g.sc.polka_competition is sameas true %}
     {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_polka', title='Polka Blind Date Couples', text='Create new blind date couples for Latin.', image='polka.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% endif %}
 </div>
 {% endif %}
 

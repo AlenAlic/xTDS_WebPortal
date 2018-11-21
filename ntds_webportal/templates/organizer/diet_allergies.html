@@ -2,33 +2,33 @@
 {% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
+<h2>Total number of people <span style="font-size:x-large" class="badge">{{ total }}</span></h2>
+<h2>People without special dietary requirements and/or allergies <span style="font-size:x-large" class="badge">{{ no_special_diet }}</span></h2>
 
-{% if ts.main_raffle_result_visible is sameas true %}
-<!--<h2>Dancers staying in the sleeping hall <span style="font-size:x-large" class="badge">{% if total > 0 %}{{ total }}{% else %}0{% endif %}</span></h2>-->
-<!--<form method="GET" enctype="multipart/form-data" novalidate>-->
-    <!--<input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list">-->
-<!--</form>-->
-<!--<div style="height:10px;"></div>-->
-<!--<table class="table table-list">-->
-    <!--<thead>-->
-        <!--<tr>-->
-            <!--<th><b>Team</b></th>-->
-            <!--<th><b>Dancers in sleeping hall</b></th>-->
-        <!--</tr>-->
-    <!--</thead>-->
-    <!--<tbody>-->
-        <!--{% for team in teams %}-->
-            <!--<tr>-->
-                <!--<td>{{ team['city'] }}</td>-->
-                <!--<td>{{ team['number_of_dancers'] }}</td>-->
-            <!--</tr>-->
-        <!--{% endfor %}-->
-    <!--</tbody>-->
-<!--</table>-->
-
+{% if people|length == 0 %}
+<h2>There are no people with dietary requirements and/or allergies</h2>
 {% else %}
-<h2>The raffle has not taken place yet.</h2>
+<h2>People with dietary requirements and/or allergies <span style="font-size:x-large" class="badge">{{ people|length }}</span></h2>
+<form method="GET" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list">
+</form>
+<div style="height:10px;"></div>
+<table class="table table-list">
+    <thead>
+        <tr>
+            <th>Who?</th>
+            <th>Diet/Allergies</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in people %}
+        <tr>
+            <td>{{ p['name'] }}</td>
+            <td>{{ p['diet'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endif %}
-
 {% endblock %}
 
