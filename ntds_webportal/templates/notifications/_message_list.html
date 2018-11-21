@@ -11,7 +11,7 @@
                 </div>
             </div>
         </div>
-        <div id="collapse-{{notification.notification_id}}" class="panel-collapse collapse {% if opened %}in{% endif %}" role="tabpanel" aria-labelledby="heading-{{notification.notification_id}}">
+        <div id="collapse-{{notification.notification_id}}" class="panel-collapse collapse {% if opened and notification.unread %}in{% endif %}" role="tabpanel" aria-labelledby="heading-{{notification.notification_id}}">
             <div class="panel-body notification-text">{{notification.text}}</div>
             <div class=panel-footer>
                 {% if notification.unread %}

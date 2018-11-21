@@ -40,6 +40,8 @@ def create():
         if notification_id is not None:
             n = Notification.query.filter(Notification.notification_id == notification_id).first()
             if n is not None:
+                n.unread = False
+                db.session.commit()
                 form.body.data = "\r\n\r\n\r\n====== Original Message ======\r\n\r\n" + n.text
                 form.title.data = 'Re: ' + n.title
     if form.validate_on_submit():
