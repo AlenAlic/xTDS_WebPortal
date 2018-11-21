@@ -12,6 +12,7 @@ from ntds_webportal.organizer.email import send_registration_open_email, send_gd
 from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
 from ntds_webportal.auth.email import send_team_captain_activation_email
 from ntds_webportal.helper_classes import TeamFinancialOverview
+from ntds_webportal.teamcaptains.forms import EditContestantForm
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 from sqlalchemy import or_, case
@@ -192,15 +193,14 @@ def registration_management():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(REGISTRATION_STARTED)
 def registration_overview():
-    # WISH - Add filter bars
-    # WISH - Make clicking dancer redirect to page (in new window) with dancer information
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .order_by(ContestantInfo.team_id,
                   case({CONFIRMED: 0, SELECTED: 1, REGISTERED: 2, CANCELLED: 3}, value=StatusInfo.status),
-                  ContestantInfo.number).all()
+                  Contestant.first_name).all()
     all_teams = db.session.query(Team).all()
     dancers = [{'country': team.country, 'name': team.name, 'id': team.name.replace(' ', '-').replace('`', ''),
-                'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team).all()}
+                'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team)
+                .order_by(Contestant.first_name).all()}
                for team in all_teams]
     # dancers = [d for d in dancers if len(d['dancers']) > 0]
     dutch_dancers = [team for team in dancers if team['country'] == NETHERLANDS]
@@ -209,6 +209,17 @@ def registration_overview():
                      team['country'] != GERMANY]
     return render_template('organizer/registration_overview.html', data=data, all_dancers=all_dancers,
                            dutch_dancers=dutch_dancers, german_dancers=german_dancers, other_dancers=other_dancers)
+
+
+@bp.route('/view_dancer/<int:number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def view_dancer(number):
+    dancer = Contestant.query.filter(Contestant.contestant_id == number).first()
+    form = EditContestantForm()
+    form.organizer_populate(dancer)
+    return render_template('organizer/view_dancer.html', dancer=dancer, form=form,
+                           timestamp=datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp())
 
 
 @bp.route('/name_change_list', methods=['GET'])
@@ -498,8 +509,7 @@ def diet_allergies():
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[ADJUDICATOR_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def adjudicators_overview():
-    # PRIORITY - Add text to web page
-    # PRIORITY - Remove Salsa and Polka when not needed
+    # PRIORITY - Add Super Volunteers
     # LONG TERM - Completely new system - Print login sheets - schedule available on personal page - assignment system
     ts = TournamentState.query.first()
     ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo)\

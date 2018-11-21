@@ -191,10 +191,6 @@ def submit_updated_dancing_info(form, contestant):
     ballroom_parner, latin_partner = di_ballroom.partner, di_latin.partner
     update_dancing_info(form, di_ballroom, di_latin)
     db.session.commit()
-    print(ballroom_parner)
-    print(di_ballroom.partner)
-    print(latin_partner)
-    print(di_latin.partner)
     if di_ballroom.partner != ballroom_parner:
         send_lost_partner_notification(di_ballroom.contestant_id, BALLROOM, partner_id=ballroom_parner)
     if di_latin.partner != latin_partner:

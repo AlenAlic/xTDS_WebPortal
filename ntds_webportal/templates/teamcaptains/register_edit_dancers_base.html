@@ -27,7 +27,7 @@ function onStart() {
 }
 function dummy() {}
 
-{% if current_user.is_dancer() is sameas true %}
+{% if current_user.is_dancer() is sameas true or current_user.is_organizer() is sameas true %}
 function dancingLevel(level, role, partner, bd, jury) {}
 function dancingRole(level, role, bd, partner) {}
 function dancingBD(level, role, partner, bd) {}

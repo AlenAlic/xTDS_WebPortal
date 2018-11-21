@@ -156,8 +156,11 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
         self.ballroom_level.choices = participating_levels_choices(base_choices=True)
         self.latin_level.choices = participating_levels_choices(base_choices=True)
         self.student.choices = payment_categories_choices()
-        self.team.query = Team.query.filter(Team.team_id == current_user.team.team_id)
-        self.team.data = self.team.query.first()
+        if current_user.is_organizer():
+            self.team.query = Team.query
+        else:
+            self.team.query = Team.query.filter(Team.team_id == current_user.team.team_id)
+            self.team.data = self.team.query.first()
         new_id = db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar()
         if new_id is None:
             new_id = 1
@@ -321,33 +324,34 @@ class EditContestantForm(BaseContestantForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Save changes')
 
-    def __init__(self, dancer, **kwargs):
+    def __init__(self, dancer=None, **kwargs):
         super().__init__(**kwargs)
-        ballroom_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-            .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
-                    DancingInfo.competition == BALLROOM,
-                    or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                        DancingInfo.level == BEGINNERS))
-        if dancer.competition(BALLROOM).partner is not None:
-            ballroom_query.filter(or_(and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)),
-                                      DancingInfo.partner == dancer.contestant_id)).order_by(Contestant.first_name)
-        else:
-            ballroom_query.filter(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None))\
-                .order_by(Contestant.first_name)
-        self.ballroom_partner.query = ballroom_query
+        if dancer is not None:
+            ballroom_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
+                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
+                        DancingInfo.competition == BALLROOM,
+                        or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                            DancingInfo.level == BEGINNERS))
+            if dancer.competition(BALLROOM).partner is not None:
+                ballroom_query.filter(or_(and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)),
+                                          DancingInfo.partner == dancer.contestant_id)).order_by(Contestant.first_name)
+            else:
+                ballroom_query.filter(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None))\
+                    .order_by(Contestant.first_name)
+            self.ballroom_partner.query = ballroom_query
 
-        latin_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-            .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
-                    DancingInfo.competition == LATIN,
-                    or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
-                        DancingInfo.level == BEGINNERS))
-        if dancer.competition(BALLROOM).partner is not None:
-            latin_query.filter(or_(and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)),
-                                   DancingInfo.partner == dancer.contestant_id)).order_by(Contestant.first_name)
-        else:
-            latin_query.filter(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)) \
-                .order_by(Contestant.first_name)
-        self.latin_partner.query = latin_query
+            latin_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
+                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
+                        DancingInfo.competition == LATIN,
+                        or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                            DancingInfo.level == BEGINNERS))
+            if dancer.competition(BALLROOM).partner is not None:
+                latin_query.filter(or_(and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)),
+                                       DancingInfo.partner == dancer.contestant_id)).order_by(Contestant.first_name)
+            else:
+                latin_query.filter(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)) \
+                    .order_by(Contestant.first_name)
+            self.latin_partner.query = latin_query
 
     def custom_validate(self, dancer):
         if dancer.status_info[0].status == SELECTED or dancer.status_info[0].status == CONFIRMED:
@@ -366,6 +370,14 @@ class EditContestantForm(BaseContestantForm):
     
     def populate(self, dancer):
         super().populate(dancer)
+        self.full_name.data = dancer.get_full_name()
+        self.email.data = dancer.email
+
+    def organizer_populate(self, dancer):
+        self.ballroom_partner.query = Contestant.query
+        self.latin_partner.query = Contestant.query
+        self.team.data = dancer.contestant_info[0].team
+        self.populate(dancer)
         self.full_name.data = dancer.get_full_name()
         self.email.data = dancer.email
 

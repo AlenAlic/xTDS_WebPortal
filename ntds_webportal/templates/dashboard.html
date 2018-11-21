@@ -127,13 +127,13 @@ onload="onStart()"
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
-<h2>Adjudication</h2>
+<h2>Adjudication system</h2>
 <div class="row" style="visibility:hidden">
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
-<h2>BAD</h2>
+<h2>BAD exports</h2>
 <div class="row" style="visibility:hidden">
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Download files to setup BAD. (In essence done, but might be changed a bit due to input from Marek)', image='BAD.png' %}
         {% include '_dashboard_page.html' %}
@@ -147,9 +147,9 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_cia', title='Check-In Assistant', text='Switch to the Check-In Assistant account. This will log you out of the Organizer account.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    <!--{% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_ada', title='Adjudicator Assistant', text='Switch to the Adjudicator Assistant account. This will log you out of the Organizer account.', image='adjudicators.png' %}-->
-        <!--{% include '_dashboard_page.html' %}-->
-    <!--{% endwith %}-->
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_ada', title='Adjudicator Assistant', text='Switch to the Adjudicator Assistant account. This will log you out of the Organizer account.', image='adjudicators.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
 </div>
 {% endif %}
 
@@ -180,6 +180,14 @@ onload="onStart()"
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+{% endif %}
+
+{% if current_user.is_ada() %}
+<div class="row" style="visibility:hidden">
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>

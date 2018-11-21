@@ -288,7 +288,6 @@ def system_configuration():
 @login_required
 @requires_access_level([ACCESS[ADMIN]])
 def switch_user():
-    # WISH - Select2 for Users
     form = SwitchUserForm()
     form.user.label.text = 'Switch to a non-Dutch team captain'
     form.submit.label.text = 'Switch to team captain'

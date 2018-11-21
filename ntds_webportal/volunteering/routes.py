@@ -69,7 +69,6 @@ def super_volunteer_data():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(REGISTRATION_OPEN)
 def volunteers():
-    # WISH - Do not display tables when empty
     dancers = Contestant.query.join(StatusInfo, ContestantInfo).filter(StatusInfo.status == CONFIRMED)\
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
     dancers = [d for d in dancers if d.volunteer_info[0].volunteering()]
