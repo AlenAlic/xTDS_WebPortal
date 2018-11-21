@@ -195,32 +195,12 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
     t_shirt = SelectField('T-shirt', validators=[DataRequired()], choices=[(k, v) for k, v in SHIRTS.items()])
     mug = SelectField('T-shirt', validators=[IsBoolean()], choices=[(k, v) for k, v in MUG_CHOICES.items()])
     bag = SelectField('T-shirt', validators=[IsBoolean()], choices=[(k, v) for k, v in BAG_CHOICES.items()])
-    
-    def custom_validate(self):
-        # WISH - Figure out way to call custom_validate() of both DancingInfoForm and VolunteerForm
-        if self.ballroom_level.data == BEGINNERS:
-            self.ballroom_blind_date.data = str(False)
-        if self.ballroom_level.data == CLOSED or self.ballroom_level.data == OPEN_CLASS:
-            self.ballroom_blind_date.data = str(True)
-        if self.latin_level.data == BEGINNERS:
-            self.latin_blind_date.data = str(False)
-        if self.latin_level.data == CLOSED or self.latin_level.data == OPEN_CLASS:
-            self.latin_blind_date.data = str(True)
-        if self.ballroom_level.data == NO:
-            self.ballroom_role.data = NO
-            self.ballroom_blind_date.data = str(False)
-            self.ballroom_partner.data = None
-        if self.latin_level.data == NO:
-            self.latin_role.data = NO
-            self.latin_blind_date.data = str(False)
-            self.latin_partner.data = None
 
-        if self.jury_ballroom.data == NO:
-            self.license_jury_ballroom.data = NO
-            self.level_jury_ballroom.data = BELOW_D
-        if self.jury_latin.data == NO:
-            self.license_jury_latin.data = NO
-            self.level_jury_latin.data = BELOW_D
+    def custom_validate(self):
+        # noinspection PyCallByClass
+        DancingInfoForm.custom_validate(self)
+        # noinspection PyCallByClass
+        VolunteerForm.custom_validate(self)
 
         if self.ballroom_level.data == BEGINNERS or self.latin_level.data == BEGINNERS:
             self.first_time.data = str(True)
