@@ -86,11 +86,12 @@ class RaffleSystem(Balance):
     def number_of_newly_selected_dancers(self):
         return len(self.newly_selected_dancers())
 
-    def available_combinations(self, partners=False):
+    def available_combinations(self, partners=False, source=REGISTERED):
+        source_list = self.dancer_lists[source]
         if not partners:
-            combination_dancers = [d for d in self.registered_dancers if has_partners(d) is False]
+            combination_dancers = [d for d in source_list if has_partners(d) is False]
         else:
-            combination_dancers = [d for d in self.registered_dancers]
+            combination_dancers = [d for d in source_list]
         available_combinations_list = [get_combinations(d) for d in combination_dancers]
         sorted_list = sort_combinations(available_combinations_list)
         available_combinations = {comb: 0 for comb in sorted_list}
@@ -286,8 +287,10 @@ class RaffleSystem(Balance):
     def specific_groups(self, dancers_source, team=None):
         if dancers_source == BEGINNERS:
             dancers = self.beginners()
-        else:
+        elif dancers_source == LIONS:
             dancers = self.lions()
+        else:
+            dancers = self.first_time_dancers()
         if team is not None:
             dancers = [d for d in dancers if d.contestant_info[0].team == team]
         groups = []
@@ -352,9 +355,6 @@ class RaffleSystem(Balance):
         if self.config.lions_guaranteed_per_team:
             self.select_guaranteed_dancers_per_team(LIONS)
 
-        # Increased chance for certain groups
-        # LONG TERM - Give increased chance to certain groups (eg. first timers)
-
         # Main raffle
         self.raffle_groups()
 
@@ -415,7 +415,13 @@ class RaffleSystem(Balance):
                     self.add_groups(groups, guaranteed=True)
 
     def raffle_groups(self, guaranteed=False, save_extra_buffer=False):
-        original_groups = [grp for grp in self.registered_groups]
+        # LONG TERM - Give increased chance to certain groups (eg. first timers) TEST THIS CODE BELOW
+        increased_chance_groups = []
+        # if self.config.beginners_increased_chance:
+        #     increased_chance_groups += self.specific_groups(BEGINNERS)
+        # if self.config.first_time_increased_chance:
+        #     increased_chance_groups += self.specific_groups(FIRST_TIME)
+        original_groups = [grp for grp in self.registered_groups] + increased_chance_groups
         r = list(range(0, len(self.registered_groups)))
         shuffle(r)
         for i in r:

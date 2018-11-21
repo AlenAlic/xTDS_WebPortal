@@ -55,6 +55,19 @@
                 {% endwith %}
             </div>
         </div>
+
+        {% if raffle_sys.selected_dancers|length > 0 %}
+        {% with source=g.data.SELECTED, panel_title='Breakdown of selected dancers' %}
+        {% include 'raffle/_raffle_available_combinations_panel.html' %}
+        {% endwith %}
+        {% endif %}
+
+        {% if raffle_sys.confirmed_dancers|length > 0 %}
+        {% with source=g.data.CONFIRMED, panel_title='Breakdown of confirmed dancers' %}
+        {% include 'raffle/_raffle_available_combinations_panel.html' %}
+        {% endwith %}
+        {% endif %}
+
         {% include 'raffle/_controls.html' %}
 	</div>
 

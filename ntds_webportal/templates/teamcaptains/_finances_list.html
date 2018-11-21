@@ -44,7 +44,7 @@
     </thead>
     <tbody>
     {% for dancer in dancers %}
-        <tr id="{{ dancer.contestant_id }}" class="checkbox-row {% if dancer.payment_info[0].all_paid() == true %}success{% elif dancer.payment_info[0].partially_paid() %}warning{% endif %}">
+        <tr id="{{ dancer.contestant_id }}" class="{% if current_user.is_tc() %}checkbox-row{% endif %} {% if dancer.payment_info[0].all_paid() == true %}success{% elif dancer.payment_info[0].partially_paid() %}warning{% endif %}">
             <td>
                {{ dancer.get_full_name() }}
             </td>

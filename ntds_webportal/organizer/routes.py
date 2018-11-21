@@ -290,7 +290,6 @@ def edit_dancing_info(number):
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def finances_overview():
     # WISH - Discuss with "Penny" for what to add - downloads for total page and summary pages
-    # WISH - Remove clickable pointer from team lists
     all_teams = db.session.query(Team)
     if g.sc.tournament == NTDS:
         all_teams = all_teams.filter(Team.country == NETHERLANDS).all()

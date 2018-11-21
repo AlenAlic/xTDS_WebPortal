@@ -45,7 +45,7 @@ function disableCheckboxes(checkboxes, disable) {
         }
     }
 }
-function filterLevels(clicked_checkbox) {
+function filterLevels(clicked_checkbox, scroll=true) {
     var rows = document.getElementsByClassName("checkbox-filter");
     var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox")
     var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox")
@@ -95,8 +95,7 @@ function filterLevels(clicked_checkbox) {
             rows[i].style.display = 'table-row';
         }
     }
-
-    window.scrollTo(0,document.body.scrollHeight);
+    if (scroll) {window.scrollTo(0,document.body.scrollHeight);}
 }
 </script>
 <script>

@@ -126,6 +126,7 @@ DEFAULT_PHD_STUDENT_PRICE = 5500
 STUDENT_TEXT = {STUDENT: 'Student', NON_STUDENT: NO, PHD_STUDENT: 'PhD-student'}
 BAG = 'bag'
 MUG = 'mug'
+FIRST_TIME = 'first_time'
 
 # Categories
 COMPETITION = 'competition'

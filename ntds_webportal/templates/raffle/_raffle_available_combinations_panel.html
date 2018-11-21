@@ -1,0 +1,10 @@
+<div class="panel panel-default">
+    <div class="panel-heading" role="button" id="heading-available" data-toggle="collapse" href="#collapse-available" aria-expanded="true" aria-controls="collapse-available">
+        <b class="panel-title">{{panel_title}}</b>
+    </div>
+    <div id="collapse-available" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-available">
+        {% with source=source %}
+        {% include 'raffle/_available_combinations_view.html' %}
+        {% endwith %}
+    </div>
+</div>

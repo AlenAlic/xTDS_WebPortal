@@ -15,7 +15,6 @@ import time
 @login_required
 @requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER]])
 def configuration():
-    # WISH - Make form dependant on System configuration settings (eg. no Beginners) - (fix JS for Beginners)
     form = RaffleConfigurationForm()
     if request.method == 'GET':
         form.populate()
@@ -52,8 +51,6 @@ def system():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(REGISTRATION_STARTED)
 def start():
-    # WISH - Non-interactive table overview of available combinations (like on next pages)
-    # WISH - Make stats (eg. first time dancers) only show up when relevant
     if g.ts.main_raffle_taken_place:
         return redirect(url_for('raffle.completed'))
     raffle_sys = RaffleSystem()
@@ -239,7 +236,7 @@ def test_start():
             raffle_sys.test = True
             raffle_sys.raffle()
         if 'start_batch_raffle' in form:
-            runs = 1000
+            runs = 100
             raffle_sys.batch = True
             start_time = time.time()
             for i in range(0, runs):
