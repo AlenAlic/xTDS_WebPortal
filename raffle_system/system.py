@@ -415,14 +415,13 @@ class RaffleSystem(Balance):
                     self.add_groups(groups, guaranteed=True)
 
     def raffle_groups(self, guaranteed=False, save_extra_buffer=False):
-        # LONG TERM - Give increased chance to certain groups (eg. first timers) TEST THIS CODE BELOW
         increased_chance_groups = []
-        # if self.config.beginners_increased_chance:
-        #     increased_chance_groups += self.specific_groups(BEGINNERS)
-        # if self.config.first_time_increased_chance:
-        #     increased_chance_groups += self.specific_groups(FIRST_TIME)
+        if self.config.beginners_increased_chance:
+            increased_chance_groups += self.specific_groups(BEGINNERS)
+        if self.config.first_time_increased_chance:
+            increased_chance_groups += self.specific_groups(FIRST_TIME)
         original_groups = [grp for grp in self.registered_groups] + increased_chance_groups
-        r = list(range(0, len(self.registered_groups)))
+        r = list(range(0, len(original_groups)))
         shuffle(r)
         for i in r:
             if not self.raffle_complete() and not self.almost_full():
