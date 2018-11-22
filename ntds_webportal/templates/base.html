@@ -24,6 +24,7 @@ xTDS WebPortal
 
 {% block styles %}
 {{ super() }}
+{{ select2_form_css() }}
 <style>
     body { padding-top: 60px;}
     .navbar-default{background-color:#f8f8f8;}
@@ -157,8 +158,28 @@ xTDS WebPortal
 {% block scripts %}
 {{ super() }}
 {{ moment.include_moment() }}
-<script src="/static/loading.js"></script>
+{{ select2_form_js() }}
+<script type="text/javascript" src="{{url_for('static', filename='loading/loading.js')}}"></script>
 {% endblock %}
+
+
+{% macro select2_form_css() %}
+<link rel="stylesheet" href="{{url_for('static', filename='select2/select2.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='select2/select2-bootstrap3.css')}}">
+<style>.select2-results .select2-highlighted{color:#fff;background-color:#1e90ff}</style>
+{% endmacro %}
+
+{% macro select2_form_js() %}
+<script type="text/javascript" src="{{url_for('static', filename='select2/select2.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='select2/form.js')}}"></script>
+{% endmacro %}
+
+
+{% macro confirm_modal() %}
+<script src="{{bootstrap_find_resource('jquery.js', cdn='jquery')}}"></script>
+<script src="{{bootstrap_find_resource('js/bootstrap.js', cdn='bootstrap')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='confirm/jquery.confirm.min.js')}}"></script>
+{% endmacro %}
 
 
 {% macro t_shirt_icon() %}

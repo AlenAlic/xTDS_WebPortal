@@ -3,9 +3,7 @@
 
 {% block head %}
 {{ super() }}
-<script src="/static/js/jquery.min.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/jquery.confirm.min.js"></script>
+{{ confirm_modal() }}
 {% endblock %}
 
 {% block app_content %}

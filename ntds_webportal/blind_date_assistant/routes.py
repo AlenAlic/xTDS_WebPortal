@@ -113,9 +113,9 @@ def create_couple_salsa():
         salsa_dancers.append(couple.follow_id)
     dancers = [d for d in dancers if d.contestant_id not in salsa_dancers]
     form.lead.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                       .format(c.contestant_info[0].team, c.get_full_name())), dancers)
+                                       .format(c.get_full_name(), c.contestant_info[0].team)), dancers)
     form.follow.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                         .format(c.contestant_info[0].team, c.get_full_name())), dancers)
+                                         .format(c.get_full_name(), c.contestant_info[0].team)), dancers)
     salsa_couples = [{'id': c.couple_id,
                       LEAD: Contestant.query.filter(Contestant.contestant_id == c.lead_id).first().get_full_name(),
                       FOLLOW: Contestant.query.filter(Contestant.contestant_id == c.follow_id).first().get_full_name()}
@@ -168,9 +168,9 @@ def create_couple_polka():
         polka_dancers.append(couple.follow_id)
     dancers = [d for d in dancers if d.contestant_id not in polka_dancers]
     form.lead.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                       .format(c.contestant_info[0].team, c.get_full_name())), dancers)
+                                       .format(c.get_full_name(), c.contestant_info[0].team)), dancers)
     form.follow.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                         .format(c.contestant_info[0].team, c.get_full_name())), dancers)
+                                         .format(c.get_full_name(), c.contestant_info[0].team)), dancers)
     polka_couples = [{'id': c.couple_id,
                       LEAD: Contestant.query.filter(Contestant.contestant_id == c.lead_id).first().get_full_name(),
                       FOLLOW: Contestant.query.filter(Contestant.contestant_id == c.follow_id).first().get_full_name()}

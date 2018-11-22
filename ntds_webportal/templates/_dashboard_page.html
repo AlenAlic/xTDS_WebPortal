@@ -9,7 +9,7 @@
                     </div>
                 {% endif %}
             {% endif %}
-            <img src="{{url_for('static', filename=image)}}" class="img-rounded" width="128" height="128" style="margin-top: 8px;">
+            <img src="{{url_for('static', filename='dashboard_images/'+image)}}" class="img-rounded" width="128" height="128" style="margin-top: 8px;">
             <div class="caption text-center" >
                 <h3>{{ title }}</h3>
                 {% if text is defined %}

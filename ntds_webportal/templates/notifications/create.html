@@ -1,11 +1,5 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
-{% import "select2_lib.html" as select2 %}
-
-{% block styles %}
-{{ super() }}
-{{ select2.form_css() }}
-{% endblock %}
 
 {% block container_style -%}
 visibility:hidden
@@ -30,7 +24,6 @@ onload="onStart()"
 
 {% block scripts %}
 {{ super() }}
-{{ select2.form_js() }}
 <script>
 function onStart() {
     var container = document.getElementById('container-hidden').style.visibility = "visible";

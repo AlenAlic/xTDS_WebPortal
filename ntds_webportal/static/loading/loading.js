@@ -27,7 +27,7 @@ const showLoadingSpinner = (element) => {
 
     backdrop.appendChild(spinnerContainer)
 
-    spinner.src = '/static/spinner_couple01.svg'
+    spinner.src = '/static/loading/spinner_couple01.svg'
     spinner.width = 240
     spinner.height = spinner.width
 

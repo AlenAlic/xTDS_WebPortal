@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% import 'my_wtf.html' as wtf %}
-{% import "select2_lib.html" as select2 %}
 
 {% block body_attribs %}
 onload="onStart()"
@@ -9,11 +8,6 @@ onload="onStart()"
 {% block container_style -%}
 visibility:hidden
 {%- endblock %}
-
-{% block styles %}
-{{ super() }}
-{{ select2.form_css() }}
-{% endblock %}
 
 {% block app_content %}
 <h2>Partner request</h2>
@@ -31,7 +25,6 @@ visibility:hidden
 
 {% block scripts %}
 {{ super() }}
-{{ select2.form_js() }}
 <script>
 function onStart() {
     document.getElementById('competition').onchange();

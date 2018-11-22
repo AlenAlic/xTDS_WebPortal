@@ -13,6 +13,6 @@ class CreateCoupleForm(FlaskForm):
 
 
 class CreateCoupleExtraCompetitionForm(FlaskForm):
-    lead = SelectField('Lead', validators=[DataRequired()], coerce=int)
-    follow = SelectField('Follow', validators=[DataRequired()], coerce=int)
+    lead = SelectField('Lead', validators=[DataRequired()], coerce=int, render_kw={'data-role': 'select2'})
+    follow = SelectField('Follow', validators=[DataRequired()], coerce=int, render_kw={'data-role': 'select2'})
     submit = SubmitField('Create couple')

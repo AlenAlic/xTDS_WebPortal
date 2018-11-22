@@ -10,7 +10,7 @@
 <!--}-->
 @font-face {
     font-family: 'BDCartoonShoutRegular';
-    src: url({{url_for('static', filename='custom_js/Pacman_font.ttf')}}) format('truetype');
+    src: url({{url_for('static', filename='pacman/Pacman_font.ttf')}}) format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -109,8 +109,8 @@ body {
     <div style="height:30px"></div>
 </div>
 <div id="pacman"></div>
-<script src="{{url_for('static', filename='custom_js/pacman.js')}}"></script>
-<script src="{{url_for('static', filename='custom_js/modernizr-1.5.min.js')}}"></script>
+<script src="{{url_for('static', filename='pacman/pacman.js')}}"></script>
+<script src="{{url_for('static', filename='pacman/modernizr-1.5.min.js')}}"></script>
 {% endblock %}
 
 

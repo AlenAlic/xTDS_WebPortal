@@ -1,44 +1,12 @@
 {% extends "base.html" %}
 {% import 'my_wtf.html' as wtf %}
 
-{% block body_attribs %}
-{% endblock %}
-
-{% block styles %}
-{{ super() }}
- 	<link rel="stylesheet" href="/static/jquery.dropdown.min.css">
-{% endblock %}
-
 {% block app_content %}
 <h2>Create couple for Salsa</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    <div class="form-group {% if form.lead.errors|length > 0  %} has-error {% endif %} required">
-        <label class="control-label" for="{{form.lead.name}}">{{form.lead.label}}</label>
-        <div class="select">
-            <select style="display:none" name="{{form.lead.name}}">
-            {% for choice in form.lead.choices %}
-                <option value="{{choice[0]}}">{{choice[1]}}</option>
-            {% endfor %}
-            </select>
-        </div>
-        {%- for error in form.lead.errors %}
-        <p class="help-block">{{error}}</p>
-        {%- endfor %}
-    </div>
-        <div class="form-group {% if form.follow.errors|length > 0  %} has-error {% endif %} required">
-            <label class="control-label" for="{{form.follow.name}}">{{form.follow.label}}</label>
-        <div class="select ">
-            <select style="display:none" name="{{form.follow.name}}">
-            {% for choice in form.follow.choices %}
-                <option value="{{choice[0]}}">{{choice[1]}}</option>
-            {% endfor %}
-        </select>
-        </div>
-        {%- for error in form.follow.errors %}
-            <p class="help-block">{{error}}</p>
-        {%- endfor %}
-    </div>
+    {{ wtf.form_field(form.lead) }}
+    {{ wtf.form_field(form.follow) }}
     {{ wtf.form_field(form.submit) }}
     <a role="button" class="btn btn-default btn-loading" href="{{ url_for('teamcaptains.partner_request_list') }}">Cancel</a>
 </form>
@@ -76,12 +44,6 @@
 
 {% block scripts %}
 {{ super() }}
-<script src="/static/jquery.dropdown.js"></script>
-<script>
-    $('.select').dropdown({
-        // options here
-    });
-</script>
 <script>
 function myFunction() {
     // Declare variables

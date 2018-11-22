@@ -10,13 +10,18 @@ xTDS WebPortal
 
     <!-- Bootstrap -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<link rel="stylesheet" href="/static/select2/select2.css">
+<link rel="stylesheet" href="/static/select2/select2-bootstrap3.css">
+<style>.select2-results .select2-highlighted{color:#fff;background-color:#1e90ff}</style>
+
 <style>
     body { padding-top: 60px;}
     .navbar-default{background-color:#f8f8f8;}
     body { background-color:#ffffff;}
     
     @media (min-width:1440px){.container{width:1410px}}
+    @media (min-width:768px){.navbar-form .form-control {width:170px}}
     .pagebreak { page-break-before: always; }
     .print-friendly { page-break-inside:avoid; page-break-after:auto }
     tr    { page-break-inside:avoid; page-break-after:auto }
@@ -24,6 +29,35 @@ xTDS WebPortal
     thead { display:table-header-group }
     tfoot { display:table-footer-group }
     @media print {.no-print, .no-print * {display: none !important; } }
+    checkbox {cursor: pointer}
+    .decorative-checkbox {cursor: default !important}
+    .checkbox-row {cursor: pointer}
+    .thumbnail.info {background-color:#d9edf7; }
+    .container-hidden {visibility:hidden;}
+    .notification-text {white-space: pre-line;}
+</style>
+<style>
+.inaccessible {
+    display: block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.25);
+    z-index: -100;
+    cursor: not-allowed;
+}
+.opaque {
+    opacity: .5;
+}
+</style>
+<style>
+    .api-pending {background-color: #d9edf7 !important;}
+    .api-success {background-color: #dff0d8 !important;}
+    .api-warning {background-color: #fcf8e3 !important;}
+    .api-failed {background-color: #f2dede !important;}
 </style>
 
 <style>
@@ -32,7 +66,7 @@ xTDS WebPortal
 <!--}-->
 @font-face {
     font-family: 'BDCartoonShoutRegular';
-    src: url(/static/custom_js/Pacman_font.ttf) format('truetype');
+    src: url(/static/pacman/Pacman_font.ttf) format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -79,6 +113,7 @@ body {
 <meta name="msapplication-TileColor" content="#da532c">
 <meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
 <meta name="theme-color" content="#ffffff">
+<meta charset="UTF-8">
 
   </head>
   <body>
@@ -99,7 +134,7 @@ body {
 </nav>
 
     
-<div class="container" style="padding-bottom:20px">
+<div id="container-hidden" class="container" style="padding-bottom:20px; ">
     
     
         
@@ -115,8 +150,8 @@ body {
     <div style="height:30px"></div>
 </div>
 <div id="pacman"></div>
-<script src="/static/custom_js/pacman.js"></script>
-<script src="/static/custom_js/modernizr-1.5.min.js"></script>
+<script src="/static/pacman/pacman.js"></script>
+<script src="/static/pacman/modernizr-1.5.min.js"></script>
 
 
 </div>
@@ -151,25 +186,11 @@ $(document).ready(function() {
     flask_moment_render_all();
 });
 </script>
-<script src="/static/loading.js"></script>
-<script>
-$(document).ready(function() {
-    $('.table-clickable-checkbox tr').click(function(event) {
-        if (event.target.type !== 'checkbox') {
-            $(':checkbox', this).trigger('click');
-        }
-    });
-});
-$(document).ready(function($) {
-    $(".checkbox-row").css("cursor", "pointer")
-    $(".checkbox").css("cursor", "pointer")
-});
-$(document).ready(function($) {
-    $(".checkbox").change(function() {
-        $(this).parents("tr:first").toggleClass('success ');
-    });
-});
-</script>
+
+<script type="text/javascript" src="/static/select2/select2.min.js"></script>
+<script type="text/javascript" src="/static/select2/form.js"></script>
+
+<script type="text/javascript" src="/static/loading/loading.js"></script>
 
 <script>
 var el = document.getElementById("pacman");
