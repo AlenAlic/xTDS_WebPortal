@@ -479,3 +479,10 @@ class EditDancingInfoForm(DancingInfoForm):
             self.ballroom_partner.data = None
         if self.latin_blind_date.data == str(True):
             self.latin_partner.data = None
+
+
+class ResendCredentialsForm(FlaskForm):
+    email = StringField('E-mail', validators=[Email()])
+
+    def populate(self, dancer):
+        self.email.data = dancer.email

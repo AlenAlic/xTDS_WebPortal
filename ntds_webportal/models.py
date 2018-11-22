@@ -79,9 +79,9 @@ class User(UserMixin, db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
     team = db.relationship('Team')
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
-    dancer = db.relationship('Contestant')
+    dancer = db.relationship('Contestant', backref=db.backref("user", uselist=False))
     volunteer_id = db.Column(db.Integer, db.ForeignKey('super_volunteer.volunteer_id'))
-    super_volunteer = db.relationship('SuperVolunteer')
+    super_volunteer = db.relationship('SuperVolunteer', backref=db.backref("user", uselist=False))
 
     def __repr__(self):
         return '{}'.format(self.username)

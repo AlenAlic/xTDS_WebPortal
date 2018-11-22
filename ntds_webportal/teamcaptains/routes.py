@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
 from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm, \
-    PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm, CreateCoupleForm
+    PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm, CreateCoupleForm, ResendCredentialsForm
 from ntds_webportal.teamcaptains.email import send_dancer_user_account_email
 from ntds_webportal.models import User, requires_access_level, Contestant, ContestantInfo, DancingInfo, \
     StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification, AdditionalInfo, Team, \
@@ -137,6 +137,37 @@ def register_dancer(number):
         db.session.commit()
         flash('{} has been re-registered successfully.'.format(changed_dancer.get_full_name()), 'alert-success')
     return redirect(url_for('teamcaptains.edit_dancers', wide=int(request.values['wide'])))
+
+
+@bp.route('/resend_login_dancer/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[TEAM_CAPTAIN]])
+@requires_tournament_state(REGISTRATION_STARTED)
+def resend_login_dancer(number):
+    changed_dancer = db.session.query(Contestant).join(ContestantInfo) \
+        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number).first()
+    if changed_dancer.status_info[0].status != data.NO_GDPR:
+        flash('Cannot reset the login credentials of a dancer that has accepted the GDPR.', 'alert-warning')
+        return redirect(url_for('teamcaptains.edit_dancers'))
+    form = ResendCredentialsForm()
+    if request.method == GET:
+        form.populate(changed_dancer)
+    if form.validate_on_submit():
+        all_dancers = Contestant.query.filter(Contestant.contestant_id != changed_dancer.contestant_id).all()
+        if len ([d for d in all_dancers if d.email == form.email.data]) == 0:
+            changed_dancer.email = form.email.data
+            changed_dancer.user.email = form.email.data
+            changed_dancer.user.username = form.email.data
+            dancer_account_password = random_password()
+            changed_dancer.user.set_password(dancer_account_password)
+            db.session.commit()
+            send_dancer_user_account_email(changed_dancer.user, changed_dancer.get_full_name(), dancer_account_password)
+            flash(f'New login credentials have been sent '
+                  f'to {changed_dancer.get_full_name()} at {changed_dancer.email}.', 'alert-success')
+            return redirect(url_for('teamcaptains.edit_dancers'))
+        else:
+            flash(f'Someone is already registered with {form.email.data} as their e-mail address.')
+    return render_template('teamcaptains/resend_login_dancer.html', form=form, dancer=changed_dancer)
 
 
 @bp.route('/name_change_request/<contestant>', methods=['GET', 'POST'])

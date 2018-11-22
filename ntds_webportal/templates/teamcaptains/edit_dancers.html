@@ -56,17 +56,22 @@
                     {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
                 </td>
                 <td align="right">
-                    {% if dancer.status_info[0].status == data.REGISTERED  %}
+                    {% if dancer.status_info[0].status == g.data.NO_GDPR  %}
+                        <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-info"
+                           href="{{ url_for('teamcaptains.resend_login_dancer', number=dancer.contestant_id) }}">
+                            Send new login credentials</a>
+                    {% endif %}
+                    {% if dancer.status_info[0].status == g.data.REGISTERED  %}
                         <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-warning"
                            href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}">
                             Cancel registration</a>
                     {% endif %}
-                    {% if dancer.status_info[0].status == data.CANCELLED %}
+                    {% if dancer.status_info[0].status == g.data.CANCELLED %}
                         <a name="{{ dancer.contestant_id }}" role="button"  class="btn btn-info"
                            href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">
                             Re-register</a>
                     {% endif %}
-                    {% if dancer.status_info[0].status == data.SELECTED %}
+                    {% if dancer.status_info[0].status == g.data.SELECTED %}
                         <button class="btn btn-danger confirm-cancellation"
                                 data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
                                 data-title="WARNING!"
@@ -76,7 +81,7 @@
                                 data-confirm="cancelSelected('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')"
                                 data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
                     {% endif %}
-                    {% if dancer.status_info[0].status == data.CONFIRMED %}
+                    {% if dancer.status_info[0].status == g.data.CONFIRMED %}
                         <button class="btn btn-danger confirm-cancellation"
                                 data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
                                 data-title="WARNING!"
