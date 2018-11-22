@@ -133,7 +133,7 @@
     {% if mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR and current_user.is_dancer() %}
         {% include 'privacy/checkbox.html' %}
     {% endif %}
-    {% if (mode == 'view' and current_user.is_dancer() is sameas true and dancer.status_info[0].status == g.data.NO_GDPR) or mode != 'view' and current_user.is_organizer is sameas false %}
+    {% if (mode == 'view' and current_user.is_dancer() is sameas true and dancer.status_info[0].status == g.data.NO_GDPR) or mode != 'view' and current_user.is_organizer() is sameas false %}
     <div class="form-group required">
         <label class="control-label col-xs-2" ></label>
         <div class="col-xs-10">
