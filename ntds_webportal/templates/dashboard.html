@@ -182,6 +182,9 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='check_in_assistant.tournament_check_in_test', title='TEST check-in', text='Testing React', image='checked_in.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
 </div>
 {% endif %}
 

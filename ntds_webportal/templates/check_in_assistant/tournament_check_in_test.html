@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% import 'my_wtf.html' as my_wtf %}
+
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block app_content %}
+<h2>Check in dancers</h2>
+<button id="collapse-all" type="button" class="btn btn-default" onclick="collapseAll()">Collapse all</button>
+<div style="height:100px;"></div>
+<div id="like_button_container"></div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ react() }}
+<script>
+    const e = React.createElement;
+
+    class LikeButton extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = { liked: false };
+        }
+
+        render() {
+        if (this.state.liked) {
+            return 'You liked this.';
+        }
+
+        return e(
+            'button',
+            { onClick: () => this.setState({ liked: true }) },
+            'Like'
+        );
+        }
+    }
+
+    const domContainer = document.querySelector('#like_button_container');
+    ReactDOM.render(e(LikeButton), domContainer);
+</script>
+<script>
+function collapseAll() {
+    $('#accordion .panel-collapse').collapse('hide');
+}
+</script>
+{% endblock %}

@@ -80,3 +80,12 @@ def dancer_paid(number):
     flash('Payment status of {name} from team {team} changed successfully.'
           .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team))
     return redirect(url_for('organizer.tournament_check_in'))
+
+
+@bp.route('/tournament_check_in_test', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[CHECK_IN_ASSISTANT]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def tournament_check_in_test():
+
+    return render_template('check_in_assistant/tournament_check_in_test.html')

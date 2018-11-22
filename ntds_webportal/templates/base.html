@@ -163,6 +163,12 @@ xTDS WebPortal
 {% endblock %}
 
 
+{% macro react() %}
+<script src="{{url_for('static', filename='node_modules/react/umd/react.production.min.js')}}"></script>
+<script src="{{url_for('static', filename='node_modules/react-dom/umd/react-dom.production.min.js')}}"></script>
+{% endmacro %}
+
+
 {% macro select2_form_css() %}
 <link rel="stylesheet" href="{{url_for('static', filename='select2/select2.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='select2/select2-bootstrap3.css')}}">
