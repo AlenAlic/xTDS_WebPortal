@@ -10,167 +10,186 @@
 
 {% if wide == 0 %}
 <a href="{{ url_for('teamcaptains.edit_dancers', wide=1) }}" class="btn btn-default">Wide view</a>
-<table class="table table-striped table-responsive">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>E-mail</th>
-            <th>Status</th>
-            <th>Student</th>
-            {% if g.sc.ask_first_time %}
-            <th>First time</th>
-            {% endif %}
-            <th>Ballroom</th>
-            <th>Latin</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for dancer in dancers %}
-            <tr class="{% if dancer.status_info[0].status != g.data.CANCELLED and dancer.status_info[0].feedback_about_information is not none %}warning{% endif %}">
-                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ dancer.contestant_info[0].number }}
-                </td>
-                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ dancer.get_full_name() }}
-                </td>
-                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ dancer.email }}
-                </td>
-                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ g.data.STATUS[dancer.status_info[0].status] }}
-                </td>
-                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ g.data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
-                </td>
-                {% if g.sc.ask_first_time %}
-                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ g.data.TF[dancer.contestant_info[0].first_time] }}
-                </td>
-                {% endif %}
-                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
-                </td>
-                <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
-                </td>
-                <td align="right">
-                    {% if dancer.status_info[0].status == g.data.NO_GDPR  %}
-                        <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-info"
-                           href="{{ url_for('teamcaptains.resend_login_dancer', number=dancer.contestant_id) }}">
-                            Send new login credentials</a>
-                    {% endif %}
-                    {% if dancer.status_info[0].status == g.data.REGISTERED  %}
-                        <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-warning"
-                           href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}">
-                            Cancel registration</a>
-                    {% endif %}
-                    {% if dancer.status_info[0].status == g.data.CANCELLED %}
-                        <a name="{{ dancer.contestant_id }}" role="button"  class="btn btn-info"
-                           href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">
-                            Re-register</a>
-                    {% endif %}
-                    {% if dancer.status_info[0].status == g.data.SELECTED %}
-                        <button class="btn btn-danger confirm-cancellation"
-                                data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
-                                data-title="WARNING!"
-                                data-text="Cancelling the registration will remove {{ dancer.get_full_name() }} completely from the tournament.<br><br>
-                                Are you sure you want to cancel the registration of {{ dancer.first_name }}?"
-                                data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}"
-                                data-confirm="cancelSelected('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')"
-                                data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
-                    {% endif %}
-                    {% if dancer.status_info[0].status == g.data.CONFIRMED %}
-                        <button class="btn btn-danger confirm-cancellation"
-                                data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
-                                data-title="WARNING!"
-                                data-text="{{ dancer.get_full_name() }} is obliged to pay the admission fee, even upon cancelling.<br><br>
-                                Cancelling the registration will remove {{ dancer.first_name }} completely from the tournament.<br><br>
-                                Are you sure you want to cancel the registration of {{ dancer.first_name }}?"
-                                data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}"
-                                data-confirm="cancelRegistration('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')"
-                                data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
+<table id="short-table" class="table table-striped table-responsive">
+<thead>
+<tr>
+    <th colspan="2" style="font-weight: normal;"><input class="form-control" type="text" id="short-table-filterNameInput" onkeyup="filter('short-table')" placeholder="Name..."></th>
+    <th colspan="1" style="font-weight: normal;"></th>
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="short-table-filterStatusInput" onkeyup="filter('short-table')" placeholder="Status..."></th>
+    <th colspan="1" style="font-weight: normal;"></th>
+    {% if g.sc.ask_first_time %}<th colspan="1" style="font-weight: normal;"></th>{% endif %}
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="short-table-filterBallroomInput" onkeyup="filter('short-table')" placeholder="Level..."></th>
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="short-table-filterLatinInput" onkeyup="filter('short-table')" placeholder="Level..."></th>
+    <th colspan="1" style="font-weight: normal;"></th>
+</tr>
+<tr>
+    <th>#</th>
+    <th>Name</th>
+    <th>E-mail</th>
+    <th>Status</th>
+    <th>Student</th>
+    {% if g.sc.ask_first_time %}<th>First time</th>{% endif %}
+    <th>Ballroom</th>
+    <th>Latin</th>
+    <th></th>
+</tr>
+</thead>
+<tbody>
+{% for dancer in dancers %}
+<tr class="{% if dancer.status_info[0].status != g.data.CANCELLED and dancer.status_info[0].feedback_about_information is not none %}warning{% endif %}">
+    <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+        {{ dancer.contestant_info[0].number }}
+    </td>
+    <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+        {{ dancer.get_full_name() }}
+    </td>
+    <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+        {{ dancer.email }}
+    </td>
+    <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+        {{ g.data.STATUS[dancer.status_info[0].status] }}
+    </td>
+    <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+        {{ g.data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
+    </td>
+    {% if g.sc.ask_first_time %}
+    <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+        {{ g.data.TF[dancer.contestant_info[0].first_time] }}
+    </td>
+    {% endif %}
+    <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+        {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
+    </td>
+    <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+        {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
+    </td>
+    <td align="right">
+        {% if dancer.status_info[0].status == g.data.NO_GDPR  %}
+            <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-info"
+               href="{{ url_for('teamcaptains.resend_login_dancer', number=dancer.contestant_id) }}">
+                Send new login credentials</a>
+        {% endif %}
+        {% if dancer.status_info[0].status == g.data.REGISTERED  %}
+            <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-warning"
+               href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}">
+                Cancel registration</a>
+        {% endif %}
+        {% if dancer.status_info[0].status == g.data.CANCELLED %}
+            <a name="{{ dancer.contestant_id }}" role="button"  class="btn btn-info"
+               href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">
+                Re-register</a>
+        {% endif %}
+        {% if dancer.status_info[0].status == g.data.SELECTED %}
+            <button class="btn btn-danger confirm-cancellation"
+                    data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
+                    data-title="WARNING!"
+                    data-text="Cancelling the registration will remove {{ dancer.get_full_name() }} completely from the tournament.<br><br>
+                    Are you sure you want to cancel the registration of {{ dancer.first_name }}?"
+                    data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}"
+                    data-confirm="cancelSelected('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')"
+                    data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
+        {% endif %}
+        {% if dancer.status_info[0].status == g.data.CONFIRMED %}
+            <button class="btn btn-danger confirm-cancellation"
+                    data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
+                    data-title="WARNING!"
+                    data-text="{{ dancer.get_full_name() }} is obliged to pay the admission fee, even upon cancelling.<br><br>
+                    Cancelling the registration will remove {{ dancer.first_name }} completely from the tournament.<br><br>
+                    Are you sure you want to cancel the registration of {{ dancer.first_name }}?"
+                    data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}"
+                    data-confirm="cancelRegistration('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')"
+                    data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
 </table>
 {% else %}
 <a href="{{ url_for('teamcaptains.edit_dancers', wide=0) }}" class="btn btn-default navbar-btn">Short view</a>
-<table class="table table-striped table-responsive">
-    <thead>
-        <tr>
-            {% if g.sc.ask_first_time %}
-            <th colspan="7">Personal</th>
-            {% else %}
-            <th colspan="6">Personal</th>
-            {% endif %}
-            {% if g.sc.breitensport_obliged_blind_date %}
-            <th colspan="4">Ballroom</th>
-            <th colspan="4">Latin</th>
-            {% else %}
-            <th colspan="3">Ballroom</th>
-            <th colspan="3">Latin</th>
-            {% endif %}
-            <th colspan="4">Volunteering</th>
-        </tr>
-        <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>E-mail</th>
-            <th>Status</th>
-            <th>Student</th>
-            {% if g.sc.ask_first_time %}
-            <th>First time</th>
-            {% endif %}
-            <th>Sleeping spot</th>
-            <th>Level</th>
-            <th>Role</th>
-            {% if g.sc.breitensport_obliged_blind_date %}
-            <th>Blind Date</th>
-            {% endif %}
-            <th>Partner</th>
-            <th>Level</th>
-            <th>Role</th>
-            {% if g.sc.breitensport_obliged_blind_date %}
-            <th>Blind Date</th>
-            {% endif %}
-            <th>Partner</th>
-            <th>Volunteer</th>
-            <th>First Aid</th>
-            <th>Jury Ballroom</th>
-            <th>Jury Latin</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for dancer in dancers %}
-            <tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-                <td>{{ dancer.contestant_info[0].number }}</td>
-                <td>{{ dancer.get_full_name() }}</td>
-                <td>{{ dancer.email }}</td>
-                <td>{{ g.data.STATUS[dancer.status_info[0].status] }}</td>
-                <td>{{ g.data.STUDENT_TEXT[dancer.contestant_info[0].student] }}</td>
-                {% if g.sc.ask_first_time %}
-                <td>{{ g.data.TF[dancer.contestant_info[0].first_time] }}</td>
-                {% endif %}
-                <td>{{ g.data.TF[dancer.additional_info[0].sleeping_arrangements] }}</td>
-                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
-                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
-                <td>{{ g.data.TF[dancer.dancing_information(g.data.BALLROOM).blind_date] }}</td>
-                <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner) }}</td>
-                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
-                <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
-                <td>{{ g.data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}</td>
-                <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}</td>
-                <td>{{ g.data.YMN[dancer.volunteer_info[0].volunteer] }}</td>
-                <td>{{ g.data.YMN[dancer.volunteer_info[0].first_aid] }}</td>
-                <td>{{ g.data.YMN[dancer.volunteer_info[0].jury_ballroom] }}</td>
-                <td>{{ g.data.YMN[dancer.volunteer_info[0].jury_latin] }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
+<table id="wide-table" class="table table-striped table-responsive">
+<thead>
+<tr>
+    <th colspan="2" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterNameInput" onkeyup="filterWide('wide-table')" placeholder="Name..."></th>
+    <th colspan="1" style="font-weight: normal;"></th>
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterStatusInput" onkeyup="filterWide('wide-table')" placeholder="Status..."></th>
+    <th colspan="1" style="font-weight: normal;"></th>
+    {% if g.sc.ask_first_time %}<th colspan="1" style="font-weight: normal;"></th>{% endif %}
+    <th colspan="1" style="font-weight: normal;"></th>
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterBallroomLevelInput" onkeyup="filterWide('wide-table')" placeholder="Level..."></th>
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterBallroomRoleInput" onkeyup="filterWide('wide-table')" placeholder="Role..."></th>
+    {% if g.sc.breitensport_obliged_blind_date %}<th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterBallroomBlindDateInput" onkeyup="filterWide('wide-table')" placeholder="Blind date..."></th>{% endif %}
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterBallroomPartnerInput" onkeyup="filterWide('wide-table')" placeholder="Partner..."></th>
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterLatinLevelInput" onkeyup="filterWide('wide-table')" placeholder="Level..."></th>
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterLatinRoleInput" onkeyup="filterWide('wide-table')" placeholder="Role..."></th>
+    {% if g.sc.breitensport_obliged_blind_date %}<th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterLatinBlindDateInput" onkeyup="filterWide('wide-table')" placeholder="Blind date..."></th>{% endif %}
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterLatinPartnerInput" onkeyup="filterWide('wide-table')" placeholder="Partner..."></th>
+    <th colspan="4" style="font-weight: normal;"></th>
+</tr>
+<tr>
+    {% if g.sc.ask_first_time %}
+    <th colspan="7">Personal</th>
+    {% else %}
+    <th colspan="6">Personal</th>
+    {% endif %}
+    {% if g.sc.breitensport_obliged_blind_date %}
+    <th colspan="4">Ballroom</th>
+    <th colspan="4">Latin</th>
+    {% else %}
+    <th colspan="3">Ballroom</th>
+    <th colspan="3">Latin</th>
+    {% endif %}
+    <th colspan="4">Volunteering</th>
+</tr>
+<tr>
+    <th>#</th>
+    <th>Name</th>
+    <th>E-mail</th>
+    <th>Status</th>
+    <th>Student</th>
+    {% if g.sc.ask_first_time %}<th>First time</th>{% endif %}
+    <th>Sleeping spot</th>
+    <th>Level</th>
+    <th>Role</th>
+    {% if g.sc.breitensport_obliged_blind_date %}<th>Blind Date</th>{% endif %}
+    <th>Partner</th>
+    <th>Level</th>
+    <th>Role</th>
+    {% if g.sc.breitensport_obliged_blind_date %}<th>Blind Date</th>{% endif %}
+    <th>Partner</th>
+    <th>Volunteer</th>
+    <th>First Aid</th>
+    <th>Jury Ballroom</th>
+    <th>Jury Latin</th>
+</tr>
+</thead>
+<tbody>
+{% for dancer in dancers %}
+<tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
+    <td>{{ dancer.contestant_info[0].number }}</td>
+    <td>{{ dancer.get_full_name() }}</td>
+    <td>{{ dancer.email }}</td>
+    <td>{{ g.data.STATUS[dancer.status_info[0].status] }}</td>
+    <td>{{ g.data.STUDENT_TEXT[dancer.contestant_info[0].student] }}</td>
+    {% if g.sc.ask_first_time %}
+    <td>{{ g.data.TF[dancer.contestant_info[0].first_time] }}</td>
+    {% endif %}
+    <td>{{ g.data.TF[dancer.additional_info[0].sleeping_arrangements] }}</td>
+    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
+    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
+    <td>{{ g.data.TF[dancer.dancing_information(g.data.BALLROOM).blind_date] }}</td>
+    <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner) }}</td>
+    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
+    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
+    <td>{{ g.data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}</td>
+    <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info[0].volunteer] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info[0].first_aid] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info[0].jury_ballroom] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info[0].jury_latin] }}</td>
+</tr>
+{% endfor %}
+</tbody>
 </table>
 {% endif %}
 <script>
@@ -209,5 +228,91 @@ function cancelConfirmed(url) {
         window.location.href = url;
     }
 };
+function filter(name) {
+    // Declare variables
+    var input, filter, table, tr, td, i;
+    input_name = document.getElementById(name+"-filterNameInput");
+    filter_name = input_name.value.toUpperCase();
+    input_status = document.getElementById(name+"-filterStatusInput");
+    filter_status = input_status.value.toUpperCase();
+    input_ballroom = document.getElementById(name+"-filterBallroomInput");
+    filter_ballroom = input_ballroom.value.toUpperCase();
+    input_latin = document.getElementById(name+"-filterLatinInput");
+    filter_latin = input_latin.value.toUpperCase();
+    table = document.getElementById(name);
+    tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        tdn = tr[i].getElementsByTagName("td")[1];
+        tds = tr[i].getElementsByTagName("td")[3];
+        {% if g.sc.ask_first_time %}
+        tdb = tr[i].getElementsByTagName("td")[7];
+        tdl = tr[i].getElementsByTagName("td")[8];
+        {% else %}
+        tdb = tr[i].getElementsByTagName("td")[6];
+        tdl = tr[i].getElementsByTagName("td")[7];
+        {% endif %}
+        if (tdn && tds && tdb && tdl) {
+            if (tdn.innerHTML.toUpperCase().indexOf(filter_name) > -1 && tds.innerHTML.toUpperCase().indexOf(filter_status) > -1 && tdb.innerHTML.toUpperCase().indexOf(filter_ballroom) > -1 && tdl.innerHTML.toUpperCase().indexOf(filter_latin) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+function filterWide(name) {
+    // Declare variables
+    var input, filter, table, tr, td, i;
+    input_name = document.getElementById(name+"-filterNameInput");
+    filter_name = input_name.value.toUpperCase();
+    input_status = document.getElementById(name+"-filterStatusInput");
+    filter_status = input_status.value.toUpperCase();
+    input_ballroom_level = document.getElementById(name+"-filterBallroomLevelInput");
+    filter_ballroom_level = input_ballroom_level.value.toUpperCase();
+    input_ballroom_role = document.getElementById(name+"-filterBallroomRoleInput");
+    filter_ballroom_role = input_ballroom_role.value.toUpperCase();
+    input_ballroom_partner = document.getElementById(name+"-filterBallroomPartnerInput");
+    filter_ballroom_partner = input_ballroom_partner.value.toUpperCase();
+    input_ballroom_blind_date = document.getElementById(name+"-filterBallroomBlindDateInput");
+    filter_ballroom_blind_date = input_ballroom_blind_date.value.toUpperCase();
+    input_latin_level = document.getElementById(name+"-filterLatinLevelInput");
+    filter_latin_level = input_latin_level.value.toUpperCase();
+    input_latin_role = document.getElementById(name+"-filterLatinRoleInput");
+    filter_latin_role = input_latin_role.value.toUpperCase();
+    input_latin_partner = document.getElementById(name+"-filterLatinPartnerInput");
+    filter_latin_partner = input_latin_partner.value.toUpperCase();
+    input_latin_blind_date = document.getElementById(name+"-filterLatinBlindDateInput");
+    filter_latin_blind_date = input_latin_blind_date.value.toUpperCase();
+    table = document.getElementById(name);
+    tr = table.getElementsByTagName("tr");
+
+    // +1 is because of the colspan=2 for the name
+    for (i = 0; i < tr.length; i++) {
+        tdn = tr[i].getElementsByTagName("td")[1];
+        tds = tr[i].getElementsByTagName("td")[3];
+        tdbl = tr[i].getElementsByTagName("td")[input_ballroom_level.closest("th").cellIndex+1];
+        tdbr = tr[i].getElementsByTagName("td")[input_ballroom_role.closest("th").cellIndex+1];
+        tdbp = tr[i].getElementsByTagName("td")[input_ballroom_partner.closest("th").cellIndex+1];
+        tdbbd = tr[i].getElementsByTagName("td")[input_ballroom_blind_date.closest("th").cellIndex+1];
+        tdll = tr[i].getElementsByTagName("td")[input_latin_level.closest("th").cellIndex+1];
+        tdlr = tr[i].getElementsByTagName("td")[input_latin_role.closest("th").cellIndex+1];
+        tdlp = tr[i].getElementsByTagName("td")[input_latin_partner.closest("th").cellIndex+1];
+        tdlbd = tr[i].getElementsByTagName("td")[input_latin_blind_date.closest("th").cellIndex+1];
+
+        if (tdn && tds && tdbl && tdbr && tdbp && tdbbd && tdll && tdlr && tdlp && tdlbd) {
+            if (tdn.innerHTML.toUpperCase().indexOf(filter_name) > -1 && tds.innerHTML.toUpperCase().indexOf(filter_status) > -1 &&
+            tdbl.innerHTML.toUpperCase().indexOf(filter_ballroom_level) > -1 && tdbr.innerHTML.toUpperCase().indexOf(filter_ballroom_role) > -1 &&
+            tdbp.innerHTML.toUpperCase().indexOf(filter_ballroom_partner) > -1 && tdbbd.innerHTML.toUpperCase().indexOf(filter_ballroom_blind_date) > -1 &&
+            tdll.innerHTML.toUpperCase().indexOf(filter_latin_level) > -1 && tdlr.innerHTML.toUpperCase().indexOf(filter_latin_role) > -1 &&
+            tdlp.innerHTML.toUpperCase().indexOf(filter_latin_partner) > -1 && tdlbd.innerHTML.toUpperCase().indexOf(filter_latin_blind_date) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
 </script>
 {% endblock %}
