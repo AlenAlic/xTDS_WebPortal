@@ -17,34 +17,56 @@
 {% block scripts %}
 {{ super() }}
 {{ react() }}
-<script>
+<script>{#
+    class Teamlist extends React.Component {
+        render () {
+            return (
+                <tr class="{% if dancer.status_info[0].checked_in == true %}success{% endif %}" {% if dancer.contestant_info[0].team_captain == true %} style="font-weight:bold" {% endif %}>
+                    <td>
+                        {{ dancer.get_full_name() }}
+                    </td>
+                    <td class="{% if dancer.payment_info[0].all_paid() == false %}danger{% endif %}">
+                        {{ g.data.TF[dancer.payment_info[0].all_paid()] }}
+                    </td>
+                    <td class="{% if dancer.payment_info[0].all_paid() == false %}danger{% endif %}" align="left">
+                        <a role="button" class="btn btn-default" href="{{ url_for('check_in_assistant.dancer_paid', number=dancer.contestant_id) }}">
+                            {% if dancer.payment_info[0].all_paid() == false %}Confirm payment{% else %}Cancel payment{% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        {{ g.data.TF[dancer.merchandise_info[0].ordered_merchandise()] }}
+                    </td>
+                    <td align="right">
+                        <a role="button" class="btn {% if dancer.status_info[0].checked_in == false %}btn-primary{% else %}btn-info{% endif %}" href="{{ url_for('check_in_assistant.check_in_dancer', number=dancer.contestant_id) }}">
+                            {% if dancer.status_info[0].checked_in == false %}Check in{% else %}Check out{% endif %}
+                        </a>
+                    </td>
+                </tr>
+
+            );
+        }
+    }#}
+</script>
+<script src="{{url_for('static', filename='src/dancer_list.js')}}"></script>
+
+
+<script >
     const e = React.createElement;
 
-    class LikeButton extends React.Component {
-        constructor(props) {
-            super(props);
-            this.state = { liked: false };
-        }
-
-        render() {
-        if (this.state.liked) {
-            return 'You liked this.';
-        }
-
-        return e(
-            'button',
-            { onClick: () => this.setState({ liked: true }) },
-            'Like'
-        );
-        }
-    }
-
     const domContainer = document.querySelector('#like_button_container');
-    ReactDOM.render(e(LikeButton), domContainer);
+    ReactDOM.render(e(DancerList), domContainer);
 </script>
 <script>
 function collapseAll() {
     $('#accordion .panel-collapse').collapse('hide');
+}
+</script>
+<script>
+function teamConfirmedDancersApiCall() {
+    fetch("/api/team/guaranteed_dancers/1", {method: "GET"})
+    .then(function(response) {return response.json();})
+    .then(function(result) {if (result) {return result}})
+    .catch(function(error) {console.log('Error: \n', error);});
 }
 </script>
 {% endblock %}

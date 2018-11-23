@@ -270,6 +270,14 @@ class Contestant(db.Model):
             if di.competition == competition:
                 return di
 
+    def to_dict(self):
+        data = {
+            'name': self.get_full_name(),
+            'contestant_id': self.contestant_id,
+            'checked_in': self.status_info[0].checked_in
+        }
+        return data
+
 
 class ContestantInfo(db.Model):
     __tablename__ = 'contestant_info'
