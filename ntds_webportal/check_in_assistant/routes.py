@@ -3,9 +3,10 @@ from flask_login import login_required
 from ntds_webportal import db
 from ntds_webportal.check_in_assistant import bp
 from ntds_webportal.models import requires_access_level,requires_tournament_state, Contestant, ContestantInfo, User, \
-    StatusInfo
+    StatusInfo, Team
 from ntds_webportal.helper_classes import TeamFinancialOverview
 from ntds_webportal.data import *
+from ntds_webportal.api.team.routes import team_confirmed_dancers
 
 
 @bp.route('/tournament_check_in', methods=['GET', 'POST'])
@@ -13,8 +14,8 @@ from ntds_webportal.data import *
 @requires_access_level([ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def tournament_check_in():
-    team_captains = db.session.query(User).filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)) \
-        .order_by(User.username).all()
+    team_captains = User.query.join(Team).filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)) \
+        .order_by(Team.name).all()
     teams = [{'name': team_captain.team.name, 'id': team_captain.team.name.replace(' ', '-').replace('`', ''),
               'confirmed_dancers':
                   db.session.query(Contestant).join(ContestantInfo, StatusInfo)
@@ -87,5 +88,8 @@ def dancer_paid(number):
 @requires_access_level([ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def tournament_check_in_test():
-
-    return render_template('check_in_assistant/tournament_check_in_test.html')
+    team_captains = User.query.join(Team).filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)) \
+        .order_by(Team.name).all()
+    teams = [{'team_id': team_captain.team.team_id, 'name': team_captain.team.name,
+              'dancers': team_confirmed_dancers(team_captain.team.team_id).json} for team_captain in team_captains]
+    return render_template('check_in_assistant/tournament_check_in_test.html', teams=teams)

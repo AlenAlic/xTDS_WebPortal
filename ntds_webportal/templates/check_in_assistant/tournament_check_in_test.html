@@ -9,52 +9,30 @@
 {% block app_content %}
 <h2>Check in dancers</h2>
 <button id="collapse-all" type="button" class="btn btn-default" onclick="collapseAll()">Collapse all</button>
-<div style="height:100px;"></div>
-<div id="like_button_container"></div>
+<div style="height:20px;"></div>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+{% for team in teams %}<div class="panel panel-default" id="render-team-{{team['team_id']}}"></div>{% endfor%}
+</div>
 
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 {{ react() }}
-<script>{#
-    class Teamlist extends React.Component {
-        render () {
-            return (
-                <tr class="{% if dancer.status_info[0].checked_in == true %}success{% endif %}" {% if dancer.contestant_info[0].team_captain == true %} style="font-weight:bold" {% endif %}>
-                    <td>
-                        {{ dancer.get_full_name() }}
-                    </td>
-                    <td class="{% if dancer.payment_info[0].all_paid() == false %}danger{% endif %}">
-                        {{ g.data.TF[dancer.payment_info[0].all_paid()] }}
-                    </td>
-                    <td class="{% if dancer.payment_info[0].all_paid() == false %}danger{% endif %}" align="left">
-                        <a role="button" class="btn btn-default" href="{{ url_for('check_in_assistant.dancer_paid', number=dancer.contestant_id) }}">
-                            {% if dancer.payment_info[0].all_paid() == false %}Confirm payment{% else %}Cancel payment{% endif %}
-                        </a>
-                    </td>
-                    <td>
-                        {{ g.data.TF[dancer.merchandise_info[0].ordered_merchandise()] }}
-                    </td>
-                    <td align="right">
-                        <a role="button" class="btn {% if dancer.status_info[0].checked_in == false %}btn-primary{% else %}btn-info{% endif %}" href="{{ url_for('check_in_assistant.check_in_dancer', number=dancer.contestant_id) }}">
-                            {% if dancer.status_info[0].checked_in == false %}Check in{% else %}Check out{% endif %}
-                        </a>
-                    </td>
-                </tr>
 
-            );
-        }
-    }#}
+<script src="{{url_for('static', filename='src/dancer_list2.js')}}"></script>
+<script>
+    const e = React.createElement;
+    {% for team in teams %}
+    ReactDOM.render(e(DancerList, {start_dancers:{{team["dancers"] | tojson}},  team_id:'{{team["team_id"]}}',  teamName:'{{team["name"]}}'}), document.getElementById('render-team-{{team["team_id"]}}'));
+    {% endfor %}
 </script>
-<script src="{{url_for('static', filename='src/dancer_list.js')}}"></script>
-
-
-<script >
+<script>{#
     const e = React.createElement;
 
     const domContainer = document.querySelector('#like_button_container');
-    ReactDOM.render(e(DancerList), domContainer);
+    ReactDOM.render(e(DancerList), domContainer);#}
 </script>
 <script>
 function collapseAll() {

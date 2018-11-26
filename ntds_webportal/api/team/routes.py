@@ -23,5 +23,5 @@ def team_guaranteed_dancers(team_id):
 def team_confirmed_dancers(team_id):
     team = Team.query.filter(Team.team_id == team_id).first()
     dancers = Contestant.query.join(ContestantInfo, StatusInfo)\
-        .filter(ContestantInfo.team == team, StatusInfo.status == REGISTERED).all()
+        .filter(ContestantInfo.team == team, StatusInfo.status == CONFIRMED).all()
     return jsonify([d.to_dict() for d in dancers])
