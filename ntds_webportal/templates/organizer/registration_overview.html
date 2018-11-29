@@ -1,11 +1,10 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
-<ul class="nav nav-tabs" id=myTabs role=tablist>
-	<li role=presentation class=active>
-		<a href=#all_teams id=all_teams-tab role=tab data-toggle=tab aria-controls=all_teams aria-expanded=true>All teams <span class="badge">{{all_dancers|length}}</span></a>
-	</li>
+<ul class="nav nav-tabs mt-2" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="all_teams-tab" data-toggle="tab" href=#all_teams role="tab" aria-controls="all_teams" aria-selected="true">All teams <span class="badge badge-pill badge-dark">{{all_dancers|length}}</span></a>
+    </li>
     {% with teams=dutch_dancers, dropdown_title='Dutch teams', dropdown_name='dutch' %}
         {% include 'organizer/_registration_teams_dropdown_menu.html' %}
     {% endwith %}
@@ -18,8 +17,8 @@
         {% endwith %}
     {% endif %}
 </ul>
-<div class=tab-content id=myTabContent>
-	<div class="tab-pane fade in active" role=tabpanel id=all_teams aria-labelledby=all_teams-tab>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" role=tabpanel id=all_teams aria-labelledby="all_teams-tab">
         {% if all_dancers|length > 0 %}
             {% with table_id='table-all', dancers=all_dancers, master_table=true %}
                 {% include 'organizer/_registration_dropdown_table.html' %}
@@ -28,31 +27,21 @@
             <h2>There are no registered dancers.</h2>
         {% endif %}
 	</div>
-    {% with teams=dutch_dancers %}
-        {% include 'organizer/_registration_teams_dropdown_tables.html' %}
-    {% endwith %}
-    {% if g.sc.tournament == g.data.ETDS %}
-        {% with teams=german_dancers %}
-            {% include 'organizer/_registration_teams_dropdown_tables.html' %}
-        {% endwith %}
-        {% with teams=other_dancers %}
-            {% include 'organizer/_registration_teams_dropdown_tables.html' %}
-        {% endwith %}
-    {% endif %}
 </div>
-
 {% endblock %}
 
 
 {% block scripts %}
 {{ super() }}
 <script>
-$(document).ready(function($) {
-    $(".clickable-row").css("cursor", "pointer")
-    $(".clickable-row").click(function() {
-        window.open($(this).data("href"));
-    });
+$(document).ready(function() {
+    $('#all_teams-tab').click();
 });
+function callFilter(team_name) {
+    input_team = document.getElementById("table-all-filterTeamInput");
+    input_team.value = team_name;
+    filter('table-all');
+}
 function filter(name) {
     // Declare variables
     var input, filter, table, tr, td, i;
@@ -104,4 +93,5 @@ function filterTeam(name) {
 }
 </script>
 {% endblock %}
+
 

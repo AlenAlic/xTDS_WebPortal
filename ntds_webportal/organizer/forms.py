@@ -5,7 +5,8 @@ from ntds_webportal.validators import UniqueEmail
 
 
 class NameChangeResponse(FlaskForm):
-    remark = TextAreaField(label='Remarks', render_kw={"style": "resize:none", "rows": "1", "maxlength": "256"})
+    remark = TextAreaField(label='Remarks for the teamcaptain (optional)',
+                           render_kw={"style": "resize:none", "rows": "3", "maxlength": "512"})
     accept = SubmitField(label='Accept')
     reject = SubmitField(label='Reject')
 

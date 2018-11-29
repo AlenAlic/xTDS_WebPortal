@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block body_attribs %}
 onload="onStart()"
@@ -182,9 +181,6 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='check_in_assistant.tournament_check_in_test', title='TEST check-in', text='Testing React', image='checked_in.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
 </div>
 {% endif %}
 
@@ -199,7 +195,7 @@ onload="onStart()"
 {% if current_user.is_tc() or current_user.is_treasurer() %}
 {% if not g.ts.registration_period_started %}
 <div class="row" style="visibility:hidden">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="col-sm-12 col-md-12 col-lg-12">
         <h2>Registration has not opened yet.</h2>
     </div>
 </div>

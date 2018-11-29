@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as wtf %}
 
 {% block app_content %}
 <h2>Create couple for Salsa</h2>
@@ -8,11 +7,11 @@
     {{ wtf.form_field(form.lead) }}
     {{ wtf.form_field(form.follow) }}
     {{ wtf.form_field(form.submit) }}
-    <a role="button" class="btn btn-default btn-loading" href="{{ url_for('teamcaptains.partner_request_list') }}">Cancel</a>
+    <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
 </form>
 <h2>Registered Salsa couples {% if salsa_couples|length > 0 %}<span class="badge">{{ salsa_couples|length }}</span>{% endif %}</h2>
 {% if salsa_couples|length > 0 %}
-<table id="myTable" class="table">
+<table id="myTable" class="table table-sm">
     <colgroup>
         <col span="1" style="width: 33%;">
         <col span="1" style="width: 33%;">
@@ -31,7 +30,7 @@
             <td>{{ couple[data.LEAD] }}</td>
             <td>{{ couple[data.FOLLOW] }}</td>
             <td align="right">
-                <a class="btn btn-warning" href="{{ url_for('blind_date_assistant.break_up_salsa_couple', couple_id=couple['id']) }}">Break up couple</a>
+                <a class="btn btn-warning btn-sm" href="{{ url_for('blind_date_assistant.break_up_salsa_couple', couple_id=couple['id']) }}">Break up couple</a>
             </td>
         </tr>
     {% endfor %}

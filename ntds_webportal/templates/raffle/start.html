@@ -7,10 +7,10 @@
     {% with subtitle='Registered', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
         {% include 'raffle/_stats.html' %}
     {% endwith %}
-    {% with source=g.data.REGISTERED, panel_title='Breakdown of registered dancers' %}
+    {% with source=g.data.REGISTERED, panel_title='Breakdown of registered dancers', toggle_id="registered" %}
         {% include 'raffle/_raffle_available_combinations_panel.html' %}
     {% endwith %}
-    <button style="display: block; margin: auto;" type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success btn-lg loading-btn">Start Raffle</button>
+    <button style="display: block; margin: auto;" type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success btn-lg loading-btn my-3">Start Raffle</button>
     {% if g.sc.beginners_level is sameas true and (g.rc.beginners_guaranteed_entry_cutoff is sameas true or g.rc.beginners_guaranteed_per_team is sameas true or g.rc.beginners_increased_chance is sameas true) %}
         <h2>Beginners that have signed up: <span class="badge" style="font-size:x-large">{{ raffle_sys.number_of_beginners() }}</span></h2>
     {% endif %}

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block head %}
 {{ super() }}
@@ -9,8 +8,8 @@
 {% block app_content %}
 
 {% if wide == 0 %}
-<a href="{{ url_for('teamcaptains.edit_dancers', wide=1) }}" class="btn btn-default">Wide view</a>
-<table id="short-table" class="table table-striped table-responsive">
+<a href="{{ url_for('teamcaptains.edit_dancers', wide=1) }}" class="btn btn-outline-secondary mb-2">Wide view</a>
+<table id="short-table" class="table table-hover table-responsive table-sm">
 <thead>
 <tr>
     <th colspan="2" style="font-weight: normal;"><input class="form-control" type="text" id="short-table-filterNameInput" onkeyup="filter('short-table')" placeholder="Name..."></th>
@@ -65,40 +64,29 @@
     </td>
     <td align="right">
         {% if dancer.status_info[0].status == g.data.NO_GDPR  %}
-            <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-info"
+            <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-info btn-sm"
                href="{{ url_for('teamcaptains.resend_login_dancer', number=dancer.contestant_id) }}">
                 Send new login credentials</a>
         {% endif %}
         {% if dancer.status_info[0].status == g.data.REGISTERED  %}
-            <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-warning"
+            <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-warning btn-sm"
                href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}">
                 Cancel registration</a>
         {% endif %}
         {% if dancer.status_info[0].status == g.data.CANCELLED %}
-            <a name="{{ dancer.contestant_id }}" role="button"  class="btn btn-info"
+            <a name="{{ dancer.contestant_id }}" role="button"  class="btn btn-primary btn-sm"
                href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">
                 Re-register</a>
         {% endif %}
         {% if dancer.status_info[0].status == g.data.SELECTED %}
-            <button class="btn btn-danger confirm-cancellation"
-                    data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
-                    data-title="WARNING!"
-                    data-text="Cancelling the registration will remove {{ dancer.get_full_name() }} completely from the tournament.<br><br>
-                    Are you sure you want to cancel the registration of {{ dancer.first_name }}?"
-                    data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}"
-                    data-confirm="cancelSelected('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')"
-                    data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
+            {% with dancer=dancer, modal_id="cancel-selected" %}
+                {% include 'teamcaptains/_cancel_selected_modal.html' %}
+            {% endwith %}
         {% endif %}
         {% if dancer.status_info[0].status == g.data.CONFIRMED %}
-            <button class="btn btn-danger confirm-cancellation"
-                    data-url="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}"
-                    data-title="WARNING!"
-                    data-text="{{ dancer.get_full_name() }} is obliged to pay the admission fee, even upon cancelling.<br><br>
-                    Cancelling the registration will remove {{ dancer.first_name }} completely from the tournament.<br><br>
-                    Are you sure you want to cancel the registration of {{ dancer.first_name }}?"
-                    data-confirm-button="Yes, cancel registration of {{ dancer.first_name }}"
-                    data-confirm="cancelRegistration('{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}')"
-                    data-cancel-button="No, keep {{ dancer.first_name }} registered">Cancel registration</button>
+            {% with dancer=dancer, modal_id="cancel-confirmed" %}
+                {% include 'teamcaptains/_cancel_confirmed_modal.html' %}
+            {% endwith %}
         {% endif %}
     </td>
 </tr>
@@ -106,8 +94,8 @@
 </tbody>
 </table>
 {% else %}
-<a href="{{ url_for('teamcaptains.edit_dancers', wide=0) }}" class="btn btn-default navbar-btn">Short view</a>
-<table id="wide-table" class="table table-striped table-responsive">
+<a href="{{ url_for('teamcaptains.edit_dancers', wide=0) }}" class="btn btn-outline-secondary mb-2">Short view</a>
+<table id="wide-table" class="table table-hover table-sm">
 <thead>
 <tr>
     <th colspan="2" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterNameInput" onkeyup="filterWide('wide-table')" placeholder="Name..."></th>
@@ -212,12 +200,6 @@ $(".confirm-cancellation").confirm({
 {% block scripts %}
 {{ super() }}
 <script>
-$(document).ready(function($) {
-    $(".clickable-row").css("cursor", "pointer")
-    $(".clickable-row").click(function() {
-        window.location = $(this).data("href");
-    });
-});
 function cancelSelected(url) {
     if (confirm()) {
         window.location.href = url;

@@ -65,6 +65,8 @@ def dashboard():
 @bp.route('/todo', methods=['GET'])
 @login_required
 def todo():
+    # GENERAL
+    # LONG TERM - Create template for modal and cards, using call function of Jinja
     # ADMIN
     # LONG TERM - Change so that teams and team captain/treasurer accounts are made at the same time
     # WISH - Make "Tournament" section in system setup throw warnings when doing something stupid

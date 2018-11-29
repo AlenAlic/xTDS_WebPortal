@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
+
 
 {% block body_attribs %}
 onload="onStart()"
@@ -9,16 +9,15 @@ onload="onStart()"
 <h2>Organizer account</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ my_wtf.form_field(form.username, disabled='') }}
-    {{ my_wtf.form_field(form.email) }}
-    {{ my_wtf.form_field(form.team, **{'onchange': "updateUsername()"}) }}
-    {{ my_wtf.form_field(form.password) }}
-    {{ my_wtf.form_field(form.repeat_password) }}
+    {{ wtf.form_field(form.username, disabled='') }}
+    {{ wtf.form_field(form.email) }}
+    {{ wtf.form_field(form.team, **{'onchange': "updateUsername()"}) }}
+    {{ wtf.form_field(form.password) }}
+    {{ wtf.form_field(form.repeat_password) }}
     <div class="form-group required">
-        <label class="control-label" ></label>
         <div class="input-group">
             <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if edit is sameas false %}Create Team{% else %}Save changes{% endif %}">&nbsp;
-            <a role="button" class="btn btn-default" href="{{ url_for('self_admin.user_list') }}">Cancel</a>
+            <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('self_admin.user_list') }}">Cancel</a>
         </div>
     </div>
 </form>

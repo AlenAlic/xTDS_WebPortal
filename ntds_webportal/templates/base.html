@@ -1,126 +1,116 @@
-{% extends 'bootstrap/base.html' %}
-{# import 'bootstrap/wtf.html' as wtf #}
+{% extends 'bootstrap_base.html' %}
 {% import 'my_wtf.html' as wtf %}
-
-{% block head %}
-{{ super() }}
-<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
-<link rel="manifest" href="/static/favicons/site.webmanifest">
-<link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#5bbad5">
-<link rel="shortcut icon" href="/static/favicons/favicon.ico">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
-<meta name="theme-color" content="#ffffff">
-<meta charset="UTF-8">
-{% endblock %}
+{% import 'registration_wtf.html' as reg_wtf %}
 
 
-{% block title %}
-xTDS WebPortal
-{% endblock %}
+{% block title %}xTDS WebPortal{% endblock %}
 
 
 {% block styles %}
 {{ super() }}
 {{ select2_form_css() }}
 <style>
-    body { padding-top: 60px;}
-    .navbar-default{background-color:#f8f8f8;}
-    body { background-color:#ffffff;}
-    {% if g.sc.website_accessible is sameas false and current_user.is_authenticated is sameas true %}
-    .navbar-default{background-color:#ffa6a6;}
-    body { background-color:#ffdcdc;}
-    {% endif %}
-    @media (min-width:1440px){.container{width:1410px}}
-    @media (min-width:768px){.navbar-form .form-control {width:170px}}
-    .pagebreak { page-break-before: always; }
-    .print-friendly { page-break-inside:avoid; page-break-after:auto }
-    tr    { page-break-inside:avoid; page-break-after:auto }
-    td    { page-break-inside:avoid; page-break-after:auto }
-    thead { display:table-header-group }
-    tfoot { display:table-footer-group }
-    @media print {.no-print, .no-print * {display: none !important; } }
-    checkbox {cursor: pointer}
-    .decorative-checkbox {cursor: default !important}
-    .checkbox-row {cursor: pointer}
-    .thumbnail.info {background-color:#d9edf7; }
-    .container-hidden {visibility:hidden;}
-    .notification-text {white-space: pre-line;}
-</style>
-<style>
-.inaccessible {
-    display: block;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.25);
-    z-index: -100;
-    cursor: not-allowed;
-}
-.opaque {
-    opacity: .5;
-}
-</style>
-<style>
-    .api-pending {background-color: #d9edf7 !important;}
-    .api-success {background-color: #dff0d8 !important;}
-    .api-warning {background-color: #fcf8e3 !important;}
-    .api-failed {background-color: #f2dede !important;}
+/* Base formatting */
+@media (min-width:1440px){.container{max-width:1410px}}
+@media (min-width:576px){.form-width-fix .form-control {width:100%}}
+@media (min-width:768px){.form-width-fix .form-control {width:140px}}
+@media (min-width:992px){.form-width-fix .form-control {width:200px}}
+@media (min-width:1200px){.form-width-fix .form-control {width:auto}}
+@media (min-width:576px){.form-width-fix .form-control-button {width:100%}}
+@media (min-width:768px){.form-width-fix .form-control-button {width:auto}}
+
+/* Cards formatting */
+.card-header {padding-top: 0.5rem; padding-bottom: 0.5rem;}
+.card-title {margin-bottom: 0.25rem;}
+.card {margin-bottom:0.5rem;}
+.primary > .card-header {background-color:var(--primary);}
+.primary > .card-header > .card-title {color:var(--white);}
+.secondary > .card-header {background-color:var(--secondary);}
+.secondary > .card-header > .card-title {color:var(--white);}
+.success > .card-header {background-color:var(--success);}
+.success > .card-header > .card-title {color:var(--white);}
+.danger > .card-header {background-color:var(--danger);}
+.danger > .card-header > .card-title {color:var(--white);}
+.warning > .card-header {background-color:var(--warning);}
+.info > .card-header {background-color:var(--info);}
+.info > .card-header > .card-title {color:var(--white);}
+.light > .card-header {background-color:var(--light);}
+.dark > .card-header {background-color:var(--dark);}
+.dark > .card-header > .card-title {color:var(--white);}
+
+/* Pages formatting */
+.inaccessible {width: 100%; height: 100%; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.25); cursor: not-allowed; }
+.opaque {opacity: .5; }
+
+/* Color site red in maintenance mode */
+{% if g.sc.website_accessible is sameas false and current_user.is_authenticated is sameas true %}
+.navbar-default{background-color:#ffa6a6 !important;}
+body { background-color:#ffdcdc;}
+{% endif %}
+
+/* Print tools */
+.pagebreak { page-break-before: always; }
+.print-friendly { page-break-inside:avoid; page-break-after:auto }
+tr    { page-break-inside:avoid; page-break-after:auto }
+td    { page-break-inside:avoid; page-break-after:auto }
+thead { display:table-header-group }
+tfoot { display:table-footer-group }
+@media print {.no-print, .no-print * {display: none !important; } }
+
+/* Misc. */
+checkbox {cursor: pointer}
+.decorative-checkbox {cursor: default !important}
+.checkbox-row {cursor: pointer}
+.thumbnail.info {background-color:#d9edf7; }
+.container-hidden {visibility:hidden;}
+.notification-text {white-space: pre-line;}
+
+/* API coloring for team captain "Edit Finances" tab */
+.api-pending {background-color:var(--info) !important;}
+.api-success {background-color:var(--success) !important;}
+.api-warning {background-color:var(--warning) !important;}
+.api-failed {background-color: #ffdcdc !important;}
 </style>
 {% endblock %}
 
 
 {% block navbar %}
-<nav class="navbar navbar-default navbar-fixed-top no-print">
+<nav class="navbar sticky-top navbar-expand-md navbar-light bg-light no-print navbar-default">
     <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
-        </div>
-        <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse" id="navbarSupportedContent">
             {% if not current_user.is_anonymous %}
-                <ul class="nav navbar-nav navbar-left">
+                <ul class="navbar-nav mr-auto">
                     {% if current_user.has_profile_access() is sameas true %}
-                    <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
+                    <li class="nav-item mx-0 mx-md-2 my-1 my-md-0"><a class="nav-link" href="{{ url_for('main.profile') }}">Profile</a></li>
                     {% endif %}
                     {% if current_user.has_messages_access() is sameas true %}
-                    <li><a href="{{ url_for('notifications.messages') }}">Messages <span class="badge">{{current_user.unread_notifications()}}</span></a></li>
+                    <li class="nav-item mx-0 mx-md-2 my-1 my-md-0"><a class="nav-link {% if current_user.unread_notifications() > 0 %}btn btn-outline-primary{% endif %}" href="{{ url_for('notifications.messages') }}">Messages <span class="badge badge-pill badge-primary">{{current_user.unread_notifications()}}</span></a></li>
                     {% endif %}
                 </ul>
             {% endif %}
             {% if current_user.is_anonymous %}
                 {% if login_form %}
-                    <form class="navbar-form navbar-right" method="POST" enctype="multipart/form-data">
+                    <form class="form-inline ml-auto form-width-fix" method="POST" enctype="multipart/form-data">
                         {{ login_form.hidden_tag() }}
-                        <div class="form-group">
-                            {{ login_form.username(class_='form-control', placeholder='Username') }}
-                        </div>
-                        <div class="form-group">
-                            {{ login_form.password(class_='form-control', placeholder='Password') }}
-                        </div>
-                        <div class="form-group">
-                            {{ login_form.submit(class_='btn btn-default') }}
-                        </div>
-                        <div class="form-group">
-                            <small><a href="{{url_for('auth.reset_password_request')}}" >Forgot password?</a></small>
-                        </div>
+                        {{ login_form.username(class_='form-control mx-0 mx-md-1 my-1 my-md-0', placeholder='Username') }}
+                        {{ login_form.password(class_='form-control mx-0 mx-md-1 my-1 my-md-0', placeholder='Password') }}
+                        {{ login_form.submit(class_='btn btn-outline-primary form-control-button mx-0 mx-md-1 my-1 my-md-0') }}
+                        <small><a class="nav-link px-0 px-md-3" href="{{url_for('auth.reset_password_request')}}">Forgot password?</a></small>
                     </form>
                 {% endif %}
             {% else %}
-                <div class="nav navbar-nav navbar-right" style="padding-right: 15px; padding-left: 15px">
-                    <p class="navbar-text">Welcome, {{ current_user.username }}!</p>
-                    <a href="{{ url_for('main.logout') }}" class="btn btn-default navbar-btn">Logout</a>
-                </div>
+                <form class="form-inline ">
+                    {% if current_user.is_dancer() %}
+                        <span class="navbar-text mx-0 mx-md-2 my-1 my-md-0">Welcome, {{ current_user.dancer.get_full_name() }}</span>
+                    {% else %}
+                        <span class="navbar-text mx-0 mx-md-2 my-1 my-md-0">Welcome, {{ current_user.username }}</span>
+                    {% endif %}
+                    <a href="{{ url_for('main.logout') }}" class="form-control btn btn-outline-primary mx-0 mx-md-2 my-1 my-md-0">Logout</a>
+                </form>
             {% endif %}
         </div>
     </div>
@@ -129,14 +119,14 @@ xTDS WebPortal
 
 
 {% block content %}
-<div id="container-hidden" class="container" style="padding-bottom:20px; {% block container_style %}{% endblock %}">
+<div id="container-hidden" class="container mt-3" style="padding-bottom:20px; {% block container_style %}{% endblock %}">
     {% if g.sc.website_accessible is sameas false and current_user.is_authenticated is sameas true %}
     <h1 style="color:#000000; text-align:center;">MAINTENANCE MODE</h1>
     {% endif %}
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div class="alert {% if category=='message' %}alert-info{% else %}{{ category }}{% endif %} alert-dismissible" role="alert">
+                <div class="alert {% if category=='message' %}alert-info{% else %}{{ category }}{% endif %} alert-dismissible mt-3" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     {{ message }}
                 </div>
@@ -160,12 +150,35 @@ xTDS WebPortal
 {{ moment.include_moment() }}
 {{ select2_form_js() }}
 <script type="text/javascript" src="{{url_for('static', filename='loading/loading.js')}}"></script>
+<script>
+<!--$(document).ready(function($) {-->
+    <!--$(".clickable-row").css("cursor", "pointer")-->
+    <!--$(".clickable-row").click(function() {-->
+        <!--window.open($(this).data("href"));-->
+    <!--});-->
+<!--});-->
+$(document).ready(function($) {
+    $(".clickable-row").css("cursor", "pointer")
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});
+</script>
 {% endblock %}
 
 
 {% macro react() %}
-<script src="{{url_for('static', filename='node_modules/react/umd/react.production.min.js')}}"></script>
-<script src="{{url_for('static', filename='node_modules/react-dom/umd/react-dom.production.min.js')}}"></script>
+<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+{#
+<script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+#}
+<script src="{{url_for('static', filename='src/BuildTools.js')}}"></script>
+{% endmacro %}
+
+{% macro bootstrap_react_elements() %}
+<script src="{{url_for('static', filename='src/Button.js')}}"></script>
 {% endmacro %}
 
 

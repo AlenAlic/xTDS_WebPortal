@@ -1,11 +1,10 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
 <h2>Change e-mail address of {{user.username}}</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ my_wtf.form_field(form.email) }}
+    {{ wtf.form_field(form.email) }}
     <div class="form-group required">
         <label class="control-label" ></label>
         <div class="input-group">

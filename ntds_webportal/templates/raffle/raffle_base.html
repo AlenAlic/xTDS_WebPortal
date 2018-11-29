@@ -45,6 +45,9 @@ function disableCheckboxes(checkboxes, disable) {
         }
     }
 }
+$(document).ready(function() {
+    $('#system-tab').click();
+});
 function filterLevels(clicked_checkbox, scroll=true) {
     var rows = document.getElementsByClassName("checkbox-filter");
     var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox")
@@ -142,8 +145,8 @@ function updateCheckboxRowApiCall(api, method, row) {
     });
 }
 function updateTeamGuaranteedDancersApiCall(api, method, source) {
-    let panel = source.closest(".panel");
-    let total = panel.querySelector('.panel-heading > .panel-title > .badge > .team-guaranteed-dancers');
+    let panel = source.closest(".card");
+    let total = panel.querySelector('.card-header > .card-title > .badge > .team-guaranteed-dancers');
     fetch(api + total.dataset.teamId, {method: method})
     .then(function(response) {return response.json();})
     .then(function(result) {

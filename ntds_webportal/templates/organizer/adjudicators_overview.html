@@ -1,18 +1,16 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
 
 <h2>Adjudicators for the tournament</h2>
 <form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download lists of adjudicators">
+    <input class="btn btn-outline-primary" id="submit-download_file" name="download_file" type="submit" value="Download lists of adjudicators">
 </form>
 <div style="height:10px;"></div>
 <!--<button id="expand-all" type="button" class="btn btn-default" onclick="expandAll()" disabled>Show all</button>-->
 <!--<button id="collapse-all" type="button" class="btn btn-default" onclick="collapseAll()">Hide all</button>-->
-<button id="toggle-all" type="button" class="btn btn-default" onclick="toggleAll()">Hide all</button>
-<div style="height:10px;"></div>
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+<button id="toggle-all" type="button" class="btn btn-outline-secondary my-2" onclick="toggleAll()">Hide all</button>
+<div id="accordion">
     {% with type=data.BALLROOM, adjudicators=ballroom_adjudicators %}
         {% include 'organizer/_adjudicator_list.html' %}
     {% endwith %}
@@ -50,10 +48,10 @@ function toggleAll() {
     var btn = document.getElementById('toggle-all');
     var txt = btn.textContent || btn.innerText;
     if (txt == "Show all") {
-        $('#accordion .panel-collapse').collapse('show');
+        $('#accordion .collapse').collapse('show');
         btn.innerHTML = 'Hide all'
     } else {
-        $('#accordion .panel-collapse').collapse('hide');
+        $('#accordion .collapse').collapse('hide');
         btn.innerHTML = 'Show all'
     }
 }

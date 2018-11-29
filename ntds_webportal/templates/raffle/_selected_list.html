@@ -1,17 +1,16 @@
-<h2>Selected dancers <span class="badge" style="font-size:x-large">{{ raffle_sys.selected_dancers|length }}</span></h2>
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+<h2>Selected dancers <span class="badge badge-pill badge-dark" style="font-size:x-large">{{ raffle_sys.selected_dancers|length }}</span></h2>
+<div id="accordion">
 {% for team in teams %}
 {% if team['selected_dancers']|length > 0 %}
-<div class="panel panel-default {% if team['guaranteed_dancers']|length > 0 %}panel-danger{% endif %}">
-    <div class="panel-heading" role="button" id="{{ team['id_title'] }}-selected" data-toggle="collapse"
-         data-parent="#accordion" href="#{{ team['id'] }}-selected" aria-expanded="false" aria-controls="{{ team['id'] }}-selected">
-        <h4 class="panel-title">{{ team['team'].country }} - {{ team['team'].name }}
-            <span class="badge" style="font-size:large;">{{ team['selected_dancers']|length }}/{{ team['available_dancers']|length + team['selected_dancers']|length }}</span>
-        </h4>
+<div class="card {% if team['guaranteed_dancers']|length > 0 %}danger{% endif %}">
+    <div class="card-header" role="button" id="{{ team['id_title'] }}-selected" data-toggle="collapse" data-parent="#accordion" href="#{{ team['id'] }}-selected" aria-expanded="false" aria-controls="{{ team['id'] }}-selected">
+        <h5 class="card-title">{{ team['team'].country }} - {{ team['team'].name }}
+            <span class="badge badge-pill badge-dark" style="font-size:large;">{{ team['selected_dancers']|length }}/{{ team['available_dancers']|length + team['selected_dancers']|length }}</span>
+        </h5>
     </div>
     <div id="{{ team['id'] }}-selected" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ team['id_title'] }}-selected">
 
-        <table class="table list-group">
+        <table class="table table-sm">
             <colgroup>
                 <col span="1" style="width: 40%;">
                 <col span="1" style="width: 20%;">
@@ -32,9 +31,9 @@
             </thead>
             <tbody>
             {% for dancer in team['selected_dancers'] %}
-                <tr class="{% if dancer.status_info[0].guaranteed_entry is sameas true %}success{% elif dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
+                <tr class="{% if dancer.status_info[0].guaranteed_entry is sameas true %}table-success{% elif dancer.contestant_info[0].team_captain is sameas true %}table-success{% endif %}" style="{% if dancer.contestant_info[0].team_captain == true %}font-weight: bold;{% endif %}">
                     <td>
-                        {{ dancer.get_full_name() }}
+                        {{ dancer.get_full_name() }}{% if dancer.contestant_info[0].team_captain == true %} - Team captain{% endif %}
                     </td>
                     <td>
                         {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
@@ -53,7 +52,7 @@
             </tbody>
         </table>
 
-        <div class=panel-footer><small style="visibility: hidden">Footer</small></div>
+        <div class=card-footer><small style="visibility: hidden">Footer</small></div>
     </div>
 </div>
 {% endif %}

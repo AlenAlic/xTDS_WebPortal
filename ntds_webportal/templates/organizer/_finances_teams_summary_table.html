@@ -1,7 +1,6 @@
 <form method="POST" enctype="multipart/form-data" novalidate>
-    <div style="height:10px;"></div>
-    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
-    <table class="table table-responsive">
+    <input class="btn btn-outline-primary my-2" id="submit" name="submit" type="submit" value="Save changes">
+    <table class="table table-sm">
         <colgroup>
             {% if g.sc.phd_student_category is sameas true %}
                 <col span="1" style="width: 20%;">
@@ -33,9 +32,9 @@
         <tbody>
             {% for team in teams %}
                 <tr class="
-                {% if team['team'].amount_paid == team['finances']['price_total'] and team['finances']['price_total'] > 0 %}success
-                {% elif team['team'].amount_paid < team['finances']['price_total'] %}danger
-                {% elif team['team'].amount_paid > team['finances']['price_total'] %}warning
+                {% if team['team'].amount_paid == team['finances']['price_total'] and team['finances']['price_total'] > 0 %}table-success
+                {% elif team['team'].amount_paid < team['finances']['price_total'] %}table-danger
+                {% elif team['team'].amount_paid > team['finances']['price_total'] %}table-warning
                 {% endif %}">
                     <td>{{ team['team'].name }}</td>
                     <td style="text-align:right">{{ team['finances']['number_of_students'] }}</td>

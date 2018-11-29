@@ -1,13 +1,9 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
-
 <ul class="nav nav-tabs" id=myTabs role=tablist>
-	<li role=presentation class=active>
-		<a href=#all_teams id=all_teams-tab role=tab data-toggle=tab aria-controls=all_teams aria-expanded=true>All teams
-            <span class="badge"></span>
-        </a>
+	<li class="nav-item" role=presentation>
+		<a class="nav-link active" href=#all_teams id=all_teams-tab role=tab data-toggle=tab aria-controls=all_teams aria-expanded=true>All teams</a>
 	</li>
     {% with teams=dutch_teams, dropdown_title='Dutch teams', dropdown_name='dutch' %}
         {% include 'organizer/_finances_teams_dropdown_menu.html' %}
@@ -22,7 +18,7 @@
     {% endif %}
 </ul>
 <div class=tab-content id=myTabContent>
-	<div class="tab-pane fade in active" role=tabpanel id=all_teams aria-labelledby=all_teams-tab>
+	<div class="tab-pane fade show active" role=tabpanel id=all_teams aria-labelledby=all_teams-tab>
         {% with teams=teams %}
             {% include 'organizer/_finances_teams_summary_table.html' %}
         {% endwith %}

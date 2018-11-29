@@ -1,5 +1,5 @@
 {% if dancers|length > 0 %}
-<table class="table table-striped table-responsive table-finances">
+<table class="table table-sm {% if current_user.is_tc() %}table-hover {% endif %}table-finances">
     <colgroup>
         {% if current_user.is_organizer() %}
         <col span="1" style="width: 20%;">
@@ -44,7 +44,7 @@
     </thead>
     <tbody>
     {% for dancer in dancers %}
-        <tr id="{{ dancer.contestant_id }}" class="{% if current_user.is_tc() %}checkbox-row{% endif %} {% if dancer.payment_info[0].all_paid() == true %}success{% elif dancer.payment_info[0].partially_paid() %}warning{% endif %}">
+        <tr id="{{ dancer.contestant_id }}" class="{% if current_user.is_tc() %}checkbox-row{% endif %} {% if dancer.payment_info[0].all_paid() == true %}table-success{% elif dancer.payment_info[0].partially_paid() %}table-warning{% endif %}">
             <td>
                {{ dancer.get_full_name() }}
             </td>

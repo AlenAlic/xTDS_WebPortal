@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block body_attribs %}
 onload="onStart()"
@@ -14,40 +13,44 @@ visibility:hidden
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     <h3>Tournament size</h3>
-    {{ my_wtf.form_field(form.maximum_number_of_dancers) }}
-    {{ my_wtf.form_field(form.selection_buffer) }}
+    <!--<div class="form-row">-->
+        <!--<div class="col-lg-6">-->
+            {{ wtf.form_field(form.maximum_number_of_dancers) }}
+        <!--</div>-->
+        <!--<div class="col-lg-6">-->
+            {{ wtf.form_field(form.selection_buffer) }}
+        <!--</div>-->
+    <!--</div>-->
     {% if g.sc.beginners_level is sameas true %}
     <h3>Beginners</h3>
-    {{ my_wtf.form_field(form.beginners_guaranteed_entry_cutoff, disabled=g.ts.main_raffle_taken_place, **{'onchange': "BeginnersCutoff(this)", 'onkeyup': "BeginnersCutoff(this)"}) }}
-    {{ my_wtf.form_field(form.beginners_guaranteed_cutoff, disabled=g.ts.main_raffle_taken_place) }}
-    {{ my_wtf.form_field(form.beginners_guaranteed_per_team, disabled=g.ts.main_raffle_taken_place, **{'onchange': "BeginnersPerTeam(this)", 'onkeyup': "BeginnersPerTeam(this)"}) }}
-    {{ my_wtf.form_field(form.beginners_minimum_entry_per_team, disabled=g.ts.main_raffle_taken_place) }}
-    {{ my_wtf.form_field(form.beginners_increased_chance, disabled=g.ts.main_raffle_taken_place) }}
+    {{ wtf.form_field(form.beginners_guaranteed_entry_cutoff, disabled=g.ts.main_raffle_taken_place, **{'onchange': "BeginnersCutoff(this)", 'onkeyup': "BeginnersCutoff(this)"}) }}
+    {{ wtf.form_field(form.beginners_guaranteed_cutoff, disabled=g.ts.main_raffle_taken_place) }}
+    {{ wtf.form_field(form.beginners_guaranteed_per_team, disabled=g.ts.main_raffle_taken_place, **{'onchange': "BeginnersPerTeam(this)", 'onkeyup': "BeginnersPerTeam(this)"}) }}
+    {{ wtf.form_field(form.beginners_minimum_entry_per_team, disabled=g.ts.main_raffle_taken_place) }}
+    {{ wtf.form_field(form.beginners_increased_chance, disabled=g.ts.main_raffle_taken_place) }}
     {% endif %}
     {% if g.sc.first_time_ask is sameas true %}
     <h3>First time attendees</h3>
-    {{ my_wtf.form_field(form.first_time_guaranteed_entry, disabled=g.ts.main_raffle_taken_place, **{'onchange': "FirstTime(this)", 'onkeyup': "FirstTime(this)"}) }}
-    {{ my_wtf.form_field(form.first_time_increased_chance, disabled=g.ts.main_raffle_taken_place) }}
+    {{ wtf.form_field(form.first_time_guaranteed_entry, disabled=g.ts.main_raffle_taken_place, **{'onchange': "FirstTime(this)", 'onkeyup': "FirstTime(this)"}) }}
+    {{ wtf.form_field(form.first_time_increased_chance, disabled=g.ts.main_raffle_taken_place) }}
     {% endif %}
     <h3>Teams</h3>
-    {{ my_wtf.form_field(form.guaranteed_team_size, disabled=g.ts.main_raffle_taken_place, **{'onchange': "TeamSize(this)", 'onkeyup': "TeamSize(this)"}) }}
-    {{ my_wtf.form_field(form.minimum_team_size, disabled=g.ts.main_raffle_taken_place) }}
+    {{ wtf.form_field(form.guaranteed_team_size, disabled=g.ts.main_raffle_taken_place, **{'onchange': "TeamSize(this)", 'onkeyup': "TeamSize(this)"}) }}
+    {{ wtf.form_field(form.minimum_team_size, disabled=g.ts.main_raffle_taken_place) }}
     {% if g.sc.tournament == g.data.NTDS %}
     <h3>Lion contestants</h3>
-    {{ my_wtf.form_field(form.lions_guaranteed_per_team, disabled=g.ts.main_raffle_taken_place, **{'onchange': "LionsPerTeam(this)", 'onkeyup': "LionsPerTeam(this)"}) }}
-    {{ my_wtf.form_field(form.closed_lion, disabled=g.ts.main_raffle_taken_place) }}
-    {{ my_wtf.form_field(form.open_class_lion, disabled=g.ts.main_raffle_taken_place) }}
-    {{ my_wtf.form_field(form.lions_minimum_entry_per_team, disabled=g.ts.main_raffle_taken_place) }}
+    {{ wtf.form_field(form.lions_guaranteed_per_team, disabled=g.ts.main_raffle_taken_place, **{'onchange': "LionsPerTeam(this)", 'onkeyup': "LionsPerTeam(this)"}) }}
+    {{ wtf.form_field(form.closed_lion, disabled=g.ts.main_raffle_taken_place) }}
+    {{ wtf.form_field(form.open_class_lion, disabled=g.ts.main_raffle_taken_place) }}
+    {{ wtf.form_field(form.lions_minimum_entry_per_team, disabled=g.ts.main_raffle_taken_place) }}
     {% endif %}
     <div class="form-group required">
-        <label class="control-label" ></label>
         <div class="input-group">
             <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Configure System">&nbsp;
-            <a role="button" class="btn btn-default" href="{{ url_for('main.index') }}">Cancel</a>
+            <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
         </div>
     </div>
 </form>
-{#my_wtf.quick_form(form)#}
 {% endblock %}
 
 {% block scripts %}

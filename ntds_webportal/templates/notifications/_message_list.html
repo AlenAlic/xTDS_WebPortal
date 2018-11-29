@@ -1,60 +1,48 @@
 {% if notifications|length > 0 %}
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+<div id="accordion">
     {% for notification in notifications %}
-    <div class="panel panel-default">
-        <div style="background-color:{% if notification.unread %}#fff{%else%}#f5f5f5{%endif%}" class="panel-heading" role="button" id="heading-{{notification.notification_id}}" data-toggle="collapse" href="#collapse-{{notification.notification_id}}" aria-expanded="false" aria-controls="collapse-{{notification.notification_id}}">
-            <div class="panel-title" style="font-size:small; {% if notification.unread %}font-weight:bold{% endif %}">
+    <div class="card">
+        <div style="background-color:{% if notification.unread %}#fff{%else%}#f5f5f5{%endif%}" class="card-header" role="button" id="heading-{{notification.notification_id}}" data-toggle="collapse" href="#collapse-{{notification.notification_id}}" aria-expanded="false" aria-controls="collapse-{{notification.notification_id}}">
+            <div class="card-title" style="font-size:small; {% if notification.unread %}font-weight:bold{% endif %}">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3">{{notification.get_sender()}}</div>
-                    <div class="col-xs-12 col-sm-5 col-md-6 col-lg-6">{{notification.title}}</div>
-                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" style="text-align: right;">{{moment(notification.timestamp).fromNow()}}</div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">{{notification.get_sender()}}</div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">{{notification.title}}</div>
+                    <div class="col-sm-12 col-md-3 col-lg-3" style="text-align: right;">{{moment(notification.timestamp).fromNow()}}</div>
                 </div>
             </div>
         </div>
-        <div id="collapse-{{notification.notification_id}}" class="panel-collapse collapse {% if opened and notification.unread %}in{% endif %}" role="tabpanel" aria-labelledby="heading-{{notification.notification_id}}">
-            <div class="panel-body notification-text">{{notification.text}}</div>
-            <div class=panel-footer>
+        <div id="collapse-{{notification.notification_id}}" class="collapse {% if opened and notification.unread %}in{% endif %}" role="tabpanel" aria-labelledby="heading-{{notification.notification_id}}">
+            <div class="card-body notification-text">{{notification.text}}</div>
+            <div class=card-footer>
                 {% if notification.unread %}
-                <a href="{{url_for('notifications.read', notification=notification.notification_id)}}">
-                    <button type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>&nbsp;Mark as read
-                    </button>
+                <a class="btn btn-outline-dark mr-2" href="{{url_for('notifications.read', notification=notification.notification_id)}}">
+                    <img class="mr-2" src="{{url_for('static', filename='octicons/mail-read.svg')}}">Mark as read
                 </a>
                 {% else %}
-                <a href="{{url_for('notifications.unread', notification=notification.notification_id)}}">
-                    <button type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;Mark as unread
-                    </button>
+                <a class="btn btn-outline-dark mr-2" href="{{url_for('notifications.unread', notification=notification.notification_id)}}">
+                    <img class="mr-2" src="{{url_for('static', filename='octicons/mail.svg')}}">Mark as unread
                 </a>
                 {% endif%}
 
                 {% if notification.archived %}
-                <a href="{{url_for('notifications.unarchive',notification=notification.notification_id)}}">
-                    <button type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-floppy-open" aria-hidden="true"></span>&nbsp;Move to inbox
-                    </button>
+                <a class="btn btn-outline-dark mr-2" href="{{url_for('notifications.unarchive',notification=notification.notification_id)}}">
+                    <img class="mr-2" src="{{url_for('static', filename='octicons/file-symlink-directory.svg')}}">Move to inbox
                 </a>
                 {% else %}
-                <a href="{{url_for('notifications.archive',notification=notification.notification_id)}}">
-                    <button type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>&nbsp;Archive
-                    </button>
+                <a class="btn btn-outline-dark mr-2" href="{{url_for('notifications.archive',notification=notification.notification_id)}}">
+                    <img class="mr-2" src="{{url_for('static', filename='octicons/archive.svg')}}">Archive
                 </a>
                 {% endif%}
-                &nbsp;&nbsp;&nbsp;&nbsp;
+
                 {% if notification.sender is not none %}
-                <a href="{{url_for('notifications.create', user_id=notification.sender_id, notification_id=notification.notification_id)}}">
-                    <button type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;Reply
-                    </button>
+                <a class="btn btn-outline-dark ml-5" href="{{url_for('notifications.create', user_id=notification.sender_id, notification_id=notification.notification_id)}}">
+                    <img class="mr-2" src="{{url_for('static', filename='octicons/reply.svg')}}">Reply
                 </a>
                 {% endif %}
 
                 {% if notification.destination %}
-                <a style="float: right" href="{{url_for('notifications.goto',notification=notification.notification_id)}}">
-                    <button type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>&nbsp;Goto
-                    </button>
+                <a style="float: right" class="btn btn-outline-dark mr-2" href="{{url_for('notifications.goto',notification=notification.notification_id)}}">
+                    <img class="mr-2" src="{{url_for('static', filename='octicons/rocket.svg')}}">Goto
                 </a>
                 {% endif %}
             </div>

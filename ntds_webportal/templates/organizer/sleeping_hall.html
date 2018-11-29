@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
+
 
 {% block app_content %}
 {% if total == 0 %}
 <h2>There are no people staying in the sleeping hall</h2>
 {% else %}
-<h2>Dancers staying in the sleeping hall <span style="font-size:x-large" class="badge">{% if total > 0 %}{{ total }}{% else %}0{% endif %}</span></h2>
+<h2>Dancers staying in the sleeping hall <span style="font-size:x-large" class="badge badge-pill badge-dark">{% if total > 0 %}{{ total }}{% else %}0{% endif %}</span></h2>
 <form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list">
+    <input class="btn btn-outline-primary" id="submit-download_file" name="download_file" type="submit" value="Download list">
 </form>
 <div style="height:10px;"></div>
-<table class="table table-list">
+<table class="table table-sm">
     <thead>
         <tr>
             <th><b>Team</b></th>

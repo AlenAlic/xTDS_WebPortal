@@ -1,6 +1,6 @@
 {% if title %}<h2>{{ title }}</h2>{% endif %}
 {% if desc %}<p>{{ desc }}</p>{% endif %}
-<table class="table">
+<table class="table table-sm">
 <colgroup>
     <col span="1" style="width: 30%;">
     <col span="1" style="width: 25%;">
@@ -12,7 +12,7 @@
 <tr>
     <th align="bottom" colspan="2">
         {% if subtitle %}{{ subtitle }}{% endif %}
-        {% if dancers %}<span id="{{ list_id }}-total-badge" class="badge">{{ dancers|length }}</span>{% endif %}
+        {% if dancers %}<span id="{{ list_id }}-total-badge" class="badge badge-pill badge-dark">{{ dancers|length }}</span>{% endif %}
     </th>
     <th>Leaders</th>
     <th>Followers</th>

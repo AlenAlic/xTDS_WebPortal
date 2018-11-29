@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from ntds_webportal import db
 from ntds_webportal.raffle import bp
 from ntds_webportal.models import requires_access_level, requires_tournament_state, Team, Contestant, \
-    User, Notification, requires_testing_environment
+    User, Notification, requires_testing_environment, StatusInfo
 from ntds_webportal.raffle.forms import RaffleConfigurationForm
 from ntds_webportal.data import *
 from raffle_system.system import RaffleSystem
@@ -53,11 +53,12 @@ def system():
 def start():
     if g.ts.main_raffle_taken_place:
         return redirect(url_for('raffle.completed'))
+    # name.replace(' ', '-').replace('`', '')
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
         all_teams = db.session.query(Team).all()
-        teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
-                  'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
+        teams = [{'team': team, 'id': team.city,
+                  'id_title': team.city + '-title'} for team in all_teams]
         for t in teams:
             t['teamcaptains'] = [d for d in raffle_sys.registered_dancers
                                  if d.contestant_info[0].team == t['team'] and d.contestant_info[0].team_captain]
@@ -88,8 +89,8 @@ def completed():
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
         all_teams = db.session.query(Team).all()
-        teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
-                  'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
+        teams = [{'team': team, 'id': team.city,
+                  'id_title': team.city + '-title'} for team in all_teams]
         for t in teams:
             t['available_dancers'] = [d for d in raffle_sys.registered_dancers
                                       if d.contestant_info[0].team == t['team']]
@@ -134,8 +135,8 @@ def confirmed():
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
         all_teams = db.session.query(Team).all()
-        teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
-                  'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
+        teams = [{'team': team, 'id': team.city,
+                  'id_title': team.city + '-title'} for team in all_teams]
         for t in teams:
             t['available_dancers'] = [d for d in raffle_sys.registered_dancers
                                       if d.contestant_info[0].team == t['team']]
@@ -220,6 +221,20 @@ def test_system():
 def test_start():
     if g.ts.main_raffle_taken_place:
         return redirect(url_for('raffle.test_completed'))
+    form = request.args
+    if 'registered' in form:
+        dancers = StatusInfo.query.all()
+        for dancer in dancers:
+            dancer.set_status(REGISTERED)
+        db.session.commit()
+        flash(f"All dancers are now {REGISTERED}.")
+    if 'no_gdpr' in form:
+        dancers = StatusInfo.query.all()
+        limit = 50
+        for dancer in dancers[:limit]:
+            dancer.set_status(NO_GDPR)
+        db.session.commit()
+        flash(f"The first {limit} dancers have now not accepted the GDPR.")
     commit_accessible = current_app.config.get('ENV') in TESTING_ENVIRONMENTS
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
@@ -304,6 +319,19 @@ def test_completed():
 def test_confirmed():
     if not g.ts.main_raffle_result_visible:
         return redirect(url_for('raffle.test_completed'))
+    form = request.args
+    if 'selected_confirmed' in form:
+        dancers = StatusInfo.query.filter(StatusInfo.status == SELECTED).all()
+        for dancer in dancers:
+            dancer.set_status(CONFIRMED)
+        db.session.commit()
+        flash(f"All {SELECTED} dancers are now {CONFIRMED}.")
+    if 'confirmed_selected' in form:
+        dancers = StatusInfo.query.filter(StatusInfo.status == CONFIRMED).all()
+        for dancer in dancers:
+            dancer.set_status(SELECTED)
+        db.session.commit()
+        flash(f"All {CONFIRMED} dancers are now {SELECTED}.")
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
         all_teams = db.session.query(Team).all()

@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
-<table id="myTable" class="table table-striped table-responsive">
+<table id="myTable" class="table table-hover">
     <colgroup>
         <col span="1" style="width: 15%;">
         <col span="1" style="width: 20%;">
@@ -16,10 +15,7 @@
     <thead>
         <tr>
             <th colspan="1"><input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..."></th>
-            <th colspan="7"></th>
-        </tr>
-        <tr>
-            <th colspan="4"></th>
+            <th colspan="3"></th>
             <th colspan="2">Ballroom</th>
             <th colspan="2">Latin</th>
         </tr>
@@ -71,12 +67,6 @@
 {% block scripts %}
 {{ super() }}
 <script>
-$(document).ready(function($) {
-    $(".clickable-row").css("cursor", "pointer")
-    $(".clickable-row").click(function() {
-        window.location = $(this).data("href");
-    });
-});
 function myFunction() {
     // Declare variables
     var input, filter, table, tr, td, i;

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block body_attribs %}
 onload="onStart()"
@@ -40,7 +39,7 @@ visibility:hidden
     <div class="form-group">
         <div class="input-group">
             <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Set team captain{% if g.sc.number_of_teamcaptains > 1 %}s{% endif %}{% endif %}">&nbsp;
-            <a role="button" class="btn btn-default" href="{{ url_for('main.dashboard') }}">Cancel</a>
+            <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.dashboard') }}">Cancel</a>
         </div>
     </div>
 </form>

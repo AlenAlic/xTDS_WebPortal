@@ -160,7 +160,8 @@ def change_email(number):
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(TEAM_CAPTAINS_HAVE_ACCESS)
 def registration_management():
-    no_gdpr_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == NO_GDPR).all()
+    no_gdpr_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == NO_GDPR)\
+        .order_by(Contestant.first_name).all()
     form = request.args
     if 'start_registration_period' in form:
         g.ts.registration_period_started = True
@@ -198,7 +199,7 @@ def registration_overview():
                   case({CONFIRMED: 0, SELECTED: 1, REGISTERED: 2, CANCELLED: 3}, value=StatusInfo.status),
                   Contestant.first_name).all()
     all_teams = db.session.query(Team).all()
-    dancers = [{'country': team.country, 'name': team.name, 'id': team.name.replace(' ', '-').replace('`', ''),
+    dancers = [{'country': team.country, 'name': team.name, 'id': team.city,
                 'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team)
                 .order_by(Contestant.first_name).all()}
                for team in all_teams]
@@ -317,7 +318,7 @@ def finances_overview():
     all_cancelled_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(StatusInfo.payment_required.is_(True), StatusInfo.status == CANCELLED) \
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
-    teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
+    teams = [{'team': team, 'id': team.city,
               'confirmed_dancers': [dancer for dancer in all_confirmed_dancers if
                                     dancer.contestant_info[0].team.name == team.name],
               'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if

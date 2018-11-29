@@ -19,7 +19,7 @@
 {% endwith %}
 <h2>Test summary</h2>
 <div class="row">
-    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+    <div class="col-sm-6 col-md-3 col-lg-3">
         <p><b>Guaranteed dancers_left</b></p>
         {{ raffle_sys.guaranteed_dancers() }}
     </div>
@@ -27,12 +27,12 @@
 
 <h2>Overview</h2>
 <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+    <div class="col-sm-12 col-md-6 col-lg-6">
         {% with subtitle='Selected', dancers=raffle_sys.selected_dancers, stats=raffle_sys.get_stats(g.data.SELECTED) %}
             {% include 'raffle/_stats.html' %}
         {% endwith %}
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+    <div class="col-sm-12 col-md-6 col-lg-6">
         {% with subtitle='Available', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
             {% include 'raffle/_stats.html' %}
         {% endwith %}

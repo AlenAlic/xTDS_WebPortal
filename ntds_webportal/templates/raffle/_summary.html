@@ -1,18 +1,18 @@
 <h2>Summary</h2>
 <div class="row">
-    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+    <div class=" col-sm-6 col-md-3 col-lg-3">
         <p><b>Total spots available:</b></p>
         {{ g.rc.maximum_number_of_dancers }}
     </div>
-    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+    <div class="col-sm-6 col-md-3 col-lg-3">
         <p><b>Dancers in the raffle system:</b></p>
         {{ raffle_sys.selected_dancers|length + raffle_sys.confirmed_dancers|length }}
     </div>
-    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+    <div class="col-sm-6 col-md-3 col-lg-3">
         <p><b>Dancers available:</b></p>
         {{ raffle_sys.registered_dancers|length }}
     </div>
-    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+    <div class="col-sm-6 col-md-3 col-lg-3">
         <p><b>Sleeping spots taken:</b></p>
         {{ raffle_sys.number_of_sleeping_spots() }}
     </div>

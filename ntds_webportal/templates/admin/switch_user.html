@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as wtf %}
 
 {% block body_attribs %}
 onload="onStart()"
@@ -12,44 +11,44 @@ visibility:hidden
 {% block app_content %}
 <h2 style="text-align: center;">Switch account</h2>
 <div class="row" style="visibility:hidden">
-    {% with url=url_for('self_admin.switch_to_organizer'), title='Organization: ' + g.sc.tournament + ' ' + g.sc.city + ' ' + g.sc.year|string, image='logo_organization.png' %}
+    {% with accessible=g.ts.organizer_account_set, url=url_for('self_admin.switch_to_organizer'), title='Organization: ' + g.sc.tournament + ' ' + g.sc.city + ' ' + g.sc.year|string, image='logo_organization.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='4 happy feet'), title='4 happy feet', text='Enschede', image='logo_4_happy_feet.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='4 happy feet'), title='4 happy feet', text='Enschede', image='logo_4_happy_feet.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='AmsterDance'), title='AmsterDance', text='Amsterdam', image='logo_amsterdance.svg' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='AmsterDance'), title='AmsterDance', text='Amsterdam', image='logo_amsterdance.svg' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='Blue Suede Shoes'), title='Blue Suede Shoes', text='Delft', image='logo_blue_suede_shoes.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='Blue Suede Shoes'), title='Blue Suede Shoes', text='Delft', image='logo_blue_suede_shoes.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='Dance Fever'), title='Dance Fever', text='Nijmegen', image='logo_dance_fever.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='Dance Fever'), title='Dance Fever', text='Nijmegen', image='logo_dance_fever.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='Erasmus Dance Society'), title='Erasmus Dance Society', text='Rotterdam', image='logo_erasmus_dance_society.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='Erasmus Dance Society'), title='Erasmus Dance Society', text='Rotterdam', image='logo_erasmus_dance_society.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='Footloose'), title='Footloose', text='Eindhoven', image='logo_footloose.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='Footloose'), title='Footloose', text='Eindhoven', image='logo_footloose.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='LeiDance'), title='LeiDance', text='Leiden', image='logo_leidance.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='LeiDance'), title='LeiDance', text='Leiden', image='logo_leidance.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='Let`s Dance'), title='Let`s Dance', text='Maastricht', image='logo_lets_dance.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='Let`s Dance'), title='Let`s Dance', text='Maastricht', image='logo_lets_dance.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='The Blue Toes'), title='The Blue Toes', text='Groningen', image='logo_the_blue_toes.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='The Blue Toes'), title='The Blue Toes', text='Groningen', image='logo_the_blue_toes.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='U Dance'), title='U Dance', text='Utrecht', image='logo_u_dance.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='U Dance'), title='U Dance', text='Utrecht', image='logo_u_dance.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
-    {% with url=url_for('self_admin.switch_to_team_captain', name='WuBDA'), title='WuBDA', text='Wageningen', image='logo_wubda.png' %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url=url_for('self_admin.switch_to_team_captain', name='WuBDA'), title='WuBDA', text='Wageningen', image='logo_wubda.png' %}
         {% include 'admin/_switch_user_subpage.html' %}
     {% endwith %}
 </div>
-{% if g.sc.tournament == g.data.ETDS %}
+{% if g.sc.tournament == g.data.ETDS and g.ts.website_accessible_to_teamcaptains %}
 <!--<h3>Switch to a different team captain</h3>-->
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
@@ -63,6 +62,7 @@ visibility:hidden
     {{ dancer_super_volunteer_form.hidden_tag() }}
     {{ wtf.form_field(dancer_super_volunteer_form.user) }}
     {{ wtf.form_field(dancer_super_volunteer_form.submit) }}
+    <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
 </form>
 {% endblock %}
 

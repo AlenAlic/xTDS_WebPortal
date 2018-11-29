@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
+
 
 {% block app_content %}
-<h2>Total number of people <span style="font-size:x-large" class="badge">{{ total }}</span></h2>
-<h2>People without special dietary requirements and/or allergies <span style="font-size:x-large" class="badge">{{ no_special_diet }}</span></h2>
+<h2>Total number of people <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ total }}</span></h2>
+<h2>People without special dietary requirements and/or allergies <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ no_special_diet }}</span></h2>
 
 {% if people|length == 0 %}
 <h2>There are no people with dietary requirements and/or allergies</h2>
 {% else %}
-<h2>People with dietary requirements and/or allergies <span style="font-size:x-large" class="badge">{{ people|length }}</span></h2>
+<h2>People with dietary requirements and/or allergies <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ people|length }}</span></h2>
 <form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list">
+    <input class="btn btn-outline-primary" id="submit-download_file" name="download_file" type="submit" value="Download list">
 </form>
 <div style="height:10px;"></div>
-<table class="table table-list">
+<table class="table table-sm">
     <thead>
         <tr>
             <th>Who?</th>

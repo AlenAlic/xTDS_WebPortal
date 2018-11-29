@@ -263,7 +263,10 @@ class Contestant(db.Model):
         db.session.commit()
 
     def get_dancing_info(self, competition):
-        return next((di for di in self.dancing_info if di.competition == competition), None)
+        for di in self.dancing_info:
+            if di.competition == competition:
+                return di
+        return None
 
     def dancing_information(self, competition):
         for di in self.dancing_info:

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as wtf %}
 
 {% block app_content %}
 <h2>Name change request for: {{contestant.get_full_name()}}</h2>
@@ -9,7 +8,7 @@
     {{ wtf.form_field(form.prefixes)}}
     {{ wtf.form_field(form.last_name)}}
     {{ wtf.form_field(form.submit, **{'class': "btn btn-primary"})}}
-    <a role="button" class="btn btn-default" href="{{ url_for('teamcaptains.edit_dancer', number=contestant.contestant_id, wide=wide) }}">Cancel</a>
+    <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('teamcaptains.edit_dancer', number=contestant.contestant_id, wide=wide) }}">Cancel</a>
 </form>
 
 {% endblock %}

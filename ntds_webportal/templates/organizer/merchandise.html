@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
+
 
 {% block app_content %}
 {% if g.ts.main_raffle_result_visible is sameas true %}
@@ -18,7 +18,7 @@
 {% endif %}
 <h2>Merchandise</h2>
 {% if g.sc.t_shirt_sold is sameas true %}
-<table class="table table-striped">
+<table class="table table-sm">
     <thead>
     <tr><th colspan="2"><b>T-shirts</b></th></tr>
     <tr><th><b>Size</b></th><th style="text-align:right"><b>Quantity</b></th></tr>
@@ -40,12 +40,12 @@
 {% if g.sc.number_of_merchandise(exclude_t_shirt=True) > 0 %}
 <div class="row">
     {% if g.sc.mug_sold is sameas true %}
-    <div class="col-xs-{{(12/g.sc.number_of_merchandise(exclude_t_shirt=True))|round|int}}">
+    <div class="col-sm-{{(12/g.sc.number_of_merchandise(exclude_t_shirt=True))|round|int}}">
         <b>Mugs:</b> {{mugs}}
     </div>
     {% endif %}
     {% if g.sc.mug_sold is sameas true %}
-    <div class="col-xs-{{(12/g.sc.number_of_merchandise(exclude_t_shirt=True))|round|int}}">
+    <div class="col-sm-{{(12/g.sc.number_of_merchandise(exclude_t_shirt=True))|round|int}}">
         <b>Bags:</b> {{bags}}
     </div>
     {% endif %}
@@ -53,17 +53,17 @@
 {% endif %}
 <h2>Overview</h2>
 <form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list of dancers">
+    <input class="btn btn-outline-primary" id="submit-download_file" name="download_file" type="submit" value="Download list of dancers">
 </form>
 <div style="height:10px"></div>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-    <div class="panel panel-default">
-        <div class="panel-heading" role="button" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            <b class="panel-title">Dancers that have ordered merchandise <span style="font-size:large" class="badge">{% if dancers|length > 0 %}{{ dancers|length }}{% else %}0{% endif %}</span></b>
+    <div class="card">
+        <div class="card-header" role="button" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            <b class="card-title">Dancers that have ordered merchandise <span class="badge badge-pill badge-dark">{% if dancers|length > 0 %}{{ dancers|length }}{% else %}0{% endif %}</span></b>
         </div>
-        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+        <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
             {% if dancers|length > 0 %}
-            <table class="table list-group">
+            <table class="table table-sm mb-0">
                 <colgroup>
                     <col span="1" style="width: 20%;">
                     <col span="1" style="width: 30%;">

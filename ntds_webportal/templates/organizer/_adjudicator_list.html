@@ -1,9 +1,9 @@
-<div class="panel panel-default">
-    <div class="panel-heading" role="button" id="heading-{{type}}" data-toggle="collapse" href="#collapse-{{type}}" aria-expanded="true" aria-controls="collapse-{{type}}">
-        <b class="panel-title">{{type}} adjudicators <span class="badge">{% if adjudicators|length > 0 %}{{ adjudicators|length }}{% else %}0{% endif %}</span></b>
+<div class="card">
+    <div class="card-header" role="button" id="heading-{{type}}" data-toggle="collapse" href="#collapse-{{type}}" aria-expanded="true" aria-controls="collapse-{{type}}">
+        <b class="card-title">{{type}} adjudicators <span class="badge badge-pill badge-dark">{% if adjudicators|length > 0 %}{{ adjudicators|length }}{% else %}0{% endif %}</span></b>
     </div>
     <div id="collapse-{{type}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-{{type}}">
-        <table class="table table-list">
+        <table class="table table-sm mb-0">
             {% if type == data.BALLROOM or type == data.LATIN %}
             <colgroup>
                 <col span="1" style="width: 20%;">

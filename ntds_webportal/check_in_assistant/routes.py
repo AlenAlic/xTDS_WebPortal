@@ -16,20 +16,8 @@ from ntds_webportal.api.team.routes import team_confirmed_dancers
 def tournament_check_in():
     team_captains = User.query.join(Team).filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)) \
         .order_by(Team.name).all()
-    teams = [{'name': team_captain.team.name, 'id': team_captain.team.name.replace(' ', '-').replace('`', ''),
-              'confirmed_dancers':
-                  db.session.query(Contestant).join(ContestantInfo, StatusInfo)
-                  .filter(ContestantInfo.team == team_captain.team,
-                          StatusInfo.status == CONFIRMED).order_by(ContestantInfo.number).all(),
-              'checked_in_dancers':
-                  db.session.query(Contestant).join(ContestantInfo, StatusInfo)
-                  .filter(ContestantInfo.team == team_captain.team, StatusInfo.status == CONFIRMED,
-                          StatusInfo.checked_in.is_(True)).order_by(ContestantInfo.number).all(),
-              'finances':
-                  TeamFinancialOverview(
-                      User.query.filter(User.team == team_captain.team, User.access == ACCESS[TEAM_CAPTAIN]).first())
-                  .finances_overview()
-              } for team_captain in team_captains]
+    teams = [{'team_id': team_captain.team.team_id, 'name': team_captain.team.name,
+              'dancers': team_confirmed_dancers(team_captain.team.team_id).json} for team_captain in team_captains]
     return render_template('check_in_assistant/tournament_check_in.html', teams=teams)
 
 
@@ -81,15 +69,3 @@ def dancer_paid(number):
     flash('Payment status of {name} from team {team} changed successfully.'
           .format(name=dancer.get_full_name(), team=dancer.contestant_info[0].team))
     return redirect(url_for('organizer.tournament_check_in'))
-
-
-@bp.route('/tournament_check_in_test', methods=['GET', 'POST'])
-@login_required
-@requires_access_level([ACCESS[CHECK_IN_ASSISTANT]])
-@requires_tournament_state(RAFFLE_CONFIRMED)
-def tournament_check_in_test():
-    team_captains = User.query.join(Team).filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)) \
-        .order_by(Team.name).all()
-    teams = [{'team_id': team_captain.team.team_id, 'name': team_captain.team.name,
-              'dancers': team_confirmed_dancers(team_captain.team.team_id).json} for team_captain in team_captains]
-    return render_template('check_in_assistant/tournament_check_in_test.html', teams=teams)

@@ -411,7 +411,8 @@ class PartnerRequestForm(FlaskForm):
 
 
 class PartnerRespondForm(FlaskForm):
-    remark = TextAreaField(label='Remarks', render_kw={"style": "resize:none", "rows": "4", "maxlength": "512"})
+    remark = TextAreaField(label='Remarks for the other teamcaptain (optional)',
+                           render_kw={"style": "resize:none", "rows": "3", "maxlength": "512"})
     accept = SubmitField(label='Accept')
     reject = SubmitField(label='Reject')
 

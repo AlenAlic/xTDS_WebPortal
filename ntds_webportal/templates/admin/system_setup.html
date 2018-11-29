@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block body_attribs %}
 onload="onStart()"
@@ -8,23 +7,22 @@ onload="onStart()"
 {% block app_content %}
 <h2>Reset Website</h2>
 <p>Reset the data on the website and close off the website for all users except for the admin.</p>
-<a class="btn btn-default" href="{{url_for('self_admin.system_setup')}}?reset_website" style="text-decoration:none">Reset xTDS WebPortal</a>
+<a class="btn btn-outline-primary" href="{{url_for('self_admin.system_setup')}}?reset_website" style="text-decoration:none">Reset xTDS WebPortal</a>
 <h2>Reset Organizer account</h2>
 {% if g.ts.organizer_account_set is sameas false %}
 Resets the Organizer account for the new tournament and sends an email to the organizer with login credentials.
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ roa_form.hidden_tag() }}
-    {{ my_wtf.form_field(roa_form.tournament, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
-    {{ my_wtf.form_field(roa_form.year, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
-    {{ my_wtf.form_field(roa_form.city, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
-    {{ my_wtf.form_field(roa_form.username, disabled=true) }}
-    {{ my_wtf.form_field(roa_form.tournament_starting_date) }}
-    {{ my_wtf.form_field(roa_form.email) }}
+    {{ wtf.form_field(roa_form.tournament, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
+    {{ wtf.form_field(roa_form.year, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
+    {{ wtf.form_field(roa_form.city, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
+    {{ wtf.form_field(roa_form.username, disabled=true) }}
+    {{ wtf.form_field(roa_form.tournament_starting_date) }}
+    {{ wtf.form_field(roa_form.email) }}
     <div class="form-group required">
-        <label class="control-label" ></label>
         <div class="input-group">
             <input class="btn btn-primary" id="submit" name="submit" type="submit"  value="Reset Organizer account">&nbsp;
-            <a role="button" class="btn btn-default" href="{{ url_for('main.index') }}">Cancel</a>
+            <a role="button" class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Cancel</a>
         </div>
     </div>
 </form>
@@ -36,7 +34,7 @@ Reset the xTDS WebPortal before you can reset the Organizer account.
 The system configuration is accessible to the organizer.
 {% else %}
 <p>Make the system configuration form accessible to the organizer. This is for <b>emergencies</b> only.</p>
-<a class="btn btn-default" href="{{url_for('self_admin.system_setup')}}?access_system_configuration" style="text-decoration:none">System Configuration Accessible</a>
+<a class="btn btn-warning" href="{{url_for('self_admin.system_setup')}}?access_system_configuration" style="text-decoration:none">System Configuration Accessible</a>
 {% endif %}
 {% endblock %}
 

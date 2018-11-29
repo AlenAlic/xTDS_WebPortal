@@ -1,11 +1,11 @@
 {% for team in teams %}
-    <div class="tab-pane fade" role=tabpanel id={{team['id']}} aria-labelledby={{team['id']}}-tab>
-    {% if team['dancers']|length > 0 %}
-    {% with table_id=team['id'], dancers=team['dancers'] %}
-        {% include 'organizer/_registration_dropdown_table.html' %}
-    {% endwith %}
-    {% else %}
-        <h2>Team {{team['name']}} has no registered dancers.</h2>
-    {% endif %}
-    </div>
+<div class="tab-pane fade" id={{team['id']}} role=tabpanel aria-labelledby={{team['id']}}-tab>
+{% if team['dancers']|length > 0 %}
+{% with table_id=team['id'], dancers=team['dancers'] %}
+    {% include 'organizer/_registration_dropdown_table.html' %}
+{% endwith %}
+{% else %}
+    <h2>Team {{team['name']}} has no registered dancers.</h2>
+{% endif %}
+</div>
 {% endfor %}

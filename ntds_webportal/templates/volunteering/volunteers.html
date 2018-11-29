@@ -1,10 +1,9 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
 {% if super_volunteers|length %}
 <h2>Super Volunteers</h2>
-<table class="table table-striped table-responsive">
+<table class="table table-sm table-hover">
 <colgroup>
     <col span="1" style="width: 15%;">
     <col span="1" style="width: 20%;">
@@ -42,7 +41,7 @@
 {% endif %}
 {% if dancers|length > 0 %}
 <h2>Dancers</h2>
-<table class="table table-striped table-responsive">
+<table class="table table-sm">
 <colgroup>
     <col span="1" style="width: 15%;">
     <col span="1" style="width: 20%;">

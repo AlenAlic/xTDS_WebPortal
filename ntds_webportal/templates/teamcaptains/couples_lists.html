@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block body_attribs %}
 {% endblock %}
 
 {% block app_content %}
 <h2>New couples</h2>
-<a href="{{ url_for('teamcaptains.create_couple') }}" class="btn btn-primary">Create new couple</a>
-<div style="margin-top: 8px;"></div>
+<a href="{{ url_for('teamcaptains.create_couple') }}" class="btn btn-primary mb-2">Create new couple</a>
 <p>Dancers that have not accepted the GDPR are marked red.</p>
 {% with category=g.data.BALLROOM, couples=ballroom_couples, show_break_up_button=true %}
     {% include 'teamcaptains/_couples_list.html' %}

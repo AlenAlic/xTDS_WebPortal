@@ -455,37 +455,8 @@ def debug_tools():
     form = request.args
     if 'force_error' in form:
         print(None.email)
-    if 'selected_confirmed' in form:
-        dancers = StatusInfo.query.filter(StatusInfo.status == SELECTED).all()
-        for dancer in dancers:
-            dancer.set_status(CONFIRMED)
-        db.session.commit()
-        flash(f"All {SELECTED} dancers are now {CONFIRMED}.")
-    if 'confirmed_selected' in form:
-        dancers = StatusInfo.query.filter(StatusInfo.status == CONFIRMED).all()
-        for dancer in dancers:
-            dancer.set_status(SELECTED)
-        db.session.commit()
-        flash(f"All {CONFIRMED} dancers are now {SELECTED}.")
-    if 'registered' in form:
-        dancers = StatusInfo.query.all()
-        for dancer in dancers:
-            dancer.set_status(REGISTERED)
-        db.session.commit()
-        flash(f"All dancers are now {REGISTERED}.")
-    if 'no_gdpr' in form:
-        dancers = StatusInfo.query.all()
-        limit = 5
-        for dancer in dancers[:limit]:
-            dancer.set_status(NO_GDPR)
-        db.session.commit()
-        flash(f"The first {limit} dancers have now not accepted the GDPR.")
     if len(form) > 0:
         return redirect(url_for('main.dashboard'))
-    if request.method == 'POST':
-        form = request.form
-        if 'force_error' in form:
-            print(None.email)
     return render_template('admin/debug_tools.html')
 
 

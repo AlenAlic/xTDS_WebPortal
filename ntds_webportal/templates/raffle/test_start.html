@@ -1,18 +1,25 @@
 {% extends "raffle/raffle_base.html" %}
 
 {% block app_content %}
+<div style="width:100%">
+    <div style="display: table; margin: 0 auto; text-align: center;">
+        <h2>Change dancers status</h2>
+        <a class="btn btn-outline-secondary mx-2 my-2" href="{{url_for('self_admin.debug_tools')}}?registered" style="text-decoration:none">All dancers -> registered</a>
+        <a class="btn btn-outline-secondary mx-2 my-2" href="{{url_for('self_admin.debug_tools')}}?no_gdpr" style="text-decoration:none">First x dancers -> no GDPR</a>
+    </div>
+</div>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     <h2>Dancers overview</h2>
     {% with subtitle='Registered', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
         {% include 'raffle/_stats.html' %}
     {% endwith %}
     <div style="width:100%">
-        <div class="btn-group btn-group-lg" style="display: table; margin: 0 auto;">
+        <div class="btn-group-lg" style="display: table; margin: 0 auto;">
             {% if commit_accessible is sameas true %}
-            <button type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success loading-btn"><strong>START RAFFLE</strong></button>
+            <button type="submit" id="submit-start_raffle" name="start_raffle" class="btn btn-success loading-btn mx-2"><strong>START RAFFLE</strong></button>
             {% endif %}
-            <button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-warning"><strong>TEST RAFFLE</strong></button>
-            <button type="submit" id="submit-start_batch_raffle" name="start_batch_raffle" class="btn btn-danger"><strong>BATCH RAFFLE</strong></button>
+            <button type="submit" id="submit-start_test_raffle" name="start_test_raffle" class="btn btn-warning mx-2"><strong>TEST RAFFLE</strong></button>
+            <button type="submit" id="submit-start_batch_raffle" name="start_batch_raffle" class="btn btn-danger mx-2"><strong>BATCH RAFFLE</strong></button>
         </div>
     </div>
     {% if g.rc.beginners_guaranteed_entry_cutoff is sameas true or g.rc.beginners_guaranteed_per_team is sameas true or g.rc.beginners_increased_chance is sameas true %}
