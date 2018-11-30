@@ -337,12 +337,12 @@ class EditContestantForm(BaseContestantForm):
         if dancer.status_info.status == SELECTED or dancer.status_info.status == CONFIRMED:
             self.ballroom_level.data = dancer.competition(BALLROOM).level
             self.ballroom_role.data = dancer.competition(BALLROOM).role
-            self.ballroom_blind_date.data = dancer.competition(BALLROOM).blind_date
+            self.ballroom_blind_date.data = str(dancer.competition(BALLROOM).blind_date)
             self.ballroom_partner.data = db.session.query(Contestant).join(ContestantInfo) \
                 .filter(Contestant.contestant_id == dancer.competition(BALLROOM).partner).first()
             self.latin_level.data = dancer.competition(LATIN).level
             self.latin_role.data = dancer.competition(LATIN).role
-            self.latin_blind_date.data = dancer.competition(LATIN).blind_date
+            self.latin_blind_date.data = str(dancer.competition(LATIN).blind_date)
             self.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
                 .filter(Contestant.contestant_id == dancer.competition(LATIN).partner).first()
         super().custom_validate()

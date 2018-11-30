@@ -229,11 +229,11 @@ function filter(name) {
         tdn = tr[i].getElementsByTagName("td")[1];
         tds = tr[i].getElementsByTagName("td")[3];
         {% if g.sc.ask_first_time %}
-        tdb = tr[i].getElementsByTagName("td")[7];
-        tdl = tr[i].getElementsByTagName("td")[8];
-        {% else %}
         tdb = tr[i].getElementsByTagName("td")[6];
         tdl = tr[i].getElementsByTagName("td")[7];
+        {% else %}
+        tdb = tr[i].getElementsByTagName("td")[5];
+        tdl = tr[i].getElementsByTagName("td")[6];
         {% endif %}
         if (tdn && tds && tdb && tdl) {
             if (tdn.innerHTML.toUpperCase().indexOf(filter_name) > -1 && tds.innerHTML.toUpperCase().indexOf(filter_status) > -1 && tdb.innerHTML.toUpperCase().indexOf(filter_ballroom) > -1 && tdl.innerHTML.toUpperCase().indexOf(filter_latin) > -1) {

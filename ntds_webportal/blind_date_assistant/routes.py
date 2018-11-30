@@ -95,7 +95,7 @@ def break_up_couple(couple_lead, competition):
     lead = Contestant.query.filter(Contestant.contestant_id == couple_lead).first()
     follow = Contestant.query.filter(Contestant.contestant_id == follow).first()
     notify_teamcaptains_broken_up_couple(lead=lead, follow=follow, competition=competition)
-    flash(f'{lead.contestant} and {follow} are not a couple anymore in {competition}.')
+    flash(f'{lead} and {follow} are not a couple anymore in {competition}.')
     return redirect(url_for('blind_date_assistant.create_couple'))
 
 
