@@ -24,14 +24,14 @@
                 </colgroup>
                 <tbody>
                 {% for dancer in team['available_dancers'] %}
-                    <tr id="{{ dancer.contestant_id }}" class="checkbox-row {% if dancer.status_info[0].guaranteed_entry == true or dancer.contestant_info[0].team_captain == true %}api-success{% endif %}" style="{% if dancer.contestant_info[0].team_captain == true %}font-weight: bold; cursor: not-allowed;{% endif %}">
+                    <tr id="{{ dancer.contestant_id }}" class="checkbox-row {% if dancer.status_info.guaranteed_entry == true or dancer.contestant_info.team_captain == true %}api-success{% endif %}" style="{% if dancer.contestant_info.team_captain == true %}font-weight: bold; cursor: not-allowed;{% endif %}">
                         <td>
-                            {{ dancer.get_full_name() }}{% if dancer.contestant_info[0].team_captain == true %} - Team captain{% endif %}
+                            {{ dancer.get_full_name() }}{% if dancer.contestant_info.team_captain == true %} - Team captain{% endif %}
                         </td>
                         <td align="right">
                             <input class="checkbox guaranteed-checkbox2" type="checkbox" value="y" style="visibility:hidden"
-                                   onclick="{% if dancer.contestant_info[0].team_captain == false %}guaranteedEntry(this){% endif %}"
-                                   {% if dancer.status_info[0].guaranteed_entry == true %}checked{% endif %}>
+                                   onclick="{% if dancer.contestant_info.team_captain == false %}guaranteedEntry(this){% endif %}"
+                                   {% if dancer.status_info.guaranteed_entry == true %}checked{% endif %}>
                         </td>
                     </tr>
                 {% endfor %}

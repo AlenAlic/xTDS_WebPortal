@@ -67,11 +67,11 @@
 <tr>
     <td>{{ dancer.get_full_name() }}</td>
     <td>{{ dancer.email }}</td>
-    <td>{{ g.data.TF[dancer.additional_info[0].sleeping_arrangements] }}</td>
-    <td>{{ g.data.DIET_ALLERGIES_DISPLAY.get(dancer.contestant_info[0].diet_allergies, '-') }}</td>
-    <td>{{ g.data.YMN[dancer.volunteer_info[0].volunteer] }}</td>
-    <td>{{ g.data.YMN[dancer.volunteer_info[0].first_aid] }}</td>
-    <td>{{ g.data.YMN[dancer.volunteer_info[0].emergency_response_officer] }}</td>
+    <td>{{ g.data.TF[dancer.additional_info.sleeping_arrangements] }}</td>
+    <td>{{ g.data.DIET_ALLERGIES_DISPLAY.get(dancer.contestant_info.diet_allergies, '-') }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.volunteer] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.first_aid] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.emergency_response_officer] }}</td>
 </tr>
 {% endfor %}
 </tbody>

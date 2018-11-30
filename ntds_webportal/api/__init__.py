@@ -2,6 +2,7 @@ from flask import Blueprint
 
 bp = Blueprint('api', __name__)
 
-from ntds_webportal.api.contestant import routes
-from ntds_webportal.api.team import routes
-from ntds_webportal.api.tournament_state import routes
+from ntds_webportal.api import errors
+from ntds_webportal.api import contestants
+from ntds_webportal.api import teams
+from ntds_webportal.api import tournament_state

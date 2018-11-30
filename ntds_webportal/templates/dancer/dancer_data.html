@@ -1,7 +1,7 @@
 {% extends "teamcaptains/register_edit_dancers_base.html" %}
 
 {% block app_content %}
-{% with title='Current status: ' ~ g.data.STATUS[dancer.status_info[0].status], mode='view' %}
+{% with title='Current status: ' ~ g.data.STATUS[dancer.status_info.status], mode='view' %}
     {% include 'teamcaptains/_dancer_form.html' %}
 {% endwith %}
 {% endblock %}

@@ -31,9 +31,9 @@
             </thead>
             <tbody>
             {% for dancer in team['selected_dancers'] %}
-                <tr class="{% if dancer.status_info[0].guaranteed_entry is sameas true %}table-success{% elif dancer.contestant_info[0].team_captain is sameas true %}table-success{% endif %}" style="{% if dancer.contestant_info[0].team_captain == true %}font-weight: bold;{% endif %}">
+                <tr class="{% if dancer.status_info.guaranteed_entry is sameas true %}table-success{% elif dancer.contestant_info.team_captain is sameas true %}table-success{% endif %}" style="{% if dancer.contestant_info.team_captain == true %}font-weight: bold;{% endif %}">
                     <td>
-                        {{ dancer.get_full_name() }}{% if dancer.contestant_info[0].team_captain == true %} - Team captain{% endif %}
+                        {{ dancer.get_full_name() }}{% if dancer.contestant_info.team_captain == true %} - Team captain{% endif %}
                     </td>
                     <td>
                         {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}

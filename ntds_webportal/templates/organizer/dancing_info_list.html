@@ -40,10 +40,10 @@
                     {{ dancer.email }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
-                    {{ dancer.contestant_info[0].team }}
+                    {{ dancer.contestant_info.team }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
-                    {{ data.STATUS[dancer.status_info[0].status] }}
+                    {{ data.STATUS[dancer.status_info.status] }}
                 </td>
                 <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
                     {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}

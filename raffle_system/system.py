@@ -63,25 +63,25 @@ class RaffleSystem(Balance):
         self.balance = self.get_list_balance(self.selected_dancers + self.confirmed_dancers)
 
     def team_captains(self):
-        return [dancer for dancer in self.registered_dancers if dancer.contestant_info[0].team_captain]
+        return [dancer for dancer in self.registered_dancers if dancer.contestant_info.team_captain]
 
     def number_of_team_captains(self):
         return len(self.team_captains())
 
     def sleeping_spots(self):
-        return [d for d in self.selected_dancers + self.confirmed_dancers if d.additional_info[0].sleeping_arrangements]
+        return [d for d in self.selected_dancers + self.confirmed_dancers if d.additional_info.sleeping_arrangements]
 
     def number_of_sleeping_spots(self):
         return len(self.sleeping_spots())
 
     def first_time_dancers(self):
-        return [dancer for dancer in self.registered_dancers if dancer.contestant_info[0].first_time]
+        return [dancer for dancer in self.registered_dancers if dancer.contestant_info.first_time]
 
     def number_of_first_time_dancers(self):
         return len(self.first_time_dancers())
 
     def newly_selected_dancers(self):
-        return [d for d in self.selected_dancers if d.status_info[0].status == REGISTERED]
+        return [d for d in self.selected_dancers if d.status_info.status == REGISTERED]
 
     def number_of_newly_selected_dancers(self):
         return len(self.newly_selected_dancers())
@@ -212,7 +212,7 @@ class RaffleSystem(Balance):
 
     def guaranteed_dancers(self):
         guaranteed_dancers = [dancer for dancer in (self.registered_dancers + self.no_partner_list)
-                              if dancer.status_info[0].guaranteed_entry or dancer.contestant_info[0].team_captain]
+                              if dancer.status_info.guaranteed_entry or dancer.contestant_info.team_captain]
         if self.config.first_time_guaranteed_entry:
             guaranteed_dancers += self.first_time_dancers()
         return guaranteed_dancers
@@ -223,11 +223,11 @@ class RaffleSystem(Balance):
     def update_states(self):
         if not self.test and not self.batch:
             for dancer in self.registered_dancers:
-                dancer.status_info[0].raffle_status = REGISTERED
+                dancer.status_info.raffle_status = REGISTERED
             for dancer in self.selected_dancers:
-                dancer.status_info[0].raffle_status = SELECTED
+                dancer.status_info.raffle_status = SELECTED
             for dancer in self.confirmed_dancers:
-                dancer.status_info[0].raffle_status = CONFIRMED
+                dancer.status_info.raffle_status = CONFIRMED
             db.session.commit()
 
     @staticmethod
@@ -292,7 +292,7 @@ class RaffleSystem(Balance):
         else:
             dancers = self.first_time_dancers()
         if team is not None:
-            dancers = [d for d in dancers if d.contestant_info[0].team == team]
+            dancers = [d for d in dancers if d.contestant_info.team == team]
         groups = []
         for grp in self.registered_groups:
             for d in grp.dancers:
@@ -532,14 +532,14 @@ class RaffleSystem(Balance):
             all_teams = [team_captain.team for team_captain in all_team_captains]
             ordered_teams = []
             for team in all_teams:
-                team_dancers = [d for d in guaranteed_dancers if d.contestant_info[0].team == team]
-                selected_team_dancers = len([d for d in selected_dancers_source if d.contestant_info[0].team == team])
+                team_dancers = [d for d in guaranteed_dancers if d.contestant_info.team == team]
+                selected_team_dancers = len([d for d in selected_dancers_source if d.contestant_info.team == team])
                 ordered_teams += [{'team': team,
                                    'max_dancers': min(len(team_dancers) + selected_team_dancers, maximum_dancers)}]
             for _ in range(0, len(guaranteed_dancers)):
                 for team in ordered_teams:
                     selected_dancers = [d for d in self.selected_dancers if
-                                        d.contestant_info[0].team == team['team']]
+                                        d.contestant_info.team == team['team']]
                     team['dancers'] = self.specific_groups(dancers_source, team=team['team'])
                     if dancers_source == BEGINNERS:
                         team['number_of_dancers'] = len([d for d in selected_dancers if d in
@@ -627,7 +627,7 @@ class RaffleSystem(Balance):
                                 for grp in groups:
                                     groups_dancers += grp.dancers
                                 admissible = len([d for d in groups_dancers
-                                                  if not d.additional_info[0]
+                                                  if not d.additional_info
                                                  .sleeping_arrangements]) == len(groups_dancers)
                             if admissible:
                                 self.add_groups(groups)
@@ -701,9 +701,9 @@ class RaffleSystem(Balance):
         for grp in groups:
             self.add_groups(groups)
             for dancer in grp.dancers:
-                dancer.status_info[0].set_status(SELECTED)
+                dancer.status_info.set_status(SELECTED)
                 teamcaptain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
-                                                User.team == dancer.contestant_info[0].team).first()
+                                                User.team == dancer.contestant_info.team).first()
                 text = f"{dancer.get_full_name()} has been selected for the tournament by the raffle system.\n"
                 n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
                                  user=teamcaptain)
@@ -716,7 +716,7 @@ class RaffleSystem(Balance):
         for grp in groups:
             self.reset_group(grp)
             for dancer in grp.dancers:
-                dancer.status_info[0].set_status(REGISTERED)
+                dancer.status_info.set_status(REGISTERED)
         flash('Marked dancers are put back into the raffle selection pool.')
         db.session.commit()
 
@@ -767,7 +767,7 @@ class RaffleSystem(Balance):
         elif not group.check() and add:
             if reducing_difference:
                 print(string_group_matched_incomplete_reducing_difference(group))
-            elif len([d for d in group.dancers if d.contestant_info[0].team_captain]) > 0:
+            elif len([d for d in group.dancers if d.contestant_info.team_captain]) > 0:
                 print(string_group_matched_incomplete_team_captain_exception(group))
             else:
                 print(GUARANTEED_EXCEPTION.format(group.dancers[0].get_full_name()))

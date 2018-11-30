@@ -75,7 +75,7 @@ def edit_dancers():
     dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team).order_by(Contestant.first_name).all()
     order = [NO_GDPR, CONFIRMED, SELECTED, REGISTERED, CANCELLED]
-    dancers = sorted(dancers, key=lambda o: order.index(o.status_info[0].status))
+    dancers = sorted(dancers, key=lambda o: order.index(o.status_info.status))
     return render_template('teamcaptains/edit_dancers.html', dancers=dancers, data=data, wide=wide)
 
 
@@ -98,14 +98,14 @@ def edit_dancer(number):
     if request.method == POST:
         form.custom_validate(dancer)
     if form.validate_on_submit():
-        dancer.status_info[0].feedback_about_information = None
+        dancer.status_info.feedback_about_information = None
         db.session.commit()
         flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
               'alert-success')
         return redirect(url_for('teamcaptains.edit_dancers', wide=wide))
-    if dancer.status_info[0].feedback_about_information is not None:
+    if dancer.status_info.feedback_about_information is not None:
         flash(Markup(f'{dancer.get_full_name()} sent feedback about his/her submitted information:<br/>'
-                     f'{dancer.status_info[0].feedback_about_information}<br/><br/> You can remove this notification '
+                     f'{dancer.status_info.feedback_about_information}<br/><br/> You can remove this notification '
                      f'by saving the form on this page.'), 'alert-info')
     return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, data=data, wide=wide,
                            timestamp=datetime.datetime.now().timestamp(), sc=g.sc, possible_partners=possible_partners)
@@ -123,17 +123,17 @@ def register_dancer(number):
     changed_dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number).first()
     if register == 0:
-        status = changed_dancer.status_info[0].status
+        status = changed_dancer.status_info.status
         changed_dancer.cancel_registration()
         db.session.commit()
         flash('The registration of {} has been cancelled.'.format(changed_dancer.get_full_name()), 'alert-info')
-        text = f"{changed_dancer.get_full_name()} from team {changed_dancer.contestant_info[0].team.name} " \
+        text = f"{changed_dancer.get_full_name()} from team {changed_dancer.contestant_info.team.name} " \
                f"has cancelled his/her registration.\n"
         n = Notification(title=f"Cancelled registration, previously {status}", text=text,
                          user=User.query.filter(User.access == ACCESS[ORGANIZER]).first())
         n.send()
     elif register == 1:
-        changed_dancer.status_info[0].set_status(REGISTERED)
+        changed_dancer.status_info.set_status(REGISTERED)
         db.session.commit()
         flash('{} has been re-registered successfully.'.format(changed_dancer.get_full_name()), 'alert-success')
     return redirect(url_for('teamcaptains.edit_dancers', wide=int(request.values['wide'])))
@@ -146,7 +146,7 @@ def register_dancer(number):
 def resend_login_dancer(number):
     changed_dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number).first()
-    if changed_dancer.status_info[0].status != data.NO_GDPR:
+    if changed_dancer.status_info.status != data.NO_GDPR:
         flash('Cannot reset the login credentials of a dancer that has accepted the GDPR.', 'alert-warning')
         return redirect(url_for('teamcaptains.edit_dancers'))
     form = ResendCredentialsForm()
@@ -154,7 +154,7 @@ def resend_login_dancer(number):
         form.populate(changed_dancer)
     if form.validate_on_submit():
         all_dancers = Contestant.query.filter(Contestant.contestant_id != changed_dancer.contestant_id).all()
-        if len ([d for d in all_dancers if d.email == form.email.data]) == 0:
+        if len([d for d in all_dancers if d.email == form.email.data]) == 0:
             changed_dancer.email = form.email.data
             changed_dancer.user.email = form.email.data
             changed_dancer.user.username = form.email.data
@@ -180,7 +180,7 @@ def name_change_request(contestant):
         return redirect(url_for('main.dashboard'))
     wide = int(request.values['wide'])
     contestant = Contestant.query.filter_by(contestant_id=contestant).first()
-    if not contestant or not contestant.contestant_info[0].team == current_user.team:
+    if not contestant or not contestant.contestant_info.team == current_user.team:
         return redirect('errors/404.html')
     form = NameChangeRequestForm()
     if form.validate_on_submit():
@@ -242,13 +242,13 @@ def couples_list():
                         list(itertools.product(ballroom_couples_leads, ballroom_couples_follows)) if
                         couple[0].contestant_id == get_dancing_categories(couple[1].dancing_info)[BALLROOM].partner]
     ballroom_couples = [couple for couple in ballroom_couples if
-                        couple['lead'].contestant_info[0].team == current_user.team
-                        or couple['follow'].contestant_info[0].team == current_user.team]
+                        couple['lead'].contestant_info.team == current_user.team
+                        or couple['follow'].contestant_info.team == current_user.team]
     latin_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                      list(itertools.product(latin_couples_leads, latin_couples_follows)) if
                      couple[0].contestant_id == get_dancing_categories(couple[1].dancing_info)[LATIN].partner]
-    latin_couples = [couple for couple in latin_couples if couple['lead'].contestant_info[0].team == current_user.team
-                     or couple['follow'].contestant_info[0].team == current_user.team]
+    latin_couples = [couple for couple in latin_couples if couple['lead'].contestant_info.team == current_user.team
+                     or couple['follow'].contestant_info.team == current_user.team]
     return render_template('teamcaptains/couples_lists.html', data=data, func=func,
                            ballroom_couples=ballroom_couples, latin_couples=latin_couples)
 
@@ -313,23 +313,23 @@ def break_up_couple(competition, lead_id, follow_id):
                                     DancingInfo.partner == follow_id).first()
     follow = Contestant.query.filter(Contestant.contestant_id == follow_id).first()
     lead_status = Contestant.query.filter(Contestant.contestant_id == lead_id).first()
-    if lead_status.status_info[0].status == SELECTED or lead_status.status_info[0].status == CONFIRMED \
-            or follow.status_info[0].status == SELECTED or follow.status_info[0].status == CONFIRMED:
+    if lead_status.status_info.status == SELECTED or lead_status.status_info.status == CONFIRMED \
+            or follow.status_info.status == SELECTED or follow.status_info.status == CONFIRMED:
         flash(f"Cannot break up a couple that has been {SELECTED} or {CONFIRMED}.")
     else:
         lead.set_partner(None)
         db.session.commit()
         flash(f'{lead.contestant} and {follow} are not a couple anymore in {competition}.')
-        dancer = None
-        if lead_status.contestant_info[0].team != current_user.team:
+        dancer, old_partner = None, None
+        if lead_status.contestant_info.team != current_user.team:
             dancer, old_partner = lead_status, follow
-        elif follow.contestant_info[0].team != current_user.team:
+        elif follow.contestant_info.team != current_user.team:
             dancer, old_partner = follow, lead_status
         if dancer is not None:
             other_team_captain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
-                                                   User.team == dancer.contestant_info[0].team).first()
+                                                   User.team == dancer.contestant_info.team).first()
             text = f"{dancer.get_full_name()} is no longer dancing with {old_partner.get_full_name()} " \
-                   f"({old_partner.contestant_info[0].team}) in {competition}."
+                   f"({old_partner.contestant_info.team}) in {competition}."
             n = Notification(title=f"{dancer.get_full_name()} - no partner in {competition}",
                              text=text.format(dancer=dancer.get_full_name(), comp=competition), user=other_team_captain)
             n.send()
@@ -345,8 +345,8 @@ def partner_request_list():
         flash("Cannot enter page right now. Register at least one dancer first to access the page.")
         return redirect(url_for('main.dashboard'))
     requests = PartnerRequest.query.all()
-    my_requests = [req for req in requests if req.dancer.contestant_info[0].team == current_user.team]
-    other_requests = list(req for req in requests if req.other.contestant_info[0].team == current_user.team)
+    my_requests = [req for req in requests if req.dancer.contestant_info.team == current_user.team]
+    other_requests = list(req for req in requests if req.other.contestant_info.team == current_user.team)
     return render_template('teamcaptains/partner_list.html', my_requests=my_requests, other_requests=other_requests,
                            title='partner requests')
 
@@ -434,7 +434,7 @@ def request_respond(req):
     req = PartnerRequest.query.filter_by(id=req).first()
     if not req:
         return redirect('errors/404.html')
-    if req.other.contestant_info[0].team != current_user.team:
+    if req.other.contestant_info.team != current_user.team:
         return redirect('errors/404.html')
     form = PartnerRespondForm()
     if form.validate_on_submit():
@@ -492,19 +492,19 @@ def set_teamcaptains():
         if current_tcs is not None:
             if len(current_tcs) >= 1:
                 current_tc_one = current_tcs[0]
-                current_tc_one.contestant_info[0].team_captain = False
+                current_tc_one.contestant_info.team_captain = False
             if len(current_tcs) == 2:
                 current_tc_two = current_tcs[1]
-                current_tc_two.contestant_info[0].team_captain = False
+                current_tc_two.contestant_info.team_captain = False
             db.session.commit()
         first_team_captain = None
         second_team_captain = None
         if form.team_captain_one.data is not None:
             first_team_captain = form.team_captain_one.data
-            first_team_captain.contestant_info[0].team_captain = True
+            first_team_captain.contestant_info.team_captain = True
         if form.team_captain_two.data is not None:
             second_team_captain = form.team_captain_two.data
-            second_team_captain.contestant_info[0].team_captain = True
+            second_team_captain.contestant_info.team_captain = True
         db.session.commit()
         if first_team_captain is not None and second_team_captain is not None:
             if first_team_captain in current_tcs and second_team_captain not in current_tcs:
@@ -539,8 +539,8 @@ def raffle_result():
     if ts.main_raffle_result_visible:
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(ContestantInfo.team == current_user.team).order_by(ContestantInfo.number).all()
-        selected_dancers = [d for d in all_dancers if d.status_info[0].status == SELECTED]
-        confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == CONFIRMED]
+        selected_dancers = [d for d in all_dancers if d.status_info.status == SELECTED]
+        confirmed_dancers = [d for d in all_dancers if d.status_info.status == CONFIRMED]
         all_leads = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
             .filter(ContestantInfo.team == current_user.team, DancingInfo.role == LEAD) \
             .order_by(DancingInfo.level, ContestantInfo.number).all()
@@ -576,40 +576,40 @@ def raffle_result():
                                  get_dancing_categories(dancer.dancing_info)[LATIN].partner is not None]
         confirmed_ballroom_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                                       list(itertools.product([dancer for dancer in ballroom_couples_leads if
-                                                              dancer.status_info[0].status == CONFIRMED],
+                                                              dancer.status_info.status == CONFIRMED],
                                                              [dancer for dancer in ballroom_couples_follows if
-                                                              dancer.status_info[0].status == CONFIRMED])) if
+                                                              dancer.status_info.status == CONFIRMED])) if
                                       couple[0].contestant_id == get_dancing_categories(
                                           couple[1].dancing_info)[BALLROOM].partner]
         confirmed_latin_couples = [{'lead': couple[0], 'follow': couple[1]} for couple in
                                    list(itertools.product([dancer for dancer in latin_couples_leads
-                                                           if dancer.status_info[0].status == CONFIRMED],
+                                                           if dancer.status_info.status == CONFIRMED],
                                                           [dancer for dancer in latin_couples_follows
-                                                           if dancer.status_info[0].status == CONFIRMED])) if
+                                                           if dancer.status_info.status == CONFIRMED])) if
                                    couple[0].contestant_id == get_dancing_categories(
                                        couple[1].dancing_info)[LATIN].partner]
         ballroom_lead_blind_daters = [dancer for dancer in all_leads if
                                       get_dancing_categories(dancer.dancing_info)[BALLROOM].role == LEAD and
                                       get_dancing_categories(dancer.dancing_info)[BALLROOM].partner is None and
-                                      dancer.status_info[0].status == CONFIRMED]
+                                      dancer.status_info.status == CONFIRMED]
         ballroom_follow_blind_daters = [dancer for dancer in all_follows if
                                         get_dancing_categories(dancer.dancing_info)[BALLROOM].role == FOLLOW
                                         and get_dancing_categories(dancer.dancing_info)[BALLROOM].partner is None
-                                        and dancer.status_info[0].status == CONFIRMED]
+                                        and dancer.status_info.status == CONFIRMED]
         latin_lead_blind_daters = [dancer for dancer in all_leads if
                                    get_dancing_categories(dancer.dancing_info)[LATIN].role == LEAD and
                                    get_dancing_categories(dancer.dancing_info)[LATIN].partner is None and
-                                   dancer.status_info[0].status == CONFIRMED]
+                                   dancer.status_info.status == CONFIRMED]
         latin_follow_blind_daters = [dancer for dancer in all_follows if
                                      get_dancing_categories(dancer.dancing_info)[LATIN].role == FOLLOW and
                                      get_dancing_categories(dancer.dancing_info)[LATIN].partner is None and
-                                     dancer.status_info[0].status == CONFIRMED]
+                                     dancer.status_info.status == CONFIRMED]
         if request.method == 'POST':
             form = request.form
             if 'confirm' in form:
                 confirmed_dancers = [d for d in selected_dancers if str(d.contestant_id) in form]
                 for dancer in confirmed_dancers:
-                    dancer.status_info[0].set_status(CONFIRMED)
+                    dancer.status_info.set_status(CONFIRMED)
                 db.session.commit()
                 flash('Confirmed selected dancer(s).', 'alert-success')
                 return redirect(url_for('teamcaptains.raffle_result'))
@@ -636,12 +636,12 @@ def edit_finances():
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
             .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required.is_(True)) \
             .order_by(Contestant.first_name).all()
-        confirmed_dancers = [d for d in all_dancers if d.status_info[0].status == CONFIRMED]
-        cancelled_dancers = [d for d in all_dancers if d.status_info[0].status == CANCELLED]
+        confirmed_dancers = [d for d in all_dancers if d.status_info.status == CONFIRMED]
+        cancelled_dancers = [d for d in all_dancers if d.status_info.status == CANCELLED]
         if g.sc.finances_full_refund:
-            refund_dancers = [d for d in cancelled_dancers if d.payment_info[0].full_refund]
+            refund_dancers = [d for d in cancelled_dancers if d.payment_info.full_refund]
         if g.sc.finances_partial_refund:
-            refund_dancers = [d for d in cancelled_dancers if d.payment_info[0].partial_refund]
+            refund_dancers = [d for d in cancelled_dancers if d.payment_info.partial_refund]
         finances = price.finances_overview()
         form = request.args
         if 'download_file' in form:
@@ -661,30 +661,30 @@ def edit_finances():
             changes = False
             for dancer in all_dancers:
                 if str(dancer.contestant_id)+"-all" in form:
-                    if not dancer.payment_info[0].all_paid():
+                    if not dancer.payment_info.all_paid():
                         changes = True
-                    dancer.payment_info[0].set_all_paid()
+                    dancer.payment_info.set_all_paid()
                 else:
-                    # if dancer.payment_info[0].all_paid():
+                    # if dancer.payment_info.all_paid():
                     #     changes = True
-                    # dancer.payment_info[0].set_all_unpaid()
+                    # dancer.payment_info.set_all_unpaid()
                     if str(dancer.contestant_id) + "-entry" in form:
-                        if not dancer.payment_info[0].entry_paid:
+                        if not dancer.payment_info.entry_paid:
                             changes = True
-                        dancer.payment_info[0].entry_paid = True
+                        dancer.payment_info.entry_paid = True
                     else:
-                        if dancer.payment_info[0].entry_paid:
+                        if dancer.payment_info.entry_paid:
                             changes = True
-                        dancer.payment_info[0].entry_paid = False
-                    if dancer.merchandise_info[0].ordered_merchandise():
+                        dancer.payment_info.entry_paid = False
+                    if dancer.merchandise_info.ordered_merchandise():
                         if str(dancer.contestant_id) + "-merchandise" in form:
-                            if not dancer.merchandise_info[0].merchandise_paid():
+                            if not dancer.merchandise_info.merchandise_paid():
                                 changes = True
-                            dancer.merchandise_info[0].set_merchandise_paid()
+                            dancer.merchandise_info.set_merchandise_paid()
                         else:
-                            if dancer.merchandise_info[0].merchandise_paid():
+                            if dancer.merchandise_info.merchandise_paid():
                                 changes = True
-                            dancer.merchandise_info[0].set_merchandise_unpaid()
+                            dancer.merchandise_info.set_merchandise_unpaid()
             if changes:
                 db.session.commit()
                 flash('Changes saved successfully.', 'alert-success')
@@ -733,7 +733,7 @@ def bus_to_brno():
             for c in range(0, len(included_dancers)):
                 ws.write(c + 1, 0, included_dancers[c].get_full_name())
                 ws.write(c + 1, 1, included_dancers[c].email)
-                ws.write(c + 1, 2, included_dancers[c].contestant_info[0].team.city)
+                ws.write(c + 1, 2, included_dancers[c].contestant_info.team.city)
             ws.set_column(0, 0, 20)
             ws.set_column(1, 1, 40)
             ws.set_column(2, 2, 30)
@@ -744,14 +744,14 @@ def bus_to_brno():
         if request.method == 'POST':
             changes = False
             for dancer in confirmed_dancers:
-                if request.form.get(str(dancer.contestant_info[0].number)) is not None:
-                    if not dancer.additional_info[0].bus_to_brno:
+                if request.form.get(str(dancer.contestant_info.number)) is not None:
+                    if not dancer.additional_info.bus_to_brno:
                         changes = True
-                    dancer.additional_info[0].bus_to_brno = True
+                    dancer.additional_info.bus_to_brno = True
                 else:
-                    if dancer.additional_info[0].bus_to_brno:
+                    if dancer.additional_info.bus_to_brno:
                         changes = True
-                    dancer.additional_info[0].bus_to_brno = False
+                    dancer.additional_info.bus_to_brno = False
             if changes:
                 db.session.commit()
                 flash('Changes saved successfully.', 'alert-success')

@@ -72,7 +72,7 @@ class TeamPossiblePartners:
         if extra_dancers is not None:
             dancers += extra_dancers
         dancers = [(str(dancer.contestant_id), dancer.contestant.get_full_name(),
-                    dancer.contestant.contestant_info[0].team.name) for dancer in dancers]
+                    dancer.contestant.contestant_info.team.name) for dancer in dancers]
         if extra_dancers is not None:
             dancers.sort(key=lambda dancer: dancer[1])
         return dancers
@@ -123,8 +123,8 @@ class TeamFinancialOverview:
 
     def get_dancers(self, price_category, paid):
         prices = self.student_prices()
-        dancers = [prices[dancer.contestant_info[0].student] for dancer in self.dancers if
-                   dancer.contestant_info[0].student == price_category and dancer.payment_info[0].entry_paid is paid]
+        dancers = [prices[dancer.contestant_info.student] for dancer in self.dancers if
+                   dancer.contestant_info.student == price_category and dancer.payment_info.entry_paid is paid]
         return dancers
 
     def get_students(self, paid):
@@ -140,18 +140,18 @@ class TeamFinancialOverview:
         return len(students), sum(students)
 
     def get_t_shirts(self, paid):
-        t_shirts = [self.config.t_shirt_price for dancer in self.dancers if dancer.merchandise_info[0].t_shirt != NO
-                    and dancer.merchandise_info[0].t_shirt_paid is paid]
+        t_shirts = [self.config.t_shirt_price for dancer in self.dancers if dancer.merchandise_info.t_shirt != NO
+                    and dancer.merchandise_info.t_shirt_paid is paid]
         return len(t_shirts), sum(t_shirts)
     
     def get_mugs(self, paid):
-        mugs = [self.config.mug_price for dancer in self.dancers if dancer.merchandise_info[0].mug
-                and dancer.merchandise_info[0].mug_paid is paid]
+        mugs = [self.config.mug_price for dancer in self.dancers if dancer.merchandise_info.mug
+                and dancer.merchandise_info.mug_paid is paid]
         return len(mugs), sum(mugs)
     
     def get_bags(self, paid):
-        bags = [self.config.bag_price for dancer in self.dancers if dancer.merchandise_info[0].bag
-                and dancer.merchandise_info[0].bag_paid is paid]
+        bags = [self.config.bag_price for dancer in self.dancers if dancer.merchandise_info.bag
+                and dancer.merchandise_info.bag_paid is paid]
         return len(bags), sum(bags)
 
     def get_total(self, paid):

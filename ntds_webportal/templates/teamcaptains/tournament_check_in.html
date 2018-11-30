@@ -13,9 +13,9 @@
     </thead>
     <tbody>
         {% for dancer in confirmed_dancers %}
-            <tr class="{% if dancer.status_info[0].checked_in == true %}success{% else %}danger{% endif %}">
+            <tr class="{% if dancer.status_info.checked_in == true %}table-success{% else %}table-danger{% endif %}">
                 <td>{{ dancer.get_full_name() }}</td>
-                <td>{{ data.TF[dancer.status_info[0].checked_in] }}</td>
+                <td>{{ data.TF[dancer.status_info.checked_in] }}</td>
             </tr>
         {% endfor %}
     </tbody>

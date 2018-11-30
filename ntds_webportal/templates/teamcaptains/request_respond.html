@@ -2,12 +2,12 @@
 
 {% block app_content %}
 <h2>Dancing partner request</h2>
-<p>Team: {{req.dancer.contestant_info[0].team}}</p>
+<p>Team: {{req.dancer.contestant_info.team}}</p>
 <p>Competition: {{req.competition}}</p>
-<p>{{req.dancer.get_full_name()}} from {{req.dancer.contestant_info[0].team}} wants to dance with {{req.other.get_full_name()}}</p>
+<p>{{req.dancer.get_full_name()}} from {{req.dancer.contestant_info.team}} wants to dance with {{req.other.get_full_name()}}</p>
 
 {% if req.remark %}
-<h4>Remarks from the teamcaptain of {{req.dancer.contestant_info[0].team}}</h4>
+<h4>Remarks from the teamcaptain of {{req.dancer.contestant_info.team}}</h4>
 <p>{{req.remark}}</p>
 {% endif %}
 

@@ -200,14 +200,12 @@ def registration_overview():
                   Contestant.first_name).all()
     all_teams = db.session.query(Team).all()
     dancers = [{'country': team.country, 'name': team.name, 'id': team.city,
-                'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team)
-                .order_by(Contestant.first_name).all()}
-               for team in all_teams]
+                'dancers': len(Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == team)
+                               .order_by(Contestant.first_name).all())} for team in all_teams]
     # dancers = [d for d in dancers if len(d['dancers']) > 0]
     dutch_dancers = [team for team in dancers if team['country'] == NETHERLANDS]
     german_dancers = [team for team in dancers if team['country'] == GERMANY]
-    other_dancers = [team for team in dancers if team['country'] != NETHERLANDS and
-                     team['country'] != GERMANY]
+    other_dancers = [team for team in dancers if team['country'] != NETHERLANDS and team['country'] != GERMANY]
     return render_template('organizer/registration_overview.html', data=data, all_dancers=all_dancers,
                            dutch_dancers=dutch_dancers, german_dancers=german_dancers, other_dancers=other_dancers)
 
@@ -320,9 +318,9 @@ def finances_overview():
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
     teams = [{'team': team, 'id': team.city,
               'confirmed_dancers': [dancer for dancer in all_confirmed_dancers if
-                                    dancer.contestant_info[0].team.name == team.name],
+                                    dancer.contestant_info.team.name == team.name],
               'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if
-                                    dancer.contestant_info[0].team.name == team.name],
+                                    dancer.contestant_info.team.name == team.name],
               'finances': TeamFinancialOverview(
                   User.query.filter(User.team == team, User.access == ACCESS[TEAM_CAPTAIN]).first())
               .finances_overview()}
@@ -330,9 +328,9 @@ def finances_overview():
     teams = [team for team in teams if (len(team['confirmed_dancers']) + len(team['cancelled_dancers'])) > 0]
     for t in teams:
         if g.sc.finances_full_refund:
-            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info[0].full_refund]
+            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info.full_refund]
         if g.sc.finances_partial_refund:
-            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info[0].partial_refund]
+            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info.partial_refund]
     dutch_teams = [team for team in teams if team['team'].country == NETHERLANDS]
     german_teams = [team for team in teams if team['team'].country == GERMANY]
     other_teams = [team for team in teams if
@@ -364,25 +362,25 @@ def merchandise():
             registered_dancers = Contestant.query.join(StatusInfo)\
                 .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR,
                             StatusInfo.status == CANCELLED)).all()
-            registered_dancers = [d for d in registered_dancers if d.merchandise_info[0].ordered_merchandise()]
+            registered_dancers = [d for d in registered_dancers if d.merchandise_info.ordered_merchandise()]
             for dancer in registered_dancers:
-                dancer.merchandise_info[0].cancel_merchandise()
+                dancer.merchandise_info.cancel_merchandise()
             g.ts.merchandise_finalized = True
             flash("Merchandise finalized.", "alert-success")
             db.session.commit()
     dancers = Contestant.query.join(StatusInfo).join(ContestantInfo).join(AdditionalInfo).join(MerchandiseInfo)\
         .join(Team).filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == CANCELLED))\
         .order_by(Team.city, Contestant.first_name).all()
-    dancers = [dancer for dancer in dancers if dancer.merchandise_info[0].ordered_merchandise()]
+    dancers = [dancer for dancer in dancers if dancer.merchandise_info.ordered_merchandise()]
     shirts = {shirt_size: 0 for shirt_size in SHIRT_SIZES}
     mugs, bags = 0, 0
     for dancer in dancers:
         try:
-            shirts[dancer.merchandise_info[0].t_shirt] += 1
+            shirts[dancer.merchandise_info.t_shirt] += 1
         except KeyError:
             pass
-        mugs += 1 if dancer.merchandise_info[0].mug else 0
-        bags += 1 if dancer.merchandise_info[0].bag else 0
+        mugs += 1 if dancer.merchandise_info.mug else 0
+        bags += 1 if dancer.merchandise_info.bag else 0
     shirts = {SHIRT_SIZES[shirt]: quantity for shirt, quantity in shirts.items()}
     total_shirts = sum([quantity for size, quantity in shirts.items()])
     download = request.args
@@ -405,20 +403,20 @@ def merchandise():
         for d in range(0, len(dancers)):
             ws.write(d + 1, 0, dancers[d].get_full_name())
             ws.write(d + 1, 1, dancers[d].email)
-            ws.write(d + 1, 2, dancers[d].contestant_info[0].team.city)
+            ws.write(d + 1, 2, dancers[d].contestant_info.team.city)
             for i in range(base_len, len(header)):
                 counter = base_len
                 if g.sc.t_shirt_sold:
                     try:
-                        ws.write(d + 1, counter, SHIRT_SIZES[dancers[d].merchandise_info[0].t_shirt])
+                        ws.write(d + 1, counter, SHIRT_SIZES[dancers[d].merchandise_info.t_shirt])
                     except KeyError:
                         ws.write(d + 1, counter, NONE)
                     counter += 1
                 if g.sc.mug_sold:
-                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info[0].mug])
+                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info.mug])
                     counter += 1
                 if g.sc.bag_sold:
-                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info[0].bag])
+                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info.bag])
                     counter += 1
         ws.freeze_panes(1, 0)
         wb.close()
@@ -472,9 +470,9 @@ def sleeping_hall():
 def diet_allergies():
     dancers = Contestant.query.join(ContestantInfo, StatusInfo).filter(StatusInfo.status == CONFIRMED,
                                                                        ContestantInfo.diet_allergies != "").all()
-    dancers = [d for d in dancers if d.contestant_info[0].diet_allergies.strip() != ""
-               and d.contestant_info[0].diet_allergies != "-"]
-    people = [{'name': d.get_full_name(), 'diet': d.contestant_info[0].diet_allergies} for d in dancers]
+    dancers = [d for d in dancers if d.contestant_info.diet_allergies.strip() != ""
+               and d.contestant_info.diet_allergies != "-"]
+    people = [{'name': d.get_full_name(), 'diet': d.contestant_info.diet_allergies} for d in dancers]
     super_volunteers = SuperVolunteer.query.filter(SuperVolunteer.diet_allergies != "").all()
     super_volunteers = [sv for sv in super_volunteers if sv.diet_allergies.strip() != "" and sv.diet_allergies != "-"]
     people.extend([{'name': sv.get_full_name(), 'diet': sv.diet_allergies} for sv in super_volunteers])
@@ -550,16 +548,16 @@ def adjudicators_overview():
                 ws.set_column(0, 7, 30)
                 for d in range(0, len(adj)):
                     ws.write(d + 1, 0, adj[d].get_full_name())
-                    ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    ws.write(d + 1, 1, adj[d].contestant_info.team.name)
                     ws.write(d + 1, 2, adj[d].email)
                     if comp == BALLROOM:
-                        wants_to = adj[d].volunteer_info[0].jury_ballroom
-                        lic = adj[d].volunteer_info[0].license_jury_ballroom
-                        lvl = adj[d].volunteer_info[0].level_ballroom
+                        wants_to = adj[d].volunteer_info.jury_ballroom
+                        lic = adj[d].volunteer_info.license_jury_ballroom
+                        lvl = adj[d].volunteer_info.level_ballroom
                     else:
-                        wants_to = adj[d].volunteer_info[0].jury_latin
-                        lic = adj[d].volunteer_info[0].license_jury_latin
-                        lvl = adj[d].volunteer_info[0].level_latin
+                        wants_to = adj[d].volunteer_info.jury_latin
+                        lic = adj[d].volunteer_info.license_jury_latin
+                        lvl = adj[d].volunteer_info.level_latin
                     ws.write(d + 1, 3, wants_to)
                     ws.write(d + 1, 4, lic)
                     ws.write(d + 1, 5, lvl)
@@ -570,12 +568,12 @@ def adjudicators_overview():
                 ws.set_column(0, 3, 30)
                 for d in range(0, len(adj)):
                     ws.write(d + 1, 0, adj[d].get_full_name())
-                    ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    ws.write(d + 1, 1, adj[d].contestant_info.team.name)
                     ws.write(d + 1, 2, adj[d].email)
                     if comp == SALSA:
-                        wants_to = adj[d].volunteer_info[0].jury_salsa
+                        wants_to = adj[d].volunteer_info.jury_salsa
                     else:
-                        wants_to = adj[d].volunteer_info[0].jury_polka
+                        wants_to = adj[d].volunteer_info.jury_polka
                     ws.write(d + 1, 3, wants_to)
             ws.freeze_panes(1, 0)
         wb.close()

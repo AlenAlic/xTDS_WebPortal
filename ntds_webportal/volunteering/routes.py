@@ -72,6 +72,6 @@ def volunteers():
     # PRIORITY Add same click through link to super volunteers here
     dancers = Contestant.query.join(StatusInfo, ContestantInfo).filter(StatusInfo.status == CONFIRMED)\
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
-    dancers = [d for d in dancers if d.volunteer_info[0].volunteering()]
+    dancers = [d for d in dancers if d.volunteer_info.volunteering()]
     super_volunteers = SuperVolunteer.query.all()
     return render_template('volunteering/volunteers.html', dancers=dancers, super_volunteers=super_volunteers)

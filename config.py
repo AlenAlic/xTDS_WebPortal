@@ -23,5 +23,9 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 # requirements
 # pip freeze > requirements.txt
+
 # recompile JSX to Vanilla JS
-# npx babel --watch dev_react --out-dir src --presets react-app/prod
+# npm init -y
+# npm install babel-cli@6 babel-preset-react-app@3
+# npx babel --watch ntds_webportal/static/react_files --out-dir ntds_webportal/static/src --presets react-app/prod
+

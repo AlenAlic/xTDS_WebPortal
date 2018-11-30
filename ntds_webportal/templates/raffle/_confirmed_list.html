@@ -36,7 +36,7 @@
             {% if team['confirmed_dancers']|length > 0 %}
                 <!--<tr><td><b style="font-size: x-large">{{ g.data.STATUS[g.data.CONFIRMED] }}</b></td></tr>-->
                 {% for dancer in team['confirmed_dancers'] %}
-                <tr class="{% if dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
+                <tr class="{% if dancer.contestant_info.team_captain is sameas true %}table-info{% endif %}">
                     <td>
                         {{ dancer.get_full_name() }}
                     </td>
@@ -73,7 +73,7 @@
                     <th></th>
                 </tr>
                 {% for dancer in team['selected_dancers'] %}
-                <tr class="{% if dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
+                <tr class="{% if dancer.contestant_info.team_captain is sameas true %}table-info{% endif %}">
                     <td>
                         {{ dancer.get_full_name() }}
                     </td>

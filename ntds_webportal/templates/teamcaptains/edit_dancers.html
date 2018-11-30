@@ -35,9 +35,9 @@
 </thead>
 <tbody>
 {% for dancer in dancers %}
-<tr class="{% if dancer.status_info[0].status != g.data.CANCELLED and dancer.status_info[0].feedback_about_information is not none %}warning{% endif %}">
+<tr class="{% if dancer.status_info.status != g.data.CANCELLED and dancer.status_info.feedback_about_information is not none %}table-warning{% endif %}">
     <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-        {{ dancer.contestant_info[0].number }}
+        {{ dancer.contestant_info.number }}
     </td>
     <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
         {{ dancer.get_full_name() }}
@@ -46,14 +46,14 @@
         {{ dancer.email }}
     </td>
     <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-        {{ g.data.STATUS[dancer.status_info[0].status] }}
+        {{ g.data.STATUS[dancer.status_info.status] }}
     </td>
     <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-        {{ g.data.STUDENT_TEXT[dancer.contestant_info[0].student] }}
+        {{ g.data.STUDENT_TEXT[dancer.contestant_info.student] }}
     </td>
     {% if g.sc.ask_first_time %}
     <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-        {{ g.data.TF[dancer.contestant_info[0].first_time] }}
+        {{ g.data.TF[dancer.contestant_info.first_time] }}
     </td>
     {% endif %}
     <td class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
@@ -63,27 +63,27 @@
         {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
     </td>
     <td align="right">
-        {% if dancer.status_info[0].status == g.data.NO_GDPR  %}
+        {% if dancer.status_info.status == g.data.NO_GDPR  %}
             <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-info btn-sm"
                href="{{ url_for('teamcaptains.resend_login_dancer', number=dancer.contestant_id) }}">
                 Send new login credentials</a>
         {% endif %}
-        {% if dancer.status_info[0].status == g.data.REGISTERED  %}
+        {% if dancer.status_info.status == g.data.REGISTERED  %}
             <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-warning btn-sm"
                href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=0, wide=wide) }}">
                 Cancel registration</a>
         {% endif %}
-        {% if dancer.status_info[0].status == g.data.CANCELLED %}
+        {% if dancer.status_info.status == g.data.CANCELLED %}
             <a name="{{ dancer.contestant_id }}" role="button"  class="btn btn-primary btn-sm"
                href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">
                 Re-register</a>
         {% endif %}
-        {% if dancer.status_info[0].status == g.data.SELECTED %}
+        {% if dancer.status_info.status == g.data.SELECTED %}
             {% with dancer=dancer, modal_id="cancel-selected" %}
                 {% include 'teamcaptains/_cancel_selected_modal.html' %}
             {% endwith %}
         {% endif %}
-        {% if dancer.status_info[0].status == g.data.CONFIRMED %}
+        {% if dancer.status_info.status == g.data.CONFIRMED %}
             {% with dancer=dancer, modal_id="cancel-confirmed" %}
                 {% include 'teamcaptains/_cancel_confirmed_modal.html' %}
             {% endwith %}
@@ -154,15 +154,15 @@
 <tbody>
 {% for dancer in dancers %}
 <tr class="clickable-row" data-href="{{url_for('teamcaptains.edit_dancer', number=dancer.contestant_id, wide=wide)}}">
-    <td>{{ dancer.contestant_info[0].number }}</td>
+    <td>{{ dancer.contestant_info.number }}</td>
     <td>{{ dancer.get_full_name() }}</td>
     <td>{{ dancer.email }}</td>
-    <td>{{ g.data.STATUS[dancer.status_info[0].status] }}</td>
-    <td>{{ g.data.STUDENT_TEXT[dancer.contestant_info[0].student] }}</td>
+    <td>{{ g.data.STATUS[dancer.status_info.status] }}</td>
+    <td>{{ g.data.STUDENT_TEXT[dancer.contestant_info.student] }}</td>
     {% if g.sc.ask_first_time %}
-    <td>{{ g.data.TF[dancer.contestant_info[0].first_time] }}</td>
+    <td>{{ g.data.TF[dancer.contestant_info.first_time] }}</td>
     {% endif %}
-    <td>{{ g.data.TF[dancer.additional_info[0].sleeping_arrangements] }}</td>
+    <td>{{ g.data.TF[dancer.additional_info.sleeping_arrangements] }}</td>
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
     <td>{{ g.data.TF[dancer.dancing_information(g.data.BALLROOM).blind_date] }}</td>
@@ -171,10 +171,10 @@
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
     <td>{{ g.data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}</td>
     <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}</td>
-    <td>{{ g.data.YMN[dancer.volunteer_info[0].volunteer] }}</td>
-    <td>{{ g.data.YMN[dancer.volunteer_info[0].first_aid] }}</td>
-    <td>{{ g.data.YMN[dancer.volunteer_info[0].jury_ballroom] }}</td>
-    <td>{{ g.data.YMN[dancer.volunteer_info[0].jury_latin] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.volunteer] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.first_aid] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.jury_ballroom] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.jury_latin] }}</td>
 </tr>
 {% endfor %}
 </tbody>

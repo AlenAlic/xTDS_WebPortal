@@ -19,7 +19,7 @@ function onStart() {
     {%- endif %}
     document.getElementById('jury_ballroom').onchange();
     document.getElementById('jury_latin').onchange();
-    {% if (mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR) -%}
+    {% if (mode == 'view' and dancer.status_info.status == g.data.NO_GDPR) -%}
         document.getElementById('privacy_checkbox').onclick();
     {%- endif %}
     var container = document.getElementById('container-hidden').style.visibility = "visible";

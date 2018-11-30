@@ -35,16 +35,16 @@
 <tbody>
 {% for dancer in dancers %}
 <tr class="clickable-row" data-href="{{url_for('organizer.view_dancer', number=dancer.contestant_id)}}">
-    <td>{{ dancer.contestant_info[0].number }}</td>
+    <td>{{ dancer.contestant_info.number }}</td>
     <td>{{ dancer.get_full_name() }}</td>
     {% if g.sc.tournament == g.data.NTDS %}
-    <td>{{ dancer.contestant_info[0].team }}</td>
+    <td>{{ dancer.contestant_info.team }}</td>
     {% else %}
-    <td>{{ dancer.contestant_info[0].team.city }}</td>
+    <td>{{ dancer.contestant_info.team.city }}</td>
     {% endif %}
     <td>{{ dancer.email }}</td>
-    <td>{{ g.data.STATUS[dancer.status_info[0].status] }}</td>
-    <td>{{ g.data.STUDENT_TEXT[dancer.contestant_info[0].student] }}</td>
+    <td>{{ g.data.STATUS[dancer.status_info.status] }}</td>
+    <td>{{ g.data.STUDENT_TEXT[dancer.contestant_info.student] }}</td>
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
 </tr>

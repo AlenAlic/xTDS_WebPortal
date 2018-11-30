@@ -231,27 +231,27 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
             self.latin_partner.data = None
 
     def populate(self, dancer):
-        self.number.data = dancer.contestant_info[0].number
+        self.number.data = dancer.contestant_info.number
 
-        self.volunteer.data = dancer.volunteer_info[0].volunteer
-        self.student.data = dancer.contestant_info[0].student
-        self.first_time.data = str(dancer.contestant_info[0].first_time)
-        self.diet_allergies.data = dancer.contestant_info[0].diet_allergies
-        self.sleeping_arrangements.data = str(dancer.additional_info[0].sleeping_arrangements)
-        self.t_shirt.data = dancer.merchandise_info[0].t_shirt
-        self.mug.data = str(dancer.merchandise_info[0].mug)
-        self.bag.data = str(dancer.merchandise_info[0].bag)
+        self.volunteer.data = dancer.volunteer_info.volunteer
+        self.student.data = dancer.contestant_info.student
+        self.first_time.data = str(dancer.contestant_info.first_time)
+        self.diet_allergies.data = dancer.contestant_info.diet_allergies
+        self.sleeping_arrangements.data = str(dancer.additional_info.sleeping_arrangements)
+        self.t_shirt.data = dancer.merchandise_info.t_shirt
+        self.mug.data = str(dancer.merchandise_info.mug)
+        self.bag.data = str(dancer.merchandise_info.bag)
 
-        self.first_aid.data = dancer.volunteer_info[0].first_aid
-        self.emergency_response_officer.data = dancer.volunteer_info[0].emergency_response_officer
-        self.jury_ballroom.data = dancer.volunteer_info[0].jury_ballroom
-        self.jury_latin.data = dancer.volunteer_info[0].jury_latin
-        self.license_jury_ballroom.data = dancer.volunteer_info[0].license_jury_ballroom
-        self.license_jury_latin.data = dancer.volunteer_info[0].license_jury_latin
-        self.level_jury_ballroom.data = dancer.volunteer_info[0].level_ballroom
-        self.level_jury_latin.data = dancer.volunteer_info[0].level_latin
-        self.jury_salsa.data = dancer.volunteer_info[0].jury_salsa
-        self.jury_polka.data = dancer.volunteer_info[0].jury_polka
+        self.first_aid.data = dancer.volunteer_info.first_aid
+        self.emergency_response_officer.data = dancer.volunteer_info.emergency_response_officer
+        self.jury_ballroom.data = dancer.volunteer_info.jury_ballroom
+        self.jury_latin.data = dancer.volunteer_info.jury_latin
+        self.license_jury_ballroom.data = dancer.volunteer_info.license_jury_ballroom
+        self.license_jury_latin.data = dancer.volunteer_info.license_jury_latin
+        self.level_jury_ballroom.data = dancer.volunteer_info.level_ballroom
+        self.level_jury_latin.data = dancer.volunteer_info.level_latin
+        self.jury_salsa.data = dancer.volunteer_info.jury_salsa
+        self.jury_polka.data = dancer.volunteer_info.jury_polka
 
         self.ballroom_level.data = dancer.competition(BALLROOM).level
         self.ballroom_role.data = dancer.competition(BALLROOM).role
@@ -334,7 +334,7 @@ class EditContestantForm(BaseContestantForm):
             self.latin_partner.query = latin_query
 
     def custom_validate(self, dancer):
-        if dancer.status_info[0].status == SELECTED or dancer.status_info[0].status == CONFIRMED:
+        if dancer.status_info.status == SELECTED or dancer.status_info.status == CONFIRMED:
             self.ballroom_level.data = dancer.competition(BALLROOM).level
             self.ballroom_role.data = dancer.competition(BALLROOM).role
             self.ballroom_blind_date.data = dancer.competition(BALLROOM).blind_date
@@ -356,7 +356,7 @@ class EditContestantForm(BaseContestantForm):
     def organizer_populate(self, dancer):
         self.ballroom_partner.query = Contestant.query
         self.latin_partner.query = Contestant.query
-        self.team.data = dancer.contestant_info[0].team
+        self.team.data = dancer.contestant_info.team
         self.populate(dancer)
         self.full_name.data = dancer.get_full_name()
         self.email.data = dancer.email
@@ -397,7 +397,7 @@ class PartnerRequestForm(FlaskForm):
         choices += [(BREITENSPORT, BREITENSPORT)]
         self.level.choices = choices
         self.other.choices = [(str(dancer.contestant_id), dancer.get_full_name() + " - " +
-                               dancer.contestant_info[0].team.name) for dancer in other_choices]
+                               dancer.contestant_info.team.name) for dancer in other_choices]
 
     dancer = QuerySelectField('Dancer from my team', validators=[DataRequired()],
                               allow_blank=True, blank_text=DANCER_TEXT, render_kw={'data-role': 'select2'})
@@ -430,7 +430,7 @@ class EditDancingInfoForm(DancingInfoForm):
         super().__init__(**kwargs)
         self.full_name.data = dancer.get_full_name()
         self.email.data = dancer.email
-        self.team.data = dancer.contestant_info[0].team
+        self.team.data = dancer.contestant_info.team
         self.ballroom_level.choices = participating_levels_choices(base_choices=True)
         self.latin_level.choices = participating_levels_choices(base_choices=True)
         if not g.sc.breitensport_obliged_blind_date:

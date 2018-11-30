@@ -2,8 +2,8 @@
     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{dropdown_title}}</a>
     <div class="dropdown-menu">
         {% for team in teams %}
-            <!--<a class="dropdown-item" id={{team['id']}}-tab data-toggle="tab" href=#{{team['id']}} role=tab aria-controls={{team['id']}} aria-selected="false">{{team['name']}} <span class="badge badge-pill badge-dark">{{team['dancers']|length}}</span></a>-->
-            <a class="dropdown-item" id={{team['id']}}-tab onclick="callFilter('{{team['name']}}')">{{team['name']}} <span class="badge badge-pill badge-dark">{{team['dancers']|length}}</span></a>
+            <!--{#<a class="dropdown-item" id={{team['id']}}-tab data-toggle="tab" href=#{{team['id']}} role=tab aria-controls={{team['id']}} aria-selected="false">{{team['name']}} <span class="badge badge-pill badge-dark">{{team['dancers']|length}}</span></a>#}-->
+            <a class="dropdown-item" id={{team['id']}}-tab onclick="callFilter('{{team['name']}}')">{{team['name']}} <span class="badge badge-pill badge-dark">{{team['dancers']}}</span></a>
         {% endfor %}
     </div>
 </li>

@@ -25,7 +25,7 @@
             {% for dancer in leads %}
                 <tr>
                     <td>
-                        {{ dancer.contestant_info[0].number }}
+                        {{ dancer.contestant_info.number }}
                     </td>
                     <td>
                         {{ dancer.get_full_name() }}
@@ -70,7 +70,7 @@
                     <td></td>
                     <td></td>
                     <td>
-                        {{ dancer.contestant_info[0].number }}
+                        {{ dancer.contestant_info.number }}
                     </td>
                     <td>
                         {{ dancer.get_full_name() }}

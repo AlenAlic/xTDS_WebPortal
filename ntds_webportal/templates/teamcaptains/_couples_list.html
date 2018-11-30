@@ -26,29 +26,29 @@
         </thead>
         <tbody>
             {% for couple in couples %}
-            {% if show_break_up_button is sameas false or couple['lead'].status_info[0].status == g.data.REGISTERED or couple['lead'].status_info[0].status == g.data.NO_GDPR %}
-                <tr class="{% if show_break_up_button is sameas false and couple['lead'].status_info[0].received_starting_number == true %}success{% endif %}">
-                    <td class="{% if couple['lead'].status_info[0].status == g.data.NO_GDPR %}table-danger{%endif%} {% if couple['lead'].contestant_info[0].team.name != current_user.team.name %}table-active{% endif %}">
-                        {{ couple['lead'].contestant_info[0].number }}
+            {% if show_break_up_button is sameas false or couple['lead'].status_info.status == g.data.REGISTERED or couple['lead'].status_info.status == g.data.NO_GDPR %}
+                <tr class="{% if show_break_up_button is sameas false and couple['lead'].status_info.received_starting_number == true %}table-success{% endif %}">
+                    <td class="{% if couple['lead'].status_info.status == g.data.NO_GDPR %}table-danger{%endif%} {% if couple['lead'].contestant_info.team.name != current_user.team.name %}table-active{% endif %}">
+                        {{ couple['lead'].contestant_info.number }}
                     </td>
-                    <td class="{% if couple['lead'].status_info[0].status == g.data.NO_GDPR %}table-danger{%endif%} {% if couple['lead'].contestant_info[0].team.name != current_user.team.name %}table-active{% endif %}">
-                        {{ couple['lead'].get_full_name() }}{% if couple['lead'].contestant_info[0].team.name != current_user.team.name %} - {{ couple['lead'].contestant_info[0].team.name }}{% endif %}
+                    <td class="{% if couple['lead'].status_info.status == g.data.NO_GDPR %}table-danger{%endif%} {% if couple['lead'].contestant_info.team.name != current_user.team.name %}table-active{% endif %}">
+                        {{ couple['lead'].get_full_name() }}{% if couple['lead'].contestant_info.team.name != current_user.team.name %} - {{ couple['lead'].contestant_info.team.name }}{% endif %}
                     </td>
-                    <td class="{% if couple['follow'].status_info[0].status == g.data.NO_GDPR %}table-danger{%endif%} {% if couple['follow'].contestant_info[0].team.name != current_user.team.name %}table-active{% endif %}">
-                        {{ couple['follow'].contestant_info[0].number }}
+                    <td class="{% if couple['follow'].status_info.status == g.data.NO_GDPR %}table-danger{%endif%} {% if couple['follow'].contestant_info.team.name != current_user.team.name %}table-active{% endif %}">
+                        {{ couple['follow'].contestant_info.number }}
                     </td>
-                    <td class="{% if couple['follow'].status_info[0].status == g.data.NO_GDPR %}table-danger{%endif%} {% if couple['follow'].contestant_info[0].team.name != current_user.team.name %}table-active{% endif %}">
-                        {{ couple['follow'].get_full_name() }}{% if couple['follow'].contestant_info[0].team.name != current_user.team.name %} - {{ couple['follow'].contestant_info[0].team.name }}{% endif %}
+                    <td class="{% if couple['follow'].status_info.status == g.data.NO_GDPR %}table-danger{%endif%} {% if couple['follow'].contestant_info.team.name != current_user.team.name %}table-active{% endif %}">
+                        {{ couple['follow'].get_full_name() }}{% if couple['follow'].contestant_info.team.name != current_user.team.name %} - {{ couple['follow'].contestant_info.team.name }}{% endif %}
                     </td>
                     <td>
                         {{ couple['lead'].competition(category).level }}
                     </td>
                     <td align="right">
                         {% if show_break_up_button is sameas true %}
-                        <input type="button" class="btn btn-warning btn-sm" {% if couple['lead'].status_info[0].status == g.data.SELECTED or couple['lead'].status_info[0].status == g.data.CONFIRMED %}disabled{% endif %}
+                        <input type="button" class="btn btn-warning btn-sm" {% if couple['lead'].status_info.status == g.data.SELECTED or couple['lead'].status_info.status == g.data.CONFIRMED %}disabled{% endif %}
                         onclick="location.href='{{ url_for('teamcaptains.break_up_couple', competition=category, lead_id=couple['lead'].contestant_id, follow_id=couple['follow'].contestant_id ) }}';" value="Break up couple" />
                         {% else  %}
-                        <input class="checkbox decorative-checkbox" type="checkbox" disabled {% if couple['lead'].status_info[0].received_starting_number == true %}checked{% endif %}>
+                        <input class="checkbox decorative-checkbox" type="checkbox" disabled {% if couple['lead'].status_info.received_starting_number == true %}checked{% endif %}>
                         {% endif %}
                     </td>
                 </tr>

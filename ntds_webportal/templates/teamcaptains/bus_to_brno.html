@@ -51,7 +51,7 @@
                             {{ dancer.email }}
                         </td>
                         <td>
-                            {{ dancer.contestant_info[0].team.city }}
+                            {{ dancer.contestant_info.team.city }}
                         </td>
                     </tr>
                 {% endfor %}
@@ -80,12 +80,12 @@
         </thead>
         <tbody>
         {% for dancer in confirmed_dancers %}
-            <tr class="checkbox-row {% if dancer.additional_info[0].bus_to_brno == true %}success{% endif %}">
+            <tr class="checkbox-row {% if dancer.additional_info.bus_to_brno == true %}table-success{% endif %}">
                 <td>
                     {{ dancer.get_full_name() }}
                 </td>
                 <td align="right">
-                    <input class="checkbox" type="checkbox" value="y" id="{{ dancer.contestant_info[0].number }}" name="{{ dancer.contestant_info[0].number }}" {% if dancer.additional_info[0].bus_to_brno == true %}checked{% endif %}>
+                    <input class="checkbox" type="checkbox" value="y" id="{{ dancer.contestant_info.number }}" name="{{ dancer.contestant_info.number }}" {% if dancer.additional_info.bus_to_brno == true %}checked{% endif %}>
                 </td>
             </tr>
         {% endfor %}

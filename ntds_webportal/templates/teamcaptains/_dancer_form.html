@@ -1,5 +1,5 @@
 {% if mode == 'edit' %}
-{% set editable = not (dancer.status_info[0].status == g.data.SELECTED or dancer.status_info[0].status == g.data.CONFIRMED) %}
+{% set editable = not (dancer.status_info.status == g.data.SELECTED or dancer.status_info.status == g.data.CONFIRMED) %}
 {% else %}
 {% set editable = true %}
 {% endif %}
@@ -122,7 +122,7 @@
         {% endif %}
     {% endif %}
     {% if current_user.is_dancer() is sameas true or current_user.is_organizer() is sameas true %}</fieldset>{% endif %}
-    {% if mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR and current_user.is_dancer() %}
+    {% if mode == 'view' and dancer.status_info.status == g.data.NO_GDPR and current_user.is_dancer() %}
     <div class="form-group row required">
         <label class="control-label col-lg-2" ></label>
         <div class="col-lg-10">
@@ -130,10 +130,10 @@
         </div>
     </div>
     {% endif %}
-    {% if mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR and current_user.is_dancer() %}
+    {% if mode == 'view' and dancer.status_info.status == g.data.NO_GDPR and current_user.is_dancer() %}
         {% include 'privacy/checkbox.html' %}
     {% endif %}
-    {% if (mode == 'view' and current_user.is_dancer() is sameas true and dancer.status_info[0].status == g.data.NO_GDPR) or mode != 'view' and current_user.is_organizer() is sameas false %}
+    {% if (mode == 'view' and current_user.is_dancer() is sameas true and dancer.status_info.status == g.data.NO_GDPR) or mode != 'view' and current_user.is_organizer() is sameas false %}
     <div class="form-group row">
         <label class="control-label col-lg-2" ></label>
         <div class="col-lg-10">
@@ -156,7 +156,7 @@
     {% endif %}
 </form>
 {% if not current_user.is_organizer() %}
-{% if (mode == 'view' and dancer.status_info[0].status != g.data.NO_GDPR and dancer.status_info[0].status != g.data.CANCELLED) %}
+{% if (mode == 'view' and dancer.status_info.status != g.data.NO_GDPR and dancer.status_info.status != g.data.CANCELLED) %}
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
     {{ feedback_form.hidden_tag() }}
     <div class="form-group row">

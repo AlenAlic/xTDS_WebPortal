@@ -10,7 +10,7 @@
 <div style="height:20px;"></div>
 
 <div id="accordion" style="visibility:hidden">
-{% for team in teams %}<div class="card" id="render-team-{{team['team_id']}}"></div>{% endfor%}
+{% for team in teams %}<div id="render-team-{{team['team_id']}}"></div>{% endfor%}
 </div>
 
 {% endblock %}
@@ -18,7 +18,6 @@
 {% block scripts %}
 {{ super() }}
 {{ react() }}
-{{ bootstrap_react_elements() }}
 <script src="{{url_for('static', filename='src/CheckInCard.js')}}"></script>
 <script>
     const e = React.createElement;

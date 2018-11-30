@@ -18,16 +18,16 @@ def dancer_data():
     form = EditContestantForm(dancer)
     if request.method == GET:
         form.populate(dancer)
-        if dancer.status_info[0].feedback_about_information is not None:
-            feedback_form.feedback.data = dancer.status_info[0].feedback_about_information
+        if dancer.status_info.feedback_about_information is not None:
+            feedback_form.feedback.data = dancer.status_info.feedback_about_information
     if 'privacy_checkbox' in request.values:
         flash('Privacy policy accepted.', 'alert-success')
-        dancer.status_info[0].set_status(REGISTERED)
+        dancer.status_info.set_status(REGISTERED)
         db.session.commit()
         return redirect(url_for('dancer.dancer_data'))
     if feedback_form.validate_on_submit():
         flash('Feedback sent to team captain.', 'alert-success')
-        dancer.status_info[0].feedback_about_information = feedback_form.feedback.data
+        dancer.status_info.feedback_about_information = feedback_form.feedback.data
         db.session.commit()
         return redirect(url_for('main.dashboard'))
     return render_template('dancer/dancer_data.html', dancer=dancer, form=form, sc=g.sc, feedback_form=feedback_form,

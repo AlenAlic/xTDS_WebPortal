@@ -24,9 +24,9 @@ def create_couple():
         .filter(StatusInfo.status == CONFIRMED, DancingInfo.role == FOLLOW, DancingInfo.partner.is_(None))\
         .order_by(Contestant.first_name).all()
     form.lead.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                       .format(c.contestant_info[0].team, c.get_full_name())), leads)
+                                       .format(c.contestant_info.team, c.get_full_name())), leads)
     form.follow.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                         .format(c.contestant_info[0].team, c.get_full_name())), follows)
+                                         .format(c.contestant_info.team, c.get_full_name())), follows)
     if form.is_submitted():
         if form.validate_on_submit():
             lead = DancingInfo.query.filter_by(contestant_id=form.lead.data, competition=form.competition.data).first()
@@ -66,16 +66,16 @@ def create_couple():
                              get_dancing_categories(dancer.dancing_info)[LATIN].partner is not None]
     confirmed_ballroom_couples = [{LEAD: couple[0], FOLLOW: couple[1]} for couple in
                                   list(itertools.product([dancer for dancer in ballroom_couples_leads if
-                                                          dancer.status_info[0].status == CONFIRMED],
+                                                          dancer.status_info.status == CONFIRMED],
                                                          [dancer for dancer in ballroom_couples_follows if
-                                                          dancer.status_info[0].status == CONFIRMED])) if
+                                                          dancer.status_info.status == CONFIRMED])) if
                                   couple[0].contestant_id == get_dancing_categories(
                                       couple[1].dancing_info)[BALLROOM].partner]
     confirmed_latin_couples = [{LEAD: couple[0], FOLLOW: couple[1]} for couple in
                                list(itertools.product([dancer for dancer in latin_couples_leads
-                                                       if dancer.status_info[0].status == CONFIRMED],
+                                                       if dancer.status_info.status == CONFIRMED],
                                                       [dancer for dancer in latin_couples_follows
-                                                       if dancer.status_info[0].status == CONFIRMED])) if
+                                                       if dancer.status_info.status == CONFIRMED])) if
                                couple[0].contestant_id == get_dancing_categories(
                                    couple[1].dancing_info)[LATIN].partner]
     return render_template('blind_date_assistant/create_couple.html', data=data, form=form,
@@ -113,9 +113,9 @@ def create_couple_salsa():
         salsa_dancers.append(couple.follow_id)
     dancers = [d for d in dancers if d.contestant_id not in salsa_dancers]
     form.lead.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                       .format(c.get_full_name(), c.contestant_info[0].team)), dancers)
+                                       .format(c.get_full_name(), c.contestant_info.team)), dancers)
     form.follow.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                         .format(c.get_full_name(), c.contestant_info[0].team)), dancers)
+                                         .format(c.get_full_name(), c.contestant_info.team)), dancers)
     salsa_couples = [{'id': c.couple_id,
                       LEAD: Contestant.query.filter(Contestant.contestant_id == c.lead_id).first().get_full_name(),
                       FOLLOW: Contestant.query.filter(Contestant.contestant_id == c.follow_id).first().get_full_name()}
@@ -168,9 +168,9 @@ def create_couple_polka():
         polka_dancers.append(couple.follow_id)
     dancers = [d for d in dancers if d.contestant_id not in polka_dancers]
     form.lead.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                       .format(c.get_full_name(), c.contestant_info[0].team)), dancers)
+                                       .format(c.get_full_name(), c.contestant_info.team)), dancers)
     form.follow.choices = map(lambda c: (c.contestant_id, "{} - {}"
-                                         .format(c.get_full_name(), c.contestant_info[0].team)), dancers)
+                                         .format(c.get_full_name(), c.contestant_info.team)), dancers)
     polka_couples = [{'id': c.couple_id,
                       LEAD: Contestant.query.filter(Contestant.contestant_id == c.lead_id).first().get_full_name(),
                       FOLLOW: Contestant.query.filter(Contestant.contestant_id == c.follow_id).first().get_full_name()}

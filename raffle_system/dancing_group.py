@@ -63,13 +63,13 @@ class DancingGroup(Balance):
 
     def get_dancers_summary(self):
         f = '{name} ({team})'
-        dancers = [f.format(name=d.get_full_name(), team=d.contestant_info[0].team.name) for d in self.dancers[:-1]]
+        dancers = [f.format(name=d.get_full_name(), team=d.contestant_info.team.name) for d in self.dancers[:-1]]
         last_dancer = 'and {}'.format(f.format(name=self.dancers[-1].get_full_name(),
-                                               team=self.dancers[-1].contestant_info[0].team.name))
+                                               team=self.dancers[-1].contestant_info.team.name))
         dancers.append(last_dancer)
         return ', '.join(dancers)
 
     def select_dancers(self):
         for dancer in self.dancers:
-            dancer.status_info[0].raffle_status = SELECTED
+            dancer.status_info.raffle_status = SELECTED
         db.session.commit()

@@ -21,7 +21,7 @@ def export_stats_list():
 
 
 def delft_exception(group):
-    dancers_list = [True for d in group.dancers if d.contestant_info[0].team.city == DELFT and
+    dancers_list = [True for d in group.dancers if d.contestant_info.team.city == DELFT and
                     (d.dancing_information(BALLROOM).level == BEGINNERS
                      or d.dancing_information(LATIN).level == BEGINNERS)]
     return True in dancers_list
@@ -107,7 +107,7 @@ def rearrange_numbers():
         all_dancers = db.session.query(Contestant).join(ContestantInfo)\
             .order_by(ContestantInfo.team_id, Contestant.contestant_id).all()
         for i in range(0, len(all_dancers)):
-            all_dancers[i].contestant_info[0].number = i+1
+            all_dancers[i].contestant_info.number = i+1
         state.numbers_rearranged = True
         db.session.commit()
 

@@ -104,7 +104,7 @@ function filterLevels(clicked_checkbox, scroll=true) {
 <script>
 function guaranteedEntry(checkbox) {
     let row = checkbox.closest("tr");
-    updateCheckboxRowApiCall("/api/status_info/guaranteed_entry/", "PATCH", row);
+    updateCheckboxRowApiCall(row);
 }
 function clearApiState(elem) {
     elem.classList.remove("api-pending");
@@ -128,29 +128,29 @@ function apiFailed(elem) {
     clearApiState(elem);
     elem.classList.add("api-failed");
 }
-function updateCheckboxRowApiCall(api, method, row) {
+function updateCheckboxRowApiCall(row) {
     apiPending(row)
-    fetch(api + row.id, {method: method})
+    fetch("/api/contestants/" + row.id + "/status_info/guaranteed_entry", {method: "PATCH"})
     .then(function(response) {return response.json();})
     .then(function(result) {
-        if (result) {
+        if (result.status_info.guaranteed_entry) {
             apiSuccess(row);
         } else {
             clearApiState(row);
         }
-        updateTeamGuaranteedDancersApiCall("/api/team/guaranteed_dancers/", "GET", row)
+        updateTeamGuaranteedDancersApiCall(row)
     })
     .catch(function(error) {
         console.log('Error: \n', error);
     });
 }
-function updateTeamGuaranteedDancersApiCall(api, method, source) {
+function updateTeamGuaranteedDancersApiCall(source) {
     let panel = source.closest(".card");
     let total = panel.querySelector('.card-header > .card-title > .badge > .team-guaranteed-dancers');
-    fetch(api + total.dataset.teamId, {method: method})
+    fetch("/api/teams/" + total.dataset.teamId + "/guaranteed_dancers", {method: "GET"})
     .then(function(response) {return response.json();})
     .then(function(result) {
-        if (result) {total.innerHTML = result}
+        if (result) {total.innerHTML = result.length}
     })
     .catch(function(error) {
         console.log('Error: \n', error);

@@ -11,6 +11,7 @@ from datetime import datetime as dt
 import datetime
 import jwt
 from ntds_webportal.base_functions import str2bool
+from sqlalchemy import or_
 
 
 USERS = 'users'
@@ -136,7 +137,7 @@ class User(UserMixin, db.Model):
     @staticmethod
     def open_partner_requests():
         return len([r for r in PartnerRequest.query.filter_by(state=PartnerRequest.STATE['Open']).all() if
-                    r.other.contestant_info[0].team == current_user.team])
+                    r.other.contestant_info.team == current_user.team])
 
     def open_name_change_requests(self):
         if self.is_organizer():
@@ -198,12 +199,32 @@ class Team(db.Model):
     city = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128), nullable=False, unique=True)
     amount_paid = db.Column(db.Integer, nullable=False, default=0)
+    contestants = db.relationship('ContestantInfo', back_populates="team")
 
     def __repr__(self):
         if g.sc.tournament == NTDS:
             return '{}'.format(self.name)
         else:
             return '{}'.format(self.city)
+
+    def is_active(self):
+        team_captain = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.team_id == self.team_id).first()
+        return team_captain.is_active is True
+
+    def confirmed_dancers(self):
+        return Contestant.query.join(ContestantInfo, StatusInfo)\
+            .filter(ContestantInfo.team == self, StatusInfo.status == CONFIRMED).order_by(Contestant.first_name).all()
+
+    def cancelled_dancers_with_merchandise(self):
+        dancers = Contestant.query.join(ContestantInfo, StatusInfo)\
+            .filter(ContestantInfo.team == self, StatusInfo.status == CANCELLED).order_by(Contestant.first_name).all()
+        return [d for d in dancers if d.merchandise_info.ordered_merchandise()]
+
+    def guaranteed_dancers(self):
+        return Contestant.query.join(ContestantInfo, StatusInfo)\
+            .filter(ContestantInfo.team == self, StatusInfo.status == REGISTERED,
+                    or_(ContestantInfo.team_captain.is_(True), StatusInfo.guaranteed_entry.is_(True)))\
+            .order_by(Contestant.first_name).all()
 
 
 class Contestant(db.Model):
@@ -213,13 +234,19 @@ class Contestant(db.Model):
     prefixes = db.Column(db.String(128), nullable=True)
     last_name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), nullable=False, unique=True)
-    contestant_info = db.relationship('ContestantInfo', back_populates='contestant', cascade='all, delete-orphan')
+    contestant_info = db.relationship('ContestantInfo', back_populates='contestant', uselist=False,
+                                      cascade='all, delete-orphan')
     dancing_info = db.relationship('DancingInfo', back_populates='contestant', cascade='all, delete-orphan')
-    volunteer_info = db.relationship('VolunteerInfo', back_populates='contestant', cascade='all, delete-orphan')
-    additional_info = db.relationship('AdditionalInfo', back_populates='contestant', cascade='all, delete-orphan')
-    status_info = db.relationship('StatusInfo', back_populates='contestant', cascade='all, delete-orphan')
-    payment_info = db.relationship('PaymentInfo', back_populates='contestant', cascade='all, delete-orphan')
-    merchandise_info = db.relationship('MerchandiseInfo', back_populates='contestant', cascade='all, delete-orphan')
+    volunteer_info = db.relationship('VolunteerInfo', back_populates='contestant', uselist=False,
+                                     cascade='all, delete-orphan')
+    additional_info = db.relationship('AdditionalInfo', back_populates='contestant', uselist=False,
+                                      cascade='all, delete-orphan')
+    status_info = db.relationship('StatusInfo', back_populates='contestant', uselist=False,
+                                  cascade='all, delete-orphan')
+    payment_info = db.relationship('PaymentInfo', back_populates='contestant', uselist=False,
+                                   cascade='all, delete-orphan')
+    merchandise_info = db.relationship('MerchandiseInfo', back_populates='contestant', uselist=False,
+                                       cascade='all, delete-orphan')
 
     def __repr__(self):
         return '{name}'.format(name=self.get_full_name())
@@ -244,21 +271,21 @@ class Contestant(db.Model):
         return [di for di in self.dancing_info if di.competition == competition][0]
 
     def cancel_registration(self):
-        self.status_info[0].set_status(CANCELLED)
+        self.status_info.set_status(CANCELLED)
         for di in self.dancing_info:
             di.set_partner(None)
-        self.contestant_info[0].team_captain = False
-        self.additional_info[0].bus_to_brno = False
-        if self.status_info[0].payment_required:
+        self.contestant_info.team_captain = False
+        self.additional_info.bus_to_brno = False
+        if self.status_info.payment_required:
             if int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) < \
                     g.sc.finances_refund_date:
                 if g.sc.finances_full_refund:
-                    self.payment_info[0].full_refund = True
+                    self.payment_info.full_refund = True
                 if g.sc.finances_partial_refund:
-                    self.payment_info[0].partial_refund = True
+                    self.payment_info.partial_refund = True
         if int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) < \
                 g.sc.merchandise_closing_date:
-            self.merchandise_info[0].cancel_merchandise()
+            self.merchandise_info.cancel_merchandise()
             pass
         db.session.commit()
 
@@ -275,10 +302,23 @@ class Contestant(db.Model):
 
     def to_dict(self):
         data = {
-            'name': self.get_full_name(),
             'contestant_id': self.contestant_id,
-            'checked_in': self.status_info[0].checked_in
+            # 'first_name':  self.first_name,
+            # 'last_name': self.get_last_name(),
+            'full_name': self.get_full_name(),
+            # 'email': self.email,
+            'contestant_info': self.contestant_info.to_dict(),
+            # 'dancing_info': {},
+            # 'volunteer_info': self.volunteer_info.to_dict(),
+            # 'additional_info': self.additional_info.to_dict(),
+            'status_info': self.status_info.to_dict(),
+            'merchandise_info': self.merchandise_info.to_dict(),
+            'payment_info': self.payment_info.to_dict(),
         }
+        # dis = [di.to_dict() for di in self.dancing_info]
+        # for di in dis:
+        #     for key, val in di.items():
+        #         data['dancing_info'][key] = val
         return data
 
 
@@ -292,10 +332,21 @@ class ContestantInfo(db.Model):
     first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
     diet_allergies = db.Column('Diet/Allergies', db.String(512), nullable=True, default=None)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=False)
-    team = db.relationship('Team')
+    team = db.relationship('Team', back_populates="contestants")
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
+
+    def to_dict(self):
+        data = {
+            'number': self.number,
+            'team_captain':  self.team_captain,
+            'student': self.student,
+            'first_time': self.first_time,
+            'diet_allergies': self.diet_allergies,
+            'team': self.team.name,
+        }
+        return data
 
 
 class DancingInfo(db.Model):
@@ -353,6 +404,17 @@ class DancingInfo(db.Model):
         self.blind_date = False
         self.partner = None
 
+    def to_dict(self):
+        data = {
+            self.competition: {
+                'level':  self.level,
+                'role': self.role,
+                'blind_date': self.blind_date,
+                'partner': self.partner,
+            }
+        }
+        return data
+
 
 class VolunteerInfo(db.Model):
     __tablename__ = 'volunteer_info'
@@ -392,6 +454,22 @@ class VolunteerInfo(db.Model):
     def adjudicating(self):
         return self.jury_ballroom != NO or self.jury_latin != NO or self.jury_salsa != NO or self.jury_polka != NO
 
+    def to_dict(self):
+        data = {
+            'volunteer': self.volunteer,
+            'first_aid':  self.first_aid,
+            'emergency_response_officer': self.emergency_response_officer,
+            'jury_ballroom': self.jury_ballroom,
+            'jury_latin': self.jury_latin,
+            'level_ballroom': self.level_ballroom,
+            'level_latin': self.level_latin,
+            'license_jury_ballroom': self.license_jury_ballroom,
+            'license_jury_latin': self.license_jury_latin,
+            'jury_salsa': self.jury_salsa,
+            'jury_polka': self.jury_polka,
+        }
+        return data
+
 
 class AdditionalInfo(db.Model):
     __tablename__ = 'additional_info'
@@ -402,6 +480,13 @@ class AdditionalInfo(db.Model):
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
+
+    def to_dict(self):
+        data = {
+            'sleeping_arrangements': self.sleeping_arrangements,
+            'bus_to_tournament':  self.bus_to_brno,
+        }
+        return data
 
 
 class StatusInfo(db.Model):
@@ -428,6 +513,18 @@ class StatusInfo(db.Model):
         elif self.status == REGISTERED:
             self.payment_required = False
 
+    def to_dict(self):
+        data = {
+            # 'status': self.status,
+            # 'payment_required':  self.payment_required,
+            # 'raffle_status': self.raffle_status,
+            'guaranteed_entry': self.guaranteed_entry,
+            'checked_in': self.checked_in,
+            'received_starting_number': self.received_starting_number,
+            # 'feedback_about_information': self.feedback_about_information,
+        }
+        return data
+
 
 class PaymentInfo(db.Model):
     __tablename__ = 'payment_info'
@@ -453,6 +550,16 @@ class PaymentInfo(db.Model):
             else:
                 return self.entry_paid
 
+    def merchandise_paid(self, set_paid=None):
+        m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
+        if set_paid is not None:
+            if set_paid:
+                return m_info.set_merchandise_paid()
+            elif not set_paid:
+                return m_info.set_merchandise_unpaid()
+        else:
+            return m_info.merchandise_paid()
+
     def set_all_paid(self):
         m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
         if m_info.ordered_merchandise():
@@ -475,6 +582,16 @@ class PaymentInfo(db.Model):
         self.entry_paid = False
         db.session.commit()
         return False
+
+    def to_dict(self):
+        data = {
+            'entry_paid': self.entry_paid,
+            # 'full_refund': self.full_refund,
+            # 'partial_refund': self.partial_refund,
+            'all_paid': self.all_paid(),
+            'merchandise_paid': self.merchandise_paid(),
+        }
+        return data
 
 
 class MerchandiseInfo(db.Model):
@@ -544,6 +661,19 @@ class MerchandiseInfo(db.Model):
         self.mug = False
         self.bag = False
         db.session.commit()
+
+    def to_dict(self):
+        data = {
+            't_shirt': self.t_shirt,
+            'mug':  self.mug,
+            'bag': self.bag,
+            't_shirt_paid': self.t_shirt_paid,
+            'mug_paid': self.mug_paid,
+            'bag_paid': self.bag_paid,
+            'merchandise_received': self.merchandise_received,
+            'ordered_merchandise': self.ordered_merchandise(),
+        }
+        return data
 
 
 class AttendedPreviousTournamentContestant(db.Model):
@@ -662,7 +792,7 @@ class PartnerRequest(db.Model):
         db.session.commit()
 
     def notify(self):
-        recipients = User.query.filter_by(team=self.dancer.contestant_info[0].team, access=ACCESS[TEAM_CAPTAIN])
+        recipients = User.query.filter_by(team=self.dancer.contestant_info.team, access=ACCESS[TEAM_CAPTAIN])
         for u in recipients:
             n = Notification()
             n.title = f"{self.state_name()} - Partner request: {self.dancer.get_full_name()} with " \
@@ -701,7 +831,7 @@ class NameChangeRequest(db.Model):
         self.notify()
 
     def notify(self):
-        recipients = User.query.filter_by(team=self.contestant.contestant_info[0].team, access=ACCESS[TEAM_CAPTAIN])
+        recipients = User.query.filter_by(team=self.contestant.contestant_info.team, access=ACCESS[TEAM_CAPTAIN])
         for u in recipients:
             n = Notification()
             n.title = f"{self.state_name()} - Name change request: " \

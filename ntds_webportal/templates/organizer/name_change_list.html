@@ -21,7 +21,7 @@
     <tbody>
     <tr>
         {% for req in nml_open %}
-        <td>{{req.contestant.contestant_info[0].team.name}}</td>
+        <td>{{req.contestant.contestant_info.team.name}}</td>
         <td>{{req.contestant.get_full_name()}}</td>
         <td>{{req.get_full_name()}}</td>
         <td>
@@ -57,7 +57,7 @@ There are no open name change requests.
     <tbody>
     <tr>
         {% for req in nml_closed %}
-        <td>{{req.contestant.contestant_info[0].team.name}}</td>
+        <td>{{req.contestant.contestant_info.team.name}}</td>
         <td>{{req.contestant.get_full_name()}}</td>
         <td>{{req.get_full_name()}}</td>
         <td>{{req.state_name()}}</td>

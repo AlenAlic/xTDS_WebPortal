@@ -44,7 +44,7 @@ These dancers have been selected by the system, but this is only visible for you
                 <td>{{ dancer.contestant_id }}</td>
                 <td>{{ dancer.get_full_name() }}</td>
                 <td>{{ dancer.email }}</td>
-                <td>{{ dancer.contestant_info[0].team }}</td>
+                <td>{{ dancer.contestant_info.team }}</td>
                 <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
                 <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
                 <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner, show_number=True) }}</td>

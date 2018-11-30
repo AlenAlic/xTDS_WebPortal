@@ -34,7 +34,7 @@
     {% for dancer in dancers %}
         <tr class="checkbox-row ">
             <td>
-                {{ dancer.contestant_info[0].number }}
+                {{ dancer.contestant_info.number }}
             </td>
             <td>
                 {{ dancer.get_full_name()}}

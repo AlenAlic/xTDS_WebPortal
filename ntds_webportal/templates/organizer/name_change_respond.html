@@ -2,7 +2,7 @@
 
 {% block app_content %}
 <h2>Name change request</h2>
-<p>The teamcaptain of {{req.contestant.contestant_info[0].team}} want to make the following changes:</p>
+<p>The teamcaptain of {{req.contestant.contestant_info.team}} want to make the following changes:</p>
 <p>{{req.contestant.get_full_name()}} <span aria-hidden="true"><img src="{{url_for('static', filename='octicons/arrow-right.svg')}}"></span> {{req.get_full_name()}}</p>
 
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>

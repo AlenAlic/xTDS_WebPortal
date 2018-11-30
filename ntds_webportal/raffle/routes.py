@@ -61,11 +61,11 @@ def start():
                   'id_title': team.city + '-title'} for team in all_teams]
         for t in teams:
             t['teamcaptains'] = [d for d in raffle_sys.registered_dancers
-                                 if d.contestant_info[0].team == t['team'] and d.contestant_info[0].team_captain]
+                                 if d.contestant_info.team == t['team'] and d.contestant_info.team_captain]
             t['available_dancers'] = [d for d in raffle_sys.registered_dancers
-                                      if d.contestant_info[0].team == t['team']]
+                                      if d.contestant_info.team == t['team']]
             t['guaranteed_dancers'] = [d for d in raffle_sys.guaranteed_dancers()
-                                       if d.contestant_info[0].team == t['team']]
+                                       if d.contestant_info.team == t['team']]
         return render_template('raffle/start.html', raffle_sys=raffle_sys, teams=teams)
     if request.method == 'POST':
         form = request.form
@@ -93,22 +93,22 @@ def completed():
                   'id_title': team.city + '-title'} for team in all_teams]
         for t in teams:
             t['available_dancers'] = [d for d in raffle_sys.registered_dancers
-                                      if d.contestant_info[0].team == t['team']]
+                                      if d.contestant_info.team == t['team']]
             t['selected_dancers'] = [d for d in raffle_sys.selected_dancers
-                                     if d.contestant_info[0].team == t['team']]
+                                     if d.contestant_info.team == t['team']]
             t['guaranteed_dancers'] = [d for d in raffle_sys.guaranteed_dancers()
-                                       if d.contestant_info[0].team == t['team']]
+                                       if d.contestant_info.team == t['team']]
         return render_template('raffle/completed.html', raffle_sys=raffle_sys, teams=teams)
     if request.method == 'POST':
         form = request.form
         if 'cancel_raffle' in form:
             for dancer in raffle_sys.all_dancers:
-                dancer.status_info[0].set_status(REGISTERED)
+                dancer.status_info.set_status(REGISTERED)
             g.ts.main_raffle_taken_place = False
             flash('Raffle cancelled.', 'alert-info')
         elif 'confirm_raffle' in form:
             for dancer in raffle_sys.selected_dancers:
-                dancer.status_info[0].set_status(SELECTED)
+                dancer.status_info.set_status(SELECTED)
             g.ts.main_raffle_result_visible = True
             flash('Raffle confirmed. The results are now visible to the teamcaptains.', 'alert-success')
         elif 'balance_raffle' in form:
@@ -139,11 +139,11 @@ def confirmed():
                   'id_title': team.city + '-title'} for team in all_teams]
         for t in teams:
             t['available_dancers'] = [d for d in raffle_sys.registered_dancers
-                                      if d.contestant_info[0].team == t['team']]
+                                      if d.contestant_info.team == t['team']]
             t['selected_dancers'] = [d for d in raffle_sys.selected_dancers
-                                     if d.contestant_info[0].team == t['team']]
+                                     if d.contestant_info.team == t['team']]
             t['confirmed_dancers'] = [d for d in raffle_sys.confirmed_dancers
-                                      if d.contestant_info[0].team == t['team']]
+                                      if d.contestant_info.team == t['team']]
         return render_template('raffle/confirmed.html', raffle_sys=raffle_sys, teams=teams)
     if request.method == 'POST':
         form = request.form
@@ -173,7 +173,7 @@ def cancel_dancer(number):
     changed_dancer = db.session.query(Contestant).filter(Contestant.contestant_id == number).first()
     changed_dancer.cancel_registration()
     team_captain = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN],
-                                     User.team == changed_dancer.contestant_info[0].team).first()
+                                     User.team == changed_dancer.contestant_info.team).first()
     db.session.commit()
     flash('The registration of {} has been cancelled.'.format(changed_dancer.get_full_name()), 'alert-info')
     text = f"{changed_dancer.get_full_name()}' registration has been cancelled by the organization.\n"
@@ -189,9 +189,9 @@ def cancel_dancer(number):
 @requires_tournament_state(REGISTRATION_STARTED)
 def confirm_dancer(number):
     changed_dancer = db.session.query(Contestant).filter(Contestant.contestant_id == number).first()
-    changed_dancer.status_info[0].set_status(CONFIRMED)
+    changed_dancer.status_info.set_status(CONFIRMED)
     team_captain = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN],
-                                     User.team == changed_dancer.contestant_info[0].team).first()
+                                     User.team == changed_dancer.contestant_info.team).first()
     db.session.commit()
     flash(f"{changed_dancer.get_full_name()} has been confirmed.", 'alert-info')
     text = f"{changed_dancer.get_full_name()}' has been confirmed by the organization.\n"
@@ -280,22 +280,22 @@ def test_completed():
                   'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
         for t in teams:
             t['available_dancers'] = [d for d in raffle_sys.registered_dancers
-                                      if d.contestant_info[0].team == t['team']]
+                                      if d.contestant_info.team == t['team']]
             t['selected_dancers'] = [d for d in raffle_sys.selected_dancers
-                                     if d.contestant_info[0].team == t['team']]
+                                     if d.contestant_info.team == t['team']]
             t['guaranteed_dancers'] = [d for d in raffle_sys.guaranteed_dancers()
-                                       if d.contestant_info[0].team == t['team']]
+                                       if d.contestant_info.team == t['team']]
         return render_template('raffle/test_completed.html', raffle_sys=raffle_sys, teams=teams)
     if request.method == 'POST':
         form = request.form
         if 'cancel_raffle' in form:
             for dancer in raffle_sys.all_dancers:
-                dancer.status_info[0].set_status(REGISTERED)
+                dancer.status_info.set_status(REGISTERED)
             g.ts.main_raffle_taken_place = False
             flash('Raffle cancelled.', 'alert-info')
         elif 'confirm_raffle' in form:
             for dancer in raffle_sys.selected_dancers:
-                dancer.status_info[0].set_status(SELECTED)
+                dancer.status_info.set_status(SELECTED)
             g.ts.main_raffle_result_visible = True
             flash('Raffle confirmed. The results are now visible to the teamcaptains.', 'alert-success')
         elif 'balance_raffle' in form:
@@ -339,17 +339,17 @@ def test_confirmed():
                   'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
         for t in teams:
             t['available_dancers'] = [d for d in raffle_sys.registered_dancers
-                                      if d.contestant_info[0].team == t['team']]
+                                      if d.contestant_info.team == t['team']]
             t['selected_dancers'] = [d for d in raffle_sys.selected_dancers
-                                     if d.contestant_info[0].team == t['team']]
+                                     if d.contestant_info.team == t['team']]
             t['confirmed_dancers'] = [d for d in raffle_sys.confirmed_dancers
-                                      if d.contestant_info[0].team == t['team']]
+                                      if d.contestant_info.team == t['team']]
         return render_template('raffle/test_confirmed.html', raffle_sys=raffle_sys, teams=teams)
     if request.method == 'POST':
         form = request.form
         if 'reset_raffle' in form:
             for dancer in raffle_sys.all_dancers:
-                dancer.status_info[0].set_status(REGISTERED)
+                dancer.status_info.set_status(REGISTERED)
             g.ts.main_raffle_taken_place = False
             g.ts.main_raffle_result_visible = False
             g.ts.raffle_completed_message_sent = False

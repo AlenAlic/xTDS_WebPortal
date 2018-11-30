@@ -30,7 +30,7 @@
         <td>{{req.other.get_full_name()}}</td>
         <td>{{req.competition}}</td>
         <td>{{req.dancer.get_full_name()}}</td>
-        <td>{{req.dancer.contestant_info[0].team.name}}</td>
+        <td>{{req.dancer.contestant_info.team.name}}</td>
         <td>{{req.state_name()}}</td>
         <td align="right">
             <a style="width:36px;height:32px" class="btn btn-primary btn-sm {% if req.state != 1 %}disabled{% endif %}" href="{{url_for('teamcaptains.request_respond',req=req.id)}}">
@@ -74,7 +74,7 @@ There are no open partner requests.
         <td>{{req.dancer.get_full_name()}}</td>
         <td>{{req.competition}}</td>
         <td>{{req.other.get_full_name()}}</td>
-        <td>{{req.other.contestant_info[0].team.name}}</td>
+        <td>{{req.other.contestant_info.team.name}}</td>
         <td>{{req.state_name()}}</td>
         <td align="right">
             <button style="width:36px;height:32px" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#req{{req.id}}-modal">

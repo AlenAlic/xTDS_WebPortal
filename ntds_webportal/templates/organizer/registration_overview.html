@@ -53,6 +53,9 @@ function filter(name) {
     filter_status = input_status.value.toUpperCase();
     table = document.getElementById(name);
     tr = table.getElementsByTagName("tr");
+    let tab = document.getElementById("all_teams-tab");
+    let total = tab.querySelector('.badge');
+    let counter = 0
 
     // Loop through all table rows, and hide those who don't match the search query
     for (i = 0; i < tr.length; i++) {
@@ -62,34 +65,13 @@ function filter(name) {
         if (td && td2 && td4) {
             if (td.innerHTML.toUpperCase().indexOf(filter_name) > -1 && td2.innerHTML.toUpperCase().indexOf(filter_team) > -1 && td4.innerHTML.toUpperCase().indexOf(filter_status) > -1) {
                 tr[i].style.display = "";
+                counter++
             } else {
                 tr[i].style.display = "none";
             }
         }
     }
-}
-function filterTeam(name) {
-    // Declare variables
-    var input, filter, table, tr, td, i;
-    input_name = document.getElementById(name+"-filterNameInput");
-    filter_name = input_name.value.toUpperCase();
-    input_status = document.getElementById(name+"-filterStatusInput");
-    filter_status = input_status.value.toUpperCase();
-    table = document.getElementById(name);
-    tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[1];
-        td4 = tr[i].getElementsByTagName("td")[4];
-        if (td && td4) {
-            if (td.innerHTML.toUpperCase().indexOf(filter_name) > -1 && td4.innerHTML.toUpperCase().indexOf(filter_status) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
+    total.innerHTML = counter
 }
 </script>
 {% endblock %}

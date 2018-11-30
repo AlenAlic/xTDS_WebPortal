@@ -1,7 +1,7 @@
 <div class="form-group row required">
     <div class="col-lg-2"></div>
     <div class="form-check col-lg-10" style="padding-left: 2.25rem!important;">
-        <input class="form-check-input" id="privacy_checkbox" name="privacy_checkbox" type="checkbox" value="y" onclick="{% if mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR %}privacyPolicy(this){% endif %}">
+        <input class="form-check-input" id="privacy_checkbox" name="privacy_checkbox" type="checkbox" value="y" onclick="{% if mode == 'view' and dancer.status_info.status == g.data.NO_GDPR %}privacyPolicy(this){% endif %}">
         <label class="form-check-label" for="privacy_checkbox">I have read the <a href="#" data-toggle="modal" data-target="#privacy-modal">privacy notice</a> and give consent for the processing of my personal data, as well as the <a href="{{g.sc.terms_and_conditions_link}}" target="_blank">terms</a> stated on the tournament site</label>
     </div>
 </div>
