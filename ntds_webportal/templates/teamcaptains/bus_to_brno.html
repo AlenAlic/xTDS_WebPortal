@@ -24,7 +24,7 @@
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
         <div class="panel-heading" role="button" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            <b class="panel-title">Dancers that want to use the bus to Brno <span class="badge">{% if included_dancers|length > 0 %}{{ included_dancers|length }}{% else %}0{% endif %}</span></b>
+            <b class="panel-title">Dancers that want to use the bus to Brno <span class="badge badge-pill badge-dark">{% if included_dancers|length > 0 %}{{ included_dancers|length }}{% else %}0{% endif %}</span></b>
         </div>
         <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
             {% if included_dancers|length > 0 %}

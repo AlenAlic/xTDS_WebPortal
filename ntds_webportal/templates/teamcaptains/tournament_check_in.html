@@ -3,7 +3,7 @@
 {% block app_content %}
 
 {% if ts.main_raffle_result_visible is sameas true %}
-<h2>Dancers that have checked in at the tournament desk <span style="font-size:x-large" class="badge">{{ checked_in_dancers|length }}/{{ confirmed_dancers|length }}</span></h2>
+<h2>Dancers that have checked in at the tournament desk <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ checked_in_dancers|length }}/{{ confirmed_dancers|length }}</span></h2>
 <table class="table">
     <thead>
         <tr>

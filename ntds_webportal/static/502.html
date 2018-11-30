@@ -1,63 +1,86 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en" >
+    <head>
+    <title>xTDS WebPortal</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
+        <meta name="theme-color" content="#ffffff">
+        <meta charset="UTF-8">
 
-    <title>
-xTDS WebPortal
-</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-    <!-- Bootstrap -->
-    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <!--Favicons-->
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
+        <link rel="manifest" href="/static/favicons/site.webmanifest">
+        <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="shortcut icon" href="/static/favicons/favicon.ico">
 
 <link rel="stylesheet" href="/static/select2/select2.css">
 <link rel="stylesheet" href="/static/select2/select2-bootstrap3.css">
 <style>.select2-results .select2-highlighted{color:#fff;background-color:#1e90ff}</style>
 
 <style>
-    body { padding-top: 60px;}
-    .navbar-default{background-color:#f8f8f8;}
-    body { background-color:#ffffff;}
-    
-    @media (min-width:1440px){.container{width:1410px}}
-    @media (min-width:768px){.navbar-form .form-control {width:170px}}
-    .pagebreak { page-break-before: always; }
-    .print-friendly { page-break-inside:avoid; page-break-after:auto }
-    tr    { page-break-inside:avoid; page-break-after:auto }
-    td    { page-break-inside:avoid; page-break-after:auto }
-    thead { display:table-header-group }
-    tfoot { display:table-footer-group }
-    @media print {.no-print, .no-print * {display: none !important; } }
-    checkbox {cursor: pointer}
-    .decorative-checkbox {cursor: default !important}
-    .checkbox-row {cursor: pointer}
-    .thumbnail.info {background-color:#d9edf7; }
-    .container-hidden {visibility:hidden;}
-    .notification-text {white-space: pre-line;}
-</style>
-<style>
-.inaccessible {
-    display: block;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.25);
-    z-index: -100;
-    cursor: not-allowed;
-}
-.opaque {
-    opacity: .5;
-}
-</style>
-<style>
-    .api-pending {background-color: #d9edf7 !important;}
-    .api-success {background-color: #dff0d8 !important;}
-    .api-warning {background-color: #fcf8e3 !important;}
-    .api-failed {background-color: #f2dede !important;}
+/* Base formatting */
+@media (min-width:1440px){.container{max-width:1410px}}
+@media (min-width:576px){.form-width-fix .form-control {width:100%}}
+@media (min-width:768px){.form-width-fix .form-control {width:140px}}
+@media (min-width:992px){.form-width-fix .form-control {width:200px}}
+@media (min-width:1200px){.form-width-fix .form-control {width:auto}}
+@media (min-width:576px){.form-width-fix .form-control-button {width:100%}}
+@media (min-width:768px){.form-width-fix .form-control-button {width:auto}}
+
+/* Cards formatting */
+.card-header {padding-top: 0.5rem; padding-bottom: 0.5rem;}
+.card-title {margin-bottom: 0.25rem;}
+.card {margin-bottom:0.5rem;}
+.primary > .card-header {background-color:var(--primary);}
+.primary > .card-header > .card-title {color:var(--white);}
+.secondary > .card-header {background-color:var(--secondary);}
+.secondary > .card-header > .card-title {color:var(--white);}
+.success > .card-header {background-color:var(--success);}
+.success > .card-header > .card-title {color:var(--white);}
+.danger > .card-header {background-color:var(--danger);}
+.danger > .card-header > .card-title {color:var(--white);}
+.warning > .card-header {background-color:var(--warning);}
+.info > .card-header {background-color:var(--info);}
+.info > .card-header > .card-title {color:var(--white);}
+.light > .card-header {background-color:var(--light);}
+.dark > .card-header {background-color:var(--dark);}
+.dark > .card-header > .card-title {color:var(--white);}
+
+/* Pages formatting */
+.inaccessible {width: 100%; height: 100%; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.25); cursor: not-allowed; }
+.opaque {opacity: .5; }
+
+/* Color site red in maintenance mode */
+
+
+/* Print tools */
+.pagebreak { page-break-before: always; }
+.print-friendly { page-break-inside:avoid; page-break-after:auto }
+tr    { page-break-inside:avoid; page-break-after:auto }
+td    { page-break-inside:avoid; page-break-after:auto }
+thead { display:table-header-group }
+tfoot { display:table-footer-group }
+@media print {.no-print, .no-print * {display: none !important; } }
+
+/* Misc. */
+checkbox {cursor: pointer}
+.decorative-checkbox {cursor: default !important}
+.checkbox-row {cursor: pointer}
+.thumbnail.info {background-color:#d9edf7; }
+.container-hidden {visibility:hidden;}
+.notification-text {white-space: pre-line;}
+
+/* API coloring for team captain "Edit Finances" tab */
+.api-pending {background-color:var(--info) !important;}
+.api-success {background-color:var(--success) !important;}
+.api-warning {background-color:var(--warning) !important;}
+.api-failed {background-color: #ffdcdc !important;}
 </style>
 
 <style>
@@ -99,42 +122,19 @@ body {
     margin: 0 auto;
 }
 </style>
-<style>
-    .navbar-default{background-color:#f8f8f8;}
-    body { background-color:#ffffff;}
-</style>
 
-<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
-<link rel="manifest" href="/static/favicons/site.webmanifest">
-<link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#5bbad5">
-<link rel="shortcut icon" href="/static/favicons/favicon.ico">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
-<meta name="theme-color" content="#ffffff">
-<meta charset="UTF-8">
-
-  </head>
-  <body>
+    </head>
+    <body>
     
-<nav class="navbar navbar-default navbar-fixed-top no-print">
+<nav class="navbar sticky-top navbar-expand-md navbar-light bg-light no-print navbar-default">
     <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/index">xTDS WebPortal</a>
-        </div>
-        
+        <a class="navbar-brand" href="/index">xTDS WebPortal</a>
     </div>
 </nav>
 
+
     
-<div id="container-hidden" class="container" style="padding-bottom:20px; ">
+<div id="container-hidden" class="container mt-3" style="padding-bottom:20px; ">
     
     
         
@@ -165,8 +165,9 @@ body {
     
 
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
 <script>
 moment.locale("en");
@@ -191,6 +192,20 @@ $(document).ready(function() {
 <script type="text/javascript" src="/static/select2/form.js"></script>
 
 <script type="text/javascript" src="/static/loading/loading.js"></script>
+<script>
+<!--$(document).ready(function($) {-->
+    <!--$(".clickable-row").css("cursor", "pointer")-->
+    <!--$(".clickable-row").click(function() {-->
+        <!--window.open($(this).data("href"));-->
+    <!--});-->
+<!--});-->
+$(document).ready(function($) {
+    $(".clickable-row").css("cursor", "pointer")
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});
+</script>
 
 <script>
 var el = document.getElementById("pacman");
@@ -203,5 +218,5 @@ if (Modernizr.canvas && Modernizr.localstorage &&
 }
 </script>
 
-  </body>
+    </body>
 </html>
