@@ -98,7 +98,7 @@ checkbox {cursor: pointer}
                         {{ login_form.hidden_tag() }}
                         {{ login_form.username(class_='form-control mx-0 mx-md-1 my-1 my-md-0', placeholder='Username') }}
                         {{ login_form.password(class_='form-control mx-0 mx-md-1 my-1 my-md-0', placeholder='Password') }}
-                        {{ login_form.submit(class_='btn btn-outline-primary form-control-button mx-0 mx-md-1 my-1 my-md-0') }}
+                        {{ login_form.submit(class_='btn btn-outline-primary form-control mx-0 mx-md-1 my-1 my-md-0') }}
                         <small><a class="nav-link px-0 px-md-3" href="{{url_for('auth.reset_password_request')}}">Forgot password?</a></small>
                     </form>
                 {% endif %}
