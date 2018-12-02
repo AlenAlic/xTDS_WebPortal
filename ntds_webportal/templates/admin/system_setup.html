@@ -7,7 +7,11 @@ onload="onStart()"
 {% block app_content %}
 <h2>Reset Website</h2>
 <p>Reset the data on the website and close off the website for all users except for the admin.</p>
-<a class="btn btn-outline-primary" href="{{url_for('self_admin.system_setup')}}?reset_website" style="text-decoration:none">Reset xTDS WebPortal</a>
+<button class="btn btn-outline-primary" data-toggle="modal" data-target="#reset-modal">Reset xTDS WebPortal</button>
+{% with dancer=dancer, modal_id="reset-modal", title="ATTENTION!!!", text="Doing this will CLEAR all data of the current tournament.<br/><br/>Are you sure you want to proceed?"|safe,
+    url=url_for('self_admin.system_setup')+"?reset_website", confirm="Yes, reset website", cancel="No, leave data" %}
+    {% include 'components/modal.html' %}
+{% endwith %}
 <h2>Reset Organizer account</h2>
 {% if g.ts.organizer_account_set is sameas false %}
 Resets the Organizer account for the new tournament and sends an email to the organizer with login credentials.

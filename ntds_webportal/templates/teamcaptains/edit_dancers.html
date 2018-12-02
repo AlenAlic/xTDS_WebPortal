@@ -67,6 +67,9 @@
             <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-info btn-sm"
                href="{{ url_for('teamcaptains.resend_login_dancer', number=dancer.contestant_id) }}">
                 Send new login credentials</a>
+            {% with dancer=dancer, modal_id="delete-cancelled-no-gdpr" %}
+                {% include 'teamcaptains/_delete_cancelled_modal.html' %}
+            {% endwith %}
         {% endif %}
         {% if dancer.status_info.status == g.data.REGISTERED  %}
             <a name="{{ dancer.contestant_id }}" role="button" class="btn btn-warning btn-sm"
@@ -77,6 +80,9 @@
             <a name="{{ dancer.contestant_id }}" role="button"  class="btn btn-primary btn-sm"
                href="{{ url_for('teamcaptains.register_dancer', number=dancer.contestant_id, register=1, wide=wide) }}">
                 Re-register</a>
+            {% with dancer=dancer, modal_id="delete-cancelled-cancelled" %}
+                {% include 'teamcaptains/_delete_cancelled_modal.html' %}
+            {% endwith %}
         {% endif %}
         {% if dancer.status_info.status == g.data.SELECTED %}
             {% with dancer=dancer, modal_id="cancel-selected" %}

@@ -74,6 +74,10 @@ def system_setup():
             for dancer in dancer_accounts:
                 db.session.delete(dancer)
             db.session.commit()
+            super_volunteer_accounts = User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER]).all()
+            for super_volunteer in super_volunteer_accounts:
+                db.session.delete(super_volunteer)
+            db.session.commit()
             non_admins = User.query.filter(User.access > ACCESS[ADMIN]).all()
             for na in non_admins:
                 na.is_active = False

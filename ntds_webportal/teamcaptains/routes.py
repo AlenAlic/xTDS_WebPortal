@@ -139,6 +139,35 @@ def register_dancer(number):
     return redirect(url_for('teamcaptains.edit_dancers', wide=int(request.values['wide'])))
 
 
+@bp.route('/delete_dancer/<number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[TEAM_CAPTAIN]])
+@requires_tournament_state(REGISTRATION_STARTED)
+def delete_dancer(number):
+    if not current_user.has_dancers_registered():
+        flash("Cannot enter page right now. Register at least one dancer first to access the page.")
+        return redirect(url_for('main.dashboard'))
+    changed_dancer = db.session.query(Contestant).join(ContestantInfo) \
+        .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number).first()
+    dancer_account = User.query.filter(User.dancer == changed_dancer).first()
+    if changed_dancer.status_info.status == NO_GDPR or changed_dancer.status_info.status == CANCELLED:
+        if dancer_account is not None:
+            if changed_dancer.deletable():
+                if changed_dancer.status_info.status == NO_GDPR:
+                    changed_dancer.cancel_registration()
+                db.session.delete(dancer_account)
+                db.session.commit()
+                flash(f"Permanently deleted the registration data of {changed_dancer.get_full_name()}.")
+            else:
+                flash(f"Cannot permanently delete the registration data of {changed_dancer.get_full_name()}. "
+                      f"{changed_dancer.first_name} either needs to receive merchandise, needs to pay, "
+                      f"or has a refund pending.")
+    else:
+        flash("Can only delete a dancers' account if the dancer has not accepted the GDPR or if the dancers' "
+              "registration is cancelled.")
+    return redirect(url_for('teamcaptains.edit_dancers', wide=int(request.values['wide'])))
+
+
 @bp.route('/resend_login_dancer/<number>', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[TEAM_CAPTAIN]])

@@ -80,7 +80,8 @@ class User(UserMixin, db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
     team = db.relationship('Team')
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
-    dancer = db.relationship('Contestant', backref=db.backref("user", uselist=False))
+    dancer = db.relationship('Contestant', backref=db.backref("user", uselist=False), single_parent=True,
+                             cascade='all, delete-orphan')
     volunteer_id = db.Column(db.Integer, db.ForeignKey('super_volunteer.volunteer_id'))
     super_volunteer = db.relationship('SuperVolunteer', backref=db.backref("user", uselist=False))
 
@@ -288,6 +289,10 @@ class Contestant(db.Model):
             self.merchandise_info.cancel_merchandise()
             pass
         db.session.commit()
+
+    def deletable(self):
+        return not (self.status_info.payment_required or self.merchandise_info.ordered_merchandise() or
+                    self.payment_info.entry_paid or self.payment_info.full_refund or self.payment_info.partial_refund)
 
     def get_dancing_info(self, competition):
         for di in self.dancing_info:
@@ -513,11 +518,16 @@ class StatusInfo(db.Model):
         elif self.status == REGISTERED:
             self.payment_required = False
 
+    def dancing_lead(self):
+        roles = [d.role for d in self.contestant.dancing_info]
+        return LEAD in roles
+
     def to_dict(self):
         data = {
             # 'status': self.status,
             # 'payment_required':  self.payment_required,
             # 'raffle_status': self.raffle_status,
+            'dancing_lead': self.dancing_lead(),
             'guaranteed_entry': self.guaranteed_entry,
             'checked_in': self.checked_in,
             'received_starting_number': self.received_starting_number,
