@@ -347,7 +347,7 @@ class RaffleSystem(Balance):
         if self.config.beginners_guaranteed_entry_cutoff and self.number_of_beginners() <= \
                 self.config.beginners_guaranteed_cutoff:
             self.select_all_beginners_groups()
-            self.balance_raffle(exclude=BEGINNERS)
+            self.balance_raffle(exclude=BEGINNERS, update=False)
         # Guaranteed number of Beginners per team
         if self.config.beginners_guaranteed_per_team:
             self.select_guaranteed_dancers_per_team(BEGINNERS)
@@ -369,8 +369,7 @@ class RaffleSystem(Balance):
         if not self.test and not self.batch:
             self.update_states()
         elif self.batch:
-            dancer_ids = list(
-                range(0, db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar() + 1))
+            dancer_ids = [0] + [d.contestant_id for d in Contestant.query.all()]
             selected = {did: 0 for did in dancer_ids}
             selected[0] = len(self.selected_dancers)
             for dancer in self.selected_dancers:
@@ -583,7 +582,7 @@ class RaffleSystem(Balance):
                 with open(f'{log_file}.txt', 'a', encoding='utf-8') as f1:
                     f1.write(str_list + '\n')
 
-    def balance_raffle(self, exclude=None):
+    def balance_raffle(self, exclude=None, update=True):
         original_groups = [grp for grp in self.registered_groups if grp.balance_sum() > 0]
         r = list(range(0, len(original_groups)))
         shuffle(r)
@@ -599,7 +598,8 @@ class RaffleSystem(Balance):
             else:
                 break
         self.reset_no_partner_groups()
-        self.update_states()
+        if update:
+            self.update_states()
         flash('Balancing attempt done.')
 
     def finish_raffle(self, non_sleeping_hall_dancers=False):

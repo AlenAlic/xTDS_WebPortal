@@ -102,7 +102,7 @@ def completed():
     if request.method == 'POST':
         form = request.form
         if 'cancel_raffle' in form:
-            for dancer in raffle_sys.all_dancers:
+            for dancer in [d for d in raffle_sys.all_dancers if d.status_info.status != NO_GDPR]:
                 dancer.status_info.set_status(REGISTERED)
             g.ts.main_raffle_taken_place = False
             flash('Raffle cancelled.', 'alert-info')
