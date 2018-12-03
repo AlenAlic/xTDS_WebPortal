@@ -30,7 +30,7 @@
     <td>{{ super_volunteer.get_full_name() }}</td>
     <td>{{ super_volunteer.email }}</td>
     <td>{{ g.data.TF[super_volunteer.sleeping_arrangements] }}</td>
-    <td>{{ g.data.DIET_ALLERGIES_DISPLAY.get(super_volunteer.diet_allergies, '-') }}</td>
+    <td>{{ super_volunteer.diet_allergies }}</td>
     <td>{{ super_volunteer.remark }}</td>
     <td>{{ g.data.YMN[super_volunteer.first_aid] }}</td>
     <td>{{ g.data.YMN[super_volunteer.emergency_response_officer] }}</td>
@@ -68,7 +68,7 @@
     <td>{{ dancer.get_full_name() }}</td>
     <td>{{ dancer.email }}</td>
     <td>{{ g.data.TF[dancer.additional_info.sleeping_arrangements] }}</td>
-    <td>{{ g.data.DIET_ALLERGIES_DISPLAY.get(dancer.contestant_info.diet_allergies, '-') }}</td>
+    <td>{{ dancer.contestant_info.diet_allergies }}</td>
     <td>{{ g.data.YMN[dancer.volunteer_info.volunteer] }}</td>
     <td>{{ g.data.YMN[dancer.volunteer_info.first_aid] }}</td>
     <td>{{ g.data.YMN[dancer.volunteer_info.emergency_response_officer] }}</td>

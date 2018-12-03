@@ -532,9 +532,17 @@ class RaffleSystem(Balance):
             ordered_teams = []
             for team in all_teams:
                 team_dancers = [d for d in guaranteed_dancers if d.contestant_info.team == team]
-                selected_team_dancers = len([d for d in selected_dancers_source if d.contestant_info.team == team])
-                ordered_teams += [{'team': team,
-                                   'max_dancers': min(len(team_dancers) + selected_team_dancers, maximum_dancers)}]
+                selected_team_dancers = [d for d in selected_dancers_source if d.contestant_info.team == team]
+                if dancers_source == BEGINNERS:
+                    count = len(team_dancers) + len(selected_team_dancers)
+                else:
+                    count = []
+                    for d in team_dancers + selected_team_dancers:
+                        for di in d.dancing_info:
+                            if di.level in [BREITENSPORT, BEGINNERS]:
+                                count.append(1)
+                    count = len(count)
+                ordered_teams += [{'team': team,'max_dancers': min(count, maximum_dancers)}]
             for _ in range(0, len(guaranteed_dancers)):
                 for team in ordered_teams:
                     selected_dancers = [d for d in self.selected_dancers if
