@@ -479,6 +479,7 @@ def diet_allergies():
     people.extend([{'id': 'sv-' + str(sv.volunteer_id), 'name': sv.get_full_name(), 'diet': sv.diet_allergies,
                     'notes': sv.organization_diet_notes} for sv in super_volunteers])
     people.sort(key=lambda x: x['name'])
+    old_notes = [p['notes'] for p in people if p['notes'].strip() != ""]
     all_confirmed_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == CONFIRMED).all()
     all_super_volunteers = SuperVolunteer.query.all()
     total = len(all_confirmed_dancers) + len(all_super_volunteers)
@@ -519,7 +520,8 @@ def diet_allergies():
             else:
                 flash('No changes were made to submit.', 'alert-warning')
             return redirect(url_for('organizer.diet_allergies'))
-    return render_template('organizer/diet_allergies.html', people=people, total=total, no_special_diet=no_special_diet)
+    return render_template('organizer/diet_allergies.html',
+                           people=people, total=total, no_special_diet=no_special_diet, old_notes=old_notes)
 
 
 @bp.route('/adjudicators_overview', methods=['GET', 'POST'])

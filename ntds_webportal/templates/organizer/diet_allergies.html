@@ -1,57 +1,91 @@
 {% extends "base.html" %}
 
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block container_style -%}
+visibility:hidden
+{%- endblock %}
 
 {% block app_content %}
-<h2>Total number of people <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ total }}</span></h2>
-<h2>People without special dietary requirements and/or allergies <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ no_special_diet }}</span></h2>
-{% if people|length == 0 %}
-<h2>There are no people with dietary requirements and/or allergies</h2>
-{% else %}
-<h2>People with dietary requirements and/or allergies <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ people|length }}</span></h2>
-<h2>Dietary categories</h2>
-<table class="table table-sm mt-2" id="diet-summary-table">
+<h2>Summary</h2>
+<table class="table table-sm mb-0" id=>
     <colgroup>
         <col span="1" style="width: 75%;">
         <col span="1" style="width: 25%;">
     </colgroup>
     <thead>
+    <tr>
+        <th>Dietary requirements</th>
+        <th style="text-align:right;">#</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>No special requirements</td>
+        <td style="text-align:right;">{{ no_special_diet }}</td>
+    </tr>
+    <tr>
+        <td>Special dietary requirements and/or allergies</td>
+        <td style="text-align:right;">{{ people|length }}</td>
+    </tr>
+    <tr>
+        <td style="text-align:right;">Total</td>
+        <td style="text-align:right;">{{ total }}</td>
+    </tr>
+    </tbody>
+</table>
+{% if people|length == 0 %}
+<h2>There are no people with dietary requirements and/or allergies</h2>
+{% else %}
+<div id="special-table-container" style="display:none;">
+    <table class="table table-sm mt-2" id="diet-summary-table">
+        <colgroup>
+            <col span="1" style="width: 75%;">
+            <col span="1" style="width: 25%;">
+        </colgroup>
+        <thead>
         <tr>
-            <th>Category</th>
-            <th>#</th>
+            <th colspan="2">Special dietary categories breakdown</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<!--<form method="GET" enctype="multipart/form-data" novalidate>-->
+    <!--<input class="btn btn-outline-secondary float-right" id="submit-download_file" name="download_file" type="submit" value="Download list">-->
+<!--</form>-->
+<div id="changes-warning" style="text-align:center;display:none;"><h3 class="float-center">Remember to save your changes</h3></div>
+<form id="breakdown-form" method="POST" enctype="multipart/form-data" novalidate>
+    <button class="btn btn-outline-secondary no-print" onclick="printSummary()">Print summary</button>
+    <button class="btn btn-outline-secondary no-print ml-2" onclick="printPage()">Print everything</button>
+    <input class="btn btn-primary no-print float-right" id="submit" name="submit" type="submit" value="Save changes">
+    <table class="table table-sm mt-2" id="diet-table">
+    <colgroup>
+        <col span="1" style="width: 25%;">
+        <col span="1" style="width: 45%;">
+        <col span="1" style="width: 30%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Who?</th>
+            <th>Diet/Allergies</th>
+            <th>Notes</th>
         </tr>
     </thead>
     <tbody>
+        {% for p in people %}
+        <tr>
+            <td>{{ p['name'] }}</td>
+            <td>{{ p['diet'] }}</td>
+            <td>
+                <input class="form-control" type="text" onkeyup="getNotes()" id="{{ p['id'] }}" name="{{ p['id'] }}" value="{{ p['notes'] }}">
+            </td>
+        </tr>
+        {% endfor %}
     </tbody>
-</table>
-<form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-outline-secondary float-right" id="submit-download_file" name="download_file" type="submit" value="Download list">
-</form>
-<form method="POST" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-outline-primary" id="submit" name="submit" type="submit" value="Save changes">
-    <table class="table table-sm mt-2" id="diet-table">
-        <colgroup>
-            <col span="1" style="width: 25%;">
-            <col span="1" style="width: 45%;">
-            <col span="1" style="width: 30%;">
-        </colgroup>
-        <thead>
-            <tr>
-                <th>Who?</th>
-                <th>Diet/Allergies</th>
-                <th>Notes</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in people %}
-            <tr>
-                <td>{{ p['name'] }}</td>
-                <td>{{ p['diet'] }}</td>
-                <td>
-                    <input class="form-control" type="text" id="{{ p['id'] }}" name="{{ p['id'] }}" value="{{ p['notes'] }}">
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
     </table>
 </form>
 {% endif %}
@@ -60,25 +94,79 @@
 {% block scripts %}
 {{ super() }}
 <script>
-function notesFilter() {
-    // Declare variables
-    var tr_input, filter, table, tr, td, i;
-    input = document.getElementById("myInput");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("diet-table");
-    tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
+function onStart() {
+    getNotes()
+    var container = document.getElementById('container-hidden').style.visibility = "visible";
+}
+const oldNotes = {{old_notes|safe}}
+function printSummary() {
+    let form = document.getElementById("breakdown-form");
+    form.classList.add("no-print");
+    window.print();
+    form.classList.remove("no-print");
+}
+function printPage() {
+    window.print();
+}
+function getNotes() {
+    let table = document.getElementById("diet-table");
+    let tr = table.getElementsByTagName("tr");
+    let tdInput, td;
+    let notesList = [];
     for (i = 0; i < tr.length; i++) {
-        tr_input = tr[i].getElementsByTagName("td")[2].querySelector(input)
-        if (tr_input) {
-            if (tr_input.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
+        td = tr[i].getElementsByTagName("td")[2]
+        if (td) {
+            tdInput = notesFilter(td.querySelector('.form-control').value);
+            notesList.push(...tdInput);
         }
     }
+    let container = document.getElementById("changes-warning");
+    if (!compareArrays(notesList,oldNotes)) {container.style.display = "block";
+    } else {container.style.display = "none"; }
+    populateTable(count(notesList));
+}
+compareArrays = (array1, array2) => array1.length === array2.length && array1.sort().every(function(value, index) { return value === array2.sort()[index]})
+function notesFilter(value) {
+    if (value.trim() == "") {return []}
+    valueList = value.split(",")
+    valueList = valueList.map(string => string.trim())
+    return valueList
+}
+function count(arr) {
+    return arr.reduce((prev, curr) => (prev[curr] = ++prev[curr] || 1, prev), {})
+}
+function populateTable(dict) {
+
+    let tr, categoryCell, countCell
+    let table = document.querySelector('#diet-summary-table tbody');
+    while (table.childNodes.length) {
+        table.removeChild(table.childNodes[0]);
+    }
+
+    let count = 0;
+    for (d in dict) {
+        if (d != "") {
+            tr = table.insertRow();
+            categoryCell = tr.insertCell();
+            categoryCell.innerHTML = d;
+            countCell = tr.insertCell();
+            countCell.style.textAlign="right"
+            countCell.innerHTML = dict[d];
+            count += dict[d]
+        }
+    }
+
+    tr = table.insertRow();
+    categoryCell = tr.insertCell();
+    categoryCell.innerHTML = "Total";
+    categoryCell.style.textAlign="right"
+    countCell = tr.insertCell();
+    countCell.style.textAlign="right"
+    countCell.innerHTML = count;
+
+    let container = document.getElementById("special-table-container");
+    if (count > 0) {container.style.display = "block";
+    } else {container.style.display = "none"; }
 }
 </script>
 {% endblock %}
