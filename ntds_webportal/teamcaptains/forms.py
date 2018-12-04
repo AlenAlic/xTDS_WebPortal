@@ -308,7 +308,7 @@ class EditContestantForm(BaseContestantForm):
         super().__init__(**kwargs)
         if dancer is not None:
             ballroom_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
+                .filter(or_(StatusInfo.status == dancer.status_info.status, StatusInfo.status == NO_GDPR),
                         DancingInfo.competition == BALLROOM,
                         or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                             DancingInfo.level == BEGINNERS))
@@ -321,7 +321,7 @@ class EditContestantForm(BaseContestantForm):
             self.ballroom_partner.query = ballroom_query
 
             latin_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
+                .filter(or_(StatusInfo.status == dancer.status_info.status, StatusInfo.status == NO_GDPR),
                         DancingInfo.competition == LATIN,
                         or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                             DancingInfo.level == BEGINNERS))

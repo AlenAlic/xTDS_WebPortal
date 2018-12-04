@@ -463,7 +463,7 @@ def sleeping_hall():
     return render_template('organizer/sleeping_hall.html', teams=teams, super_volunteers=super_volunteers, total=total)
 
 
-@bp.route('/diet_allergies', methods=['GET'])
+@bp.route('/diet_allergies', methods=[GET, POST])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
@@ -472,10 +472,12 @@ def diet_allergies():
                                                                        ContestantInfo.diet_allergies != "").all()
     dancers = [d for d in dancers if d.contestant_info.diet_allergies.strip() != ""
                and d.contestant_info.diet_allergies != "-"]
-    people = [{'name': d.get_full_name(), 'diet': d.contestant_info.diet_allergies} for d in dancers]
+    people = [{'id': 'd-' + str(d.contestant_id), 'name': d.get_full_name(), 'diet': d.contestant_info.diet_allergies,
+               'notes': d.contestant_info.organization_diet_notes} for d in dancers]
     super_volunteers = SuperVolunteer.query.filter(SuperVolunteer.diet_allergies != "").all()
     super_volunteers = [sv for sv in super_volunteers if sv.diet_allergies.strip() != "" and sv.diet_allergies != "-"]
-    people.extend([{'name': sv.get_full_name(), 'diet': sv.diet_allergies} for sv in super_volunteers])
+    people.extend([{'id': 'sv-' + str(sv.volunteer_id), 'name': sv.get_full_name(), 'diet': sv.diet_allergies,
+                    'notes': sv.organization_diet_notes} for sv in super_volunteers])
     people.sort(key=lambda x: x['name'])
     all_confirmed_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == CONFIRMED).all()
     all_super_volunteers = SuperVolunteer.query.all()
@@ -499,6 +501,24 @@ def diet_allergies():
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
+    if request.method == 'POST':
+        if 'submit' in request.form:
+            changes = False
+            for p in people:
+                diet_notes = request.form.get(p['id'])
+                if p['id'].split('-')[0] == "d":
+                    person = ContestantInfo.query.get(int(p['id'].split('-')[1]))
+                else:
+                    person = SuperVolunteer.query.get(int(p['id'].split('-')[1]))
+                if person.organization_diet_notes != diet_notes:
+                    person.organization_diet_notes = diet_notes
+                    changes = True
+            if changes:
+                db.session.commit()
+                flash('Changes saved successfully.', 'alert-success')
+            else:
+                flash('No changes were made to submit.', 'alert-warning')
+            return redirect(url_for('organizer.diet_allergies'))
     return render_template('organizer/diet_allergies.html', people=people, total=total, no_special_diet=no_special_diet)
 
 

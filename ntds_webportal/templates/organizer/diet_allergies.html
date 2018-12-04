@@ -4,31 +4,81 @@
 {% block app_content %}
 <h2>Total number of people <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ total }}</span></h2>
 <h2>People without special dietary requirements and/or allergies <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ no_special_diet }}</span></h2>
-
 {% if people|length == 0 %}
 <h2>There are no people with dietary requirements and/or allergies</h2>
 {% else %}
 <h2>People with dietary requirements and/or allergies <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ people|length }}</span></h2>
-<form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-outline-primary" id="submit-download_file" name="download_file" type="submit" value="Download list">
-</form>
-<div style="height:10px;"></div>
-<table class="table table-sm">
+<h2>Dietary categories</h2>
+<table class="table table-sm mt-2" id="diet-summary-table">
+    <colgroup>
+        <col span="1" style="width: 75%;">
+        <col span="1" style="width: 25%;">
+    </colgroup>
     <thead>
         <tr>
-            <th>Who?</th>
-            <th>Diet/Allergies</th>
+            <th>Category</th>
+            <th>#</th>
         </tr>
     </thead>
     <tbody>
-        {% for p in people %}
-        <tr>
-            <td>{{ p['name'] }}</td>
-            <td>{{ p['diet'] }}</td>
-        </tr>
-        {% endfor %}
     </tbody>
 </table>
+<form method="GET" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-outline-secondary float-right" id="submit-download_file" name="download_file" type="submit" value="Download list">
+</form>
+<form method="POST" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-outline-primary" id="submit" name="submit" type="submit" value="Save changes">
+    <table class="table table-sm mt-2" id="diet-table">
+        <colgroup>
+            <col span="1" style="width: 25%;">
+            <col span="1" style="width: 45%;">
+            <col span="1" style="width: 30%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Who?</th>
+                <th>Diet/Allergies</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in people %}
+            <tr>
+                <td>{{ p['name'] }}</td>
+                <td>{{ p['diet'] }}</td>
+                <td>
+                    <input class="form-control" type="text" id="{{ p['id'] }}" name="{{ p['id'] }}" value="{{ p['notes'] }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
 {% endif %}
 {% endblock %}
 
+{% block scripts %}
+{{ super() }}
+<script>
+function notesFilter() {
+    // Declare variables
+    var tr_input, filter, table, tr, td, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("diet-table");
+    tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        tr_input = tr[i].getElementsByTagName("td")[2].querySelector(input)
+        if (tr_input) {
+            if (tr_input.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+{% endblock %}
