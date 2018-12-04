@@ -13,6 +13,7 @@ from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
 from ntds_webportal.auth.email import send_team_captain_activation_email
 from ntds_webportal.helper_classes import TeamFinancialOverview
 from ntds_webportal.teamcaptains.forms import EditContestantForm
+from ntds_webportal.volunteering.forms import SuperVolunteerForm
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 from sqlalchemy import or_, case
@@ -461,6 +462,16 @@ def sleeping_hall():
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
     return render_template('organizer/sleeping_hall.html', teams=teams, super_volunteers=super_volunteers, total=total)
+
+
+@bp.route('/view_super_volunteer/<int:number>', methods=[GET])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def view_super_volunteer(number):
+    super_volunteer = SuperVolunteer.query.filter(SuperVolunteer.volunteer_id == number).first()
+    form = SuperVolunteerForm()
+    form.populate(super_volunteer)
+    return render_template('organizer/view_super_volunteer.html', form=form)
 
 
 @bp.route('/diet_allergies', methods=[GET, POST])
