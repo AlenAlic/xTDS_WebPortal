@@ -1,48 +1,71 @@
 {% extends "base.html" %}
 
-{% block head %}
-{{ super() }}
-<script src="/static/js/jquery.min.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/jquery.confirm.min.js"></script>
-{% endblock %}
-
 {% block app_content %}
 <h2>Registration period</h2>
 {% if not g.ts.registration_period_started and not g.ts.registration_open %}
-    <p>The registration period has not started yet. Starting the registration period will alert the team captains by sending an e-mail that the registration period has started.</p>
-    <button class="btn btn-primary btn-lg confirm-modal"
-            data-url="{{url_for('organizer.registration_management')}}?start_registration_period"
-            data-title="Start registration period"
-            data-text="Are you sure you want to start the registration period?<br><br>This will automatically send out e-mail to the team captains that the registration has started."
-            data-confirm-button="Yes, start registration period"
-            data-cancel-button="No, do not start registration period yet">
-        <b>Start registration period</b>
-    </button>
+<p>The registration period has not started yet. Starting the registration period will alert the team captains by sending an e-mail that the registration period has started.</p>
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#startRegistration"><b>Start registration period</b></button>
+<div class="modal fade" id="startRegistration" tabindex="-1" role="dialog" aria-labelledby="startRegistration" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Start registration period</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to start the registration period?<br><br>This will automatically send out e-mail to the team captains that the registration has started.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{{url_for('organizer.registration_management')}}?start_registration_period" class="btn btn-primary">Yes, start registration period</a>
+                <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, do not start registration period</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% elif g.ts.registration_open %}
-    <p>The registration is currently <b>open</b>. New dancers can be registered at the moment.</p>
-    <button class="btn btn-primary btn-lg confirm-modal"
-            data-url="{{url_for('organizer.registration_management')}}?close_registration"
-            data-title="Close registration"
-            data-text="Are you sure you want to close the registration?"
-            data-confirm-button="Yes, close the registration"
-            data-cancel-button="No, keep the registration open">
-        <b>Close registration</b>
-    </button>
+<p>The registration is currently <b>open</b>. New dancers can be registered at the moment.</p>
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#openRegistration"><b>Close registration</b></button>
+<div class="modal fade" id="openRegistration" tabindex="-1" role="dialog" aria-labelledby="openRegistration" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Close registration</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to close the registration?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{{url_for('organizer.registration_management')}}?close_registration" class="btn btn-primary">Yes, close the registration</a>
+                <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, keep the registration open</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% else %}
 <p>The registration is currently <b>closed</b>.</p>
-    <button class="btn btn-primary btn-lg confirm-modal"
-            data-url="{{url_for('organizer.registration_management')}}?open_registration"
-            data-title="Open registration"
-            data-text="Are you sure you want to open the registration?"
-            data-confirm-button="Yes, open the registration"
-            data-cancel-button="No, keep registration period yet">
-        <b>Open registration</b>
-    </button>
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#closeRegistration"><b>Open registration</b></button>
+<div class="modal fade" id="closeRegistration" tabindex="-1" role="dialog" aria-labelledby="closeRegistration" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Open registration</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to open the registration?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{{url_for('organizer.registration_management')}}?open_registration" class="btn btn-primary">Yes, open the registration</a>
+                <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, keep the registration closed</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 {% if no_gdpr_dancers|length > 0 %}
-<h2>Dancers that have not accepted the GDPR <span class="badge" style="font-size:x-large">{{ no_gdpr_dancers|length }}</span></h2>
-<table class="table" style="margin-bottom:0;">
+<h2>Dancers that have not accepted the GDPR <span class="badge badge-pill badge-dark" style="font-size:x-large">{{ no_gdpr_dancers|length }}</span></h2>
+<table class="table table-sm" style="margin-bottom:0;">
     <colgroup>
         <col span="1" style="width: 70%;">
         <col span="1" style="width: 30%;">
@@ -51,19 +74,29 @@
         <tr>
             <td style="border: none;">You can send an e-mail reminder to all the dancers that have not accepted the privacy statement.</td>
             <td style="border: none; text-align:right;">
-                <button class="btn btn-info confirm-modal"
-                        data-url="{{url_for('organizer.registration_management')}}?notify_no_gdpr"
-                        data-title="Notify registered dancers"
-                        data-text="Are you sure you want to e-mail a reminder to all the dancers in the list?"
-                        data-confirm-button="Yes, send e-mail"
-                        data-cancel-button="No, do not send">
-                    <b>Send reminder</b>
-                </button>
+                <button class="btn btn-outline-secondary" data-toggle="modal" data-target="#sendReminder"><b>Send reminder</b></button>
             </td>
         </tr>
     </tbody>
 </table>
-<table class="table table-striped">
+<div class="modal fade" id="sendReminder" tabindex="-1" role="dialog" aria-labelledby="sendReminder" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Notify registered dancers</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to e-mail a reminder to all the dancers in the list?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{{url_for('organizer.registration_management')}}?notify_no_gdpr" class="btn btn-primary">Yes, send e-mail</a>
+                <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, do not send</button>
+            </div>
+        </div>
+    </div>
+</div>
+<table class="table table-sm">
     <thead>
         <tr>
             <th><b>Name</b></th>
@@ -76,23 +109,10 @@
             <tr>
                 <td>{{ dancer.get_full_name() }}</td>
                 <td>{{ dancer.email }}</td>
-                <td>{{ dancer.contestant_info[0].team.name }}</td>
+                <td>{{ dancer.contestant_info.team.name }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
 {% endif %}
-<script>
-$.confirm.options = {
-    confirmButtonClass: "btn-primary",
-    cancelButtonClass: "btn-default",
-    dialogClass: "modal-dialog modal-lg"
-}
-$(".confirm-modal").confirm({
-    confirm: function(button) {
-        window.location.href = button.data('url');
-    },
-    cancel: function(button) {}
-});
-</script>
 {% endblock %}

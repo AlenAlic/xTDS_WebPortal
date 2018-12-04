@@ -6,12 +6,11 @@ from sqlalchemy import or_, and_
 
 class TeamPossiblePartners:
 
-    def __init__(self, team_captain, status=REGISTERED, other_teams=False, include_external_partners_of=None,
-                 include_gdpr=False):
+    def __init__(self, team_captain, dancer=None, status=REGISTERED, other_teams=False, include_gdpr=False):
         self.team = team_captain.team
+        self.dancer = dancer
         self.status = status
         self.other_teams = other_teams
-        self.include_external_partners_of = include_external_partners_of
         self.include_gdpr = include_gdpr
 
     def get_dancing_info_list(self, competition, level, role):
@@ -24,16 +23,20 @@ class TeamPossiblePartners:
             dancers = dancers.filter(or_(StatusInfo.status == self.status, StatusInfo.status == NO_GDPR))
         else:
             dancers = dancers.filter(StatusInfo.status == self.status)
-        if not self.other_teams and self.include_external_partners_of is not None:
+        if not self.other_teams and self.dancer is not None:
             external_partners = dancers.filter(DancingInfo.competition == competition,
                                                DancingInfo.level == level, DancingInfo.role == role,
-                                               DancingInfo.partner == self.include_external_partners_of.contestant_id)\
+                                               DancingInfo.partner == self.dancer.contestant_id)\
                 .filter(ContestantInfo.team != self.team).all()
         else:
             external_partners = []
-        dancers = dancers.filter(DancingInfo.competition == competition,
-                                 DancingInfo.level == level, DancingInfo.role == role,
-                                 DancingInfo.blind_date.is_(False), DancingInfo.partner.is_(None))
+        dancers = dancers.filter(DancingInfo.competition == competition, DancingInfo.role == role,
+                                 DancingInfo.level == level, DancingInfo.blind_date.is_(False))
+        if self.dancer is not None:
+            dancers = dancers.filter(or_(DancingInfo.partner.is_(None),
+                                         DancingInfo.partner == self.dancer.contestant_id))
+        else:
+            dancers = dancers.filter(DancingInfo.partner.is_(None))
         if self.other_teams:
             dancers = dancers.filter(ContestantInfo.team != self.team).all()
         else:
@@ -69,7 +72,7 @@ class TeamPossiblePartners:
         if extra_dancers is not None:
             dancers += extra_dancers
         dancers = [(str(dancer.contestant_id), dancer.contestant.get_full_name(),
-                    dancer.contestant.contestant_info[0].team.name) for dancer in dancers]
+                    dancer.contestant.contestant_info.team.name) for dancer in dancers]
         if extra_dancers is not None:
             dancers.sort(key=lambda dancer: dancer[1])
         return dancers
@@ -120,8 +123,8 @@ class TeamFinancialOverview:
 
     def get_dancers(self, price_category, paid):
         prices = self.student_prices()
-        dancers = [prices[dancer.contestant_info[0].student] for dancer in self.dancers if
-                   dancer.contestant_info[0].student == price_category and dancer.payment_info[0].entry_paid is paid]
+        dancers = [prices[dancer.contestant_info.student] for dancer in self.dancers if
+                   dancer.contestant_info.student == price_category and dancer.payment_info.entry_paid is paid]
         return dancers
 
     def get_students(self, paid):
@@ -137,18 +140,18 @@ class TeamFinancialOverview:
         return len(students), sum(students)
 
     def get_t_shirts(self, paid):
-        t_shirts = [self.config.t_shirt_price for dancer in self.dancers if dancer.merchandise_info[0].t_shirt != NO
-                    and dancer.merchandise_info[0].t_shirt_paid is paid]
+        t_shirts = [self.config.t_shirt_price for dancer in self.dancers if dancer.merchandise_info.t_shirt != NO
+                    and dancer.merchandise_info.t_shirt_paid is paid]
         return len(t_shirts), sum(t_shirts)
     
     def get_mugs(self, paid):
-        mugs = [self.config.mug_price for dancer in self.dancers if dancer.merchandise_info[0].mug
-                and dancer.merchandise_info[0].mug_paid is paid]
+        mugs = [self.config.mug_price for dancer in self.dancers if dancer.merchandise_info.mug
+                and dancer.merchandise_info.mug_paid is paid]
         return len(mugs), sum(mugs)
     
     def get_bags(self, paid):
-        bags = [self.config.bag_price for dancer in self.dancers if dancer.merchandise_info[0].bag
-                and dancer.merchandise_info[0].bag_paid is paid]
+        bags = [self.config.bag_price for dancer in self.dancers if dancer.merchandise_info.bag
+                and dancer.merchandise_info.bag_paid is paid]
         return len(bags), sum(bags)
 
     def get_total(self, paid):

@@ -1,26 +1,25 @@
 {% if mode == 'edit' %}
-{% set editable = not (dancer.status_info[0].status == g.data.SELECTED or dancer.status_info[0].status == g.data.CONFIRMED) %}
+{% set editable = not (dancer.status_info.status == g.data.SELECTED or dancer.status_info.status == g.data.CONFIRMED) %}
 {% else %}
 {% set editable = true %}
 {% endif %}
 <h2>{{title}}</h2>
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
-    {% if current_user.is_dancer() is sameas true %}<fieldset disabled>{% endif %}
+    {% if current_user.is_dancer() is sameas true or current_user.is_organizer() is sameas true %}<fieldset disabled>{% endif %}
     {{ form.hidden_tag() }}
     <h3>Personal information</h3>
-    <!--{{ reg_wtf.form_field(form.team) }}-->
     {% if mode == 'register' %}
         {{ reg_wtf.form_field(form.number) }}
         {{ reg_wtf.form_field(form.first_name, placeholder='First name') }}
         {{ reg_wtf.form_field(form.prefixes, placeholder='Prefix') }}
         {{ reg_wtf.form_field(form.last_name, placeholder='Last name') }}
     {% elif mode == 'edit' %}
-        <div class="form-group required">
-            <label class="control-label  col-xs-2" for="full_name">Full name</label>
-            <div class="col-xs-10">
+        <div class="form-group row required">
+            <label class="col-form-label col-lg-2" for="full_name">Full name</label>
+            <div class="col-lg-10">
                 <div class="input-group">
+                    <div class="input-group-prepend"><a class="input-group-text" href="{{url_for('teamcaptains.name_change_request', contestant=dancer.contestant_id, wide=wide)}}"><img src="{{url_for('static', filename='octicons/pencil.svg')}}"></a></div>
                     <input class="form-control" disabled="" id="full_name" name="full_name" placeholder="Full name" required="" type="text" value="{{form.full_name.data}}">
-                    <a href="{{url_for('teamcaptains.name_change_request', contestant=dancer.contestant_id, wide=wide)}}" class="glyphicon glyphicon-pencil input-group-addon"></a>
                 </div>
             </div>
         </div>
@@ -28,6 +27,9 @@
         {{ reg_wtf.form_field(form.full_name) }}
     {% endif %}
     {{ reg_wtf.form_field(form.email, placeholder='E-mail address') }}
+    {% if current_user.is_organizer() %}
+    {{ reg_wtf.form_field(form.team) }}
+    {% endif %}
     {{ reg_wtf.form_field(form.student) }}
     {% if g.sc.first_time_ask is sameas true %}
         {{ reg_wtf.form_field(form.first_time) }}
@@ -39,19 +41,27 @@
 
     <h3>Ballroom</h3>
     {{ reg_wtf.form_field(form.ballroom_level, disabled=not editable, **{'onchange': "dancingLevel(id, 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date', 'jury_ballroom')", 'onkeyup': "dancingLevel(id, 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date', 'jury_ballroom')"}) }}
+    {% if (mode == 'view' and form.ballroom_level.data != g.data.NO) or mode == 'edit' or mode == 'register' %}
     {{ reg_wtf.form_field(form.ballroom_role, disabled=true, **{'onchange': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date', 'ballroom_partner')", 'onkeyup': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date', 'ballroom_partner')"}) }}
+    {% if (mode == 'view' and form.ballroom_level.data == g.data.BREITENSPORT) or mode == 'edit' or mode == 'register' %}
     {% if g.sc.breitensport_obliged_blind_date is sameas true %}
         {{ reg_wtf.form_field(form.ballroom_blind_date, disabled=true, **{'onchange': "dancingBD('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')", 'onkeyup': "dancingBD('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')"}) }}
     {% endif %}
+    {% endif %}
     {{ reg_wtf.form_field(form.ballroom_partner, disabled=true) }}
+    {% endif %}
 
     <h3>Latin</h3>
     {{ reg_wtf.form_field(form.latin_level, disabled=not editable, **{'onchange': "dancingLevel(id, 'latin_role', 'latin_partner', 'latin_blind_date', 'jury_latin')", 'onkeyup': "dancingLevel(id, 'latin_role', 'latin_partner', 'latin_blind_date', 'jury_latin')"}) }}
+    {% if (mode == 'view' and form.latin_level.data != g.data.NO) or mode == 'edit' or mode == 'register' %}
     {{ reg_wtf.form_field(form.latin_role, disabled=true, **{'onchange': "dancingRole('latin_level', 'latin_role', 'latin_blind_date', 'latin_partner')", 'onkeyup': "dancingRole('latin_level', 'latin_role', 'latin_blind_date', 'latin_partner')"}) }}
+    {% if (mode == 'view' and form.latin_level.data == g.data.BREITENSPORT) or mode == 'edit' or mode == 'register' %}
     {% if g.sc.breitensport_obliged_blind_date is sameas true %}
         {{ reg_wtf.form_field(form.latin_blind_date, disabled=true, **{'onchange': "dancingBD('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')", 'onkeyup': "dancingBD('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')"}) }}
     {% endif %}
+    {% endif %}
     {{ reg_wtf.form_field(form.latin_partner, disabled=true) }}
+    {% endif %}
 
     {% if g.sc.ask_volunteer is sameas true or g.sc.ask_first_aid is sameas true or g.sc.ask_emergency_response_officer is sameas true %}
         <h3>Volunteering</h3>
@@ -70,18 +80,22 @@
         <h3>Adjudication</h3>
     {% endif %}
     {{ reg_wtf.form_field(form.jury_ballroom, **{'onchange': "adjudicatorGreyOut('jury_ballroom', 'license_jury_ballroom', 'level_jury_ballroom')", 'onkeyup': "adjudicatorGreyOut('jury_ballroom', 'license_jury_ballroom', 'level_jury_ballroom')"}) }}
+    {% if mode == 'view' and form.jury_ballroom.data != g.data.NO or mode == 'edit' or mode == 'register' %}
     {% if g.sc.ask_adjudicator_certification %}
         {{ reg_wtf.form_field(form.license_jury_ballroom) }}
     {% endif %}
     {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true %}
         {{ reg_wtf.form_field(form.level_jury_ballroom) }}
     {% endif %}
+    {% endif %}
     {{ reg_wtf.form_field(form.jury_latin, **{'onchange': "adjudicatorGreyOut('jury_latin', 'license_jury_latin', 'level_jury_latin')", 'onkeyup': "adjudicatorGreyOut('jury_latin', 'license_jury_latin', 'level_jury_latin')"}) }}
+    {% if mode == 'view' and form.jury_ballroom.data != g.data.NO or mode == 'edit' or mode == 'register' %}
     {% if g.sc.ask_adjudicator_certification %}
         {{ reg_wtf.form_field(form.license_jury_latin) }}
     {% endif %}
     {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true %}
         {{ reg_wtf.form_field(form.level_jury_latin) }}
+    {% endif %}
     {% endif %}
     {% if g.sc.salsa_competition is sameas true %}
         {{ reg_wtf.form_field(form.jury_salsa) }}
@@ -92,9 +106,9 @@
     {% if g.sc.t_shirt_sold is sameas true or g.sc.mug_sold is sameas true or g.sc.bag_sold is sameas true %}
     <h3>Merchandise</h3>
         {% if g.sc.merchandise_link is not none %}
-            <div class="form-group">
-                <label class="control-label col-xs-2" ></label>
-                <div class="col-xs-10"><b>Click <a href="{{ g.sc.merchandise_link }}" target="_blank">here</a> to visit the {{ g.sc.tournament }} website and see the merchandise</b></div>
+            <div class="form-group row">
+                <label class="control-label col-lg-2" ></label>
+                <div class="col-lg-10"><b>Click <a href="{{ g.sc.merchandise_link }}" target="_blank">here</a> to visit the {{ g.sc.tournament }} website and see the merchandise</b></div>
             </div>
         {% endif %}
         {% if g.sc.t_shirt_sold is sameas true %}
@@ -107,40 +121,59 @@
             {{ reg_wtf.form_field(form.bag, disabled=(timestamp > g.sc.merchandise_closing_date)) }}
         {% endif %}
     {% endif %}
-    {% if current_user.is_dancer() is sameas true %}</fieldset>{% endif %}
-    {% if mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR %}
+    {% if current_user.is_dancer() is sameas true or current_user.is_organizer() is sameas true %}</fieldset>{% endif %}
+    {% if mode == 'view' and dancer.status_info.status == g.data.NO_GDPR and current_user.is_dancer() %}
+    <div class="form-group row required">
+        <label class="control-label col-lg-2" ></label>
+        <div class="col-lg-10">
+            <h3>You can give feedback to your team captain after accepting the terms.</h3>
+        </div>
+    </div>
+    {% endif %}
+    {% if mode == 'view' and dancer.status_info.status == g.data.NO_GDPR and current_user.is_dancer() %}
         {% include 'privacy/checkbox.html' %}
     {% endif %}
-    {% if (mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR) or mode != 'view' %}
-    <div class="form-group required">
-        <label class="control-label col-xs-2" ></label>
-        <div class="col-xs-10">
+    {% if (mode == 'view' and current_user.is_dancer() is sameas true and dancer.status_info.status == g.data.NO_GDPR) or mode != 'view' and current_user.is_organizer() is sameas false %}
+    <div class="form-group row">
+        <label class="control-label col-lg-2" ></label>
+        <div class="col-lg-10">
             <div class="input-group">
                 <input class="btn btn-primary" id="submit" name="submit" type="submit" {% if mode == 'view' %}disabled{% endif %} value="{% if mode == 'edit' %}Save changes{% elif mode == 'view' %}Accept privacy conditions{% else %}Register dancer{% endif %}">&nbsp;
-                <a role="button" class="btn btn-default" href="{% if mode == 'edit' %}{{ url_for('teamcaptains.edit_dancers', wide=wide) }}{% else %}{{ url_for('main.index') }}{% endif %}">Cancel</a>
+                <a role="button" class="btn btn-outline-secondary ml-2" href="{% if mode == 'edit' %}{{ url_for('teamcaptains.edit_dancers', wide=wide) }}{% else %}{{ url_for('main.index') }}{% endif %}">Cancel</a>
             </div>
         </div>
     </div>
     {% endif %}
-    {#{reg_wtf.quick_form(form)}#}
+    {% if current_user.is_organizer() %}
+    <div class="form-group row required">
+        <label class="control-label col-lg-2" ></label>
+        <div class="col-lg-10">
+            <div class="input-group">
+                <a role="button" class="btn btn-outline-secondary" href="{{ url_for('organizer.registration_overview') }}">Return to overview</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </form>
-{% if (mode == 'view' and dancer.status_info[0].status != g.data.NO_GDPR and dancer.status_info[0].status != g.data.CANCELLED) %}
+{% if not current_user.is_organizer() %}
+{% if (mode == 'view' and dancer.status_info.status != g.data.NO_GDPR and dancer.status_info.status != g.data.CANCELLED) %}
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
     {{ feedback_form.hidden_tag() }}
-    <div class="form-group">
-        <label class="control-label col-xs-2" ></label>
-        <div class="col-xs-10"><b style="font-size:large;">Feedback for team captain (only if there is anything wrong with your submitted data)</b></div>
+    <div class="form-group row">
+        <label class="control-label col-lg-2" ></label>
+        <div class="col-lg-10"><b style="font-size:large;">Feedback for team captain (only if there is anything wrong with your submitted data)</b></div>
     </div>
     {{ reg_wtf.form_field(feedback_form.feedback) }}
-    <div class="form-group required">
-        <label class="control-label col-xs-2" ></label>
-        <div class="col-xs-10">
+    <div class="form-group row required">
+        <label class="control-label col-lg-2" ></label>
+        <div class="col-lg-10">
             <div class="input-group">
                 <input class="btn btn-primary" id="submit_dancer_feedback" name="submit_dancer_feedback" type="submit" value="Send feedback to team captain">&nbsp;
-                <a role="button" class="btn btn-default" href="{{ url_for('main.index') }}">Cancel</a>
+                <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
             </div>
         </div>
     </div>
 </form>
+{% endif %}
 {% endif %}
 {% include 'privacy/modal.html' %}

@@ -22,8 +22,8 @@ WEB_PAGE_PLACEHOLDER = {"placeholder": "Leave blank if there is no such page"}
 
 
 class SwitchUserForm(FlaskForm):
-    user = SelectField(label='User', validators=[DataRequired()], coerce=int)
-    submit = SubmitField('Switch to user')
+    user = SelectField(label='User', validators=[DataRequired()], coerce=int, render_kw={'data-role': 'select2'})
+    submit = SubmitField('Switch')
 
 
 class CreateBaseUserWithoutEmailForm(FlaskForm):

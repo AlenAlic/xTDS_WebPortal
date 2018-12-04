@@ -1,109 +1,74 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
+{% if super_volunteers|length %}
 <h2>Super Volunteers</h2>
-<table class="table table-striped table-responsive">
+<table class="table table-sm table-hover">
 <colgroup>
     <col span="1" style="width: 15%;">
-    <col span="1" style="width: 20%;">
+    <col span="1" style="width: 25%;">
     <col span="1" style="width: 10%;">
-    <col span="1" style="width: 20%;">
-    <col span="1" style="width: 15%;">
+    <col span="1" style="width: 30%;">
     <col span="1" style="width: 10%;">
     <col span="1" style="width: 10%;">
 </colgroup>
 <thead>
-    <tr>
-        <th>Name</th>
-        <th>E-mail</th>
-        <th>Sleeping spot</th>
-        <th>Diet/Allergies</th>
-        <th>Remarks</th>
-        <th>First Aid</th>
-        <th>Emergency Response Officer</th>
-    </tr>
+<tr>
+    <th>Name</th>
+    <th>E-mail</th>
+    <th>Sleeping spot</th>
+    <th>Remarks</th>
+    <th>First Aid</th>
+    <th>Emergency Response Officer</th>
+</tr>
 </thead>
 <tbody>
-    {% for super_volunteer in super_volunteers %}
-        <tr>
-            <td>{{ super_volunteer.get_full_name() }}</td>
-            <td>{{ super_volunteer.email }}</td>
-            <td>{{ g.data.TF[super_volunteer.sleeping_arrangements] }}</td>
-            <td>{{ g.data.DIET_ALLERGIES_DISPLAY.get(super_volunteer.diet_allergies, '-') }}</td>
-            <td>{{ super_volunteer.remark }}</td>
-            <td>{{ g.data.YMN[super_volunteer.first_aid] }}</td>
-            <td>{{ g.data.YMN[super_volunteer.emergency_response_officer] }}</td>
-        </tr>
-    {% endfor %}
+{% for super_volunteer in super_volunteers %}
+<tr class="clickable-row" data-href="{{ url_for('organizer.view_super_volunteer', number=super_volunteer.volunteer_id) }}">
+    <td>{{ super_volunteer.get_full_name() }}</td>
+    <td>{{ super_volunteer.email }}</td>
+    <td>{{ g.data.TF[super_volunteer.sleeping_arrangements] }}</td>
+    <td>{{ super_volunteer.remark }}</td>
+    <td>{{ g.data.YMN[super_volunteer.first_aid] }}</td>
+    <td>{{ g.data.YMN[super_volunteer.emergency_response_officer] }}</td>
+</tr>
+{% endfor %}
 </tbody>
 </table>
+{% endif %}
+{% if dancers|length > 0 %}
 <h2>Dancers</h2>
-<table class="table table-striped table-responsive">
+<table class="table table-sm">
 <colgroup>
     <col span="1" style="width: 15%;">
-    <col span="1" style="width: 20%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 30%;">
     <col span="1" style="width: 10%;">
-    <col span="1" style="width: 20%;">
-    <col span="1" style="width: 15%;">
     <col span="1" style="width: 10%;">
     <col span="1" style="width: 10%;">
 </colgroup>
 <thead>
-    <tr>
-        <th>Name</th>
-        <th>E-mail</th>
-        <th>Sleeping spot</th>
-        <th>Diet/Allergies</th>
-        <th>Volunteer</th>
-        <th>First Aid</th>
-        <th>Emergency Response Officer</th>
-        <!--<th>Jury</th>-->
-        <!--<th>Highest level</th>-->
-        <!--<th>License</th>-->
-        <!--<th>Jury</th>-->
-        <!--<th>Highest level</th>-->
-        <!--<th>License</th>-->
-        <!--<th>Jury Salsa</th>-->
-        <!--<th>Jury Polka</th>-->
-    </tr>
+<tr>
+    <th>Name</th>
+    <th>E-mail</th>
+    <th>Sleeping spot</th>
+    <th>Volunteer</th>
+    <th>First Aid</th>
+    <th>Emergency Response Officer</th>
+</tr>
 </thead>
 <tbody>
-    {% for dancer in dancers %}
-        <tr>
-            <td>{{ dancer.get_full_name() }}</td>
-            <td>{{ dancer.email }}</td>
-            <td>{{ g.data.TF[dancer.additional_info[0].sleeping_arrangements] }}</td>
-            <td>{{ g.data.DIET_ALLERGIES_DISPLAY.get(dancer.contestant_info[0].diet_allergies, '-') }}</td>
-            <td>{{ g.data.YMN[dancer.volunteer_info[0].volunteer] }}</td>
-            <td>{{ g.data.YMN[dancer.volunteer_info[0].first_aid] }}</td>
-            <td>{{ g.data.YMN[dancer.volunteer_info[0].emergency_response_officer] }}</td>
-            <!--<td>-->
-                <!--{{ g.data.YMN[dancer.volunteer_info[0].jury_ballroom] }}-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--{{ dancer.volunteer_info[0].level_ballroom }}-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--{{ g.data.YMN[dancer.volunteer_info[0].license_jury_ballroom] }}-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--{{ g.data.YMN[dancer.volunteer_info[0].jury_latin] }}-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--{{ dancer.volunteer_info[0].level_latin }}-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--{{ g.data.YMN[dancer.volunteer_info[0].license_jury_latin] }}-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--{{ g.data.YMN[dancer.volunteer_info[0].jury_salsa] }}-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--{{ g.data.YMN[dancer.volunteer_info[0].jury_polka] }}-->
-            <!--</td>-->
-        </tr>
-    {% endfor %}
+{% for dancer in dancers %}
+<tr>
+    <td>{{ dancer.get_full_name() }}</td>
+    <td>{{ dancer.email }}</td>
+    <td>{{ g.data.TF[dancer.additional_info.sleeping_arrangements] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.volunteer] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.first_aid] }}</td>
+    <td>{{ g.data.YMN[dancer.volunteer_info.emergency_response_officer] }}</td>
+</tr>
+{% endfor %}
 </tbody>
 </table>
+{% endif %}
 {% endblock %}

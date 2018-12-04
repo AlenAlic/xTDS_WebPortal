@@ -1,11 +1,10 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
-<ul class="nav nav-tabs" id=myTabs role=tablist>
-	<li role=presentation class=active>
-		<a href=#all_teams id=all_teams-tab role=tab data-toggle=tab aria-controls=all_teams aria-expanded=true>All teams <span class="badge">{{all_dancers|length}}</span></a>
-	</li>
+<ul class="nav nav-tabs mt-2" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="all_teams-tab" data-toggle="tab" href=#all_teams role="tab" aria-controls="all_teams" aria-selected="true">All teams <span class="badge badge-pill badge-dark">{{all_dancers|length}}</span></a>
+    </li>
     {% with teams=dutch_dancers, dropdown_title='Dutch teams', dropdown_name='dutch' %}
         {% include 'organizer/_registration_teams_dropdown_menu.html' %}
     {% endwith %}
@@ -18,28 +17,63 @@
         {% endwith %}
     {% endif %}
 </ul>
-<div class=tab-content id=myTabContent>
-	<div class="tab-pane fade in active" role=tabpanel id=all_teams aria-labelledby=all_teams-tab>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" role=tabpanel id=all_teams aria-labelledby="all_teams-tab">
         {% if all_dancers|length > 0 %}
-            {% with dancers=all_dancers %}
-                {% include 'organizer/_registration_all_teams_overview.html' %}
+            {% with table_id='table-all', dancers=all_dancers, master_table=true %}
+                {% include 'organizer/_registration_dropdown_table.html' %}
             {% endwith %}
         {% else %}
             <h2>There are no registered dancers.</h2>
         {% endif %}
 	</div>
-    {% with teams=dutch_dancers %}
-        {% include 'organizer/_registration_teams_dropdown_table.html' %}
-    {% endwith %}
-    {% if g.sc.tournament == g.data.ETDS %}
-        {% with teams=german_dancers %}
-            {% include 'organizer/_registration_teams_dropdown_table.html' %}
-        {% endwith %}
-        {% with teams=other_dancers %}
-            {% include 'organizer/_registration_teams_dropdown_table.html' %}
-        {% endwith %}
-    {% endif %}
 </div>
-
 {% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    $('#all_teams-tab').click();
+});
+function callFilter(team_name) {
+    input_team = document.getElementById("table-all-filterTeamInput");
+    input_team.value = team_name;
+    filter('table-all');
+}
+function filter(name) {
+    // Declare variables
+    var input, filter, table, tr, td, i;
+    input_name = document.getElementById(name+"-filterNameInput");
+    filter_name = input_name.value.toUpperCase();
+    input_team = document.getElementById(name+"-filterTeamInput");
+    filter_team = input_team.value.toUpperCase();
+    input_status = document.getElementById(name+"-filterStatusInput");
+    filter_status = input_status.value.toUpperCase();
+    table = document.getElementById(name);
+    tr = table.getElementsByTagName("tr");
+    let tab = document.getElementById("all_teams-tab");
+    let total = tab.querySelector('.badge');
+    let counter = 0
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1];
+        td2 = tr[i].getElementsByTagName("td")[2];
+        td4 = tr[i].getElementsByTagName("td")[4];
+        if (td && td2 && td4) {
+            if (td.innerHTML.toUpperCase().indexOf(filter_name) > -1 && td2.innerHTML.toUpperCase().indexOf(filter_team) > -1 && td4.innerHTML.toUpperCase().indexOf(filter_status) > -1) {
+                tr[i].style.display = "";
+                counter++
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+    total.innerHTML = counter
+}
+</script>
+{% endblock %}
+
 

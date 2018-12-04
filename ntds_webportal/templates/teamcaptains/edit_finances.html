@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
 
@@ -11,7 +10,7 @@
 <h2>Received by organization:</h2>
 <div style="font-size:x-large">{{ g.data.euros(current_user.team.amount_paid) }} / {{ g.data.euros(finances['price_total']) }}</div>
 <form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-info" id="submit-download_file" name="download_file" type="submit" value="Download list">
+    <input class="btn btn-outline-info my-2" id="submit-download_file" name="download_file" type="submit" value="Download list">
 </form>
 <form method="POST" enctype="multipart/form-data" novalidate>
     {% with status='Confirmed dancers', dancers=confirmed_dancers %}
@@ -21,7 +20,7 @@
         {% include 'teamcaptains/_finances_list.html' %}
     {% endwith %}
     <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
-    <a role="button" class="btn btn-default btn-loading" href="{{ url_for('main.dashboard') }}">Cancel</a>
+    <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.dashboard') }}">Cancel</a>
 </form>
 {% with status='Refunds', dancers=refund_dancers %}
     {% include 'teamcaptains/_refund_list.html' %}
@@ -37,22 +36,17 @@
 <script>
 function allPaid(checkbox) {
     var row = checkbox.closest("tr")
-    <!--removeColors(row)-->
-    <!--row.classList.add("info");-->
-    <!--row.classList.add("success");-->
     var entry = row.querySelector(".entry-fee-checkbox");
     var merchandise = row.querySelector(".merchandise-checkbox");
     entry.checked = checkbox.checked;
     merchandise.checked = checkbox.checked
-    <!--apiAllPaid("/api/payment_info/all_paid/", "PUT", row, checkbox)-->
     checkRow(checkbox)
 }
 function removeColors(elem) {
-    elem.classList.remove("warning");
-    elem.classList.remove("success");
-    elem.classList.remove("info");
+    elem.classList.remove("table-warning");
+    elem.classList.remove("table-success");
+    elem.classList.remove("table-info");
 }
-
 function checkRow(checkbox) {
     var row = checkbox.closest("tr")
     var entry = row.querySelector(".entry-fee-checkbox");
@@ -72,17 +66,9 @@ function checkRow(checkbox) {
 }
 function changeColor(elem, toggle) {
     if (toggle) {
-        if (elem.classList.contains("dummy-warning")) {
-            elem.classList.remove("dummy-warning");
-            elem.classList.add("warning");
-        }
-        elem.classList.remove("info");
+        elem.classList.remove("table-info");
     } else {
-        if (elem.classList.contains("warning")) {
-            elem.classList.remove("warning");
-            elem.classList.add("dummy-warning");
-        }
-        elem.classList.add("info");
+        elem.classList.add("table-info");
     }
 }
 $(document).ready(function() {
@@ -92,18 +78,5 @@ $(document).ready(function() {
         }
     });
 });
-function apiAllPaid(api, method, row, checkbox) {
-    fetch(api + row.id, {method: method, body: JSON.stringify({set_paid: checkbox.checked})})
-    .then(function(response) {return response.json();})
-    .then(function(result) {
-        row.classList.remove("info");
-        if (result) {
-            row.classList.add("success");
-        }
-    })
-    .catch(function(error) {
-        console.log('Looks like there was a problem: \n', error);
-    });
-}
 </script>
 {% endblock %}

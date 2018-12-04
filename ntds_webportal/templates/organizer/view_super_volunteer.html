@@ -1,0 +1,7 @@
+{% extends "volunteering/register_edit_volunteer_base.html" %}
+
+{% block app_content %}
+{% with mode='view' %}
+    {% include 'volunteering/_volunteer_form.html' %}
+{% endwith %}
+{% endblock %}

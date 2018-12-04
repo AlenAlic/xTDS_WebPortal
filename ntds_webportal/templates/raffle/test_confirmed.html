@@ -7,8 +7,16 @@
         <h2>Reset raffle</h2>
         <p><strong>Warning!</strong> Doing this will redo the raffle entirely, without any way of getting this configuration back.</p>
         <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-            <button type="submit" id="submit-reset_raffle" name="reset_raffle" class="btn btn-danger loading-btn">RESET Raffle</button>
+            <button type="submit" id="submit-reset_raffle" name="reset_raffle" class="btn btn-danger btn-lg loading-btn">RESET Raffle</button>
         </form>
+    </div>
+</div>
+
+<div style="width:100%">
+    <div style="display: table; margin: 0 auto; text-align: center;">
+        <h2>Change dancers status</h2>
+        <a class="btn btn-outline-secondary mx-2 my-2" href="{{url_for('raffle.test_confirmed')}}?selected_confirmed" style="text-decoration:none">Selected -> confirmed</a>
+        <a class="btn btn-outline-secondary mx-2 my-2" href="{{url_for('raffle.test_confirmed')}}?confirmed_selected" style="text-decoration:none">Confirmed -> selected</a>
     </div>
 </div>
 
@@ -25,24 +33,25 @@
 <h2>Overview</h2>
 <div class="row">
     {% if raffle_sys.selected_dancers|length > 0 %}
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-{{ 12//width }}">
+    <div class="col-sm-12 col-md-6 col-lg-{{ 12//width }}">
         {% with subtitle='Selected', dancers=raffle_sys.selected_dancers, stats=raffle_sys.get_stats(g.data.SELECTED) %}
             {% include 'raffle/_stats.html' %}
         {% endwith %}
     </div>
     {% endif %}
     {% if raffle_sys.confirmed_dancers|length > 0 %}
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-{{ 12//width }}">
+    <div class="col-sm-12 col-md-6 col-lg-{{ 12//width }}">
         {% with subtitle='Confirmed', dancers=raffle_sys.confirmed_dancers, stats=raffle_sys.get_stats(g.data.CONFIRMED) %}
             {% include 'raffle/_stats.html' %}
         {% endwith %}
     </div>
     {% endif %}
-    <div class="col-xs-12 col-sm-12 col-md-{%if width_md%}12{%else%}6{%endif%} col-lg-{{ 12//width }}">
+    <div class="col-sm-12 col-md-{%if width_md%}12{%else%}6{%endif%} col-lg-{{ 12//width }}">
         {% with subtitle='Available', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
             {% include 'raffle/_stats.html' %}
         {% endwith %}
     </div>
 </div>
 {% include 'raffle/_controls.html' %}
+{% include 'raffle/_test_available_groups.html' %}
 {% endblock %}

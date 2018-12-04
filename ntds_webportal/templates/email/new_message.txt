@@ -4,7 +4,7 @@ Dear {{ recipient.username }},
 You have a new message from {{ sender.username }}.
 
 Please click the link below to read it.
-{{ url_for('main.profile', _external=True) }}
+{{ url_for('main.index', _external=True) }}
 
 
 Sincerely,

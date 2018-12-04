@@ -1,3 +1,4 @@
+from flask import g
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo
@@ -34,3 +35,15 @@ class TreasurerForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     message = StringField('Personal Message')
     tr_submit = SubmitField('Send e-mail to treasurer')
+
+
+class SendEmailForNotificationsForm(FlaskForm):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.send_email.label.text = f'Send me an e-mail when I get a new message on this site. ' \
+                                     f'(This will be disabled the day of the {g.sc.tournament} starts)'
+
+    send_email = BooleanField()
+    email_submit = SubmitField('Save e-mail preference')

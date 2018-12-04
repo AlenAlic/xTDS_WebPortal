@@ -1,10 +1,8 @@
-<li role=presentation class=dropdown>
-    <a href=# class=dropdown-toggle id={{dropdown_name}} data-toggle=dropdown aria-controls={{dropdown_name}}-contents>{{dropdown_title}} <span class=caret></span></a>
-    <ul class=dropdown-menu aria-labelledby={{dropdown_name}} id={{dropdown_name}}-contents>
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{dropdown_title}}</a>
+    <div class="dropdown-menu">
         {% for team in teams %}
-        <li>
-            <a href=#{{team['id']}} role=tab id={{team['id']}}-tab data-toggle=tab aria-controls={{team['id']}}>{{team['team'].name}} <span class="badge">{{team['finances']['total_number_of_payments_paid']}} / {{team['finances']['total_number_of_payments']}}</span></a>
-        </li>
+            <a class="dropdown-item" id={{team['id']}}-tab data-toggle="tab" href=#{{team['id']}} role=tab aria-controls={{team['id']}} aria-selected="false">{{team['team'].name}} <span class="badge badge-pill badge-dark">{{team['finances']['total_number_of_payments_paid']}} / {{team['finances']['total_number_of_payments']}}</span></a>
         {% endfor %}
-    </ul>
+    </div>
 </li>

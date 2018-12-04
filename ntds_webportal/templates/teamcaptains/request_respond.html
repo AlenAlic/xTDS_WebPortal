@@ -1,26 +1,23 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
 <h2>Dancing partner request</h2>
-<p>Team: {{req.dancer.contestant_info[0].team}}</p>
+<p>Team: {{req.dancer.contestant_info.team}}</p>
 <p>Competition: {{req.competition}}</p>
-<p>{{req.dancer.get_full_name()}} from {{req.dancer.contestant_info[0].team}} wants to dance with {{req.other.get_full_name()}}</p>
+<p>{{req.dancer.get_full_name()}} from {{req.dancer.contestant_info.team}} wants to dance with {{req.other.get_full_name()}}</p>
 
 {% if req.remark %}
-<h4>Remarks from the teamcaptain of {{req.dancer.contestant_info[0].team}}</h4>
+<h4>Remarks from the teamcaptain of {{req.dancer.contestant_info.team}}</h4>
 <p>{{req.remark}}</p>
 {% endif %}
 
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    <div class="form-group ">
-        <label class="control-label" for="remark">Remarks for the other teamcaptain (optional)</label>
-        <textarea class="form-control" id="remark" name="remark" type="text"></textarea>
-    </div>
-    <div class="btn-group" role="group" aria-label="Basic example">
+    {{ wtf.form_field(form.remark) }}
+    <div class="input-group">
         <input type="submit" id="accept" name="accept" value="Accept" class="btn btn-success"/>
-        <input type="submit" id="reject" name="reject" value="Reject" class="btn btn-danger"/>
+        <input type="submit" id="reject" name="reject" value="Reject" class="btn btn-danger ml-2"/>
+        <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('teamcaptains.partner_request_list') }}">Cancel</a>
     </div>
 </form>
 {% endblock %}

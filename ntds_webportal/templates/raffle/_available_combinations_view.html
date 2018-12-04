@@ -1,0 +1,44 @@
+<table class="table table-sm table-list mb-0">
+    <colgroup>
+        {% for n in range(g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) %}
+        <col span="1" style="width: {{ 80 / (g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) }}%;">
+        {% endfor %}
+        <col span="1" style="width: 5%;">
+    </colgroup>
+    <thead>
+        <tr>
+            {% for comp in g.data.ALL_COMPETITIONS %}
+            <th colspan="{{ g.sc.get_participating_levels_including_not_dancing()|length}}">
+                {{ comp }}
+            </th>
+            {% endfor %}
+            <th></th>
+        </tr>
+        <tr>
+            {% for comp in g.data.ALL_COMPETITIONS %}
+                {% for level in g.sc.get_participating_levels_including_not_dancing() %}
+                <th>{% if level == g.data.NO %}{{ g.data.NOT_DANCING }}{% else %}{{ level }}{% endif %}
+                    <input class="checkbox filter-checkbox {{comp}}-checkbox" type="checkbox" onclick="filterLevels(this, false)" value="y"></th>
+                {% endfor %}
+            {% endfor %}
+            <th># dancers available</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for comb, val in raffle_sys.available_combinations(partners=true, source=source).items() %}
+        <tr class="checkbox-filter">
+            {% for comp in g.data.ALL_COMPETITIONS %}
+                {% for level in g.sc.get_participating_levels_including_not_dancing() %}
+                    {% if comp == g.data.BALLROOM %}
+                        {% set lvl, rl = 1, 2 %}
+                    {% else %}
+                        {% set lvl, rl = 4, 5 %}
+                    {% endif %}
+                    <td class="vertical-line">{% if comb[lvl] == level %}{% if level == g.data.NO %}x{% else %}{{ comb[rl] }}{% endif %}{% endif %}</td>
+                {% endfor %}
+            {% endfor %}
+            <td class="vertical-line-bottom">{{ val }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

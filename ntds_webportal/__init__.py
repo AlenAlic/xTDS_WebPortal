@@ -1,7 +1,7 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, g, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager, current_user, logout_user
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_mail import Mail
@@ -9,6 +9,7 @@ from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_debugtoolbar import DebugToolbarExtension
 from wtforms import PasswordField
+import ntds_webportal.data as data
 
 
 class MyAdminIndexView(AdminIndexView):
@@ -72,7 +73,6 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:'))
-    # migrate.init_app(app, db)
     login.init_app(app)
     login.login_view = 'main.index'
     bootstrap.init_app(app)
@@ -101,6 +101,42 @@ def create_app():
     admin.add_view(BaseView(NotSelectedContestant, db.session))
     admin.add_view(BaseView(SuperVolunteer, db.session))
     toolbar.init_app(app)
+
+    @app.before_request
+    def before_request_callback():
+        g.sc = SystemConfiguration.query.first()
+        if not g.sc.website_accessible:
+            if current_user.is_authenticated:
+                if current_user.access > 0:
+                    logout_user()
+                    flash('The xTDS WebPortal is currently undergoing maintenance. '
+                          'You have been logged out of you previous session.')
+        g.data = data
+        g.ts = TournamentState.query.first()
+        g.rc = RaffleConfiguration.query.first()
+
+    def create_tournament_state_table():
+        if len(TournamentState.query.all()) == 0:
+            ts = TournamentState()
+            db.session.add(ts)
+            db.session.commit()
+
+    def create_system_configuration_table():
+        if len(SystemConfiguration.query.all()) == 0:
+            sc = SystemConfiguration()
+            db.session.add(sc)
+            db.session.commit()
+
+    def create_raffle_configuration_table():
+        if len(RaffleConfiguration.query.all()) == 0:
+            rc = RaffleConfiguration()
+            db.session.add(rc)
+            db.session.commit()
+
+    with app.app_context():
+        create_tournament_state_table()
+        create_system_configuration_table()
+        create_raffle_configuration_table()
 
     from ntds_webportal.main import bp as main_bp
     app.register_blueprint(main_bp)

@@ -15,7 +15,7 @@ You can click the link below to visit the site.
 {{ url_for('main.index', _external=True) }}
 
 
-Please log in to complete your registration.
+Please log in, and accept the GDPR policy to complete your registration.
 
 If for some reason the information that your teamcaptain has submitted is incorrect (or has changed), you can indicate that to your team captain through your user account as well.
 

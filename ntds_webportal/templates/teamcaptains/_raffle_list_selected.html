@@ -1,5 +1,5 @@
 <h2>{{status}}</h2>
-<table class="table table-striped table-clickable-checkbox table-responsive">
+<table class="table table-sm table-clickable-checkbox">
     <colgroup>
         <col span="1" style="width: 5%;">
         <col span="1" style="width: 25%;">
@@ -34,7 +34,7 @@
     {% for dancer in dancers %}
         <tr class="checkbox-row ">
             <td>
-                {{ dancer.contestant_info[0].number }}
+                {{ dancer.contestant_info.number }}
             </td>
             <td>
                 {{ dancer.get_full_name()}}

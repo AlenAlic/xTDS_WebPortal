@@ -1,17 +1,17 @@
-<h2>Selected and confirmed dancers <span class="badge" style="font-size:x-large">{{ raffle_sys.confirmed_dancers|length }} / {{ raffle_sys.selected_dancers|length + raffle_sys.confirmed_dancers|length }}</span></h2>
-{% if raffle_sys.selected_dancers|length > 0 %}<p>Teams marked in yellow have selected dancers that have not been confirmed yet.</p>{% endif %}
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+<h2>Selected and confirmed dancers <span class="badge badge-pill badge-dark" style="font-size:x-large">{{ raffle_sys.confirmed_dancers|length }} / {{ raffle_sys.selected_dancers|length + raffle_sys.confirmed_dancers|length }}</span></h2>
+{% if raffle_sys.selected_dancers|length > 0 %}<p>Teams marked in blue have selected dancers that have not been confirmed yet.</p>{% endif %}
+<div id="accordion">
 {% for team in teams %}
 {% if team['selected_dancers']|length > 0 or team['confirmed_dancers']|length > 0 %}
-<div class="panel panel-default {% if team['selected_dancers']|length > 0 %}panel-warning{% endif %}">
-    <div class="panel-heading" role="button" id="{{ team['id_title'] }}-confirmed" data-toggle="collapse"
+<div class="card {% if team['selected_dancers']|length > 0 %}primary{% endif %}">
+    <div class="card-header" role="button" id="{{ team['id_title'] }}-confirmed" data-toggle="collapse"
          data-parent="#accordion" href="#{{ team['id'] }}-confirmed" aria-expanded="false" aria-controls="{{ team['id'] }}-confirmed">
-        <h4 class="panel-title">{{ team['team'].country }} - {{ team['team'].name }}
-            <span class="badge" style="font-size:large;">{{ team['confirmed_dancers']|length }}/{{ team['selected_dancers']|length + team['confirmed_dancers']|length }}</span>
-        </h4>
+        <h5 class="card-title">{{ team['team'].country }} - {{ team['team'].name }}
+            <span class="badge badge-pill badge-dark" style="font-size:large;">{{ team['confirmed_dancers']|length }}/{{ team['selected_dancers']|length + team['confirmed_dancers']|length }}</span>
+        </h5>
     </div>
     <div id="{{ team['id'] }}-confirmed" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ team['id_title'] }}-confirmed">
-        <table class="table list-group">
+        <table class="table table-sm">
             <colgroup>
                 <col span="1" style="width: 20%;">
                 <col span="1" style="width: 15%;">
@@ -36,7 +36,7 @@
             {% if team['confirmed_dancers']|length > 0 %}
                 <!--<tr><td><b style="font-size: x-large">{{ g.data.STATUS[g.data.CONFIRMED] }}</b></td></tr>-->
                 {% for dancer in team['confirmed_dancers'] %}
-                <tr class="{% if dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
+                <tr class="{% if dancer.contestant_info.team_captain is sameas true %}table-info{% endif %}">
                     <td>
                         {{ dancer.get_full_name() }}
                     </td>
@@ -73,7 +73,7 @@
                     <th></th>
                 </tr>
                 {% for dancer in team['selected_dancers'] %}
-                <tr class="{% if dancer.contestant_info[0].team_captain is sameas true %}info{% endif %}">
+                <tr class="{% if dancer.contestant_info.team_captain is sameas true %}table-info{% endif %}">
                     <td>
                         {{ dancer.get_full_name() }}
                     </td>
@@ -91,8 +91,8 @@
                     </td>
                     <td align="right">
                         <!--<div class="btn-group">-->
-                            <a role="button" class="btn btn-info" href="{{ url_for('raffle.confirm_dancer', number=dancer.contestant_id) }}">Confirm registration</a>
-                            <a role="button" class="btn btn-danger" href="{{ url_for('raffle.cancel_dancer', number=dancer.contestant_id) }}">Cancel registration</a>
+                            <a role="button" class="btn btn-outline-primary btn-sm mr-2" href="{{ url_for('raffle.confirm_dancer', number=dancer.contestant_id) }}">Confirm registration</a>
+                            <a role="button" class="btn btn-outline-danger btn-sm" href="{{ url_for('raffle.cancel_dancer', number=dancer.contestant_id) }}">Cancel registration</a>
                         <!--</div>-->
                     </td>
                 </tr>

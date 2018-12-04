@@ -1,29 +1,7 @@
 {% extends "base.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block body_attribs %}
 onload="onStart()"
-{% endblock %}
-
-{% block styles %}
-{{ super() }}
-<style>
-.inaccessible {
-    display: block;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.25);
-    z-index: -100;
-    cursor: not-allowed;
-}
-.opaque {
-    opacity: .5;
-}
-</style>
 {% endblock %}
 
 {% block app_content %}
@@ -125,11 +103,14 @@ onload="onStart()"
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% if g.sc.merchandise() is sameas true %}
-        {% with accessible=g.ts.main_raffle_result_visible, url='organizer.merchandise', title='Merchandise', text='Overview of ordered merchandise.', image='merchandise.png' %}
+        {% with accessible=g.ts.main_raffle_result_visible, url='organizer.merchandise', wants_attention=finalize_merchandise, title='Merchandise', text='Overview of ordered merchandise.', image='merchandise.png' %}
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.diet_allergies', title='Diet/Allergies', text='Get a list of all allergies and dietary wishes of dancers and Super Volunteers. Work in progress. Coming in a future build.', image='food.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -145,13 +126,13 @@ onload="onStart()"
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
-<h2>Adjudication</h2>
+<h2>Adjudication system</h2>
 <div class="row" style="visibility:hidden">
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
-<h2>BAD</h2>
+<h2>BAD exports</h2>
 <div class="row" style="visibility:hidden">
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Download files to setup BAD. (In essence done, but might be changed a bit due to input from Marek)', image='BAD.png' %}
         {% include '_dashboard_page.html' %}
@@ -165,9 +146,9 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_cia', title='Check-In Assistant', text='Switch to the Check-In Assistant account. This will log you out of the Organizer account.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    <!--{% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_ada', title='Adjudicator Assistant', text='Switch to the Adjudicator Assistant account. This will log you out of the Organizer account.', image='adjudicators.png' %}-->
-        <!--{% include '_dashboard_page.html' %}-->
-    <!--{% endwith %}-->
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_ada', title='Adjudicator Assistant', text='Switch to the Adjudicator Assistant account. This will log you out of the Organizer account.', image='adjudicators.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
 </div>
 {% endif %}
 
@@ -179,12 +160,16 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% if g.sc.salsa_competition is sameas true %}
     {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_salsa', title='Salsa Blind Date Couples', text='Create new blind date couples for Salsa.', image='salsa.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% endif %}
+    {% if g.sc.polka_competition is sameas true %}
     {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_polka', title='Polka Blind Date Couples', text='Create new blind date couples for Latin.', image='polka.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% endif %}
 </div>
 {% endif %}
 
@@ -199,10 +184,18 @@ onload="onStart()"
 </div>
 {% endif %}
 
+{% if current_user.is_ada() %}
+<div class="row" style="visibility:hidden">
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+{% endif %}
+
 {% if current_user.is_tc() or current_user.is_treasurer() %}
 {% if not g.ts.registration_period_started %}
 <div class="row" style="visibility:hidden">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="col-sm-12 col-md-12 col-lg-12">
         <h2>Registration has not opened yet.</h2>
     </div>
 </div>
@@ -253,7 +246,7 @@ onload="onStart()"
 
 {% if current_user.is_dancer() %}
 <div class="row" style="visibility:hidden">
-    {% with feedback=dancer.status_info[0].feedback_about_information, url='dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
+    {% with wants_attention=dancer.status_info.feedback_about_information, url='dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=false, url='main.todo', title='My volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}

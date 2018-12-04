@@ -13,7 +13,8 @@ ACCESS = {
     SUPER_VOLUNTEER: 20
 }
 PROFILE_ACCESS = [ACCESS[ADMIN], ACCESS[ORGANIZER], ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER]]
-MESSAGES_ACCESS = [ACCESS[ADMIN], ACCESS[ORGANIZER], ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER]]
+MESSAGES_ACCESS = [ACCESS[ADMIN], ACCESS[ORGANIZER], ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER],
+                   ACCESS[ADJUDICATOR_ASSISTANT]]
 
 # All possible teams
 TEAMS = [
@@ -27,7 +28,7 @@ TEAMS = [
     {'country': NETHERLANDS, 'name': 'Let`s Dance', 'city': MAASTRICHT},
     {'country': NETHERLANDS, 'name': 'The Blue Toes', 'city': GRONINGEN},
     {'country': NETHERLANDS, 'name': 'U Dance', 'city': UTRECHT},
-    {'country': NETHERLANDS, 'name': 'WUBDA', 'city': WAGENINGEN},
+    {'country': NETHERLANDS, 'name': 'WuBDA', 'city': WAGENINGEN},
     {'country': GERMANY, 'name': 'Unitanz Aachen', 'city': AACHEN},
     {'country': GERMANY, 'name': 'Unitanz Antibes', 'city': ANTIBES},
     {'country': GERMANY, 'name': 'Unitanz Berlin', 'city': BERLIN},

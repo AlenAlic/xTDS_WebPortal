@@ -7,37 +7,37 @@
 </p>
 <!--<button type="submit" id="submit-save_guaranteed_dancers" name="save_guaranteed_dancers" class="btn btn-primary loading-btn">Save guaranteed dancers</button>-->
 <!--<br/><br/>-->
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+<div id="accordion" >
 {% for team in teams %}
     {% if team['available_dancers']|length > 0 %}
-    <div class="panel panel-default {% if team['teamcaptains']|length == 0 %}panel-danger{% elif g.sc.number_of_teamcaptains == 2 and team['teamcaptains']|length == 1 %}panel-warning{% endif %}">
-        <div class="panel-heading" role="button" id="{{ team['id_title'] }}" data-toggle="collapse" data-parent="#accordion" href="#{{ team['id'] }}" aria-expanded="false" aria-controls="{{ team['id'] }}">
-            <h4 class="panel-title">{{ team['team'].country }} - {{ team['team'].name }}
-                <span id="{{ team['id'] }}-guaranteed-badge" class="badge"><span data-team-id="{{ team['team'].team_id }}" class="team-guaranteed-dancers {{ team['id'] }}-guaranteed">{{ team['guaranteed_dancers']|length }}</span> / {{ team['available_dancers']|length }}</span>
-            </h4>
+    <div class="card my-2 {% if team['teamcaptains']|length == 0 %}danger{% elif g.sc.number_of_teamcaptains == 2 and team['teamcaptains']|length == 1 %}warning{% endif %}">
+        <div class="card-header" role="button" id="{{ team['id_title'] }}" data-toggle="collapse" data-parent="#accordion" href="#{{ team['id'] }}" aria-expanded="false" aria-controls="{{ team['id'] }}">
+            <h5 class="card-title">{{ team['team'].country }} - {{ team['team'].name }}
+                <span id="{{ team['id'] }}-guaranteed-badge" class="badge badge-pill badge-dark"><span data-team-id="{{ team['team'].team_id }}" class="team-guaranteed-dancers {{ team['id'] }}-guaranteed">{{ team['guaranteed_dancers']|length }}</span> / {{ team['available_dancers']|length }}</span>
+            </h5>
         </div>
-        <div id="{{ team['id'] }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ team['id_title'] }}">
-            <table class="table table-responsive table-clickable-checkbox list-group">
+        <div id="{{ team['id'] }}" class="collapse" role="tabpanel" aria-labelledby="{{ team['id_title'] }}">
+            <table class="table table-hover table-clickable-checkbox table-sm">
                 <colgroup>
                     <col span="1" style="width: 90%;">
                     <col span="1" style="width: 10%;">
                 </colgroup>
                 <tbody>
                 {% for dancer in team['available_dancers'] %}
-                    <tr id="{{ dancer.contestant_id }}" class="checkbox-row {% if dancer.status_info[0].guaranteed_entry == true or dancer.contestant_info[0].team_captain == true %}api-success{% endif %}" style="{% if dancer.contestant_info[0].team_captain == true %}font-weight: bold; cursor: not-allowed;{% endif %}">
+                    <tr id="{{ dancer.contestant_id }}" class="checkbox-row {% if dancer.status_info.guaranteed_entry == true or dancer.contestant_info.team_captain == true %}api-success{% endif %}" style="{% if dancer.contestant_info.team_captain == true %}font-weight: bold; cursor: not-allowed;{% endif %}">
                         <td>
-                            {{ dancer.get_full_name() }}{% if dancer.contestant_info[0].team_captain == true %} - Team captain{% endif %}
+                            {{ dancer.get_full_name() }}{% if dancer.contestant_info.team_captain == true %} - Team captain{% endif %}
                         </td>
                         <td align="right">
                             <input class="checkbox guaranteed-checkbox2" type="checkbox" value="y" style="visibility:hidden"
-                                   onclick="{% if dancer.contestant_info[0].team_captain == false %}guaranteedEntry(this){% endif %}"
-                                   {% if dancer.status_info[0].guaranteed_entry == true %}checked{% endif %}>
+                                   onclick="{% if dancer.contestant_info.team_captain == false %}guaranteedEntry(this){% endif %}"
+                                   {% if dancer.status_info.guaranteed_entry == true %}checked{% endif %}>
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
-            <div class=panel-footer><small style="visibility: hidden">Footer</small></div>
+            <div class=card-footer><small style="visibility: hidden">Footer</small></div>
         </div>
     </div>
     {% endif %}

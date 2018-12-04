@@ -4,14 +4,16 @@ from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, TournamentState, \
-    SalsaPartners, PolkaPartners, VolunteerInfo, requires_tournament_state
+    SalsaPartners, PolkaPartners, VolunteerInfo, requires_tournament_state, SuperVolunteer
 from ntds_webportal.functions import submit_updated_dancing_info, get_dancing_categories, random_password
-from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm
+from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm
 from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm
 from ntds_webportal.organizer.email import send_registration_open_email, send_gdpr_reminder_email
 from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
 from ntds_webportal.auth.email import send_team_captain_activation_email
 from ntds_webportal.helper_classes import TeamFinancialOverview
+from ntds_webportal.teamcaptains.forms import EditContestantForm
+from ntds_webportal.volunteering.forms import SuperVolunteerForm
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 from sqlalchemy import or_, case
@@ -159,7 +161,8 @@ def change_email(number):
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(TEAM_CAPTAINS_HAVE_ACCESS)
 def registration_management():
-    no_gdpr_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == NO_GDPR).all()
+    no_gdpr_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == NO_GDPR)\
+        .order_by(Contestant.first_name).all()
     form = request.args
     if 'start_registration_period' in form:
         g.ts.registration_period_started = True
@@ -192,23 +195,31 @@ def registration_management():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(REGISTRATION_STARTED)
 def registration_overview():
-    # WISH - Add filter bars
-    # WISH - Make clicking dancer redirect to page (in new window) with dancer information
     all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo)\
         .order_by(ContestantInfo.team_id,
                   case({CONFIRMED: 0, SELECTED: 1, REGISTERED: 2, CANCELLED: 3}, value=StatusInfo.status),
-                  ContestantInfo.number).all()
+                  Contestant.first_name).all()
     all_teams = db.session.query(Team).all()
-    dancers = [{'country': team.country, 'name': team.name, 'id': team.name.replace(' ', '-').replace('`', ''),
-                'dancers': db.session.query(Contestant).join(ContestantInfo).filter(ContestantInfo.team == team).all()}
-               for team in all_teams]
+    dancers = [{'country': team.country, 'name': team.name, 'id': team.city,
+                'dancers': len(Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == team)
+                               .order_by(Contestant.first_name).all())} for team in all_teams]
     # dancers = [d for d in dancers if len(d['dancers']) > 0]
     dutch_dancers = [team for team in dancers if team['country'] == NETHERLANDS]
     german_dancers = [team for team in dancers if team['country'] == GERMANY]
-    other_dancers = [team for team in dancers if team['country'] != NETHERLANDS and
-                     team['country'] != GERMANY]
+    other_dancers = [team for team in dancers if team['country'] != NETHERLANDS and team['country'] != GERMANY]
     return render_template('organizer/registration_overview.html', data=data, all_dancers=all_dancers,
                            dutch_dancers=dutch_dancers, german_dancers=german_dancers, other_dancers=other_dancers)
+
+
+@bp.route('/view_dancer/<int:number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def view_dancer(number):
+    dancer = Contestant.query.filter(Contestant.contestant_id == number).first()
+    form = EditContestantForm()
+    form.organizer_populate(dancer)
+    return render_template('organizer/view_dancer.html', dancer=dancer, form=form,
+                           timestamp=datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp())
 
 
 @bp.route('/name_change_list', methods=['GET'])
@@ -249,7 +260,6 @@ def name_change_respond(req):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[BLIND_DATE_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def dancing_info_list():
-    # PRIORITY - Add role to list
     dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == SELECTED))\
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
@@ -263,8 +273,6 @@ def dancing_info_list():
 def edit_dancing_info(number):
     dancer = db.session.query(Contestant).join(DancingInfo).filter(Contestant.contestant_id == number).first()
     form = EditDancingInfoForm(dancer)
-    # PRIORITY - Notify teamcaptains when partner gone due to switch in level or blind date
-    # PRIORITY - Add JS for partner update
     if request.method == GET:
         form.populate(dancer)
     if request.method == POST:
@@ -281,8 +289,7 @@ def edit_dancing_info(number):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def finances_overview():
-    # WISH - Discuss with "Penny" for what to add
-    # WISH - Remove clickable pointer from team lists
+    # WISH - Discuss with "Penny" for what to add - downloads for total page and summary pages
     all_teams = db.session.query(Team)
     if g.sc.tournament == NTDS:
         all_teams = all_teams.filter(Team.country == NETHERLANDS).all()
@@ -310,11 +317,11 @@ def finances_overview():
     all_cancelled_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
         .filter(StatusInfo.payment_required.is_(True), StatusInfo.status == CANCELLED) \
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
-    teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
+    teams = [{'team': team, 'id': team.city,
               'confirmed_dancers': [dancer for dancer in all_confirmed_dancers if
-                                    dancer.contestant_info[0].team.name == team.name],
+                                    dancer.contestant_info.team.name == team.name],
               'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if
-                                    dancer.contestant_info[0].team.name == team.name],
+                                    dancer.contestant_info.team.name == team.name],
               'finances': TeamFinancialOverview(
                   User.query.filter(User.team == team, User.access == ACCESS[TEAM_CAPTAIN]).first())
               .finances_overview()}
@@ -322,9 +329,9 @@ def finances_overview():
     teams = [team for team in teams if (len(team['confirmed_dancers']) + len(team['cancelled_dancers'])) > 0]
     for t in teams:
         if g.sc.finances_full_refund:
-            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info[0].full_refund]
+            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info.full_refund]
         if g.sc.finances_partial_refund:
-            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info[0].partial_refund]
+            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info.partial_refund]
     dutch_teams = [team for team in teams if team['team'].country == NETHERLANDS]
     german_teams = [team for team in teams if team['team'].country == GERMANY]
     other_teams = [team for team in teams if
@@ -349,52 +356,75 @@ def remove_payment_requirement(number):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def merchandise():
-    # PRIORITY - Rework to include other merchandise
-    # PRIORITY - Change cancel status to take into account merchandise closing date
-    # PRIORITY - Add option to confirm order as is and remove all registered dancers merchandise
-    ts = TournamentState.query.first()
+    current_timestamp = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
+    form = FinalizeMerchandiseForm()
+    if form.is_submitted() and form.validate_on_submit():
+        if not g.ts.merchandise_finalized:
+            registered_dancers = Contestant.query.join(StatusInfo)\
+                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR,
+                            StatusInfo.status == CANCELLED)).all()
+            registered_dancers = [d for d in registered_dancers if d.merchandise_info.ordered_merchandise()]
+            for dancer in registered_dancers:
+                dancer.merchandise_info.cancel_merchandise()
+            g.ts.merchandise_finalized = True
+            flash("Merchandise finalized.", "alert-success")
+            db.session.commit()
     dancers = Contestant.query.join(StatusInfo).join(ContestantInfo).join(AdditionalInfo).join(MerchandiseInfo)\
         .join(Team).filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == CANCELLED))\
-        .order_by(Team.city).all()
-    dancers = [dancer for dancer in dancers if dancer.merchandise_info[0].ordered_merchandise()]
+        .order_by(Team.city, Contestant.first_name).all()
+    dancers = [dancer for dancer in dancers if dancer.merchandise_info.ordered_merchandise()]
     shirts = {shirt_size: 0 for shirt_size in SHIRT_SIZES}
+    mugs, bags = 0, 0
     for dancer in dancers:
         try:
-            shirts[dancer.merchandise_info[0].t_shirt] += 1
+            shirts[dancer.merchandise_info.t_shirt] += 1
         except KeyError:
             pass
+        mugs += 1 if dancer.merchandise_info.mug else 0
+        bags += 1 if dancer.merchandise_info.bag else 0
     shirts = {SHIRT_SIZES[shirt]: quantity for shirt, quantity in shirts.items()}
     total_shirts = sum([quantity for size, quantity in shirts.items()])
-    form = request.args
-    if 'download_file' in form:
+    download = request.args
+    if 'download_file' in download:
+        header = {'Name': 0, 'E-mail': 1, 'Team': 2}
+        base_len = len(header)
+        for i in range(0, 3):
+            if g.sc.merchandise_sold(i):
+                header.update({g.sc.merchandise_name(i): len(header)})
         fn = f'merchandise_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
         output = BytesIO()
         wb = xlsxwriter.Workbook(output, {'in_memory': True})
         f = wb.add_format({'text_wrap': True, 'bold': True})
         ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
-        ws.write(0, 0, 'Dancer', f)
-        ws.write(0, 1, 'Email', f)
-        ws.write(0, 2, 'Team', f)
-        ws.write(0, 3, 'T-shirt', f)
+        for name, index in header.items():
+            ws.write(0, index, name, f)
         ws.set_column(0, 0, 30)
         ws.set_column(1, 1, 40)
         ws.set_column(2, 3, 20)
         for d in range(0, len(dancers)):
             ws.write(d + 1, 0, dancers[d].get_full_name())
             ws.write(d + 1, 1, dancers[d].email)
-            ws.write(d + 1, 2, dancers[d].contestant_info[0].team.city)
-            try:
-                ws.write(d + 1, 3, SHIRT_SIZES[dancers[d].merchandise_info[0].t_shirt])
-            except KeyError:
-                ws.write(d + 1, 3, NONE)
-            for m in range(0, len(dancers[d].merchandise_info)):
-                ws.write(d + 1, m + 4, dancers[d].merchandise_info[m].quantity)
+            ws.write(d + 1, 2, dancers[d].contestant_info.team.city)
+            for i in range(base_len, len(header)):
+                counter = base_len
+                if g.sc.t_shirt_sold:
+                    try:
+                        ws.write(d + 1, counter, SHIRT_SIZES[dancers[d].merchandise_info.t_shirt])
+                    except KeyError:
+                        ws.write(d + 1, counter, NONE)
+                    counter += 1
+                if g.sc.mug_sold:
+                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info.mug])
+                    counter += 1
+                if g.sc.bag_sold:
+                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info.bag])
+                    counter += 1
         ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
-    return render_template('organizer/merchandise.html', ts=ts, data=data, shirts=shirts, total_shirts=total_shirts,
-                           dancers=dancers)
+    return render_template('organizer/merchandise.html', dancers=dancers, current_timestamp=current_timestamp,
+                           form=form, shirts=shirts, total_shirts=total_shirts, mugs=mugs, bags=bags)
 
 
 @bp.route('/sleeping_hall', methods=['GET'])
@@ -402,16 +432,14 @@ def merchandise():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def sleeping_hall():
-    # PRIORITY - Add Super Volunteers
-    # PRIORITY - Add similar page for diets/allergies
-    ts = TournamentState.query.first()
     team_captains = db.session.query(User).filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True))\
         .order_by(User.username).all()
     teams = [{'city': team_captain.team.city,
               'number_of_dancers': db.session.query(Contestant).join(ContestantInfo, StatusInfo, AdditionalInfo)
              .filter(ContestantInfo.team == team_captain.team, StatusInfo.status == CONFIRMED,
                      AdditionalInfo.sleeping_arrangements.is_(True)).count()} for team_captain in team_captains]
-    total = sum([team['number_of_dancers'] for team in teams])
+    super_volunteers = len(SuperVolunteer.query.all())
+    total = sum([team['number_of_dancers'] for team in teams]) + super_volunteers
     form = request.args
     if 'download_file' in form:
         fn = f'sleeping_hall_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
@@ -421,17 +449,90 @@ def sleeping_hall():
         la = wb.add_format({'align': 'left'})
         ws = wb.add_worksheet()
         ws.write(0, 0, 'Team', f)
-        ws.write(0, 1, 'Dancers in sleeping hall (Total: {total})'.format(total=total), f)
+        ws.write(0, 1, 'People in sleeping hall (Total: {total})'.format(total=total), f)
         for d in range(0, len(teams)):
             ws.write(d + 1, 0, teams[d]['city'])
             ws.write(d + 1, 1, teams[d]['number_of_dancers'], la)
+        ws.write(len(teams) + 1, 0, 'Super Volunteers')
+        ws.write(len(teams) + 1, 1, super_volunteers, la)
         ws.set_column(0, 0, 30)
         ws.set_column(1, 1, 40)
         ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
-    return render_template('organizer/sleeping_hall.html', data=data, ts=ts, teams=teams, total=total)
+    return render_template('organizer/sleeping_hall.html', teams=teams, super_volunteers=super_volunteers, total=total)
+
+
+@bp.route('/view_super_volunteer/<int:number>', methods=[GET])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def view_super_volunteer(number):
+    super_volunteer = SuperVolunteer.query.filter(SuperVolunteer.volunteer_id == number).first()
+    form = SuperVolunteerForm()
+    form.populate(super_volunteer)
+    return render_template('organizer/view_super_volunteer.html', form=form)
+
+
+@bp.route('/diet_allergies', methods=[GET, POST])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def diet_allergies():
+    dancers = Contestant.query.join(ContestantInfo, StatusInfo).filter(StatusInfo.status == CONFIRMED,
+                                                                       ContestantInfo.diet_allergies != "").all()
+    dancers = [d for d in dancers if d.contestant_info.diet_allergies.strip() != ""
+               and d.contestant_info.diet_allergies != "-"]
+    people = [{'id': 'd-' + str(d.contestant_id), 'name': d.get_full_name(), 'diet': d.contestant_info.diet_allergies,
+               'notes': d.contestant_info.organization_diet_notes} for d in dancers]
+    super_volunteers = SuperVolunteer.query.filter(SuperVolunteer.diet_allergies != "").all()
+    super_volunteers = [sv for sv in super_volunteers if sv.diet_allergies.strip() != "" and sv.diet_allergies != "-"]
+    people.extend([{'id': 'sv-' + str(sv.volunteer_id), 'name': sv.get_full_name(), 'diet': sv.diet_allergies,
+                    'notes': sv.organization_diet_notes} for sv in super_volunteers])
+    people.sort(key=lambda x: x['name'])
+    old_notes = [p['notes'] for p in people if p['notes'].strip() != ""]
+    all_confirmed_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == CONFIRMED).all()
+    all_super_volunteers = SuperVolunteer.query.all()
+    total = len(all_confirmed_dancers) + len(all_super_volunteers)
+    no_special_diet = total - len(people)
+    form = request.args
+    if 'download_file' in form:
+        fn = f'diet_allergies_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
+        output = BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        f = wb.add_format({'text_wrap': True, 'bold': True})
+        ws = wb.add_worksheet()
+        ws.write(0, 0, 'Who?', f)
+        ws.write(0, 1, 'Diet/Allergies (Total: {total})'.format(total=len(people)), f)
+        for p in range(0, len(people)):
+            ws.write(p + 1, 0, people[p]['name'])
+            ws.write(p + 1, 1, people[p]['diet'])
+        ws.set_column(0, 0, 30)
+        ws.set_column(1, 1, 80)
+        ws.freeze_panes(1, 0)
+        wb.close()
+        output.seek(0)
+        return send_file(output, as_attachment=True, attachment_filename=fn)
+    if request.method == 'POST':
+        if 'submit' in request.form:
+            changes = False
+            for p in people:
+                diet_notes = request.form.get(p['id'])
+                if p['id'].split('-')[0] == "d":
+                    person = ContestantInfo.query.get(int(p['id'].split('-')[1]))
+                else:
+                    person = SuperVolunteer.query.get(int(p['id'].split('-')[1]))
+                if person.organization_diet_notes != diet_notes:
+                    person.organization_diet_notes = diet_notes
+                    changes = True
+            if changes:
+                db.session.commit()
+                flash('Changes saved successfully.', 'alert-success')
+            else:
+                flash('No changes were made to submit.', 'alert-warning')
+            return redirect(url_for('organizer.diet_allergies'))
+    return render_template('organizer/diet_allergies.html',
+                           people=people, total=total, no_special_diet=no_special_diet, old_notes=old_notes)
 
 
 @bp.route('/adjudicators_overview', methods=['GET', 'POST'])
@@ -439,9 +540,8 @@ def sleeping_hall():
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[ADJUDICATOR_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def adjudicators_overview():
-    # PRIORITY - Add text to web page
-    # PRIORITY - Remove Salsa and Polka when not needed
-    # LONG TERM - Completely new system
+    # PRIORITY - Add Super Volunteers
+    # LONG TERM - Completely new system - Print login sheets - schedule available on personal page - assignment system
     ts = TournamentState.query.first()
     ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo)\
         .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_ballroom != NO)\
@@ -481,16 +581,16 @@ def adjudicators_overview():
                 ws.set_column(0, 7, 30)
                 for d in range(0, len(adj)):
                     ws.write(d + 1, 0, adj[d].get_full_name())
-                    ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    ws.write(d + 1, 1, adj[d].contestant_info.team.name)
                     ws.write(d + 1, 2, adj[d].email)
                     if comp == BALLROOM:
-                        wants_to = adj[d].volunteer_info[0].jury_ballroom
-                        lic = adj[d].volunteer_info[0].license_jury_ballroom
-                        lvl = adj[d].volunteer_info[0].level_ballroom
+                        wants_to = adj[d].volunteer_info.jury_ballroom
+                        lic = adj[d].volunteer_info.license_jury_ballroom
+                        lvl = adj[d].volunteer_info.level_ballroom
                     else:
-                        wants_to = adj[d].volunteer_info[0].jury_latin
-                        lic = adj[d].volunteer_info[0].license_jury_latin
-                        lvl = adj[d].volunteer_info[0].level_latin
+                        wants_to = adj[d].volunteer_info.jury_latin
+                        lic = adj[d].volunteer_info.license_jury_latin
+                        lvl = adj[d].volunteer_info.level_latin
                     ws.write(d + 1, 3, wants_to)
                     ws.write(d + 1, 4, lic)
                     ws.write(d + 1, 5, lvl)
@@ -501,12 +601,12 @@ def adjudicators_overview():
                 ws.set_column(0, 3, 30)
                 for d in range(0, len(adj)):
                     ws.write(d + 1, 0, adj[d].get_full_name())
-                    ws.write(d + 1, 1, adj[d].contestant_info[0].team.name)
+                    ws.write(d + 1, 1, adj[d].contestant_info.team.name)
                     ws.write(d + 1, 2, adj[d].email)
                     if comp == SALSA:
-                        wants_to = adj[d].volunteer_info[0].jury_salsa
+                        wants_to = adj[d].volunteer_info.jury_salsa
                     else:
-                        wants_to = adj[d].volunteer_info[0].jury_polka
+                        wants_to = adj[d].volunteer_info.jury_polka
                     ws.write(d + 1, 3, wants_to)
             ws.freeze_panes(1, 0)
         wb.close()
@@ -574,8 +674,11 @@ def bad():
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def switch_to_bda():
     bda = User.query.filter(User.access == ACCESS[BLIND_DATE_ASSISTANT]).first()
-    logout_user()
-    login_user(bda)
+    if bda is not None:
+        logout_user()
+        login_user(bda)
+    else:
+        flash('Blind Date Assistant account not created.')
     return redirect(url_for('main.index'))
 
 
@@ -585,8 +688,11 @@ def switch_to_bda():
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def switch_to_cia():
     cia = User.query.filter(User.access == ACCESS[CHECK_IN_ASSISTANT]).first()
-    logout_user()
-    login_user(cia)
+    if cia is not None:
+        logout_user()
+        login_user(cia)
+    else:
+        flash('Check-in Assistant account not created.')
     return redirect(url_for('main.index'))
 
 
@@ -596,6 +702,9 @@ def switch_to_cia():
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def switch_to_ada():
     ada = User.query.filter(User.access == ACCESS[ADJUDICATOR_ASSISTANT]).first()
-    logout_user()
-    login_user(ada)
+    if ada is not None:
+        logout_user()
+        login_user(ada)
+    else:
+        flash('Adjudicator Assistant account not created.')
     return redirect(url_for('main.index'))

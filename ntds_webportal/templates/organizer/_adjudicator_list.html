@@ -1,9 +1,9 @@
-<div class="panel panel-default">
-    <div class="panel-heading" role="button" id="heading-{{type}}" data-toggle="collapse" href="#collapse-{{type}}" aria-expanded="true" aria-controls="collapse-{{type}}">
-        <b class="panel-title">{{type}} adjudicators <span class="badge">{% if adjudicators|length > 0 %}{{ adjudicators|length }}{% else %}0{% endif %}</span></b>
+<div class="card">
+    <div class="card-header" role="button" id="heading-{{type}}" data-toggle="collapse" href="#collapse-{{type}}" aria-expanded="true" aria-controls="collapse-{{type}}">
+        <b class="card-title">{{type}} adjudicators <span class="badge badge-pill badge-dark">{% if adjudicators|length > 0 %}{{ adjudicators|length }}{% else %}0{% endif %}</span></b>
     </div>
     <div id="collapse-{{type}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-{{type}}">
-        <table class="table table-list">
+        <table class="table table-sm mb-0">
             {% if type == data.BALLROOM or type == data.LATIN %}
             <colgroup>
                 <col span="1" style="width: 20%;">
@@ -29,15 +29,15 @@
                 {% for adjudicator in adjudicators %}
                     <tr>
                         <td>{{ adjudicator.get_full_name() }}</td>
-                        <td>{{ adjudicator.contestant_info[0].team.name }}</td>
+                        <td>{{ adjudicator.contestant_info.team.name }}</td>
                         {% if type == data.BALLROOM %}
-                        <td>{{ adjudicator.volunteer_info[0].jury_ballroom }}</td>
-                        <td>{{ adjudicator.volunteer_info[0].license_jury_ballroom }}</td>
-                        <td>{{ adjudicator.volunteer_info[0].level_ballroom }}</td>
+                        <td>{{ adjudicator.volunteer_info.jury_ballroom }}</td>
+                        <td>{{ adjudicator.volunteer_info.license_jury_ballroom }}</td>
+                        <td>{{ adjudicator.volunteer_info.level_ballroom }}</td>
                         {% elif type == data.LATIN %}
-                        <td>{{ adjudicator.volunteer_info[0].jury_latin }}</td>
-                        <td>{{ adjudicator.volunteer_info[0].license_jury_latin }}</td>
-                        <td>{{ adjudicator.volunteer_info[0].level_latin }}</td>
+                        <td>{{ adjudicator.volunteer_info.jury_latin }}</td>
+                        <td>{{ adjudicator.volunteer_info.license_jury_latin }}</td>
+                        <td>{{ adjudicator.volunteer_info.level_latin }}</td>
                         {% endif %}
                         <td>
                             {{  g.data.LEVEL_ROLE_DISPLAY[adjudicator.dancing_information(g.data.BALLROOM).level] }}
@@ -65,11 +65,11 @@
                 {% for adjudicator in adjudicators %}
                     <tr>
                         <td>{{ adjudicator.get_full_name() }}</td>
-                        <td>{{ adjudicator.contestant_info[0].team.name }}</td>
+                        <td>{{ adjudicator.contestant_info.team.name }}</td>
                         {% if type == data.SALSA %}
-                        <td>{{ adjudicator.volunteer_info[0].jury_salsa }}</td>
+                        <td>{{ adjudicator.volunteer_info.jury_salsa }}</td>
                         {% elif type == data.POLKA %}
-                        <td>{{ adjudicator.volunteer_info[0].jury_polka }}</td>
+                        <td>{{ adjudicator.volunteer_info.jury_polka }}</td>
                         {% endif %}
                     </tr>
                 {% endfor %}

@@ -2,11 +2,11 @@
 
 {% block app_content %}
 <ul class="nav nav-tabs" id=myTabs role=tablist>
-	<li role=presentation class=active>
-		<a href=#system id=system-tab role=tab data-toggle=tab aria-controls=system aria-expanded=true>System</a>
+	<li class="nav-item">
+		<a class="nav-link" href=#system id=system-tab role=tab data-toggle=tab aria-controls=system aria-expanded=true>System</a>
 	</li>
-    <li role=presentation>
-        <a href=#overview class=dropdown-toggle id=overview-tab data-toggle=tab aria-controls=overview-contents>Overview Dancers</a>
+    <li class="nav-item">
+        <a class="nav-link" href=#overview id=overview-tab data-toggle=tab aria-controls=overview-contents>Overview Dancers</a>
     </li>
 </ul>
 <div class=tab-content id=myTabContent>
@@ -27,17 +27,21 @@
         {% endwith %}
         <h2>Overview</h2>
         <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="col-sm-12 col-md-6 col-lg-6">
                 {% with subtitle='Selected', dancers=raffle_sys.selected_dancers, stats=raffle_sys.get_stats(g.data.SELECTED) %}
                     {% include 'raffle/_stats.html' %}
                 {% endwith %}
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="col-sm-12 col-md-6 col-lg-6">
                 {% with subtitle='Available', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
                     {% include 'raffle/_stats.html' %}
                 {% endwith %}
             </div>
         </div>
+
+        {% with source=g.data.SELECTED, panel_title='Breakdown of selected dancers', toggle_id="selected" %}
+        {% include 'raffle/_raffle_available_combinations_panel.html' %}
+        {% endwith %}
 
         {% include 'raffle/_controls.html' %}
 	</div>

@@ -29,18 +29,31 @@ def create_super_volunteer_user_account(form, super_volunteer):
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     form = SuperVolunteerForm()
-    if form.validate_on_submit():
-        if 'privacy_checkbox' in request.values:
-            super_volunteer = SuperVolunteer()
-            super_volunteer.update_data(form)
-            db.session.add(super_volunteer)
-            db.session.commit()
-            flash(Markup(f'<b>Registration complete:</b> {super_volunteer.get_full_name()}, '
-                         f'you have been successfully registered as a Super Volunteer.'), 'alert-success')
-            create_super_volunteer_user_account(form, super_volunteer)
-            return redirect(url_for('main.index'))
+    if request.method == 'POST':
+        form.custom_validate()
+        all_users = User.query.all()
+        emails = [u.email for u in all_users if u.email is not None]
+        form_email = form.email.data
+        if form_email in emails and form_email is not None:
+            flash(Markup(f'There is already a dancer registered with the e-mail address {form.email.data}.<br/>'
+                         f'You cannot register as both a dancer in the tournament, and a Super Volunteer.<br/>'
+                         f'If you are already registered as a dancer, and wish to be a Super Volunteer instead, '
+                         f'please contact your team captain to completely remove your registration as a dancer '
+                         f'from the tournament first. Afterwards, you can register as a Super Volunteer.'),
+                  "alert-danger")
         else:
-            flash('You can not register without accepting the privacy statement.', 'alert-danger')
+            if form.validate_on_submit():
+                if 'privacy_checkbox' in request.values:
+                    super_volunteer = SuperVolunteer()
+                    super_volunteer.update_data(form)
+                    db.session.add(super_volunteer)
+                    db.session.commit()
+                    flash(Markup(f'<b>Registration complete:</b> {super_volunteer.get_full_name()}, '
+                                 f'you have been successfully registered as a Super Volunteer.'), 'alert-success')
+                    create_super_volunteer_user_account(form, super_volunteer)
+                    return redirect(url_for('main.index'))
+                else:
+                    flash('You can not register without accepting the privacy statement.', 'alert-danger')
     return render_template('volunteering/register_volunteer.html', form=form)
 
 
@@ -67,9 +80,8 @@ def super_volunteer_data():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(REGISTRATION_OPEN)
 def volunteers():
-    # WISH - Do not display tables when empty
     dancers = Contestant.query.join(StatusInfo, ContestantInfo).filter(StatusInfo.status == CONFIRMED)\
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
-    dancers = [d for d in dancers if d.volunteer_info[0].volunteering()]
+    dancers = [d for d in dancers if d.volunteer_info.volunteering()]
     super_volunteers = SuperVolunteer.query.all()
     return render_template('volunteering/volunteers.html', dancers=dancers, super_volunteers=super_volunteers)

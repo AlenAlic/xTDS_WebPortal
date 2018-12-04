@@ -3,10 +3,23 @@ from flask import g, flash, render_template, current_app
 from flask_login import current_user
 from ntds_webportal import db
 from ntds_webportal.models import Contestant, ContestantInfo, DancingInfo, VolunteerInfo, AdditionalInfo, \
-    StatusInfo, PaymentInfo, MerchandiseInfo, User, Notification, SystemConfiguration
+    StatusInfo, PaymentInfo, MerchandiseInfo, User, Notification, SystemConfiguration, Team
 from ntds_webportal.data import *
 from ntds_webportal.helper_classes import TeamFinancialOverview
+import sqlalchemy as alchemy
 import os
+
+
+def active_teams():
+    teams = Team.query.all()
+    return [t for t in teams if t.is_active()]
+
+
+def database_is_empty():
+    table_names = alchemy.inspect(db.engine).get_table_names()
+    is_empty = table_names == []
+    print('Database empty: {is_empty}.'.format(is_empty=is_empty))
+    return is_empty
 
 
 def get_dancing_categories(dancing_info):
@@ -18,36 +31,34 @@ def get_dancing_categories(dancing_info):
 
 def notify_teamcaptains_couple_created(lead, follow, competition):
     teamcaptain_lead = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
-                                         User.team == lead.contestant_info[0].team).first()
+                                         User.team == lead.contestant_info.team).first()
     text = "{dancer} has found a partner. He/She has signed up for {comp} with {partner} from team {team}."
     n = Notification(title=f"{lead} found a dancing partner for {competition}",
                      text=text.format(dancer=lead.get_full_name(), comp=competition,
-                                      partner=follow.get_full_name(), team=follow.contestant_info[0].team.name),
+                                      partner=follow.get_full_name(), team=follow.contestant_info.team.name),
                      user=teamcaptain_lead)
-    db.session.add(n)
+    n.send()
     teamcaptain_follow = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
-                                           User.team == follow.contestant_info[0].team).first()
+                                           User.team == follow.contestant_info.team).first()
     n2 = Notification(title=f"{follow} found a dancing partner for {competition}",
                       text=text.format(dancer=follow.get_full_name(), comp=competition,
-                                       partner=lead.get_full_name(), team=lead.contestant_info[0].team.name),
+                                       partner=lead.get_full_name(), team=lead.contestant_info.team.name),
                       user=teamcaptain_follow)
-    db.session.add(n2)
-    db.session.commit()
+    n2.send()
 
 
 def notify_teamcaptains_broken_up_couple(lead, follow, competition):
     teamcaptain_lead = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
-                                         User.team == lead.contestant_info[0].team).first()
+                                         User.team == lead.contestant_info.team).first()
     text = "{dancer} no longer has a partner in {comp}."
     n = Notification(title=f"{lead.get_full_name()} no longer has a partner for {competition}",
                      text=text.format(dancer=lead.get_full_name(), comp=competition), user=teamcaptain_lead)
-    db.session.add(n)
+    n.send()
     teamcaptain_follow = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
-                                           User.team == follow.contestant_info[0].team).first()
+                                           User.team == follow.contestant_info.team).first()
     n2 = Notification(title=f"{follow.get_full_name()} no longer has a partner for {competition}",
                       text=text.format(dancer=follow.get_full_name(), comp=competition), user=teamcaptain_follow)
-    db.session.add(n2)
-    db.session.commit()
+    n2.send()
 
 
 def reset_tournament_state():
@@ -74,18 +85,18 @@ def make_system_configuration_accessible_to_organizer():
 def get_total_dancer_price_list(dancer):
     price = TeamFinancialOverview(current_user)
     prices = price.prices()
-    price = prices[dancer.contestant_info[0].student] + prices[dancer.merchandise_info[0].t_shirt]
+    price = prices[dancer.contestant_info.student] + prices[dancer.merchandise_info.t_shirt]
     student_string = {STUDENT: 'Student', NON_STUDENT: 'Non-student', PHD_STUDENT: 'PhD-student'}
     description = f"{g.sc.tournament} {g.sc.city} {g.sc.year} - " \
-                  f"{student_string[dancer.contestant_info[0].student]} entry fee"
-    if dancer.merchandise_info[0].t_shirt != NO:
+                  f"{student_string[dancer.contestant_info.student]} entry fee"
+    if dancer.merchandise_info.t_shirt != NO:
         description += " + t-shirt"
-    if dancer.merchandise_info[0].mug:
+    if dancer.merchandise_info.mug:
         description += " + mug"
-    if dancer.merchandise_info[0].bag:
+    if dancer.merchandise_info.bag:
         description += " + bag"
     paid_string = {True: "Yes", False: "No"}
-    return [dancer.get_full_name(), price/100, description, paid_string[dancer.payment_info[0].all_paid()]]
+    return [dancer.get_full_name(), price/100, description, paid_string[dancer.payment_info.all_paid()]]
 
 
 def submit_contestant(form, contestant=None):
@@ -109,12 +120,12 @@ def submit_contestant(form, contestant=None):
         ci.number = form.number.data
         ci.team = form.team.data
     else:
-        ci = contestant.contestant_info[0]
-        vi = contestant.volunteer_info[0]
-        ai = contestant.additional_info[0]
-        si = contestant.status_info[0]
-        pi = contestant.payment_info[0]
-        mi = contestant.merchandise_info[0]
+        ci = contestant.contestant_info
+        vi = contestant.volunteer_info
+        ai = contestant.additional_info
+        si = contestant.status_info
+        pi = contestant.payment_info
+        mi = contestant.merchandise_info
         di_ballroom = contestant.competition(BALLROOM)
         di_latin = contestant.competition(LATIN)
         new_dancer = False
@@ -161,6 +172,7 @@ def submit_contestant(form, contestant=None):
 def update_dancing_info(form, di_ballroom, di_latin):
     di_ballroom.level = form.ballroom_level.data
     di_ballroom.role = form.ballroom_role.data
+    di_ballroom.blind_date = str2bool(form.ballroom_blind_date.data)
     db.session.add(di_ballroom)
     db.session.flush()
     if not str2bool(form.ballroom_blind_date.data) and form.ballroom_partner.data is not None:
@@ -169,6 +181,7 @@ def update_dancing_info(form, di_ballroom, di_latin):
         di_ballroom.set_partner(None)
     di_latin.level = form.latin_level.data
     di_latin.role = form.latin_role.data
+    di_latin.blind_date = str2bool(form.latin_blind_date.data)
     db.session.add(di_latin)
     db.session.flush()
     if not str2bool(form.latin_blind_date.data) and form.latin_partner.data is not None:
@@ -180,9 +193,45 @@ def update_dancing_info(form, di_ballroom, di_latin):
 def submit_updated_dancing_info(form, contestant):
     di_ballroom = contestant.competition(BALLROOM)
     di_latin = contestant.competition(LATIN)
+    ballroom_parner, latin_partner = di_ballroom.partner, di_latin.partner
     update_dancing_info(form, di_ballroom, di_latin)
     db.session.commit()
+    if di_ballroom.partner != ballroom_parner:
+        send_lost_partner_notification(di_ballroom.contestant_id, BALLROOM, partner_id=ballroom_parner)
+    if di_latin.partner != latin_partner:
+        send_lost_partner_notification(di_ballroom.contestant_id, LATIN, partner_id=latin_partner)
     return contestant.get_full_name()
+
+
+def send_lost_partner_notification(changed_id, competition, partner_id):
+    dancer = Contestant.query.filter(Contestant.contestant_id == changed_id).first()
+    partner = Contestant.query.filter(Contestant.contestant_id == partner_id).first()
+    teamcaptain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
+                                    User.team == dancer.contestant_info.team).first()
+    if dancer.contestant_info.team == partner.contestant_info.team:
+        teamcaptain = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
+                                        User.team == dancer.contestant_info.team).first()
+        text = f"The organization has made changes to the dancing information of {dancer.get_full_name()}, and due " \
+               f"to that, {dancer.first_name} and {partner.get_full_name()} are no longer dancing together " \
+               f"in {competition}."
+        n = Notification(title=f"Changed {competition} information of {dancer.get_full_name()} and "
+                               f"{partner.get_full_name()}", text=text, user=teamcaptain)
+        n.send()
+    else:
+        text_dancer = f"The organization has made changes to the dancing information of {dancer.get_full_name()}, " \
+                      f"and due to that, {dancer.first_name} and {partner.get_full_name()} " \
+                      f"({partner.contestant_info.team}) are no longer dancing together in {competition}."
+        n = Notification(title=f"Changed {competition} information of {dancer.get_full_name()}",
+                         text=text_dancer, user=teamcaptain)
+        n.send()
+        teamcaptain_partner = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
+                                                User.team == partner.contestant_info.team).first()
+        text_partner = f"The organization has made changes to the dancing information of {dancer.get_full_name()} " \
+                       f"({dancer.contestant_info.team}), and due to that, {dancer.first_name} and " \
+                       f"{partner.get_full_name()} are no longer dancing together in {competition}."
+        n = Notification(title=f"Changed {competition} information of {partner.get_full_name()}",
+                         text=text_partner, user=teamcaptain_partner)
+        n.send()
 
 
 def generate_maintenance_page():

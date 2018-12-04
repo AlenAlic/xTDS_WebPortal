@@ -45,7 +45,10 @@ function disableCheckboxes(checkboxes, disable) {
         }
     }
 }
-function filterLevels(clicked_checkbox) {
+$(document).ready(function() {
+    $('#system-tab').click();
+});
+function filterLevels(clicked_checkbox, scroll=true) {
     var rows = document.getElementsByClassName("checkbox-filter");
     var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox")
     var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox")
@@ -95,14 +98,13 @@ function filterLevels(clicked_checkbox) {
             rows[i].style.display = 'table-row';
         }
     }
-
-    window.scrollTo(0,document.body.scrollHeight);
+    if (scroll) {window.scrollTo(0,document.body.scrollHeight);}
 }
 </script>
 <script>
 function guaranteedEntry(checkbox) {
     let row = checkbox.closest("tr");
-    updateCheckboxRowApiCall("/api/status_info/guaranteed_entry/", "PATCH", row);
+    updateCheckboxRowApiCall(row);
 }
 function clearApiState(elem) {
     elem.classList.remove("api-pending");
@@ -126,29 +128,29 @@ function apiFailed(elem) {
     clearApiState(elem);
     elem.classList.add("api-failed");
 }
-function updateCheckboxRowApiCall(api, method, row) {
+function updateCheckboxRowApiCall(row) {
     apiPending(row)
-    fetch(api + row.id, {method: method})
+    fetch("/api/contestants/" + row.id + "/status_info/guaranteed_entry", {method: "PATCH"})
     .then(function(response) {return response.json();})
     .then(function(result) {
-        if (result) {
+        if (result.status_info.guaranteed_entry) {
             apiSuccess(row);
         } else {
             clearApiState(row);
         }
-        updateTeamGuaranteedDancersApiCall("/api/team/guaranteed_dancers/", "GET", row)
+        updateTeamGuaranteedDancersApiCall(row)
     })
     .catch(function(error) {
         console.log('Error: \n', error);
     });
 }
-function updateTeamGuaranteedDancersApiCall(api, method, source) {
-    let panel = source.closest(".panel");
-    let total = panel.querySelector('.panel-heading > .panel-title > .badge > .team-guaranteed-dancers');
-    fetch(api + total.dataset.teamId, {method: method})
+function updateTeamGuaranteedDancersApiCall(source) {
+    let panel = source.closest(".card");
+    let total = panel.querySelector('.card-header > .card-title > .badge > .team-guaranteed-dancers');
+    fetch("/api/teams/" + total.dataset.teamId + "/guaranteed_dancers", {method: "GET"})
     .then(function(response) {return response.json();})
     .then(function(result) {
-        if (result) {total.innerHTML = result}
+        if (result) {total.innerHTML = result.length}
     })
     .catch(function(error) {
         console.log('Error: \n', error);

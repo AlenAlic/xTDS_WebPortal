@@ -1,22 +1,14 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block app_content %}
 <h2>Server mainenance page (pacman)</h2>
 <p>Generate the webpage that will be displayed when the server is undergoing maintenance.</p>
-<a class="btn btn-default" href="{{url_for('self_admin.maintenance')}}?502_page" style="text-decoration:none">Generate maintenance page</a>
+<a class="btn btn-outline-primary" href="{{url_for('self_admin.maintenance')}}?502_page" style="text-decoration:none">Generate maintenance page</a>
 <h2>Maintenance mode</h2>
 <p>The website is currently {% if g.sc.website_accessible is sameas true %}<b>NOT</b> in{% else %}<b>IN</b>{% endif %} mainenance mode.</p>
 {% if g.sc.website_accessible is sameas false %}
-    <a class="btn btn-info" href="{{url_for('self_admin.maintenance')}}?maintenance_mode_off" style="text-decoration:none">Maintenance mode OFF</a>
+    <a class="btn btn-primary" href="{{url_for('self_admin.maintenance')}}?maintenance_mode_off" style="text-decoration:none">Turn Maintenance mode OFF</a>
 {% else %}
-    <a class="btn btn-warning" href="{{url_for('self_admin.maintenance')}}?maintenance_mode_on" style="text-decoration:none">Maintenance mode ON</a>
+    <a class="btn btn-warning" href="{{url_for('self_admin.maintenance')}}?maintenance_mode_on" style="text-decoration:none">Turn maintenance mode ON</a>
 {% endif %}
-<!--<form class="form" method="POST" enctype="multipart/form-data" novalidate>-->
-    <!--{% if g.sc.website_accessible is sameas false %}-->
-        <!--<button type="submit" id="submit-maintenance_mode_off" name="maintenance_mode_off" class="btn btn-info">Maintenance mode OFF</button>-->
-    <!--{% else %}-->
-        <!--<button type="submit" id="submit-maintenance_mode_on" name="maintenance_mode_on" class="btn btn-warning">Maintenance mode ON</button>-->
-    <!--{% endif %}-->
-<!--</form>-->
 {% endblock %}

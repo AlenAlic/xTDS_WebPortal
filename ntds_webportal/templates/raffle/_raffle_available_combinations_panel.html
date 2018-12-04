@@ -1,0 +1,10 @@
+<div class="card">
+    <div class="card-header" role="button" id="heading-{{toggle_id}}" data-toggle="collapse" href="#collapse-{{toggle_id}}" aria-expanded="true" aria-controls="collapse-{{toggle_id}}">
+        <b class="card-title">{{panel_title}}</b>
+    </div>
+    <div id="collapse-{{toggle_id}}" class=" collapse" role="tabpanel" aria-labelledby="heading-{{toggle_id}}">
+        {% with source=source %}
+        {% include 'raffle/_available_combinations_view.html' %}
+        {% endwith %}
+    </div>
+</div>

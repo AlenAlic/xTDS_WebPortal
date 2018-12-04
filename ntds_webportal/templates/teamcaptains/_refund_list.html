@@ -1,5 +1,5 @@
 {% if dancers|length > 0 %}
-<table class="table table-striped table-responsive table-finances">
+<table class="table table-sm table-finances">
     <colgroup>
         {% if current_user.is_organizer() %}
         <col span="1" style="width: 20%;">
@@ -26,7 +26,7 @@
         <tr>
             <td>{{ dancer.get_full_name() }}</td>
             <td style="text-align:right">
-                {{ g.data.euros(finances[dancer.contestant_info[0].student]*g.sc.finances_partial_refund_percentage/100) }}
+                {{ g.data.euros(finances[dancer.contestant_info.student]*g.sc.finances_partial_refund_percentage/100) }}
             </td>
             <td></td>
         </tr>

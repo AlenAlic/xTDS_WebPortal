@@ -1,0 +1,12 @@
+Dear {{ recipient.username }},
+
+
+You have a new automated message.
+
+Please click the link below to read it.
+{{ url_for('main.index', _external=True) }}
+
+
+Sincerely,
+
+The xTDS WebPortal Admin

@@ -1,11 +1,11 @@
-<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 {% if accessible is sameas false %}opaque{% endif %}">
-    <a href="{{url_for('organizer.bad')}}?{{name}}" style="text-decoration:none">
-        <div class="thumbnail thumbnail-same-height" >
-            <img src="{{url_for('static', filename=image)}}" class="img-rounded" width="100">
-            <div class="caption text-center" >
-                <h3>{{ title }}</h3>
+<div class="col-sm-4 col-md-3 col-lg-2 {% if accessible is sameas false %}opaque{% endif %}">
+    <a href="{{url_for('organizer.bad')}}?{{name}}" style="text-decoration:none;color:black;">
+        <div class="card my-2 thumbnail-same-height" >
+            <img src="{{url_for('static', filename='BAD/'+image)}}" class="card-img-top mx-auto" style="max-width: 128px; max-height: 128px; margin-top: 8px;">
+            <div class="card-body" style="text-align: center;">
+                <h3 class="card-title">{{ title }}</h3>
                 {% if text is defined %}
-                    <p>{{ text }}</p>
+                    <p class="card-text">{{ text }}</p>
                 {% endif %}
             </div>
         </div>

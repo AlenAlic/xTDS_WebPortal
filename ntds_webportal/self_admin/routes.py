@@ -74,6 +74,10 @@ def system_setup():
             for dancer in dancer_accounts:
                 db.session.delete(dancer)
             db.session.commit()
+            super_volunteer_accounts = User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER]).all()
+            for super_volunteer in super_volunteer_accounts:
+                db.session.delete(super_volunteer)
+            db.session.commit()
             non_admins = User.query.filter(User.access > ACCESS[ADMIN]).all()
             for na in non_admins:
                 na.is_active = False
@@ -150,7 +154,7 @@ def system_setup():
 @login_required
 @requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER]])
 def system_configuration():
-    if current_user.is_organizer() and g.ts.system_configured:
+    if current_user.is_organizer() and g.ts.registration_period_started:
         flash('Page currently inaccessible. The registration has started. For emergency access, contact the admin.')
         return redirect(url_for('main.dashboard'))
     form = SystemSetupForm()
@@ -289,14 +293,68 @@ def system_configuration():
 @requires_access_level([ACCESS[ADMIN]])
 def switch_user():
     form = SwitchUserForm()
-    users = User.query.filter(User.is_active.is_(True), User.user_id != current_user.user_id).all()
+    form.user.label.text = 'Switch to a non-Dutch team captain'
+    form.submit.label.text = 'Switch to team captain'
+    users = User.query.join(Team).filter(User.is_active.is_(True), User.user_id != current_user.user_id,
+                                         or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]),
+                                         Team.country != NETHERLANDS).order_by(Team.city).all()
     form.user.choices = map(lambda user_map: (user_map.user_id, user_map.username), users)
+    dancer_super_volunteer_form = SwitchUserForm()
+    dancer_super_volunteer_form.user.label.text = 'Switch to a dancer or Super Volunteer User account'
+    dancer_super_volunteer_users = User.query\
+        .filter(User.is_active.is_(True), or_(User.access == ACCESS[DANCER], User.access == ACCESS[SUPER_VOLUNTEER]))\
+        .all()
+    dancer_super_volunteer_choices = [(u.user_id, u.dancer.get_full_name()) for u in dancer_super_volunteer_users
+                                      if u.dancer is not None]
+    dancer_super_volunteer_choices += [(u.user_id, u.super_volunteer.get_full_name()) for u
+                                       in dancer_super_volunteer_users if u.super_volunteer is not None]
+    dancer_super_volunteer_choices.sort(key=lambda x: x[1])
+    dancer_super_volunteer_choices = [(0, 'Choose an account to switch to.')] + dancer_super_volunteer_choices
+    dancer_super_volunteer_form.user.choices = dancer_super_volunteer_choices
     if form.validate_on_submit():
         user = User.query.filter(User.user_id == form.user.data).first()
+        if user is not None:
+            logout_user()
+            login_user(user)
+        else:
+            flash('User account is not active.')
+        return redirect(url_for('main.index'))
+    if dancer_super_volunteer_form.validate_on_submit():
+        user = User.query.filter(User.user_id == form.user.data).first()
+        if user is not None:
+            logout_user()
+            login_user(user)
+        else:
+            flash('User account is not active.')
+        return redirect(url_for('main.index'))
+    return render_template('admin/switch_user.html', form=form, dancer_super_volunteer_form=dancer_super_volunteer_form)
+
+
+@bp.route('/switch_to_organizer', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ADMIN]])
+def switch_to_organizer():
+    user = User.query.filter(User.is_active.is_(True), User.access == ACCESS[ORGANIZER]).first()
+    if user is not None:
         logout_user()
         login_user(user)
-        return redirect(url_for('main.index'))
-    return render_template('admin/switch_user.html', form=form)
+    else:
+        flash('User account is not active.')
+    return redirect(url_for('main.index'))
+
+
+@bp.route('/switch_to_team_captain/<name>', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ADMIN]])
+def switch_to_team_captain(name):
+    user = User.query.join(Team).filter(User.is_active.is_(True), User.access == ACCESS[TEAM_CAPTAIN],
+                                        Team.name == name).first()
+    if user is not None:
+        logout_user()
+        login_user(user)
+    else:
+        flash('User account is not active.')
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/user_list', methods=['GET', 'POST'])
@@ -401,37 +459,8 @@ def debug_tools():
     form = request.args
     if 'force_error' in form:
         print(None.email)
-    if 'selected_confirmed' in form:
-        dancers = StatusInfo.query.filter(StatusInfo.status == SELECTED).all()
-        for dancer in dancers:
-            dancer.set_status(CONFIRMED)
-        db.session.commit()
-        flash(f"All {SELECTED} dancers are now {CONFIRMED}.")
-    if 'confirmed_selected' in form:
-        dancers = StatusInfo.query.filter(StatusInfo.status == CONFIRMED).all()
-        for dancer in dancers:
-            dancer.set_status(SELECTED)
-        db.session.commit()
-        flash(f"All {CONFIRMED} dancers are now {SELECTED}.")
-    if 'registered' in form:
-        dancers = StatusInfo.query.all()
-        for dancer in dancers:
-            dancer.set_status(REGISTERED)
-        db.session.commit()
-        flash(f"All dancers are now {REGISTERED}.")
-    if 'no_gdpr' in form:
-        dancers = StatusInfo.query.all()
-        limit = 5
-        for dancer in dancers[:limit]:
-            dancer.set_status(NO_GDPR)
-        db.session.commit()
-        flash(f"The first {limit} dancers have now not accepted the GDPR.")
     if len(form) > 0:
         return redirect(url_for('main.dashboard'))
-    if request.method == 'POST':
-        form = request.form
-        if 'force_error' in form:
-            print(None.email)
     return render_template('admin/debug_tools.html')
 
 

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'my_wtf.html' as my_wtf %}
 
 {% block body_attribs %}
 {% endblock %}
@@ -23,7 +22,7 @@
 
 {% if confirmed_dancers|length > 0 %}
 <h2 class="no-print">Confirmed dancers</h2>
-<button class="btn btn-default no-print" onclick="printPage()">Print lists of confirmed dancers</button>
+<button class="btn btn-outline-primary no-print mt-1 mb-2" onclick="printPage()">Print lists of confirmed dancers</button>
 {% with category='Ballroom', couples=confirmed_ballroom_couples, show_break_up_button=false %}
     {% include 'teamcaptains/_couples_list.html' %}
 {% endwith %}
@@ -57,13 +56,13 @@ $(document).ready(function() {
 });
 $(document).ready(function($) {
     $(".checkbox").change(function() {
-        $(this).parents("tr:first").toggleClass('info');
+        $(this).parents("tr:first").toggleClass('table-info');
     });
 });
 function changeColor(elem) {
     let row = elem.closest("tr");
-    if (elem.checked) {row.classList.add("info");}
-    else {row.classList.remove("info");}
+    if (elem.checked) {row.classList.add("table-info");}
+    else {row.classList.remove("table-info");}
 }
 function checkAll(ele) {
      var checkboxes = document.getElementsByClassName('dancer');

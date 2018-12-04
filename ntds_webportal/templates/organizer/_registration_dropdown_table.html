@@ -1,0 +1,53 @@
+<table id="{{table_id}}" class="table table-sm table-hover">
+<colgroup>
+    <col span="1" style="width: 5%;">
+    <col span="1" style="width: 15%;">
+    <col span="1" style="width: 15%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 10%;">
+    <col span="1" style="width: 10%;">
+    <col span="1" style="width: 10%;">
+    <col span="1" style="width: 10%;">
+</colgroup>
+<thead>
+<tr>
+    <th colspan="2" style="font-weight: normal;"><input class="form-control" type="text" id="{{table_id}}-filterNameInput" onkeyup="filter{% if not master_table %}Team{% endif %}('{{table_id}}')" placeholder="Name..."></th>
+    {% if master_table %}
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="table-all-filterTeamInput" onkeyup="filter('table-all')" placeholder="Team..."></th>
+    {% else %}
+    <th colspan="1" style="font-weight: normal;"></th>
+    {% endif %}
+    <th colspan="1" style="font-weight: normal;"></th>
+    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="{{table_id}}-filterStatusInput" onkeyup="filter{% if not master_table %}Team{% endif %}('{{table_id}}')" placeholder="Status..."></th>
+    <th colspan="3" style="font-weight: normal;"></th>
+</tr>
+<tr>
+    <th>#</th>
+    <th>Name</th>
+    <th>Team</th>
+    <th>E-mail</th>
+    <th>Status</th>
+    <th>Student</th>
+    <th>Ballroom</th>
+    <th>Latin</th>
+</tr>
+</thead>
+<tbody>
+{% for dancer in dancers %}
+<tr class="clickable-row" data-href="{{url_for('organizer.view_dancer', number=dancer.contestant_id)}}">
+    <td>{{ dancer.contestant_info.number }}</td>
+    <td>{{ dancer.get_full_name() }}</td>
+    {% if g.sc.tournament == g.data.NTDS %}
+    <td>{{ dancer.contestant_info.team }}</td>
+    {% else %}
+    <td>{{ dancer.contestant_info.team.city }}</td>
+    {% endif %}
+    <td>{{ dancer.email }}</td>
+    <td>{{ g.data.STATUS[dancer.status_info.status] }}</td>
+    <td>{{ g.data.STUDENT_TEXT[dancer.contestant_info.student] }}</td>
+    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
+    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>

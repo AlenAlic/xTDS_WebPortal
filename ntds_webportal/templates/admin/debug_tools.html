@@ -3,13 +3,4 @@
 {% block app_content %}
 <h2>Force error to test the error mail</h2>
 <a class="btn btn-danger" href="{{url_for('self_admin.debug_tools')}}?force_error" style="text-decoration:none">Force error</a>
-<h2>Change dancer status</h2>
-<a class="btn btn-primary" href="{{url_for('self_admin.debug_tools')}}?selected_confirmed" style="text-decoration:none">Selected -> confirmed</a>
-<br/><br/>
-<a class="btn btn-primary" href="{{url_for('self_admin.debug_tools')}}?confirmed_selected" style="text-decoration:none">Confirmed -> selected</a>
-<br/><br/>
-<a class="btn btn-primary" href="{{url_for('self_admin.debug_tools')}}?registered" style="text-decoration:none">All registered</a>
-<br/><br/>
-<a class="btn btn-primary" href="{{url_for('self_admin.debug_tools')}}?no_gdpr" style="text-decoration:none">All no GDPR</a>
-<br/><br/>
 {% endblock %}

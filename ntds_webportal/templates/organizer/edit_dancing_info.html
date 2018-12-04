@@ -90,7 +90,45 @@ function dancingRole(level, role, bd) {
     } else {
         div_bd.setAttribute('disabled', true);
     }
+
+    div_bd.onchange();
     {% endif %}
+}
+
+var old_ballroom_level = "{{form.ballroom_level.data}}"
+var old_ballroom_role = "{{form.ballroom_role.data}}"
+var old_ballroom_blind_date = "{{form.ballroom_blind_date.data}}"
+var old_ballroom_partner = "{{form.ballroom_partner.data.contestant_id}}"
+if (old_ballroom_partner == "") {old_ballroom_partner = "__None"}
+
+var old_latin_level = "{{form.latin_level.data}}"
+var old_latin_role = "{{form.latin_role.data}}"
+var old_latin_blind_date = "{{form.latin_blind_date.data}}"
+var old_latin_partner = "{{form.latin_partner.data.contestant_id}}"
+if (old_latin_partner == "") {old_latin_partner = "__None"}
+
+function dancingBD(level, role, partner, bd) {
+    var div_level = document.getElementById(level);
+    var div_role = document.getElementById(role);
+    var div_partner = document.getElementById(partner);
+    var div_bd = document.getElementById(bd);
+
+    let old_level = 0;
+    let old_role= 0;
+    if (level == 'ballroom_level') {old_level = old_ballroom_level;} else {old_level = old_latin_level;}
+    if (level == 'ballroom_level') {old_role = old_ballroom_role;} else {old_role = old_latin_role;}
+    if (div_level.value == old_level && div_role.value == old_role) {
+        let val_bd = div_bd.options[div_bd.selectedIndex].value;
+        if (val_bd == "True") {
+            div_partner.value = "__None";
+        } else if (val_bd == "False") {
+            if (level == 'ballroom_level') {div_partner.value = old_ballroom_partner;} else { div_partner.value = old_latin_partner;}
+        } else {
+            div_partner.value = "__None";
+        }
+    } else {
+        div_partner.value = "__None";
+    }
 }
 </script>
 {% endblock %}

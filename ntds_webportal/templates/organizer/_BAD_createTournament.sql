@@ -161,22 +161,22 @@ INSERT INTO `start` (`tourn`,`lead`,`follow`) VALUES ({{ var.tournament_TEST }},
 -- Dancers
 -- Insert dancers into system:
 {%- for dancer in dancers %}
-INSERT INTO `person` SET `id` = "{{ dancer.contestant_id }}", `fname` = "{{ dancer.first_name }}", `name` = "{{ dancer.get_last_name() }}", `team` = (SELECT `id` FROM `team` WHERE `name` = "{{ dancer.contestant_info[0].team.name }} ({{ dancer.contestant_info[0].team.city }})");
+INSERT INTO `person` SET `id` = "{{ dancer.contestant_id }}", `fname` = "{{ dancer.first_name }}", `name` = "{{ dancer.get_last_name() }}", `team` = (SELECT `id` FROM `team` WHERE `name` = "{{ dancer.contestant_info.team.name }} ({{ dancer.contestant_info.team.city }})");
 {%- endfor %}
 
 -- REGISTERD DANCERS, use this to copy queries to import dancers that have been selected by the system after this file was created
 {%- for dancer in registered_dancers %}
--- INSERT INTO `person` SET `id` = "{{ dancer.contestant_id }}", `fname` = "{{ dancer.first_name }}", `name` = "{{ dancer.get_last_name() }}", `team` = (SELECT `id` FROM `team` WHERE `name` = "{{ dancer.contestant_info[0].team.name }} ({{ dancer.contestant_info[0].team.city }})");
+-- INSERT INTO `person` SET `id` = "{{ dancer.contestant_id }}", `fname` = "{{ dancer.first_name }}", `name` = "{{ dancer.get_last_name() }}", `team` = (SELECT `id` FROM `team` WHERE `name` = "{{ dancer.contestant_info.team.name }} ({{ dancer.contestant_info.team.city }})");
 {%- endfor %}
 
 -- Jury
 {%- for dancer in dancers %}
-{%- if dancer.volunteer_info[0].jury_ballroom == "yes" or dancer.volunteer_info[0].jury_ballroom == "maybe"
-or dancer.volunteer_info[0].jury_latin == "yes" or dancer.volunteer_info[0].jury_latin == "maybe"
-or dancer.volunteer_info[0].jury_salsa == "yes" or dancer.volunteer_info[0].jury_salsa == "maybe"
-or dancer.volunteer_info[0].jury_polka == "yes" or dancer.volunteer_info[0].jury_polka == "maybe" %}
+{%- if dancer.volunteer_info.jury_ballroom == "yes" or dancer.volunteer_info.jury_ballroom == "maybe"
+or dancer.volunteer_info.jury_latin == "yes" or dancer.volunteer_info.jury_latin == "maybe"
+or dancer.volunteer_info.jury_salsa == "yes" or dancer.volunteer_info.jury_salsa == "maybe"
+or dancer.volunteer_info.jury_polka == "yes" or dancer.volunteer_info.jury_polka == "maybe" %}
 -- {{ dancer.get_full_name() }}
-INSERT INTO `staff`      SET `id` = {{ dancer.contestant_id }}, `tag` = "{{ dancer.first_name[0]+dancer.last_name[0] }}", `password` = SHA1("jury{{ dancer.contestant_info[0].number }}");
+INSERT INTO `staff`      SET `id` = {{ dancer.contestant_id }}, `tag` = "{{ dancer.first_name[0]+dancer.last_name[0] }}", `password` = SHA1("jury{{ dancer.contestant_info.number }}");
 INSERT INTO `employ`     SET `role` = "adjudicator", `who` = {{ dancer.contestant_id }};
 {# INSERT INTO `employ`     SET `role` = "adjudicator", `who` = {{ dancer.contestant_id }}, `tourn` = {{ var.tournament_TEST }}; #}
 {%- endif %}

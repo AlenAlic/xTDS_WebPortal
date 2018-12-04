@@ -2,11 +2,11 @@
 
 {% block app_content %}
 <ul class="nav nav-tabs" id=myTabs role=tablist>
-	<li role=presentation class=active>
-		<a href=#system id=system-tab role=tab data-toggle=tab aria-controls=system aria-expanded=true>System</a>
+	<li class="nav-item">
+		<a class="nav-link" href=#system id=system-tab role=tab data-toggle=tab aria-controls=system aria-expanded=true>System</a>
 	</li>
-    <li role=presentation>
-        <a href=#overview class=dropdown-toggle id=overview-tab data-toggle=tab aria-controls=overview-contents>Overview Dancers</a>
+    <li class="nav-item">
+        <a class="nav-link" href=#overview id=overview-tab data-toggle=tab aria-controls=overview-contents>Overview Dancers</a>
     </li>
 </ul>
 <div class=tab-content id=myTabContent>
@@ -16,9 +16,9 @@
             <div style="display: table; margin: 0 auto; text-align: center;">
                 <h2>Notify team captains</h2>
                 <p>Send a generic e-mail to all team captains to notify them that the main raffle has taken place and that the results are now visible.</p>
-                <button class="btn btn-info" onclick="sendRaffleNotificationEmail('/api/tournament_state/raffle_completed_message_sent/send_generic_email/', 'PATCH')">Send generic e-mail</button>
+                <button class="btn btn-outline-primary" onclick="sendRaffleNotificationEmail('/api/tournament_state/raffle_completed_message_sent/send_generic_email/', 'PATCH')">Send generic e-mail</button>
                 <p></p>
-                <button class="btn btn-default" onclick="sendRaffleNotificationEmail('/api/tournament_state/raffle_completed_message_sent/send_own_email/', 'PATCH')">I will send my own e-mails</button>
+                <button class="btn btn-outline-secondary" onclick="sendRaffleNotificationEmail('/api/tournament_state/raffle_completed_message_sent/send_own_email/', 'PATCH')">I will send my own e-mails</button>
             </div>
         </div>
         {% endif %}
@@ -36,25 +36,38 @@
         <h2>Overview</h2>
         <div class="row">
             {% if raffle_sys.selected_dancers|length > 0 %}
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-{{ 12//width }}">
+            <div class="col-sm-12 col-md-6 col-lg-{{ 12//width }}">
                 {% with subtitle='Selected', dancers=raffle_sys.selected_dancers, stats=raffle_sys.get_stats(g.data.SELECTED) %}
                     {% include 'raffle/_stats.html' %}
                 {% endwith %}
             </div>
             {% endif %}
             {% if raffle_sys.confirmed_dancers|length > 0 %}
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-{{ 12//width }}">
+            <div class="col-sm-12 col-md-6 col-lg-{{ 12//width }}">
                 {% with subtitle='Confirmed', dancers=raffle_sys.confirmed_dancers, stats=raffle_sys.get_stats(g.data.CONFIRMED) %}
                     {% include 'raffle/_stats.html' %}
                 {% endwith %}
             </div>
             {% endif %}
-            <div class="col-xs-12 col-sm-12 col-md-{%if width_md%}12{%else%}6{%endif%} col-lg-{{ 12//width }}">
+            <div class="col-sm-12 col-md-{%if width_md%}12{%else%}6{%endif%} col-lg-{{ 12//width }}">
                 {% with subtitle='Available', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
                     {% include 'raffle/_stats.html' %}
                 {% endwith %}
             </div>
         </div>
+
+        {% if raffle_sys.selected_dancers|length > 0 %}
+        {% with source=g.data.SELECTED, panel_title='Breakdown of selected dancers', toggle_id="selected" %}
+            {% include 'raffle/_raffle_available_combinations_panel.html' %}
+        {% endwith %}
+        {% endif %}
+
+        {% if raffle_sys.confirmed_dancers|length > 0 %}
+        {% with source=g.data.CONFIRMED, panel_title='Breakdown of confirmed dancers', toggle_id="confirmed" %}
+            {% include 'raffle/_raffle_available_combinations_panel.html' %}
+        {% endwith %}
+        {% endif %}
+
         {% include 'raffle/_controls.html' %}
 	</div>
 

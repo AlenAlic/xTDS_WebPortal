@@ -1,12 +1,11 @@
 {% extends "base.html" %}
-{% import 'registration_wtf.html' as reg_wtf %}
 
 {% block body_attribs %}
 onload="onStart()"
 {% endblock %}
 
 {% block container_style -%}
-visibility:visisble
+visibility:hidden
 {%- endblock %}
 
 {% block scripts %}
@@ -20,14 +19,14 @@ function onStart() {
     {%- endif %}
     document.getElementById('jury_ballroom').onchange();
     document.getElementById('jury_latin').onchange();
-    {% if (mode == 'view' and dancer.status_info[0].status == g.data.NO_GDPR) -%}
+    {% if (mode == 'view' and dancer.status_info.status == g.data.NO_GDPR) -%}
         document.getElementById('privacy_checkbox').onclick();
     {%- endif %}
     var container = document.getElementById('container-hidden').style.visibility = "visible";
 }
 function dummy() {}
 
-{% if current_user.is_dancer() is sameas true %}
+{% if current_user.is_dancer() is sameas true or current_user.is_organizer() is sameas true %}
 function dancingLevel(level, role, partner, bd, jury) {}
 function dancingRole(level, role, bd, partner) {}
 function dancingBD(level, role, partner, bd) {}

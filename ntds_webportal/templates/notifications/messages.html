@@ -3,43 +3,33 @@
 {% block styles %}
 {{ super() }}
 <style>
-.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
-    color: #000;
-    background-color: #e8eaed;
-}
+.nav-pill > a.active, .nav-pills > a:focus, .nav-pills > a:hover {background-color: #e8eaed;}
+.nav-pills .nav-link.active {opacity:0.5}
 </style>
 {% endblock %}
 
 {% block app_content %}
 <h2>Messages</h2>
 <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">
-        <ul class="nav nav-pills nav-stacked" id=myTabs role=tablist>
-            <li role=presentation>
-                <a href="{{ url_for('notifications.create') }}" class="btn btn-primary navbar-btn">Compose message</a>
-            </li>
-            <li><div style="height:30px"></div></li>
-            <li role=presentation class=active>
-                <a href=#inbox id=inbox-tab role=tab data-toggle=tab aria-controls=inbox aria-expanded=true style="font-size:large;color:#000">Inbox</a>
-            </li>
-            <li role=presentation>
-                <a href=#archive id=archive-tab data-toggle=tab aria-controls=archive-contents style="font-size:large;color:#000">Archive</a>
-            </li>
-            <li role=presentation>
-                <a href=#sent id=sent-tab data-toggle=tab aria-controls=sent-contents style="font-size:large;color:#000">Sent</a>
-            </li>
-        </ul>
+    <div class="col-sm-12 col-md-3 col-lg-2">
+        <div class="nav flex-column nav-pills" id=myTabs role=tablist>
+            <a href="{{ url_for('notifications.create') }}" class="btn btn-primary nav-link">Compose message</a>
+            <div style="height:30px"></div>
+            <a class="nav-link" href=#inbox id=inbox-tab role=tab data-toggle=tab aria-controls=inbox-contents aria-expanded=true style="font-size:large;">Inbox</a>
+            <a class="nav-link" href=#archive id=archive-tab data-toggle=tab aria-controls=archive-contents style="font-size:large;">Archive</a>
+            <a class="nav-link" href=#sent id=sent-tab data-toggle=tab aria-controls=sent-contents style="font-size:large;">Sent</a>
+        </div>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10">
+    <div class="col-sm-12 col-md-9 col-lg-10">
         <div style="height:8px"></div>
         <div class="tab-content" id=myTabContent>
             <div class="tab-pane fade in active" role=tabpanel id=inbox aria-labelledby=inbox-tab>
-                {% with notifications=inbox_messages %}
+                {% with notifications=inbox_messages, opened=true %}
                     {% include 'notifications/_message_list.html' %}
                 {% endwith %}
             </div>
             <div class="tab-pane fade" role=tabpanel id=archive aria-labelledby=archive-tab>
-                {% with notifications=archived_messages %}
+                {% with notifications=archived_messages%}
                     {% include 'notifications/_message_list.html' %}
                 {% endwith %}
             </div>
@@ -51,4 +41,13 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    $('#inbox-tab').click();
+});
+</script>
 {% endblock %}
