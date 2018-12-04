@@ -73,7 +73,7 @@ def dashboard():
 @login_required
 def todo():
     # GENERAL
-    # LONG TERM - Create template for modal and cards, using call function of Jinja
+    # LONG TERM - Create template for cards, using call function of Jinja
     # ADMIN
     # LONG TERM - Change so that teams and team captain/treasurer accounts are made at the same time
     # WISH - Make "Tournament" section in system setup throw warnings when doing something stupid

@@ -564,7 +564,6 @@ def set_teamcaptains():
 @requires_access_level([ACCESS[TEAM_CAPTAIN]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def raffle_result():
-    # PRIORITY - Update page after reworked Check-In page
     ts = TournamentState.query.first()
     if ts.main_raffle_result_visible:
         all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
@@ -801,11 +800,14 @@ def bus_to_brno():
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def tournament_check_in():
     ts = TournamentState.query.first()
-    confirmed_dancers = db.session.query(Contestant).join(ContestantInfo, StatusInfo) \
+    confirmed_dancers = Contestant.query.join(ContestantInfo, StatusInfo) \
         .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED)\
-        .order_by(ContestantInfo.number).all()
-    checked_in_dancers = db.session.query(Contestant).join(ContestantInfo, StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED,
-                StatusInfo.checked_in.is_(True)).order_by(ContestantInfo.number).all()
+        .order_by(Contestant.first_name).all()
+    checked_in_dancers = [d for d in confirmed_dancers if d.status_info.checked_in]
+    cancelled_dancers = Contestant.query.join(ContestantInfo, StatusInfo) \
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CANCELLED)\
+        .order_by(Contestant.first_name).all()
+    cancelled_dancers = [d for d in cancelled_dancers if d.merchandise_info.ordered_merchandise()]
     return render_template('teamcaptains/tournament_check_in.html', ts=ts, data=data,
-                           confirmed_dancers=confirmed_dancers, checked_in_dancers=checked_in_dancers)
+                           confirmed_dancers=[d.to_dict() for d in confirmed_dancers],
+                           checked_in_dancers=checked_in_dancers, cancelled_dancers=cancelled_dancers)

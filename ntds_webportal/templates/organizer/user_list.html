@@ -1,10 +1,5 @@
 {% extends "base.html" %}
 
-{% block head %}
-{{ super() }}
-{{ confirm_modal() }}
-{% endblock %}
-
 {% block body_attribs %}
 onload="onStart()"
 {% endblock %}
@@ -62,19 +57,6 @@ onload="onStart()"
         </div>
     </div>
 </div>
-<script>
-$.confirm.options = {
-    confirmButtonClass: "btn-primary",
-    cancelButtonClass: "btn-default",
-    dialogClass: "modal-dialog modal-lg"
-}
-$(".confirm-activation").confirm({
-    confirm: function(button) {
-        window.location.href = button.data('url');
-    },
-    cancel: function(button) {}
-});
-</script>
 {% else %}
 <p>Team captains have access to the xTDS WebPortal.</p>
 {% endif %}

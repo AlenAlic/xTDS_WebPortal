@@ -1,10 +1,5 @@
 {% extends "base.html" %}
 
-{% block head %}
-{{ super() }}
-{{ confirm_modal() }}
-{% endblock %}
-
 {% block app_content %}
 <h2>Registration period</h2>
 {% if not g.ts.registration_period_started and not g.ts.registration_open %}

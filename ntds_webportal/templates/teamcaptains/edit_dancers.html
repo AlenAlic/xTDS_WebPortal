@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 
-{% block head %}
-{{ super() }}
-{{ confirm_modal() }}
-{% endblock %}
-
 {% block app_content %}
-
 {% if wide == 0 %}
 <a href="{{ url_for('teamcaptains.edit_dancers', wide=1) }}" class="btn btn-outline-secondary mb-2">Wide view</a>
 <table id="short-table" class="table table-hover table-responsive table-sm">
@@ -186,36 +180,12 @@
 </tbody>
 </table>
 {% endif %}
-<script>
-$.confirm.options = {
-    confirmButtonClass: "btn-danger",
-    cancelButtonClass: "btn-default",
-    dialogClass: "modal-dialog"
-}
-$(".confirm-cancellation").confirm({
-    confirm: function(button) {
-        <!--alert("You just confirmed.");-->
-        window.location.href = button.data('url');
-    },
-    cancel: function(button) {}
-});
-</script>
 {% endblock %}
 
 
 {% block scripts %}
 {{ super() }}
 <script>
-function cancelSelected(url) {
-    if (confirm()) {
-        window.location.href = url;
-    }
-};
-function cancelConfirmed(url) {
-    if (confirm()) {
-        window.location.href = url;
-    }
-};
 function filter(name) {
     // Declare variables
     var input, filter, table, tr, td, i;

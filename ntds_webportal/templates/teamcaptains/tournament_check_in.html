@@ -1,27 +1,73 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-
-{% if ts.main_raffle_result_visible is sameas true %}
 <h2>Dancers that have checked in at the tournament desk <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ checked_in_dancers|length }}/{{ confirmed_dancers|length }}</span></h2>
-<table class="table">
+<table class="table table-sm mb-5">
+    <colgroup>
+        <col span="1" style="width: 40%"/>
+        <col span="1" style="width: 15%"/>
+        <col span="1" style="width: 15%"/>
+        <col span="1" style="width: 15%"/>
+        <col span="1" style="width: 15%"/>
+    </colgroup>
     <thead>
         <tr>
-            <th><b>Dancer</b></th>
-            <th><b>Checked in?</b></th>
+            <th>Dancer</th>
+            <th>Paid</th>
+            <th>Received merchandise</th>
+            <th>Received starting number</th>
+            <th>Checked in</th>
         </tr>
     </thead>
     <tbody>
-        {% for dancer in confirmed_dancers %}
-            <tr class="{% if dancer.status_info.checked_in == true %}table-success{% else %}table-danger{% endif %}">
-                <td>{{ dancer.get_full_name() }}</td>
-                <td>{{ data.TF[dancer.status_info.checked_in] }}</td>
-            </tr>
-        {% endfor %}
+    {% for dancer in confirmed_dancers %}
+        <tr class="{% if dancer.status_info.checked_in == true %}table-success{% endif %}">
+            <td>{{ dancer['full_name'] }}</td>
+            <td>
+                {% with flag=dancer['payment_info']['all_paid'] %}
+                    {% include 'components/true_false_icon.html' %}
+                {% endwith %}
+            </td>
+            <td>
+                {% if dancer['merchandise_info']['ordered_merchandise'] %}
+                    {% with flag=dancer['merchandise_info']['merchandise_received'] %}
+                        {% include 'components/true_false_icon.html' %}
+                    {% endwith %}
+                {% endif %}
+            </td>
+            <td>
+                {% if dancer['status_info']['dancing_lead'] %}
+                    {% with flag=dancer['status_info']['received_starting_number'] %}
+                        {% include 'components/true_false_icon.html' %}
+                    {% endwith %}
+                {% endif %}
+            </td>
+            <td>
+                {% with flag=dancer['status_info']['checked_in'] %}
+                    {% include 'components/true_false_icon.html' %}
+                {% endwith %}
+            </td>
+        </tr>
+    {% endfor %}
+    {% if cancelled_dancers|length > 0 %}
+    <tr>
+        <th colspan="4" class="pt-5">Cancelled dancers with ordered merchandise</th>
+    </tr>
+    <tr>
+        <th>Dancer</th>
+        <th colspan="4">Ordered merchandise</th>
+    </tr>
+    {% for dancer in cancelled_dancers %}
+    <tr>
+        <td>{{ dancer.get_full_name() }}</td>
+        <td colspan="4">
+            {% if dancer.merchandise_info.t_shirt != g.data.NO %}{{ t_shirt_icon() }}{% endif %}
+            {% if dancer.merchandise_info.bag %}{{ bag_icon() }}{% endif %}
+            {% if dancer.merchandise_info.mug %}{{ mug_icon() }}{% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    {% endif %}
     </tbody>
 </table>
-{% else %}
-<h2>The raffle has not taken place yet.</h2>
-{% endif %}
-
 {% endblock %}

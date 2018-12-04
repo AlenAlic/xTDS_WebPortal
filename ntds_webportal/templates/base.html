@@ -191,19 +191,15 @@ $(document).ready(function($) {
 {% endmacro %}
 
 
-{% macro confirm_modal() %}
-<script src="{{bootstrap_find_resource('jquery.js', cdn='jquery')}}"></script>
-<script src="{{bootstrap_find_resource('js/bootstrap.js', cdn='bootstrap')}}"></script>
-<script type="text/javascript" src="{{url_for('static', filename='confirm/jquery.confirm.min.js')}}"></script>
-{% endmacro %}
-
-
-{% macro t_shirt_icon() %}
+{% macro icon(type) -%}
+<img style="width:20px;height:20px" src="{{url_for('static', filename='octicons/'+type+'.svg')}}">
+{%- endmacro %}
+{% macro t_shirt_icon() -%}
 &#x1F455;
-{% endmacro %}
-{% macro mug_icon() %}
+{%- endmacro %}
+{% macro mug_icon() -%}
 &#x2615;
-{% endmacro %}
-{% macro bag_icon() %}
+{%- endmacro %}
+{% macro bag_icon() -%}
 &#x1f45c;
-{% endmacro %}
+{%- endmacro %}
