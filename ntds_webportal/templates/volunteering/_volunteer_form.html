@@ -1,9 +1,7 @@
 <h2>{{title}}</h2>
 <h5>{{subtitle}}</h5>
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
-    {% if not current_user.is_anonymous %}
     {% if current_user.is_organizer() is sameas true %}<fieldset disabled>{% endif %}
-    {% endif %}
     {{ form.hidden_tag() }}
     <h3>Personal information</h3>
     {{ reg_wtf.form_field(form.first_name, placeholder='First name') }}
@@ -50,22 +48,15 @@
     {% if mode == 'register' %}
         {% include 'privacy/checkbox.html' %}
     {% endif %}
-    {% if not current_user.is_anonymous %}
     {% if current_user.is_organizer() is sameas true %}</fieldset>{% endif %}
-    {% endif %}
     <div class="form-group row">
         <label class="control-label col-lg-2" ></label>
         <div class="input-group col-lg-10">
-            {% if current_user.is_anonymous %}
-                <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Register{% endif %}">
-                <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
+            {% if current_user.is_super_volunteer() or current_user.is_anonymous %}
+            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Register{% endif %}">
+            <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
             {% else %}
-                {% if current_user.is_super_volunteer() %}
-                <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Register{% endif %}">
-                <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
-                {% else %}
-                <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.volunteers') }}">Return to overview</a>
-                {% endif %}
+            <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.volunteers') }}">Return to overview</a>
             {% endif %}
         </div>
     </div>

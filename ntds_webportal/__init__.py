@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, g, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager, current_user, logout_user
+from flask_login import LoginManager, current_user, logout_user, AnonymousUserMixin
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_mail import Mail
@@ -15,13 +15,10 @@ import ntds_webportal.data as data
 class MyAdminIndexView(AdminIndexView):
     @expose('/')
     def index(self):
-        if not current_user.is_authenticated:
-            return redirect(url_for('main.index'))
+        if current_user.is_admin():
+            return self.render(self._template)
         else:
-            if current_user.is_admin():
-                return self.render(self._template)
-            else:
-                return redirect(url_for('main.index'))
+            return redirect(url_for('main.index'))
 
 
 db = SQLAlchemy()
@@ -39,9 +36,7 @@ class BaseView(ModelView):
     page_size = 100
 
     def is_accessible(self):
-        if current_user.is_authenticated:
-            return current_user.is_admin()
-        return False
+        return current_user.is_admin()
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('main.index'))
@@ -58,6 +53,49 @@ class UserView(BaseView):
             User.set_password(form.password2.data)
 
 
+class Anonymous(AnonymousUserMixin):
+
+    @staticmethod
+    def is_admin():
+        return False
+
+    @staticmethod
+    def is_organizer():
+        return False
+
+    @staticmethod
+    def is_tc():
+        return False
+
+    @staticmethod
+    def is_treasurer():
+        return False
+
+    @staticmethod
+    def is_bda():
+        return False
+
+    @staticmethod
+    def is_cia():
+        return False
+
+    @staticmethod
+    def is_ada():
+        return False
+
+    @staticmethod
+    def is_dancer():
+        return False
+
+    @staticmethod
+    def is_super_volunteer():
+        return False
+
+    @staticmethod
+    def allowed():
+        return False
+
+
 def create_app():
     """
     Create instance of website.
@@ -70,11 +108,13 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('config')
     app.config.from_pyfile('config.py')
+    app.url_map.strict_slashes = False
 
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:'))
     login.init_app(app)
     login.login_view = 'main.index'
+    login.anonymous_user = Anonymous
     bootstrap.init_app(app)
     moment.init_app(app)
     mail.init_app(app)
