@@ -346,8 +346,7 @@ def finances_overview():
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def remove_payment_requirement(number):
     dancer = StatusInfo.query.filter(StatusInfo.contestant_id == number).first()
-    dancer.payment_required = False
-    db.session.commit()
+    dancer.remove_payment_requirement()
     return redirect(url_for('organizer.finances_overview'))
 
 

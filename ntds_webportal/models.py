@@ -523,6 +523,11 @@ class StatusInfo(db.Model):
         roles = [d.role for d in self.contestant.dancing_info]
         return LEAD in roles
 
+    def remove_payment_requirement(self):
+        self.payment_required = False
+        self.contestant.payment_info.remove_refund()
+        db.session.commit()
+
     def to_dict(self):
         data = {
             # 'status': self.status,
@@ -593,6 +598,11 @@ class PaymentInfo(db.Model):
         self.entry_paid = False
         db.session.commit()
         return False
+
+    def remove_refund(self):
+        self.partial_refund = False
+        self.full_refund = False
+        db.session.commit()
 
     def to_dict(self):
         data = {
