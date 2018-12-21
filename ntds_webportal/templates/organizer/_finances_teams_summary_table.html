@@ -45,7 +45,7 @@
                     <td style="text-align:right">{{ team['finances']['number_of_merchandise'] }}</td>
                     <td style="text-align:right">{{ data.euros(team['finances']['price_total']) }}</td>
                     <td style="text-align:right">
-                        <input class="form-control" type="text" id="{{ team['team'].team_id }}" name="{{ team['team'].team_id }}" style="text-align:right;"
+                        <input class="form-control" type="number" min="0" step="0.01" id="{{ team['team'].team_id }}" name="{{ team['team'].team_id }}" style="text-align:right;"
                                placeholder="{% if team['team'].amount_paid == 0 %}€0.00{% else %}{{ data.euros(team['team'].amount_paid) }}{% endif %}">
                     </td>
                     <td style="text-align:right">{{ data.euros(team['team'].amount_paid-team['finances']['price_total']) }}</td>
