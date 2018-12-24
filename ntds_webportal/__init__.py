@@ -33,7 +33,7 @@ toolbar = DebugToolbarExtension()
 
 class BaseView(ModelView):
     column_hide_backrefs = False
-    page_size = 100
+    page_size = 1000
 
     def is_accessible(self):
         return current_user.is_admin()
