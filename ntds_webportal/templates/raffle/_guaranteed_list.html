@@ -29,7 +29,7 @@
                             {{ dancer.get_full_name() }}{% if dancer.contestant_info.team_captain == true %} - Team captain{% endif %}
                         </td>
                         <td align="right">
-                            <input class="checkbox guaranteed-checkbox2" type="checkbox" value="y" style="visibility:hidden"
+                            <input class="checkbox" type="checkbox" value="y" style="visibility:hidden"
                                    onclick="{% if dancer.contestant_info.team_captain == false %}guaranteedEntry(this){% endif %}"
                                    {% if dancer.status_info.guaranteed_entry == true %}checked{% endif %}>
                         </td>
