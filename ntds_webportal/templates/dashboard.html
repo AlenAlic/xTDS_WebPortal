@@ -99,7 +99,7 @@ onload="onStart()"
 </div>
 <h2>Pre-tournament</h2>
 <div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', loading_screen=true, title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% if g.sc.merchandise() is sameas true %}
@@ -116,7 +116,7 @@ onload="onStart()"
 </div>
 <h2>Volunteering system</h2>
 <div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.system_configured, url='volunteering.register', title='Registration for Super-volunteers/external adjudicators', text='Work in progress.', image='register_contestant.png' %}
+    {% with accessible=g.ts.system_configured, url='volunteering.register', title='Registration for Super-volunteers/external adjudicators', text='Share this page for Supervolunteers to register through.', image='register_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=g.ts.system_configured, url='volunteering.volunteers', title='Volunteers', text='Overview of Super-volunteers and confirmed volunteering dancers.', image='volunteers.png' %}

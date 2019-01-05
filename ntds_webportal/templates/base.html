@@ -138,11 +138,6 @@ checkbox {cursor: pointer}
     {% endblock %}
 
 </div>
-<!--<nav class="navbar-defaul navbar-fixed-bottom" style="padding-top:60px;">-->
-    <!--<div class="container">-->
-        <!--<p class="navbar-text">Place sticky footer content here.</p>-->
-    <!--</div>-->
-<!--</nav>-->
 {% endblock %}
 
 {% block scripts %}
@@ -151,12 +146,6 @@ checkbox {cursor: pointer}
 {{ select2_form_js() }}
 <script type="text/javascript" src="{{url_for('static', filename='loading/loading.js')}}"></script>
 <script>
-<!--$(document).ready(function($) {-->
-    <!--$(".clickable-row").css("cursor", "pointer")-->
-    <!--$(".clickable-row").click(function() {-->
-        <!--window.open($(this).data("href"));-->
-    <!--});-->
-<!--});-->
 $(document).ready(function($) {
     $(".clickable-row").css("cursor", "pointer")
     $(".clickable-row").click(function() {
