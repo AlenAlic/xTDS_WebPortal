@@ -300,8 +300,8 @@ def finances_overview():
             changes = False
             for team in all_teams:
                 amount_paid = request.form.get(str(team.team_id))
-                if amount_paid != '' and amount_paid is not None:
-                    amount_paid = int(float(amount_paid)*100)
+                if amount_paid != ''.strip() and amount_paid is not None:
+                    amount_paid = int(round(float(amount_paid)*100))
                     if team.amount_paid != amount_paid:
                         team.amount_paid = amount_paid
                         changes = True
@@ -478,6 +478,7 @@ def view_super_volunteer(number):
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def diet_allergies():
+    # PRIORITY Remove comma separated on input
     dancers = Contestant.query.join(ContestantInfo, StatusInfo).filter(StatusInfo.status == CONFIRMED,
                                                                        ContestantInfo.diet_allergies != "").all()
     dancers = [d for d in dancers if d.contestant_info.diet_allergies.strip() != ""

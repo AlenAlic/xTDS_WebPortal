@@ -53,7 +53,6 @@ def system():
 def start():
     if g.ts.main_raffle_taken_place:
         return redirect(url_for('raffle.completed'))
-    # name.replace(' ', '-').replace('`', '')
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
         all_teams = db.session.query(Team).all()
@@ -119,6 +118,8 @@ def completed():
             raffle_sys.finish_raffle(non_sleeping_hall_dancers=True)
         elif 'select_random_group' in form:
             flash(raffle_sys.add_neutral_group())
+        elif 'select_specific_dancers' in form:
+            flash(raffle_sys.select_specific_dancers(form))
         else:
             flash(raffle_sys.select_single_dancer(form))
         db.session.commit()
@@ -159,6 +160,8 @@ def confirmed():
             raffle_sys.finish_raffle(non_sleeping_hall_dancers=True)
         elif 'select_random_group' in form:
             flash(raffle_sys.add_neutral_group())
+        elif 'select_specific_dancers' in form:
+            flash(raffle_sys.select_specific_dancers(form))
         else:
             flash(raffle_sys.select_single_dancer(form))
         db.session.commit()
@@ -306,6 +309,8 @@ def test_completed():
             raffle_sys.finish_raffle(non_sleeping_hall_dancers=True)
         elif 'select_random_group' in form:
             flash(raffle_sys.add_neutral_group())
+        elif 'select_specific_dancers' in form:
+            flash(raffle_sys.select_specific_dancers(form))
         else:
             flash(raffle_sys.select_single_dancer(form))
         db.session.commit()
@@ -366,6 +371,8 @@ def test_confirmed():
             raffle_sys.finish_raffle(non_sleeping_hall_dancers=True)
         elif 'select_random_group' in form:
             flash(raffle_sys.add_neutral_group())
+        elif 'select_specific_dancers' in form:
+            flash(raffle_sys.select_specific_dancers(form))
         else:
             flash(raffle_sys.select_single_dancer(form))
         db.session.commit()

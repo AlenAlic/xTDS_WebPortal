@@ -704,6 +704,22 @@ class RaffleSystem(Balance):
                       f"You cannot add more dancers."
         return message
 
+    def select_specific_dancers(self, form):
+        if not self.full():
+            dancers = [d for d in self.registered_dancers if f"specific-{d.contestant_id}" in form]
+            groups = self.find_dancers_groups(dancers, REGISTERED)
+            if not self.exceed_max(groups):
+                self.add_groups(groups, guaranteed=True)
+                self.update_states()
+                print_group = DancingGroup(dancers_input=[d for grp in groups for d in grp.dancers])
+                message = 'Selected {}.'.format(print_group.get_dancers_summary())
+            else:
+                message = "Cannot add dancers selected dancers. Doing so would exceed the limit."
+        else:
+            message = f"The maximum number of dancers ({self.config.maximum_number_of_dancers}) has been reached. " \
+                      f"You cannot add more dancers."
+        return message
+
     def confirm_selection(self, dancers):
         groups = self.find_dancers_groups(dancers, SELECTED)
         for grp in groups:
@@ -778,7 +794,7 @@ class RaffleSystem(Balance):
             elif len([d for d in group.dancers if d.contestant_info.team_captain]) > 0:
                 print(string_group_matched_incomplete_team_captain_exception(group))
             else:
-                print(GUARANTEED_EXCEPTION.format(group.dancers[0].get_full_name()))
+                print(string_group_guaranteed_exception(group))
         else:
             print(string_group_no_partner(group))
         if add:

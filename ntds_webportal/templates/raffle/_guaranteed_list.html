@@ -1,12 +1,8 @@
 <h2>Guaranteed dancers</h2>
-<!--Teamcaptains are marked light blue, first timers are marked yellow, and dancers you selected to be granted guaranteed entry are marked green.-->
-<!--<p>Select any dancers you want to be guaranteed entry into the tournament from the lists below.</p>-->
 <p>
     {% if g.sc.number_of_teamcaptains == 2 %}Teams marked red are missing both team captains, and teams marked yellow are missing one team captain.
     {% elif g.sc.number_of_teamcaptains == 1 %}Teams marked red are missing their team captain.{% endif %}
 </p>
-<!--<button type="submit" id="submit-save_guaranteed_dancers" name="save_guaranteed_dancers" class="btn btn-primary loading-btn">Save guaranteed dancers</button>-->
-<!--<br/><br/>-->
 <div id="accordion" >
 {% for team in teams %}
     {% if team['available_dancers']|length > 0 %}

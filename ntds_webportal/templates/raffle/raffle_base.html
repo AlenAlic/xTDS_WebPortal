@@ -43,13 +43,13 @@ function disableCheckboxes(checkboxes, disable) {
 $(document).ready(function() {
     $('#system-tab').click();
 });
-function filterLevels(clicked_checkbox, scroll=true) {
-    var rows = document.getElementsByClassName("checkbox-filter");
-    var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox")
-    var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox")
-    var all_checkboxes = document.getElementsByClassName("filter-checkbox")
+function filterLevels(clicked_checkbox, scroll=true, source="") {
+    var rows = document.getElementsByClassName("checkbox-filter" + source);
+    var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox" + source)
+    var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox" + source)
+    var all_checkboxes = document.getElementsByClassName("filter-checkbox" + source)
 
-    if (clicked_checkbox.classList.contains("{{g.data.BALLROOM}}-checkbox")) {
+    if (clicked_checkbox.classList.contains("{{g.data.BALLROOM}}-checkbox" + source)) {
         if (clicked_checkbox.checked) {
             disableCheckboxes(ballroom_checkboxes, true)
         } else {
@@ -69,9 +69,9 @@ function filterLevels(clicked_checkbox, scroll=true) {
         rows[i].style.display = 'table-row';
     }
 
-    var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox")
-    var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox")
-    var checkboxes = document.querySelectorAll(".filter-checkbox:checked")
+    var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox" + source)
+    var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox" + source)
+    var checkboxes = document.querySelectorAll(".filter-checkbox" + source + ":checked")
 
     if (checkboxes.length > 0) {
         for (j = 0; j < checkboxes.length; j++) {
