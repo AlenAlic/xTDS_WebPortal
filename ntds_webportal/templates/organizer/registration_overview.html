@@ -20,9 +20,65 @@
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" role=tabpanel id=all_teams aria-labelledby="all_teams-tab">
         {% if all_dancers|length > 0 %}
-            {% with table_id='table-all', dancers=all_dancers, master_table=true %}
-                {% include 'organizer/_registration_dropdown_table.html' %}
-            {% endwith %}
+            <table id='table-all' class="table table-sm table-hover">
+                <colgroup>
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 15%;">
+                    <col span="1" style="width: 15%;">
+                    <col span="1" style="width: 23%;">
+                    <col span="1" style="width: 8%;">
+                    <col span="1" style="width: 8%;">
+                    <col span="1" style="width: 8%;">
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 8%;">
+                    <col span="1" style="width: 5%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="2" style="font-weight: normal;"><input class="form-control" type="text" id="table-all-filterNameInput" onkeyup="filter('table-all')" placeholder="Name..."></th>
+                    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="table-all-filterTeamInput" onkeyup="filter('table-all')" placeholder="Team..."></th>
+                    <th colspan="1" style="font-weight: normal;"></th>
+                    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="table-all-filterStatusInput" onkeyup="filter('table-all')" placeholder="Status..."></th>
+                    <th colspan="1" style="font-weight: normal;"></th>
+                    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="table-all-filterBallroomLevelInput" onkeyup="filter('table-all')" placeholder="Level..."></th>
+                    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="table-all-filterBallroomRoleInput" onkeyup="filter('table-all')" placeholder="Role..."></th>
+                    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="table-all-filterLatinLevelInput" onkeyup="filter('table-all')" placeholder="Level..."></th>
+                    <th colspan="1" style="font-weight: normal;"><input class="form-control" type="text" id="table-all-filterLatinRoleInput" onkeyup="filter('table-all')" placeholder="Role..."></th>
+                </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Team</th>
+                    <th>E-mail</th>
+                    <th>Status</th>
+                    <th>Student</th>
+                    <th>Ballroom</th>
+                    <th>Role</th>
+                    <th>Latin</th>
+                    <th>Role</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for dancer in all_dancers %}
+                <tr class="clickable-row" data-href="{{url_for('organizer.view_dancer', number=dancer.contestant_id)}}">
+                    <td>{{ dancer.contestant_info.number }}</td>
+                    <td>{{ dancer.get_full_name() }}</td>
+                    {% if g.sc.tournament == g.data.NTDS %}
+                    <td>{{ dancer.contestant_info.team }}</td>
+                    {% else %}
+                    <td>{{ dancer.contestant_info.team.city }}</td>
+                    {% endif %}
+                    <td>{{ dancer.email }}</td>
+                    <td>{{ g.data.STATUS[dancer.status_info.status] }}</td>
+                    <td>{{ g.data.STUDENT_TEXT[dancer.contestant_info.student] }}</td>
+                    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
+                    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
+                    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
+                    <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         {% else %}
             <h2>There are no registered dancers.</h2>
         {% endif %}
@@ -44,13 +100,23 @@ function callFilter(team_name) {
 }
 function filter(name) {
     // Declare variables
-    var input, filter, table, tr, td, i;
+    var input, filter, table, tr, tdn, tdt, tds, tdbl, tdbr, tdll, tdlr, i;
     input_name = document.getElementById(name+"-filterNameInput");
     filter_name = input_name.value.toUpperCase();
     input_team = document.getElementById(name+"-filterTeamInput");
     filter_team = input_team.value.toUpperCase();
     input_status = document.getElementById(name+"-filterStatusInput");
     filter_status = input_status.value.toUpperCase();
+
+    input_ballroom_level = document.getElementById(name+"-filterBallroomLevelInput");
+    filter_ballroom_level = input_ballroom_level.value.toUpperCase();
+    input_ballroom_role = document.getElementById(name+"-filterBallroomRoleInput");
+    filter_ballroom_role = input_ballroom_role.value.toUpperCase();
+    input_latin_level = document.getElementById(name+"-filterLatinLevelInput");
+    filter_latin_level = input_latin_level.value.toUpperCase();
+    input_latin_role = document.getElementById(name+"-filterLatinRoleInput");
+    filter_latin_role = input_latin_role.value.toUpperCase();
+
     table = document.getElementById(name);
     tr = table.getElementsByTagName("tr");
     let tab = document.getElementById("all_teams-tab");
@@ -59,11 +125,15 @@ function filter(name) {
 
     // Loop through all table rows, and hide those who don't match the search query
     for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[1];
-        td2 = tr[i].getElementsByTagName("td")[2];
-        td4 = tr[i].getElementsByTagName("td")[4];
-        if (td && td2 && td4) {
-            if (td.innerHTML.toUpperCase().indexOf(filter_name) > -1 && td2.innerHTML.toUpperCase().indexOf(filter_team) > -1 && td4.innerHTML.toUpperCase().indexOf(filter_status) > -1) {
+        tdn = tr[i].getElementsByTagName("td")[1];
+        tdt = tr[i].getElementsByTagName("td")[2];
+        tds = tr[i].getElementsByTagName("td")[4];
+        tdbl = tr[i].getElementsByTagName("td")[6];
+        tdbr = tr[i].getElementsByTagName("td")[7];
+        tdll = tr[i].getElementsByTagName("td")[8];
+        tdlr = tr[i].getElementsByTagName("td")[9];
+        if (tdn && tdt && tds && tdbl && tdbr && tdll && tdlr) {
+            if (tdn.innerHTML.toUpperCase().indexOf(filter_name) > -1 && tdt.innerHTML.toUpperCase().indexOf(filter_team) > -1 && tds.innerHTML.toUpperCase().indexOf(filter_status) > -1 && tdbl.innerHTML.toUpperCase().indexOf(filter_ballroom_level) > -1 && tdbr.innerHTML.toUpperCase().indexOf(filter_ballroom_role) > -1 && tdll.innerHTML.toUpperCase().indexOf(filter_latin_level) > -1 && tdlr.innerHTML.toUpperCase().indexOf(filter_latin_role) > -1) {
                 tr[i].style.display = "";
                 counter++
             } else {
