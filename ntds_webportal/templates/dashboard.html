@@ -99,7 +99,7 @@ onload="onStart()"
 </div>
 <h2>Pre-tournament</h2>
 <div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', loading_screen=true, title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', loading_screen=true, title='Finances', text='Overview of payment data of the dancers that have been confirmed for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% if g.sc.merchandise() is sameas true %}
@@ -107,7 +107,7 @@ onload="onStart()"
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of confirmed dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.diet_allergies', title='Diet/Allergies', text='Get a list of all allergies and dietary wishes of dancers and Super Volunteers.', image='food.png' %}

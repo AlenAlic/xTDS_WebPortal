@@ -437,8 +437,8 @@ def sleeping_hall():
               'number_of_dancers': db.session.query(Contestant).join(ContestantInfo, StatusInfo, AdditionalInfo)
              .filter(ContestantInfo.team == team_captain.team, StatusInfo.status == CONFIRMED,
                      AdditionalInfo.sleeping_arrangements.is_(True)).count()} for team_captain in team_captains]
-    super_volunteers = len(SuperVolunteer.query.all())
-    total = sum([team['number_of_dancers'] for team in teams]) + super_volunteers
+    super_volunteers = SuperVolunteer.query.filter(SuperVolunteer.sleeping_arrangements.is_(True)).all()
+    total = sum([team['number_of_dancers'] for team in teams]) + len(super_volunteers)
     form = request.args
     if 'download_file' in form:
         fn = f'sleeping_hall_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
