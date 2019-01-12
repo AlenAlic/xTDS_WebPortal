@@ -49,27 +49,31 @@ body { background-color:#ffdcdc;}
 {% endif %}
 
 /* Print tools */
-.pagebreak { page-break-before: always; }
-.print-friendly { page-break-inside:avoid; page-break-after:auto }
-tr    { page-break-inside:avoid; page-break-after:auto }
-td    { page-break-inside:avoid; page-break-after:auto }
-thead { display:table-header-group }
-tfoot { display:table-footer-group }
-@media print {.no-print, .no-print * {display: none !important; } }
+@page               {size: 210mm 297mm; margin: 15mm 15mm 15mm 15mm;}
+.pagebreak          {page-break-before: always;}
+.print-block        {page-break-after:always;}
+.print-friendly     {page-break-inside:avoid; page-break-after:auto}
+tr                  {page-break-inside:avoid; page-break-after:auto}
+td                  {page-break-inside:avoid; page-break-after:auto}
+thead               {display:table-header-group}
+tfoot               {display:table-footer-group}
+@media print        {.no-print, .no-print * {display:none !important;}}
 
 /* Misc. */
-checkbox {cursor: pointer}
-.decorative-checkbox {cursor: default !important}
-.checkbox-row {cursor: pointer}
-.thumbnail.info {background-color:#d9edf7; }
-.container-hidden {visibility:hidden;}
-.notification-text {white-space: pre-line;}
+checkbox                        {cursor:pointer}
+.decorative-checkbox            {cursor:default !important}
+.checkbox-row                   {cursor:pointer}
+.thumbnail.info                 {background-color:#d9edf7; }
+.container-hidden               {visibility:hidden;}
+.notification-text              {white-space:pre-line;}
+.clickable, .clickable-row      {cursor:pointer;}
+.nav-link.disabled              {cursor:default;}
 
 /* API coloring for team captain "Edit Finances" tab */
-.api-pending {background-color:var(--info) !important;}
-.api-success {background-color:var(--success) !important;}
-.api-warning {background-color:var(--warning) !important;}
-.api-failed {background-color: #ffdcdc !important;}
+.api-pending    {background-color:var(--info) !important;}
+.api-success    {background-color:var(--success) !important;}
+.api-warning    {background-color:var(--warning) !important;}
+.api-failed     {background-color: #ffdcdc !important;}
 </style>
 {% endblock %}
 
@@ -123,16 +127,7 @@ checkbox {cursor: pointer}
     {% if g.sc.website_accessible is sameas false and current_user.is_authenticated is sameas true %}
     <h1 style="color:#000000; text-align:center;">MAINTENANCE MODE</h1>
     {% endif %}
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert {% if category=='message' %}alert-info{% else %}{{ category }}{% endif %} alert-dismissible mt-3" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+    {{ flash_messages() }}
 
     {% block app_content %}
     {% endblock %}
@@ -147,13 +142,26 @@ checkbox {cursor: pointer}
 <script type="text/javascript" src="{{url_for('static', filename='loading/loading.js')}}"></script>
 <script>
 $(document).ready(function($) {
-    $(".clickable-row").css("cursor", "pointer")
     $(".clickable-row").click(function() {
         window.location = $(this).data("href");
     });
 });
 </script>
 {% endblock %}
+
+
+{% macro flash_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert {% if category=='message' %}alert-info{% else %}{{ category }}{% endif %} alert-dismissible mt-2" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+{% endmacro %}
 
 
 {% macro react() %}

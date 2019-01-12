@@ -54,13 +54,10 @@ visibility:hidden
         </tbody>
     </table>
 </div>
-<!--<form method="GET" enctype="multipart/form-data" novalidate>-->
-    <!--<input class="btn btn-outline-secondary float-right" id="submit-download_file" name="download_file" type="submit" value="Download list">-->
-<!--</form>-->
 <div id="changes-warning" style="text-align:center;display:none;"><h3 class="float-center">Remember to save your changes</h3></div>
 <form id="breakdown-form" method="POST" enctype="multipart/form-data" novalidate>
-    <button class="btn btn-outline-secondary no-print" onclick="printSummary()">Print summary</button>
-    <button class="btn btn-outline-secondary no-print ml-2" onclick="printPage()">Print everything</button>
+    <button class="btn btn-outline-secondary no-print" type="button" onclick="printSummary()">Print summary</button>
+    <button class="btn btn-outline-secondary no-print ml-2" type="button" onclick="printPage()">Print everything</button>
     <input class="btn btn-primary no-print float-right" id="submit" name="submit" type="submit" value="Save changes">
     <table class="table table-sm mt-2" id="diet-table">
     <colgroup>
@@ -116,8 +113,7 @@ function getNotes() {
     for (i = 0; i < tr.length; i++) {
         td = tr[i].getElementsByTagName("td")[2]
         if (td) {
-            tdInput = notesFilter(td.querySelector('.form-control').value);
-            notesList.push(...tdInput);
+            notesList.push(td.querySelector('.form-control').value);
         }
     }
     let container = document.getElementById("changes-warning");
@@ -126,12 +122,6 @@ function getNotes() {
     populateTable(count(notesList));
 }
 compareArrays = (array1, array2) => array1.length === array2.length && array1.sort().every(function(value, index) { return value === array2.sort()[index]})
-function notesFilter(value) {
-    if (value.trim() == "") {return []}
-    valueList = value.split(",")
-    valueList = valueList.map(string => string.trim())
-    return valueList
-}
 function count(arr) {
     return arr.reduce((prev, curr) => (prev[curr] = ++prev[curr] || 1, prev), {})
 }
@@ -143,16 +133,19 @@ function populateTable(dict) {
         table.removeChild(table.childNodes[0]);
     }
 
+    ordered_keys = Object.keys(dict)
+    ordered_keys.sort()
+
     let count = 0;
-    for (d in dict) {
-        if (d != "") {
+    for (d in ordered_keys) {
+        if (ordered_keys[d] != "") {
             tr = table.insertRow();
             categoryCell = tr.insertCell();
-            categoryCell.innerHTML = d;
+            categoryCell.innerHTML = ordered_keys[d];
             countCell = tr.insertCell();
             countCell.style.textAlign="right"
-            countCell.innerHTML = dict[d];
-            count += dict[d]
+            countCell.innerHTML = dict[ordered_keys[d]];
+            count += dict[ordered_keys[d]]
         }
     }
 

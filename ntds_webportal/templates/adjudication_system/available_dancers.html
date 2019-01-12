@@ -1,0 +1,102 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+<h2>{{ g.event }} - Dancers</h2>
+<h3>Import dancers from registration</h3>
+<p>Import all confirmed dancers in their respective role from the registration data.</p>
+<form class="form mb-3" method="GET" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-outline-primary loading-btn" id="import_dancers" name="import_dancers" type="submit" value="Import dancers">
+</form>
+{% if g.ts.dancers_imported %}
+<p>Dancers have been imported from the registration data at least once.</p>
+{% endif %}
+<h3>Create dancer</h3>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.contestant) }}
+    {{ wtf.form_field(form.role) }}
+    {{ wtf.form_field(form.submit) }}
+</form>
+<h3 class="mt-3">Dancers in system (<span id="couples-total">{{dancers|length}}</span>)</h3>
+<table id="dancers-table" class="table table-sm">
+    <colgroup>
+        <col span="1" style="width: 6%;">
+        <col span="1" style="width: 22%;">
+        <col span="1" style="width: 8%;">
+        <col span="1" style="width: 26%;">
+        <col span="1" style="width: 30%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="2"><input class="form-control" type="text" id="dancers-table-filterNameInput" onkeyup="filter('dancers-table')" placeholder="Name..."></th>
+            <th><input class="form-control" type="text" id="dancers-table-filterRoleInput" onkeyup="filter('dancers-table')" placeholder="Role..."></th>
+            <th><input class="form-control" type="text" id="dancers-table-filterTeamInput" onkeyup="filter('dancers-table')" placeholder="Team..."></th>
+            <th><input class="form-control" type="text" id="dancers-table-filterPartnerInput" onkeyup="filter('dancers-table')" placeholder="Partners/Competitions..."></th>
+        </tr>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Team</th>
+            <th>Partners/Competitions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dancer in dancers|sort(attribute='number') %}
+        <tr class="clickable-row" data-href="{{url_for('adjudication_system.edit_dancer', dancer_id=dancer.dancer_id)}}">
+            <td>{{dancer.number}}</td>
+            <td>{{dancer.name}}</td>
+            <td>{{dancer.role}}</td>
+            <td>{{dancer.team}}</td>
+            <td>{%- for partner in dancer.partners() -%}
+                    {% if not loop.first %}<br/>{% endif %}
+                    {#{{partner[0].number}}-#}{{partner[0].name}}
+                    {%- if partner[1]|length > 0 %} ({%- for p in partner[1] -%}{{p}}{{ ", " if not loop.last }}{%- endfor -%}){%- endif -%}
+                    {{ ", " if not loop.last }}
+                {%- endfor -%}
+                {%- if dancer.competitions()|length > 0 -%}{% if dancer.partners()|length > 0 %}<br/>{% endif %}Single dancer in: {% for c in dancer.competitions() -%}{{c}}{{ ", " if not loop.last }}{%- endfor -%}{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function filter(name) {
+    // Declare variables
+    let input, filter, table, tr, i, tdn, tdr, tdt, tdp;
+    input_name = document.getElementById(name+"-filterNameInput");
+    filter_name = input_name.value.toUpperCase();
+    input_role = document.getElementById(name+"-filterRoleInput");
+    filter_role = input_role.value.toUpperCase();
+    input_team = document.getElementById(name+"-filterTeamInput");
+    filter_team = input_team.value.toUpperCase();
+    input_partner = document.getElementById(name+"-filterPartnerInput");
+    filter_partner = input_partner.value.toUpperCase();
+    table = document.getElementById(name);
+    tr = table.getElementsByTagName("tr");
+    let total = document.getElementById("couples-total");
+    let counter = 0
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        tdn = tr[i].getElementsByTagName("td")[1];
+        tdr = tr[i].getElementsByTagName("td")[2];
+        tdt = tr[i].getElementsByTagName("td")[3];
+        tdp = tr[i].getElementsByTagName("td")[4];
+        if (tdn && tdr && tdt && tdp) {
+            if (tdn.innerHTML.toUpperCase().indexOf(filter_name) > -1 && tdr.innerHTML.toUpperCase().indexOf(filter_role) > -1 && tdt.innerHTML.toUpperCase().indexOf(filter_team) > -1 && tdp.innerHTML.toUpperCase().indexOf(filter_partner) > -1) {
+                tr[i].style.display = "";
+                counter++
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+    total.innerHTML = counter
+}
+</script>
+{% endblock %}

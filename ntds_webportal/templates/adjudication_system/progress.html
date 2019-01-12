@@ -1,0 +1,324 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block body_attribs %}
+{{super()}}
+onload="onStart()"
+{% endblock %}
+
+{% macro round_result(result) %}
+<tr>
+    <td><input type="checkbox" onchange="update()" id="{{result.couple.couple_id}}" name="{{result.couple.couple_id}}" checked {% if dancing_round.has_next_round() %}disabled{% endif %}></td>
+    <td>{{result.couple.number}}</td>
+    <td>{{result.placing}}</td>
+    <td>{% if result.marks > -1 %}{{result.marks}}{% endif %}</td>
+    <td>{{result.couple.lead}}</td>
+    <td>{{result.couple.follow}}</td>
+    <td>{% if result.couple.lead.team == result.couple.follow.team %}{{result.couple.lead.team}}{% else %}{{result.couple.lead.team}} / {{result.couple.follow.team}}{% endif %}</td>
+</tr>
+{% endmacro %}
+
+{% block app_content %}
+<h2>{{dancing_round.competition.event}} / {{dancing_round.competition}} / {{dancing_round.type.value}}</h2>
+{% if dancing_round.first_round_after_qualification_split() or dancing_round.is_completed() %}
+    <h3 class="mt-4">Configure next round</h3>
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        <div class="row">
+            <div class="col-{% if dancing_round.is_qualification() is sameas true %}12{% else %}8{% endif %}">
+                <table id="dancers-tables" class="{% if dancing_round.is_qualification() is sameas true %}table-striped{% endif %} table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Starting</th>
+                            <th scope="col">#</th>
+                            {% if not dancing_round.first_round_after_qualification_split() %}
+                            <th scope="col">Placing</th>
+                            <th scope="col">Crosses</th>
+                            {% endif %}
+                            <th scope="col">Lead</th>
+                            <th scope="col">Follow</th>
+                            <th scope="col">Team{% if not dancing_round.competition.is_change_per_dance() %}(s){% endif %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if dancing_round.first_round_after_qualification_split() %}
+                            {% for couple in dancing_round.couples|sort(attribute='number') %}
+                            <tr>
+                                <td><input type="checkbox" onchange="update()" id="{{couple.couple_id}}" name="{{couple.couple_id}}" checked {% if dancing_round.has_next_round() %}disabled{% endif %}></td>
+                                <td>{{couple.number}}</td>
+                                <td>{{couple.lead}}</td>
+                                <td>{{couple.follow}}</td>
+                                <td>{% if couple.lead.team == couple.follow.team %}{{couple.lead.team}}{% else %}{{couple.lead.team}} / {{couple.follow.team}}{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            {% if dancing_round.competition.is_change_per_dance() %}
+                                {% for dancer in dancing_round.change_per_dance_dancers_rows() %}
+                                <tr>
+                                    <td><input type="checkbox" onchange="update()" id="{{dancer['dancer'].dancer_id}}" name="{{dancer['dancer'].dancer_id}}" checked {% if dancing_round.has_next_round() %}disabled{% endif %}></td>
+                                    <td>{{dancer['dancer'].number}}</td>
+                                    <td>{{dancer['placing']}}</td>
+                                    <td>{% if dancer['crosses'] > -1 %}{{dancer['crosses']}}{% endif %}</td>
+                                    <td>{% if dancer['lead'] %}{{dancer['dancer'].name}}{% endif %}</td>
+                                    <td>{% if dancer['follow'] %}{{dancer['dancer'].name}}{% endif %}</td>
+                                    <td>{{dancer['dancer'].team}}</td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                {% if dancing_round.is_final() %}
+                                    {% for c in dancing_round.couples|sort(attribute='number') %}
+                                        <tr>
+                                            <td><input type="checkbox" onchange="update()" id="{{c.couple_id}}" name="{{c.couple_id}}" checked {% if dancing_round.has_next_round() %}disabled{% endif %}></td>
+                                            <td>{{c.number}}</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>{{c.lead}}</td>
+                                            <td>{{c.follow}}</td>
+                                            <td>{% if c.lead.team == c.follow.team %}{{c.lead.team}}{% else %}{{c.lead.team}} / {{c.follow.team}}{% endif %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    {% set groups = dancing_round.round_results|groupby('marks') %}
+                                    {% for grouper, result_list in groups %}
+                                        {% if grouper == -1 %}
+                                            {% for result in result_list|sort(attribute='couple.number') %}
+                                                {{ round_result(result) }}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for result_list in groups|sort(attribute=0, reverse=true) %}
+                                        {% if result_list.grouper > -1 %}
+                                            {% for result in result_list.list|sort(attribute='couple.number') %}
+                                                {{ round_result(result) }}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            {% if not dancing_round.has_next_round() %}
+            <div class="col-{% if dancing_round.is_qualification() is sameas true %}12{% else %}4{% endif %} pr-5">
+                {% if not dancing_round.is_qualification() %}
+                <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                    {{ round_form.hidden_tag() }}
+                    {{ wtf.form_field(round_form.type, onchange="update()") }}
+                    {{ wtf.form_field(round_form.dances) }}
+                    {% if not dancing_round.first_round_after_qualification_split() %}
+                    <div class="form-group required">
+                        <label>Cutoff for next round (<span id="cutoff-couples">0</span> couples)</label>
+                        {{round_form.cutoff(class_="form-control", onchange="update()")}}
+                        <small class="text-muted">Couples <span id="cutoff-above-below">at or above</span> this cutoff will dance the next round</small>
+                    </div>
+                    {% endif %}
+                    <div id="marks-heats-container">
+                        <div class="form-row mb-3">
+                            <div class="col-12">
+                                <label>Target marks</label>
+                            </div>
+                            <div class="col-auto">
+                                {{ round_form.min_marks(class_="form-control", onchange="update()", onclick="update()", onkeyup="update()") }}
+                            </div>
+                            <div class="col-auto" style="line-height:calc(2.25rem + 2px);">
+                                 to
+                            </div>
+                            <div class="col-auto">
+                                {{ round_form.max_marks(class_="form-control", onchange="update()", onclick="update()", onkeyup="update()") }}
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="col-12">
+                                <label>Heats</label>
+                            </div>
+                            <div class="col-auto">
+                                {{ round_form.heats(class_="form-control", onchange="update()", onclick="update()", onkeyup="update()") }}
+                            </div>
+                            <div class="col-auto" style="line-height:calc(2.25rem + 2px);">
+                                of up to <span id="couples-per-heat"></span> couples each
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
+                <div role="group" class="my-4">
+                    {% if dancing_round.first_round_after_qualification_split() is sameas true %}
+                    <button class="btn btn-primary mr-5" name="configure">Configure round</button>
+                    <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#modal-delete">Delete round</button>
+                    {% elif dancing_round.is_qualification() is sameas true %}
+                        {% if dancing_round.is_split() %}
+                        <div>The qualification is already split. If you wish re-do it, delete the rounds generated by the split first.</div>
+                        {% else %}
+                        <button class="btn btn-primary mr-5" name="split">Split into competitions</button>
+                        <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#modal-delete">Delete round</button>
+                        {% endif %}
+                    {% else %}
+                    <button class="btn btn-primary mr-5" name="configure">Configure next round</button>
+                    <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#modal-delete">Delete round</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </form>
+    <script>
+    onStart = () => {update();}
+    {% if dancing_round.first_round_after_qualification_split() is sameas true %}
+    update = () => {
+        let couples = document.getElementById("dancers-tables").querySelectorAll('input[type="checkbox"]:checked').length
+
+        // Couples per heat
+        const couples_span = document.getElementById("couples-per-heat")
+        let heats = document.getElementById("heats").value
+        if (heats != "" && heats != "0") {couples_span.innerHTML = Math.ceil(couples/heats)}
+        else {couples_span.innerHTML = 0}
+    }
+    {% else %}
+    update = () => {
+        // Cutoff
+        const couples_cutoff_span = document.getElementById("cutoff-couples")
+        const couples_ab = document.getElementById("cutoff-above-below")
+        let cutoff_value = document.getElementById("cutoff").value;
+        let rows = document.getElementById("dancers-tables").getElementsByTagName("tr");
+        let counter = 0
+        let checkbox
+        let couples = document.getElementById("dancers-tables").querySelectorAll('input[type="checkbox"]:checked').length
+        let type = document.getElementById("type").options[document.getElementById("type").selectedIndex].value
+        if (parseInt(cutoff_value) != -1) {
+            for (i = 0; i < rows.length; i++) {
+                checkbox = rows[i].querySelectorAll('input[type="checkbox"]:checked')
+                rows[i].style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue("--white");
+                if (type != "re_dance") {
+                    if (checkbox.length == 1 && (parseInt(rows[i].getElementsByTagName("td")[3].innerHTML) >= parseInt(cutoff_value) || rows[i].getElementsByTagName("td")[3].innerHTML == "")) {
+                    counter++;
+                    rows[i].style.backgroundColor = "#d9edf7";
+                    }
+                } else {
+                    if (checkbox.length == 1 && parseInt(rows[i].getElementsByTagName("td")[3].innerHTML) < parseInt(cutoff_value)) {
+                    counter++;
+                    rows[i].style.backgroundColor = "#d9edf7";
+                    }
+                }
+            }
+        } else {
+            for (i = 1; i < rows.length; i++) {
+                checkbox = rows[i].querySelectorAll('input[type="checkbox"]:checked')
+                if (checkbox.length == 1) {rows[i].style.backgroundColor = "#d9edf7";}
+                else {rows[i].style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue("--white");}
+            }
+            counter = couples
+        }
+        {% if dancing_round.competition.is_change_per_dance() %}
+        counter = counter / 2
+        {% endif %}
+        couples_cutoff_span.innerHTML = counter
+        if (type != "re_dance") {
+            couples_ab.innerHTML = "at or above"
+        } else {
+            couples_ab.innerHTML = "below"
+        }
+
+        // Display heats/marks
+        const next_round_type =  document.getElementById("type")
+        const marks_heats = document.getElementById("marks-heats-container")
+        if (next_round_type.options[next_round_type.selectedIndex].value == "final") {marks_heats.style.display = 'none';}
+        else {marks_heats.style.display = 'block';}
+
+        couples = counter
+
+        // Couples per heat
+        const couples_span = document.getElementById("couples-per-heat")
+        let heats = document.getElementById("heats").value
+        if (heats != "" && heats != "0") {couples_span.innerHTML = Math.ceil(couples/heats)}
+        else {couples_span.innerHTML = 0}
+    }
+    {% endif %}
+    </script>
+{% else %}
+    {% set dance_heat_list = dancing_round.dance_heat_list() %}
+    <table class="table-striped table-sm">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Lead</th>
+                <th scope="col">Follow</th>
+                <th scope="col">Team{% if not dancing_round.competition.is_change_per_dance() %}(s){% endif %}</th>
+                {% if not dancing_round.has_one_heat() %}
+                    {% for dance in dancing_round.dances %}
+                    <th scope="col">{{dance.tag}}</th>
+                    {% endfor %}
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% if dancing_round.competition.is_change_per_dance() %}
+                {% for couple in dancing_round.couples|sort(attribute='number') %}
+                <tr>
+                    <td>{{couple.lead.number}}</td>
+                    <td>{{couple.lead}}</td>
+                    <td></td>
+                    <td>{{couple.lead.team}}</td>
+                    {% if not dancing_round.has_one_heat() %}
+                        {% for dance in dancing_round.dances %}
+                        <td>{{dance_heat_list[dance.tag][couple.number]}}</td>
+                        {% endfor %}
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                {% for couple in dancing_round.couples|sort(attribute='follow.number') %}
+                <tr>
+                    <td>{{couple.follow.number}}</td>
+                    <td></td>
+                    <td>{{couple.follow}}</td>
+                    <td>{{couple.follow.team}}</td>
+                    {% if not dancing_round.has_one_heat() %}
+                        {% for dance in dancing_round.dances %}
+                        <td>{{dance_heat_list[dance.tag][couple.number]}}</td>
+                        {% endfor %}
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            {% else %}
+                {% for couple in dancing_round.couples|sort(attribute='number') %}
+                <tr>
+                    <td>{{couple.number}}</td>
+                    <td>{{couple.lead}}</td>
+                    <td>{{couple.follow}}</td>
+                    <td>{% if couple.lead.team == couple.follow.team %}{{couple.lead.team}}{% else %}{{couple.lead.team}} / {{couple.follow.team}}{% endif %}</td>
+                    {% if not dancing_round.has_one_heat() %}
+                        {% for dance in dancing_round.dances %}
+                        <td>{{dance_heat_list[dance.tag][couple.number]}}</td>
+                        {% endfor %}
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        <div role="group" class="my-4">
+            <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#modal-delete">Delete round</button>
+        </div>
+    </form>
+    <script>onStart = () => {}</script>
+{% endif %}
+<div align="left" class="modal fade" id="modal-delete" tabindex="-1" role="dialog" aria-labelledby="modal-delete" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">WARNING!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you really wish to delete the data of {{dancing_round}} (heats, marks, etc.)?</p>
+                <p>This is IRREVERSIBLE, and the data will be LOST FOREVER!</p>
+            </div>
+            <form method="POST" enctype="multipart/form-data" novalidate>
+            <div class="modal-footer">
+                <button name="delete" class="btn btn-primary">Yes, delete {{dancing_round}}</button>
+                <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, cancel</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

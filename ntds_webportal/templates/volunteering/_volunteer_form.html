@@ -55,8 +55,10 @@
             {% if current_user.is_super_volunteer() or current_user.is_anonymous %}
             <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Register{% endif %}">
             <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
-            {% else %}
+            {% elif request.path[:31] == '/organizer/view_super_volunteer' %}
             <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.volunteers') }}">Return to overview</a>
+            {% else %}
+            <a role="button" class="btn btn-outline-secondary" href="{{ url_for('main.dashboard') }}">Return to dashboard</a>
             {% endif %}
         </div>
     </div>

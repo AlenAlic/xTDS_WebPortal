@@ -1,0 +1,43 @@
+{% extends 'adjudication_system/floor_manager_base.html' %}
+
+{% block styles %}
+{{ super() }}
+<style>
+.couple-number-label        {line-height:calc(2.25rem + 2px);}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<h2>{{dancing_round.competition.event}} / {{dancing_round.competition}} / {{dancing_round.type.value}}</h2>
+<button class="btn btn-outline-success mt-3 mb-4" onclick="location.reload(true);">Refresh</button>
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        {% for dance in dancing_round.dances %}
+            <a class="nav-item nav-link {% if request.args.get('dance_id')|int == dance.dance_id|int %}active{% endif %}" href="{{url_for('adjudication_system.floor_manager', round_id=dancing_round.round_id, dance_id=dance.dance_id)}}">{{dance}}</a>
+        {% endfor %}
+    </div>
+</nav>
+{% for heat in dancing_round.heats %}
+    {% if heat.dance == dance %}
+        <h4>{{heat.dance}} / Heat {{heat.number}}</h4>
+        {% for present in heat.couples_present|sort(attribute='couple.number') %}
+            <div class="form-check form-check-inline mb-3 mr-4">
+                <input class="form-check-input mx-2" type="checkbox" name="{{present.couple_present_id}}" id="{{present.couple_present_id}}" onclick="presentAPI(this.id)" {% if present.present is sameas true %}checked{% endif %}>
+                <label class="form-check-label mx-2 couple-number-label" for="{{present.couple_present_id}}"><b>{{present.couple.number}}</b></label>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+presentAPI = present_id => {
+    fetch("/adjudication_system/api/present/" + present_id + "/present", {method: "PATCH"})
+    .then(function(response) {return response.json();})
+    .then(function(result) {})
+    .catch(function(error) {console.log('Error: \n', error); });
+}
+</script>
+{% endblock %}

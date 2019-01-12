@@ -1,0 +1,21 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+{% import 'my_inline_wtf.html' as inline_wtf %}
+
+{% block app_content %}
+<h2>{{ g.event }}</h2>
+<h2>Edit discipline</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ discipline_form.hidden_tag() }}
+    <div class="form-row">
+        <div class="col-12 col-md-4">
+            {{ inline_wtf.form_field(discipline_form.name) }}
+        </div>
+        <div class="col-12 col-md-8">
+            {{ inline_wtf.form_field(discipline_form.dances) }}
+        </div>
+    </div>
+    <button class="btn btn-primary mr-2" type="submit" name="save_changes">Save changes</button>
+    <button class="btn btn-danger mr-2" type="submit" name="delete_discipline" {% if not discipline.deletable() %}disabled{% endif%}>Delete discipine</button>
+    <a role="button" class="btn btn-outline-secondary" href="{{url_for('adjudication_system.disciplines')}}">Cancel</a>
+</form>
+{% endblock %}

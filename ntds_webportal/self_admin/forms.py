@@ -84,7 +84,6 @@ class SystemSetupForm(SystemSetupTournamentForm):
                                           validators=[NumberRange(1, 2)], default=1)
 
     beginners_level = SelectField(ASK_LEVEL.format(level=BEGINNERS), choices=[(k, v) for k, v in YN.items()])
-    champions_level = SelectField(ASK_LEVEL.format(level=CHAMPIONS), choices=[(k, v) for k, v in YN.items()])
     closed_level = SelectField(ASK_LEVEL.format(level=CLOSED), choices=[(k, v) for k, v in YN.items()])
     breitensport_obliged_blind_date = SelectField(f"Is there a cutoff where {BREITENSPORT} dancers must Blind Date?",
                                                   choices=[(k, v) for k, v in YN.items()])

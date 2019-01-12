@@ -16,12 +16,12 @@
                 <th colspan="2" style="font-size:large;text-align:right;"></th>
             </tr>
             <tr>
-                <th><b>#</b></th>
-                <th><b>Name</b></th>
-                <th><b>#</b></th>
-                <th><b>Name</b></th>
-                <th><b>Level</b></th>
-                <th><b>{% if show_break_up_button is sameas false %}Received number{% endif %}</b></th>
+                <th>#</th>
+                <th>Name</th>
+                <th>#</th>
+                <th>Name</th>
+                <th>Level</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -47,8 +47,6 @@
                         {% if show_break_up_button is sameas true %}
                         <input type="button" class="btn btn-warning btn-sm" {% if couple['lead'].status_info.status == g.data.SELECTED or couple['lead'].status_info.status == g.data.CONFIRMED %}disabled{% endif %}
                         onclick="location.href='{{ url_for('teamcaptains.break_up_couple', competition=category, lead_id=couple['lead'].contestant_id, follow_id=couple['follow'].contestant_id ) }}';" value="Break up couple" />
-                        {% else  %}
-                        <input class="checkbox decorative-checkbox" type="checkbox" disabled {% if couple['lead'].status_info.received_starting_number == true %}checked{% endif %}>
                         {% endif %}
                     </td>
                 </tr>

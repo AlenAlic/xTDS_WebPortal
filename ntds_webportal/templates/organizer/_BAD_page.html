@@ -2,7 +2,7 @@
     <a href="{{url_for('organizer.bad')}}?{{name}}" style="text-decoration:none;color:black;">
         <div class="card my-2 thumbnail-same-height" >
             <img src="{{url_for('static', filename='BAD/'+image)}}" class="card-img-top mx-auto" style="max-width: 128px; max-height: 128px; margin-top: 8px;">
-            <div class="card-body" style="text-align: center;">
+            <div class="card-body  pb-2" style="text-align: center;">
                 <h3 class="card-title">{{ title }}</h3>
                 {% if text is defined %}
                     <p class="card-text">{{ text }}</p>

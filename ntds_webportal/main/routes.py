@@ -66,6 +66,8 @@ def dashboard():
         if finalize_merchandise:
             flash("Please check the merchandise tab. The last date for ordering merchandise has passed.")
         return render_template('dashboard.html', finalize_merchandise=finalize_merchandise)
+    if current_user.is_floor_manager():
+        return redirect(url_for('adjudication_system.floor_manager_start_page'))
     return render_template('dashboard.html')
 
 

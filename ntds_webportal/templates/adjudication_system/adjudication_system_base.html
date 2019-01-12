@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block html_attribs %}style="height:100%"{% endblock html_attribs %}
+{% block body_attribs %}style="height:100%"{% endblock body_attribs %}
+{% block navbar %}{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+@media only print       {.no-print, .no-print * {display:none !important; } .center-container {flex: 0 0 100% !important; max-width:100% !important; overflow:visible !important;} h2 {display:none;}}
+</style>
+{% endblock %}
+
+{% set event_active = request.path == '/adjudication_system/event'
+    or request.path == '/adjudication_system/dances' or request.path[:31] == '/adjudication_system/edit_dance'
+    or request.path == '/adjudication_system/disciplines' or request.path[:36] == '/adjudication_system/edit_discipline'
+    or request.path == '/adjudication_system/dancing_classes' or request.path[:39] == '/adjudication_system/edit_dancing_class'
+    or request.path == '/adjudication_system/available_adjudicators' or request.path == '/adjudication_system/adjudicator_assignments'
+    or request.path == '/adjudication_system/available_dancers'
+    or request.path == '/adjudication_system/available_couples' or request.path[:32] == '/adjudication_system/edit_couple'
+%}
+
+{% block content %}
+<div class="row mx-0" style="height:100%">
+    <div class="col-2 px-4 pt-3 no-print" style="background:var(--light); overflow-y:auto;">
+        <ul class="nav flex-column nav-pills" id="pills-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link btn btn-outline-primary" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
+            </li>
+            {% if g.event is not none %}
+                <li class="nav-item mt-3">
+                    <a class="nav-link {% if event_active %}active{% endif %}" href="{{url_for('adjudication_system.event')}}" style="font-size:x-large;"><b>{{g.event}}</b></a>
+                </li>
+            {% else %}
+                <li class="nav-item mt-3">
+                    <a class="nav-link {% if event_active %}active{% endif %}" href="{{url_for('adjudication_system.event')}}" style="font-size:x-large;"><b>New event</b></a>
+                </li>
+            {% endif %}
+            {% if g.competitions is not none %}
+                {% for competition in g.competitions|sort(attribute='when') %}
+                    <li class="nav-item py-0">
+                        <a class="nav-link py-1 {% if request.args.get('competition_id')|int == competition.competition_id %}active{% endif %}" {% if competition.is_configurable() %}href="{{url_for('adjudication_system.competition', competition_id=competition.competition_id)}}"{% endif %} style="font-size:large;"><b>{{competition}}</b></a>
+                    </li>
+                    {% for round in competition.rounds %}
+                        <li class="nav-item py-0">
+                            <a class="nav-link py-0 {% if request.args.get('round_id')|int == round.round_id %}active{% endif %}" href="{{url_for('adjudication_system.progress', round_id=round.round_id)}}">{{round.type.value}} ({{round.couples|length}})</a>
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="col-8 pt-3 pb-5 center-container" style="overflow-y:auto;">
+        {{ flash_messages() }}
+        {% block app_content %}{% endblock %}
+    </div>
+
+    <div class="col-2 pt-3 px-4 no-print" style="background:var(--light); overflow-y:auto;">
+        <img src="{{url_for('static', filename='adjudication_system_4hf_logo.png')}}" class="" style="max-width:70%; height:auto; display:block; margin:auto;">
+        {% if event_active %}
+            <ul class="nav flex-column nav-pills" id="event-tab" role="tablist">
+                <li class="nav-item">
+                    <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Competition dependencies</b>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/adjudication_system/dances' or request.path[:31] == '/adjudication_system/edit_dance'%}active{% endif %}"
+                       href="{{url_for('adjudication_system.dances')}}">Dances</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/adjudication_system/disciplines' or request.path[:36] == '/adjudication_system/edit_discipline'%}active{% endif %}"
+                       href="{{url_for('adjudication_system.disciplines')}}">Disciplines</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/adjudication_system/dancing_classes' or request.path[:39] == '/adjudication_system/edit_dancing_class'%}active{% endif %}"
+                       href="{{url_for('adjudication_system.dancing_classes')}}">Classes</a>
+                </li>
+                <li class="nav-item">
+                    <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Adjudication</b>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/adjudication_system/available_adjudicators'%}active{% endif %}"
+                       href="{{url_for('adjudication_system.available_adjudicators')}}">Adjudicators</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/adjudication_system/adjudicator_assignments'%}active{% endif %} {% if g.event is none or not g.event.has_competitions() %}disabled{% endif %}"
+                       href="{% if g.event is not none %}{{url_for('adjudication_system.adjudicator_assignments')}}{% else %}javascript:void(0);{% endif %}">Assignments</a>
+                </li>
+                <li class="nav-item">
+                    <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Competition nexus</b>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/adjudication_system/available_dancers'%}active{% endif %} {% if g.event is none or not g.event.has_competitions() %}disabled{% endif %}"
+                       href="{% if g.event is not none %}{{url_for('adjudication_system.available_dancers')}}{% else %}javascript:void(0);{% endif %}">Dancers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/adjudication_system/available_couples' or request.path[:32] == '/adjudication_system/edit_couple' %}active{% endif %} {% if g.event is none or not g.event.has_competitions() %}disabled{% endif %}"
+                       href="{% if g.event is not none %}{{url_for('adjudication_system.available_couples')}}{% else %}javascript:void(0);{% endif %}">Couples</a>
+                </li>
+            </ul>
+        {% endif %}
+        {% if dancing_round %}
+        <ul class="nav flex-column nav-pills" id="round-tab" role="tablist">
+            <li class="nav-item">
+                <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Round</b>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('round_id') is none %}disabled{% endif %} {% if request.path == '/adjudication_system/progress'%}active{% endif %}" href="{{url_for('adjudication_system.progress', round_id=request.args.get('round_id'), dance_id=request.args.get('dance_id'))}}">Progress</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('round_id') is none or dancing_round.dances|length == 0 %}disabled{% endif %} {% if request.path == '/adjudication_system/reports'%}active{% endif %}" href="{% if dancing_round.dances|length > 0 %}{{url_for('adjudication_system.reports', round_id=request.args.get('round_id'), dance_id=request.args.get('dance_id'))}}{% else %}javascript:void(0);{% endif %}">Reports</a>
+            </li>
+            {% if dancing_round.is_final() %}
+            {% if dancing_round.final_completed() %}
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('round_id') is none %}disabled{% endif %} {% if request.path == '/adjudication_system/final_result'%}active{% endif %}" href="{{url_for('adjudication_system.final_result', round_id=request.args.get('round_id'))}}">Final result</a>
+            </li>
+            {% endif %}
+            {% endif %}
+            <li class="nav-item">
+                <b class="nav-link disabled" style="font-size:large; text-decoration:underline;">Dance</b>
+            </li>
+            {% if not dancing_round.is_final() %}
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('round_id') is none or dancing_round.dances|length == 0 %}disabled{% endif %} {% if request.path == '/adjudication_system/floor_management' %}active{% endif %}" href="{% if dancing_round.dances|length > 0 %}{{url_for('adjudication_system.floor_management', round_id=request.args.get('round_id'), dance_id=request.args.get('dance_id'))}}{% else %}javascript:void(0);{% endif %}">Floor management</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('round_id') is none or dancing_round.dances|length == 0 %}disabled{% endif %} {% if request.path == '/adjudication_system/adjudication'%}active{% endif %}" href="{% if dancing_round.dances|length > 0 %}{{url_for('adjudication_system.adjudication', round_id=request.args.get('round_id'), dance_id=request.args.get('dance_id'))}}{% else %}javascript:void(0);{% endif %}">Adjudication</a>
+            </li>
+        </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script>
+// var number = getUrlVars()["number"];
+getUrlVars = () => {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+// var text = getUrlParam('text', 'default');
+getUrlParam = (parameter, default_param) => {
+    var url_parameter = default_param;
+    if(window.location.href.indexOf(parameter) > -1){
+        url_parameter = getUrlVars()[parameter];
+    }
+    return url_parameter;
+}
+</script>
+{% endblock %}

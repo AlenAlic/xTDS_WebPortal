@@ -3,9 +3,9 @@ from flask_login import login_required, logout_user, login_user
 from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
-    StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, TournamentState, \
-    SalsaPartners, PolkaPartners, VolunteerInfo, requires_tournament_state, SuperVolunteer
-from ntds_webportal.functions import submit_updated_dancing_info, get_dancing_categories, random_password
+    StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, SalsaPartners, PolkaPartners, VolunteerInfo, \
+    requires_tournament_state, SuperVolunteer, Adjudicator
+from ntds_webportal.functions import submit_updated_dancing_info, random_password
 from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm
 from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm
 from ntds_webportal.organizer.email import send_registration_open_email, send_gdpr_reminder_email
@@ -64,7 +64,9 @@ def user_list():
     bda = db.session.query(User).filter(User.access == ACCESS[BLIND_DATE_ASSISTANT]).first()
     chi = db.session.query(User).filter(User.access == ACCESS[CHECK_IN_ASSISTANT]).first()
     ada = db.session.query(User).filter(User.access == ACCESS[ADJUDICATOR_ASSISTANT]).first()
-    return render_template('organizer/user_list.html', data=data, users=users, bda=bda, chi=chi, ada=ada)
+    tom = db.session.query(User).filter(User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER]).first()
+    fm = db.session.query(User).filter(User.access == ACCESS[FLOOR_MANAGER]).first()
+    return render_template('organizer/user_list.html', users=users, bda=bda, chi=chi, ada=ada, tom=tom, fm=fm)
 
 
 def assistant_account(access_level):
@@ -78,6 +80,10 @@ def assistant_account(access_level):
             form.username.data = CHECK_IN_ASSISTANT_ACCOUNT_NAME
         elif access_level == ADJUDICATOR_ASSISTANT:
             form.username.data = ADJUDICATOR_ASSISTANT_ACCOUNT_NAME
+        elif access_level == TOURNAMENT_OFFICE_MANAGER:
+            form.username.data = TOURNAMENT_OFFICE_MANAGER_ACCOUNT_NAME
+        elif access_level == FLOOR_MANAGER:
+            form.username.data = FLOOR_MANAGER_ACCOUNT_NAME
         if form.validate_on_submit():
             user = User()
             user.username = form.username.data
@@ -111,8 +117,7 @@ def blind_date_assistant_account():
     form, user, submit = assistant_account(BLIND_DATE_ASSISTANT)
     if submit:
         return redirect(url_for('organizer.user_list'))
-    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
-                           assistant=BLIND_DATE_ASSISTANT)
+    return render_template('organizer/assistant_account.html', form=form, user=user, assistant=BLIND_DATE_ASSISTANT)
 
 
 @bp.route('/check_in_assistant_account', methods=['GET', 'POST'])
@@ -123,8 +128,7 @@ def check_in_assistant_account():
     form, user, submit = assistant_account(CHECK_IN_ASSISTANT)
     if submit:
         return redirect(url_for('organizer.user_list'))
-    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
-                           assistant=CHECK_IN_ASSISTANT)
+    return render_template('organizer/assistant_account.html', form=form, user=user, assistant=CHECK_IN_ASSISTANT)
 
 
 @bp.route('/adjudicator_assistant_account', methods=['GET', 'POST'])
@@ -135,8 +139,30 @@ def adjudicator_assistant_account():
     form, user, submit = assistant_account(ADJUDICATOR_ASSISTANT)
     if submit:
         return redirect(url_for('organizer.user_list'))
-    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
-                           assistant=ADJUDICATOR_ASSISTANT)
+    return render_template('organizer/assistant_account.html', form=form, user=user, assistant=ADJUDICATOR_ASSISTANT)
+
+
+@bp.route('/tournament_office_manager_account', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(SYSTEM_CONFIGURED)
+def tournament_office_manager_account():
+    form, user, submit = assistant_account(TOURNAMENT_OFFICE_MANAGER)
+    if submit:
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/assistant_account.html', form=form, user=user,
+                           assistant=TOURNAMENT_OFFICE_MANAGER)
+
+
+@bp.route('/floor_manager_account', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(SYSTEM_CONFIGURED)
+def floor_manager_account():
+    form, user, submit = assistant_account(FLOOR_MANAGER)
+    if submit:
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/assistant_account.html', form=form, user=user, assistant=FLOOR_MANAGER)
 
 
 @bp.route('/change_email/<number>', methods=['GET', 'POST'])
@@ -277,10 +303,10 @@ def edit_dancing_info(number):
         form.populate(dancer)
     if request.method == POST:
         form.custom_validate()
-    if form.validate_on_submit():
-        flash('{} data has been changed successfully.'.format(submit_updated_dancing_info(form, contestant=dancer)),
-              'alert-success')
-        return redirect(url_for('organizer.dancing_info_list'))
+        if form.validate_on_submit():
+            flash('{} data has been changed successfully.'.format(submit_updated_dancing_info(form, contestant=dancer)),
+                  'alert-success')
+            return redirect(url_for('organizer.dancing_info_list'))
     return render_template('organizer/edit_dancing_info.html', data=data, form=form, dancer=dancer)
 
 
@@ -478,7 +504,6 @@ def view_super_volunteer(number):
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def diet_allergies():
-    # PRIORITY Remove comma separated on input
     dancers = Contestant.query.join(ContestantInfo, StatusInfo).filter(StatusInfo.status == CONFIRMED,
                                                                        ContestantInfo.diet_allergies != "").all()
     dancers = [d for d in dancers if d.contestant_info.diet_allergies.strip() != ""
@@ -537,84 +562,101 @@ def diet_allergies():
 
 @bp.route('/adjudicators_overview', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS[ORGANIZER], ACCESS[ADJUDICATOR_ASSISTANT]])
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[ADJUDICATOR_ASSISTANT], ACCESS[TOURNAMENT_OFFICE_MANAGER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def adjudicators_overview():
-    # PRIORITY - Add Super Volunteers
-    # LONG TERM - Completely new system - Print login sheets - schedule available on personal page - assignment system
-    ts = TournamentState.query.first()
-    ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo)\
-        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_ballroom != NO)\
-        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_ballroom), ContestantInfo.team_id)\
-        .all()
-    latin_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo) \
-        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_latin != NO) \
-        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_latin), ContestantInfo.team_id) \
-        .all()
-    salsa_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
-        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_salsa != NO) \
-        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_salsa), ContestantInfo.team_id) \
-        .all()
-    polka_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
-        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_polka != NO) \
-        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_polka), ContestantInfo.team_id) \
-        .all()
-    form = request.args
-    if 'download_file' in form:
-        fn = 'adjudicators_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
-        output = BytesIO()
-        wb = xlsxwriter.Workbook(output, {'in_memory': True})
-        f = wb.add_format({'text_wrap': True, 'bold': True})
-        adjudicators = {BALLROOM: ballroom_adjudicators, LATIN: latin_adjudicators, SALSA: salsa_adjudicators,
-                        POLKA: polka_adjudicators}
-        for comp, adj in adjudicators.items():
-            ws = wb.add_worksheet(name=comp)
-            ws.write(0, 0, 'Dancer', f)
-            ws.write(0, 1, 'Team', f)
-            ws.write(0, 2, 'E-mail', f)
-            ws.write(0, 3, 'Wants to adjudicate?', f)
-            if comp == BALLROOM or comp == LATIN:
-                ws.write(0, 4, 'Has license?', f)
-                ws.write(0, 5, 'Highest achieved level', f)
-                ws.write(0, 6, 'Dancing Ballroom?', f)
-                ws.write(0, 7, 'Dancing Latin?', f)
-                ws.set_column(0, 7, 30)
-                for d in range(0, len(adj)):
-                    ws.write(d + 1, 0, adj[d].get_full_name())
-                    ws.write(d + 1, 1, adj[d].contestant_info.team.name)
-                    ws.write(d + 1, 2, adj[d].email)
-                    if comp == BALLROOM:
-                        wants_to = adj[d].volunteer_info.jury_ballroom
-                        lic = adj[d].volunteer_info.license_jury_ballroom
-                        lvl = adj[d].volunteer_info.level_ballroom
+    adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
+        .filter(StatusInfo.status == CONFIRMED, or_(VolunteerInfo.jury_ballroom != NO, VolunteerInfo.jury_latin != NO))\
+        .order_by(Contestant.first_name).all()
+    super_volunteer_adjudicators = SuperVolunteer.query\
+        .filter(or_(SuperVolunteer.jury_ballroom != NO, SuperVolunteer.jury_latin != NO))\
+        .order_by(SuperVolunteer.first_name).all()
+    selected_adjudicators = [a for a in adjudicators if a.volunteer_info.selected_adjudicator] + \
+                            [a for a in super_volunteer_adjudicators if a.selected_adjudicator]
+    form = request.form
+    tags = generate_tags(adjudicators + super_volunteer_adjudicators)
+    if request.method == POST:
+        if 'submit' in form:
+            submitted_tags = [form.get(f"tag-contestant-{a.contestant_id}") for a in adjudicators] + \
+                             [form.get(f"tag-super_volunteer-{a.volunteer_id}") for a in super_volunteer_adjudicators]
+            if sorted(set(tags.values())) == sorted(set(submitted_tags)):
+                for adjudicator in adjudicators:
+                    adjudicator.volunteer_info.selected_adjudicator = \
+                        f"checked-contestant-{adjudicator.contestant_id}" in form
+                    adjudicator.volunteer_info.adjudicator_notes = form.get(f"contestant-{adjudicator.contestant_id}")
+                    if adjudicator.volunteer_info.selected_adjudicator:
+                        check_adjudicator = Adjudicator.query\
+                            .filter(Adjudicator.name == adjudicator.get_full_name()).first()
+                        if check_adjudicator is None:
+                            new_adjudicator = Adjudicator()
+                            new_adjudicator.name = adjudicator.get_full_name()
+                            new_adjudicator.tag = form.get(f"tag-contestant-{adjudicator.contestant_id}")
+                            new_adjudicator.user = adjudicator.user
+                            db.session.add(new_adjudicator)
+                        else:
+                            if adjudicator.user.adjudicator is not None:
+                                adjudicator.user.adjudicator.name = adjudicator.get_full_name()
+                                adjudicator.user.adjudicator.tag = \
+                                    form.get(f"tag-contestant-{adjudicator.contestant_id}")
                     else:
-                        wants_to = adj[d].volunteer_info.jury_latin
-                        lic = adj[d].volunteer_info.license_jury_latin
-                        lvl = adj[d].volunteer_info.level_latin
-                    ws.write(d + 1, 3, wants_to)
-                    ws.write(d + 1, 4, lic)
-                    ws.write(d + 1, 5, lvl)
-                    dc = get_dancing_categories(adj[d].dancing_info)
-                    ws.write(d + 1, 6, dc[BALLROOM].level)
-                    ws.write(d + 1, 7, dc[LATIN].level)
+                        adjudicator.user.adjudicator = None
+                for adjudicator in super_volunteer_adjudicators:
+                    adjudicator.selected_adjudicator = f"checked-super_volunteer-{adjudicator.volunteer_id}" in form
+                    adjudicator.adjudicator_notes = form.get(f"super_volunteer-{adjudicator.volunteer_id}")
+                    if adjudicator.selected_adjudicator:
+                        check_adjudicator = Adjudicator.query\
+                            .filter(Adjudicator.name == adjudicator.get_full_name()).first()
+                        if check_adjudicator is None:
+                            new_adjudicator = Adjudicator()
+                            new_adjudicator.name = adjudicator.get_full_name()
+                            new_adjudicator.tag = form.get(f"tag-super_volunteer-{adjudicator.volunteer_id}")
+                            new_adjudicator.user = adjudicator.user
+                            db.session.add(new_adjudicator)
+                        else:
+                            if adjudicator.user.adjudicator is not None:
+                                adjudicator.user.adjudicator.name = adjudicator.get_full_name()
+                                adjudicator.user.adjudicator.tag = \
+                                    form.get(f"tag-super_volunteer-{adjudicator.volunteer_id}")
+                    else:
+                        adjudicator.user.adjudicator = None
+                for adjudicator in Adjudicator.query.all():
+                    if adjudicator.user is None:
+                        db.session.delete(adjudicator)
+                db.session.commit()
+                flash('Changes saved.', 'alert-success')
+                return redirect(url_for('organizer.adjudicators_overview'))
             else:
-                ws.set_column(0, 3, 30)
-                for d in range(0, len(adj)):
-                    ws.write(d + 1, 0, adj[d].get_full_name())
-                    ws.write(d + 1, 1, adj[d].contestant_info.team.name)
-                    ws.write(d + 1, 2, adj[d].email)
-                    if comp == SALSA:
-                        wants_to = adj[d].volunteer_info.jury_salsa
-                    else:
-                        wants_to = adj[d].volunteer_info.jury_polka
-                    ws.write(d + 1, 3, wants_to)
-            ws.freeze_panes(1, 0)
-        wb.close()
-        output.seek(0)
-        return send_file(output, as_attachment=True, attachment_filename=fn)
-    return render_template('organizer/adjudicators_overview.html', ts=ts, data=data,
-                           ballroom_adjudicators=ballroom_adjudicators, latin_adjudicators=latin_adjudicators,
-                           salsa_adjudicators=salsa_adjudicators, polka_adjudicators=polka_adjudicators)
+                flash("Adjudicator tags are not unique.", "alert-warning")
+    return render_template('organizer/adjudicators_overview.html', adjudicators=adjudicators, tags=tags,
+                           super_volunteer_adjudicators=super_volunteer_adjudicators,
+                           selected_adjudicators=selected_adjudicators)
+
+
+def generate_tags(adjudicators):
+    tags = {a: f"{a.first_name[:2]}{a.last_name[0]}".upper() for a in adjudicators}
+    non_unique_tags = list(set([tags[a] for a in adjudicators if list(tags.values()).count(tags[a]) > 1]))
+    for tag in non_unique_tags:
+        tags_to_modify = {a: tags[a] for a in adjudicators if tags[a] == tag}
+        for i, adj in enumerate(tags_to_modify, 1):
+            tags[adj] = f"{tags[adj]}{i}"
+    return tags
+
+
+def update_adjudicator(form, adjudicator, selected=False):
+    if selected:
+        check_adjudicator = Adjudicator.query.filter(Adjudicator.name == adjudicator.get_full_name()).first()
+        if check_adjudicator is None:
+            new_adjudicator = Adjudicator()
+            new_adjudicator.name = adjudicator.get_full_name()
+            new_adjudicator.tag = form.get(f"tag-contestant-{adjudicator.contestant_id}")
+            new_adjudicator.user = adjudicator.user
+            db.session.add(new_adjudicator)
+        else:
+            if adjudicator.user.adjudicator is not None:
+                adjudicator.user.adjudicator.name = adjudicator.get_full_name()
+                adjudicator.user.adjudicator.tag = form.get(f"tag-contestant-{adjudicator.contestant_id}")
+    else:
+        adjudicator.user.adjudicator = None
 
 
 @bp.route('/BAD', methods=['GET', 'POST'])
@@ -622,7 +664,7 @@ def adjudicators_overview():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(SYSTEM_CONFIGURED)
 def bad():
-    # PRIORITY - Update (see mail to Marek)
+    # NEXT TOURNAMENT - Update inclusion of adjudicators accounts
     form = request.args
     if 'download_createUniverse' in form:
         output = StringIO(render_template('organizer/_BAD_createUniverse.sql'))
@@ -707,4 +749,35 @@ def switch_to_ada():
         login_user(ada)
     else:
         flash('Adjudicator Assistant account not created.')
+    return redirect(url_for('main.index'))
+
+
+@bp.route('/switch_to_tom', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def switch_to_tom():
+    tom = User.query.filter(User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER]).first()
+    if tom is not None:
+        logout_user()
+        login_user(tom)
+    else:
+        flash('Tournament Office Manager account not created.')
+    return redirect(url_for('main.index'))
+
+
+@bp.route('/switch_to_fm', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def switch_to_fm():
+    fm = User.query.filter(User.access == ACCESS[FLOOR_MANAGER]).first()
+    if fm is not None:
+        if g.event is not None:
+            logout_user()
+            login_user(fm)
+        else:
+            flash('There is no event yet.')
+    else:
+        flash('Floor Manager account not created.')
     return redirect(url_for('main.index'))

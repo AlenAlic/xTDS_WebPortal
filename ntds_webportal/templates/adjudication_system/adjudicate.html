@@ -1,0 +1,220 @@
+{% extends 'adjudication_system/adjudicate_base.html' %}
+
+{% block body_attribs %}
+{{super()}}
+onload="onStart()"
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+.adjudicator-nav-bar        {height:auto; font-size:small;}
+.adjudicator-status-bar     {width:100%; color:var(--light); display:flex;}
+.adjudicator-status-bar-cell-side, .adjudicator-status-bar-cell-center
+                            {text-align:center; display:flex-inline; flex:1;}
+.adjudicator-status-bar-cell-center
+                            {align-self:center;}
+.adjudicator-status-bar-cell-end
+                            {justify-self:flex-end;}
+
+.adj-table-container    {display: inline-flex;}
+.adj-table              {border-collapse:separate; border-spacing:.5em;}
+.adj-cell-number, .adj-cell-mark
+                        {border: 2px solid black; width:3.2rem; height:3.2rem; text-align:center; line-height:1rem;}
+.adj-cell-number        {font-size:large;}
+.adj-cell-mark          {font-size:2.5rem;}
+
+.image-fill             {vertical-align:middle; margin:auto; height:auto; width:100%; max-width:100%; max-height:100%;}
+.cross                  {display:none;}
+.crossed                {display:inline;}
+.api-pending            {background-color:#fcf8e3 !important;}
+
+.final-container        {width:100%; color:var(--;light); display:flex;}
+.final-column, .final-column-side, .final-column-center
+                        {text-align:center; flex:1;}
+.final-column-side      {display:flex;}
+.final-column-center    {display:flex-inline; justify-content:center;}
+.final-placing, .final-placing-hidden, .final-placing-block
+                        {display:block;}
+.final-placing-hidden   {visibility:hidden;}
+.final-placing-block    {width:4em;}
+</style>
+{% endblock %}
+
+{% block navbar %}
+<nav id="nav-bar" class="navbar sticky-top navbar-expand navbar-light adjudicator-nav-bar px-1" style="background:{% if not dancing_round.is_final() %}var(--secondary){% else %}{% if dancing_round.adjudicator_dance_placed(current_user.adjudicator, dance)|length == dancing_round.couples|length %}var(--success){% else %}var(--danger){% endif %}{% endif %};">
+    <div class="adjudicator-status-bar">
+        <div class="adjudicator-status-bar-cell-side">
+            <div>
+                {% if dancing_round.previous_dance(dance) is not none %}
+                <a class="nav-item btn btn-outline-light" href="{{url_for('adjudication_system.adjudicate', round_id=dancing_round.round_id, dance_id=dancing_round.previous_dance(dance).dance_id)}}">{{dancing_round.previous_dance(dance)}}</a>
+                {% else %}
+                <a class="nav-item btn btn-outline-light" href="{{ url_for('adjudication_system.adjudicate_start_page', round_id=dancing_round.round_id) }}">Exit</a>
+                {% endif %}
+                <div>{% if not dancing_round.is_final() %}Target: {{ dancing_round.min_marks }}{% if dancing_round.min_marks != dancing_round.max_marks %} ... {{ dancing_round.max_marks }}{% endif %}{% endif %}</div>
+            </div>
+        </div>
+        <a class="adjudicator-status-bar-cell-center clickable" onclick="location.reload(true)">
+            <b>{{dance}}</b>
+            <div id="marked-couples-container" >
+                <span id="marked-couples">
+                    {% if not dancing_round.is_final() %}
+                    {{dancing_round.adjudicator_dance_marked(current_user.adjudicator, dance)|length}}
+                    {% else %}
+                    {{dancing_round.adjudicator_dance_placed(current_user.adjudicator, dance)|length}}
+                    {% endif %}
+                </span> / {{dancing_round.couples|length}}
+            </div>
+            <div><b><span id="open-closed">{% if not dancing_round.is_dance_active(dance) %}-CLOSED-{% endif %}</span></b></div>
+        </a>
+        <div class="adjudicator-status-bar-cell-side">
+            <div class="adjudicator-status-bar-cell-end">
+                {% if dancing_round.next_dance(dance) is not none %}
+                <a class="nav-item btn btn-outline-light" href="{{url_for('adjudication_system.adjudicate', round_id=dancing_round.round_id, dance_id=dancing_round.next_dance(dance).dance_id)}}">{{dancing_round.next_dance(dance)}}</a>
+                {% else %}
+                <a class="nav-item btn btn-outline-light" href="{{ url_for('adjudication_system.adjudicate_start_page', round_id=dancing_round.round_id) }}">Exit</a>
+                {% endif %}
+                <div>{% if not dancing_round.is_final() %}Noted: <span id="noted-couples">{{dancing_round.adjudicator_dance_noted(current_user.adjudicator, dance)|length}}</span>{% endif %}</div>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block app_content %}
+<div class="crosses-open px-2">
+{% if not dancing_round.is_final() %}
+{% for heat in dancing_round.heats %}
+    {% if heat.dance == dance %}
+    <h4>Heat {{heat.number}} / {{dancing_round.number_of_heats(dance)}}</h4>
+    {% endif %}
+    {% for mark in heat.marks|sort(attribute='couple.number') %}
+    {% if mark.adjudicator == current_user.adjudicator and mark.heat.dance == dance %}
+        <div class="adj-table-container mb-3">
+            <table class="adj-table">
+                <tbody>
+                <tr>
+                    <th class="adj-cell-number" onclick="updateNotesAPI({{mark.mark_id}})">{{- mark.couple.number -}}</th>
+                </tr>
+                <tr>
+                    <th id="{{mark.mark_id}}" onclick="updateCrossAPI(this)" class="adj-cell-mark">
+                        <span class="notes">{% for n in range(mark.notes) %}.{% endfor %}</span><img class="cross {% if mark.mark %}crossed{% endif %} image-fill" src="{{url_for('static', filename='octicons/x.svg')}}">
+                    </th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    {% endfor %}
+{% endfor %}
+</div>
+<script>
+var wait = ms => new Promise((r, j) => setTimeout(r, ms))
+onStart = () => {
+    fetch("/adjudication_system/api/round/" + {{dancing_round.round_id}} + "/adjudicator/" + {{current_user.adjudicator.adjudicator_id}} + "/dance/" + {{dance.dance_id}}, {method: "GET"})
+    .then(function(response) {return response.json();})
+    .then(function(result) {updatePage(result);} )
+    .catch(function(error) {console.log('Error: \n', error); });
+}
+updateNotesAPI = (id) => {
+    let cell = document.getElementById(id)
+    apiPending(cell)
+    fetch("/adjudication_system/api/mark/" + cell.id + "/notes", {method: "PATCH"})
+    .then(function(response) {return response.json();})
+    .then(function(result) {updateCross(cell, result);} )
+    .catch(function(error) {console.log('Error: \n', error); });
+}
+updateCrossAPI = (cell) => {
+    apiPending(cell)
+    fetch("/adjudication_system/api/mark/" + cell.id + "/mark", {method: "PATCH"})
+    .then(function(response) {return response.json();})
+    .then(function(result) {updateCross(cell, result);} )
+    .catch(function(error) {console.log('Error: \n', error); });
+}
+updateCross = (cell, result) => {
+    clearAPIState(cell);
+    if (result.open) {
+        let cross = cell.querySelector('.cross')
+        let notes = cell.querySelector('.notes')
+        if (result.marked) {cross.classList.add("crossed");}
+        else {cross.classList.remove("crossed"); }
+        notes.innerHTML = '.'.repeat(result.notes)
+    }
+    updatePage(result)
+}
+updatePage = result => {
+    let crossed = document.getElementById('marked-couples')
+    crossed.innerHTML = result.crossed
+    let noted = document.getElementById('noted-couples')
+    noted.innerHTML = result.noted
+    let nav = document.getElementById('nav-bar')
+    if (result.crossed >= result.min_marks && result.crossed <= result.max_marks) {
+        if (result.noted == 0) {
+            nav.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue("--success");
+        }
+        else {
+            nav.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue("--info");
+        }
+    } else {
+        nav.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue("--danger");
+    }
+    let open = document.getElementById('open-closed')
+    let crossed_container = document.getElementById('marked-couples-container')
+    if (!result.open) {
+        open.innerHTML = "-CLOSED-";
+    } else {
+        open.innerHTML = "";
+    }
+}
+clearAPIState = elem => {elem.classList.remove("api-pending");}
+apiPending = elem => {
+    clearAPIState(elem);
+    elem.classList.add("api-pending");
+}
+</script>
+{% else %}
+<div class="px-2 final-container">
+    <div class="final-column-side">
+        <div data-toggle="buttons">
+        {% for placing in dancing_round.final_placings|sort(attribute='couple.number') %}
+            {% if placing.dance == dance and placing.adjudicator == current_user.adjudicator %}
+            <label class="btn btn-{% if placing.final_placing > 0 %}primary{% else %}outline-primary{% endif %} final-placing-block" for="{{placing.final_placing_id}}">
+                <input {% if not dancing_round.is_dance_active(dance) %}disabled{% endif %} type="radio" name="placings" style="display:none;" id="{{placing.final_placing_id}}">{{placing.couple.number}}
+            </label>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+    <div class="px-1 final-column-center">
+        {% for placing in dancing_round.final_placings|sort(attribute='couple.number') %}
+            {% if placing.dance == dance and placing.adjudicator == current_user.adjudicator %}
+                {% if placing.final_placing > 0 %}
+                <button class="btn btn-secondary mb-2 final-placing" disabled style="margin-left:{{0.8 * (placing.final_placing - 1)}}em;">{{placing.final_placing}}</button>
+                {% else %}
+                <button class="btn btn-secondary mb-2 final-placing-hidden" disabled>&nbsp;</button>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <button class="btn btn-secondary mb-2 final-placing-hidden" disabled style="margin-left:{{0.8 * (dancing_round.couples|length - 1)}}em;">{{dancing_round.couples|length + 1}}</button>
+    </div>
+    <div class="final-column-side">
+        <span style="margin-left:auto;">
+            {% for i in range(dancing_round.couples|length) %}
+            <button class="btn btn-secondary mb-2 final-placing-block" {% if dancing_round.is_place_given(current_user.adjudicator, dance, loop.index) or not dancing_round.is_dance_active(dance) %}disabled{% endif %} value="{{loop.index}}" onclick="updatePlacingAPI(this)">{{loop.index}}</button>
+            {% endfor %}
+            <button class="btn btn-outline-danger mb-2 final-placing-block" {% if not dancing_round.is_dance_active(dance) %}disabled{% endif %} value="0" onclick="updatePlacingAPI(this)">X</button>
+        </span>
+    </div>
+</div>
+<script>
+onStart = () => {}
+updatePlacingAPI = elem => {
+    let place = document.querySelector('input[name="placings"]:checked')
+    fetch("/adjudication_system/api/final_placing/" + place.id + "/final_placing/" + elem.value, {method: "PATCH"})
+    .then(function(response) {return response.json();})
+    .then(function(result) {location.reload(true);} )
+    .catch(function(error) {console.log('Error: \n', error); });
+}
+</script>
+{% endif %}
+{% endblock %}

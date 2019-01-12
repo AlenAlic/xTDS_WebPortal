@@ -9,7 +9,6 @@ from ntds_webportal.validators import Level, Role, ChoiceMade, UniqueEmail, IsBo
 from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, DancingInfo, Team
 from wtforms_sqlalchemy.fields import QuerySelectField
 import wtforms_sqlalchemy.fields as f
-from flask_select2.form.fields import Select2Field
 from sqlalchemy import and_, or_
 import datetime
 
@@ -396,13 +395,12 @@ class PartnerRequestForm(FlaskForm):
             choices += [(BEGINNERS, BEGINNERS)]
         choices += [(BREITENSPORT, BREITENSPORT)]
         self.level.choices = choices
-        self.other.choices = [(str(dancer.contestant_id), dancer.get_full_name() + " - " +
-                               dancer.contestant_info.team.name) for dancer in other_choices]
+        self.other.choices = [("", DANCER_TEXT)] + [(str(dancer.contestant_id), dancer.get_full_name() + " - " +
+                                                     dancer.contestant_info.team.name) for dancer in other_choices]
 
     dancer = QuerySelectField('Dancer from my team', validators=[DataRequired()],
                               allow_blank=True, blank_text=DANCER_TEXT, render_kw={'data-role': 'select2'})
-    other = Select2Field('Dancer from other team', validators=[DataRequired()],
-                         allow_blank=True, blank_text=DANCER_TEXT)
+    other = SelectField('Dancer from other team', validators=[DataRequired()], render_kw={'data-role': 'select2'})
     competition = SelectField('Competition', validators=[DataRequired()],
                               choices=[(k, v) for k, v in COMPETITION_CHOICE.items()])
     level = SelectField('Level', validators=[DataRequired()])

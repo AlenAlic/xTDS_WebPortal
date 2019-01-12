@@ -1,0 +1,78 @@
+{% if current_user.is_ada() %}
+{% extends 'base.html' %}
+{% else %}
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+{% endif %}
+
+{% macro delete_adjudicator_modal(adjudicator) %}
+<div align="left" class="modal fade" id="adjudicator-{{adjudicator.adjudicator_id}}" tabindex="-1" role="dialog" aria-labelledby="header-{{adjudicator.adjudicator_id}}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="header-{{adjudicator.adjudicator_id}}">WARNING!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you wish to delete the adjudicator {{adjudicator.name}}?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{{ url_for('adjudication_system.delete_adjudicator', adjudicator_id=adjudicator.adjudicator_id) }}" class="btn btn-danger">Yes, delete adjudicator from the system</a>
+                <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, keep adjudicator in the system</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% block app_content %}
+<h2>{{ g.event }} - Available adjudicators</h2>
+<h3>Create new adjudicator</h3>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+            {{ contestant_form.hidden_tag() }}
+            {{ wtf.form_field(contestant_form.contestant) }}
+            {{ wtf.form_field(contestant_form.adjudicator_contestant_submit) }}
+        </form>
+    </div>
+    <div class="col-12 col-md-6">
+        <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+            {{ super_volunteer_form.hidden_tag() }}
+            {{ wtf.form_field(super_volunteer_form.super_volunteer) }}
+            {{ wtf.form_field(super_volunteer_form.adjudicator_super_volunteer_submit) }}
+        </form>
+    </div>
+</div>
+<h3 class="mt-3">Adjudicators in system <span class="badge badge-pill badge-dark">{{all_adjudicators|length}}</span></h3>
+<table id="couples-table" class="table table-sm">
+    <colgroup>
+        <col span="1" style="width: 10%;">
+        <col span="1" style="width: 30%;">
+        <col span="1" style="width: 50%;">
+        <col span="1" style="width: 10%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Tag</th>
+            <th>Adjudicator</th>
+            <th>Assignments</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for adjudicator in all_adjudicators %}
+        <tr>
+            <td>{{adjudicator.tag}}</td>
+            <td>{{adjudicator.name}}</td>
+            <td>{%- for comp in adjudicator.competitions|sort(attribute='when') -%}{{comp}}{{ ", " if not loop.last }}{%- endfor -%}</td>
+            <td align="center">
+                {% if adjudicator.deletable() %}
+                <span class="clickable" data-toggle="modal" data-target="#adjudicator-{{adjudicator.adjudicator_id}}" aria-hidden="true">{{ icon("x") }}</span>
+                {{ delete_adjudicator_modal(adjudicator) }}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

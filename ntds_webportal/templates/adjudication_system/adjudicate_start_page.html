@@ -1,0 +1,14 @@
+{% extends 'adjudication_system/adjudicate_base.html' %}
+
+{% block app_content %}
+<div class="px-3">
+    <h4>{{current_user.adjudicator.name}}</h4>
+    <h5>{{dancing_round.competition}} / {{dancing_round.type.value}} ({{dancing_round.couples|length}})</h5>
+    <br/>
+    <p>You may enter the adjudication pages with the buttons below.</p>
+    <p class="mb-3">Please return to this page when the round is over.</p>
+    <a class="btn btn-outline-primary mr-2 mb-2" href="{{url_for('adjudication_system.adjudicate', round_id=dancing_round.round_id, dance_id=dancing_round.first_dance().dance_id)}}">First dance</a>
+    <a class="btn btn-outline-primary mr-4 mb-2" href="{{url_for('adjudication_system.adjudicate', round_id=dancing_round.round_id, dance_id=dancing_round.last_dance().dance_id)}}">Last dance</a>
+    <a class="btn btn-outline-danger mb-2" href="{{url_for('adjudication_system.adjudicator_dashboard')}}">Exit</a>
+</div>
+{% endblock %}

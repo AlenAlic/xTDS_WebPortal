@@ -1,0 +1,49 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+{% import 'my_inline_wtf.html' as inline_wtf %}
+
+{% block app_content %}
+<h2>{{ g.event }} - Competition dependencies</h2>
+<div class="row">
+    <div class="col-5">
+        <h2>Available dances</h2>
+        {% if all_dances|length > 0 %}
+        <table class="table-sm table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="pl-2 pr-4">Dance</th>
+                    <th class="pl-2 pr-4">Tag</th>
+                    <th class="pl-2 pr-4">Discipline</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dance in all_dances %}
+                <tr class="clickable-row" data-href="{{url_for('adjudication_system.edit_dance', dance_id=dance.dance_id)}}">
+                    <td class="pl-2 pr-4">{{dance}}</td>
+                    <td class="pl-2 pr-4">{{dance.tag}}</td>
+                    <td class="pl-2 pr-4">{% if dance.discipline is not none %}{{dance.discipline}}{% else %}-{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>There are no dances yet</p>
+        {% endif %}
+    </div>
+    <div class="col-7">
+        <h2>Create new dance</h2>
+        <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+            {{ dance_form.hidden_tag() }}
+            <div class="form-row">
+                <div class="col-12 col-md-8">
+                    {{ wtf.form_field(dance_form.name) }}
+                </div>
+                <div class="col-12 col-md-4">
+                    {{ wtf.form_field(dance_form.tag) }}
+                </div>
+            </div>
+            {{ wtf.form_field(dance_form.dance_submit) }}
+            <a role="button" class="btn btn-outline-secondary ml-2" href="{{url_for('main.dashboard')}}">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,80 +1,74 @@
-<div class="card">
-    <div class="card-header" role="button" id="heading-{{type}}" data-toggle="collapse" href="#collapse-{{type}}" aria-expanded="true" aria-controls="collapse-{{type}}">
-        <b class="card-title">{{type}} adjudicators <span class="badge badge-pill badge-dark">{% if adjudicators|length > 0 %}{{ adjudicators|length }}{% else %}0{% endif %}</span></b>
-    </div>
-    <div id="collapse-{{type}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-{{type}}">
-        <table class="table table-sm mb-0">
-            {% if type == data.BALLROOM or type == data.LATIN %}
-            <colgroup>
-                <col span="1" style="width: 20%;">
-                <col span="1" style="width: 20%;">
-                <col span="1" style="width: 10%;">
-                <col span="1" style="width: 10%;">
-                <col span="1" style="width: 10%;">
-                <col span="1" style="width: 15%;">
-                <col span="1" style="width: 15%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th><b>Name</b></th>
-                    <th><b>Team</b></th>
-                    <th><b>Wants to adjudicate?</b></th>
-                    <th><b>Has license?</b></th>
-                    <th><b>Highest achieved level</b></th>
-                    <th><b>Dancing Ballroom</b></th>
-                    <th><b>Dancing Latin</b></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for adjudicator in adjudicators %}
-                    <tr>
-                        <td>{{ adjudicator.get_full_name() }}</td>
-                        <td>{{ adjudicator.contestant_info.team.name }}</td>
-                        {% if type == data.BALLROOM %}
-                        <td>{{ adjudicator.volunteer_info.jury_ballroom }}</td>
-                        <td>{{ adjudicator.volunteer_info.license_jury_ballroom }}</td>
-                        <td>{{ adjudicator.volunteer_info.level_ballroom }}</td>
-                        {% elif type == data.LATIN %}
-                        <td>{{ adjudicator.volunteer_info.jury_latin }}</td>
-                        <td>{{ adjudicator.volunteer_info.license_jury_latin }}</td>
-                        <td>{{ adjudicator.volunteer_info.level_latin }}</td>
-                        {% endif %}
-                        <td>
-                            {{  g.data.LEVEL_ROLE_DISPLAY[adjudicator.dancing_information(g.data.BALLROOM).level] }}
-                        </td>
-                        <td>
-                            {{  g.data.LEVEL_ROLE_DISPLAY[adjudicator.dancing_information(g.data.LATIN).level] }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-            {% else %}
-            <colgroup>
-                <col span="1" style="width: 40%;">
-                <col span="1" style="width: 35%;">
-                <col span="1" style="width: 25%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th><b>Name</b></th>
-                    <th><b>Team</b></th>
-                    <th><b>Wants to adjudicate?</b></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for adjudicator in adjudicators %}
-                    <tr>
-                        <td>{{ adjudicator.get_full_name() }}</td>
-                        <td>{{ adjudicator.contestant_info.team.name }}</td>
-                        {% if type == data.SALSA %}
-                        <td>{{ adjudicator.volunteer_info.jury_salsa }}</td>
-                        {% elif type == data.POLKA %}
-                        <td>{{ adjudicator.volunteer_info.jury_polka }}</td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-            {% endif %}
-        </table>
-    </div>
-</div>
+<table class="table table-sm mb-0" style="font-size:small">
+    <colgroup>
+        <col span="1" style="width: 5%;">
+        <col span="1" style="width: 12%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 5%;">
+        <col span="1" style="width: 5%;">
+        <col span="1" style="width: 7%;">
+        <col span="1" style="width: 5%;">
+        <col span="1" style="width: 5%;">
+        <col span="1" style="width: 7%;">
+        <col span="1" style="width: 5%;">
+        <col span="1" style="width: 5%;">
+        <col span="1" style="width: 24%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th></th>
+            <th colspan="2">Personal</th>
+            <th colspan="3">Ballroom</th>
+            <th colspan="3">Latin</th>
+            <th colspan="2">Dancing</th>
+            <th></th>
+        </tr>
+        <tr>
+            <th>Selected</th>
+            <th>Name</th>
+            <th>Team</th>
+            <th>Wants to adjudicate?</th>
+            <th>Has license?</th>
+            <th>Highest achieved level</th>
+            <th>Wants to adjudicate?</th>
+            <th>Has license?</th>
+            <th>Highest achieved level</th>
+            <th>Dancing Ballroom</th>
+            <th>Dancing Latin</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for adjudicator in adjudicators %}
+            <tr>
+                <td align="center"><input type="checkbox"></td>
+                <td>{{ adjudicator.get_full_name() }}</td>
+                <td>{{ adjudicator.contestant_info.team.name }}</td>
+                <td>{{ adjudicator.volunteer_info.jury_ballroom }}</td>
+                <td>{{ adjudicator.volunteer_info.license_jury_ballroom }}</td>
+                <td>{{ adjudicator.volunteer_info.level_ballroom }}</td>
+                <td>{{ adjudicator.volunteer_info.jury_latin }}</td>
+                <td>{{ adjudicator.volunteer_info.license_jury_latin }}</td>
+                <td>{{ adjudicator.volunteer_info.level_latin }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[adjudicator.dancing_information(g.data.BALLROOM).level] }}</td>
+                <td>{{ g.data.LEVEL_ROLE_DISPLAY[adjudicator.dancing_information(g.data.LATIN).level] }}</td>
+                <td><input class="form-control" type="text" onkeyup="" id="bla" name="bla" value="bla"></td>
+            </tr>
+        {% endfor %}
+        {% for adjudicator in super_volunteer_adjudicators %}
+            <tr>
+                <td align="center"><input type="checkbox"></td>
+                <td>{{ adjudicator.get_full_name() }}</td>
+                <td>-</td>
+                <td>{{ adjudicator.jury_ballroom }}</td>
+                <td>{{ adjudicator.license_jury_ballroom }}</td>
+                <td>{{ adjudicator.level_ballroom }}</td>
+                <td>{{ adjudicator.jury_latin }}</td>
+                <td>{{ adjudicator.license_jury_latin }}</td>
+                <td>{{ adjudicator.level_latin }}</td>
+                <td>-</td>
+                <td>-</td>
+                <td><input class="form-control" type="text" onkeyup="" id="bla" name="bla" value="bla"></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

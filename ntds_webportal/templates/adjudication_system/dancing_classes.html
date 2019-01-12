@@ -1,0 +1,34 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+{% import 'my_inline_wtf.html' as inline_wtf %}
+
+{% block app_content %}
+<h2>{{ g.event }} - Competition dependencies</h2>
+<div class="row">
+    <div class="col-5">
+        <h2>Available classes</h2>
+        {% if all_classes|length > 0 %}
+        <table class="table-sm table-bordered table-hover">
+            <tbody>
+                {% for dancing_class in all_classes %}
+                <tr class="clickable-row" data-href="{{url_for('adjudication_system.edit_dancing_class', dancing_class_id=dancing_class.dancing_class_id)}}">
+                    <td class="pl-2 pr-4">{{dancing_class}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+        <p>There are no available classes</p>
+        {% endif %}
+    </div>
+    <div class="col-7">
+        <h2>Create new class</h2>
+        <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+            {{ dancing_class_form.hidden_tag() }}
+            {{ wtf.form_field(dancing_class_form.name) }}
+            {{ wtf.form_field(dancing_class_form.dancing_class_submit) }}
+            <a role="button" class="btn btn-outline-secondary ml-2" href="{{url_for('main.dashboard')}}">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

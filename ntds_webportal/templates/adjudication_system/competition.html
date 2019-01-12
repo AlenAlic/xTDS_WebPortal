@@ -1,0 +1,144 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+{% from 'adjudication_system/_collapse.html' import collapse %}
+
+{% block body_attribs %}
+{{super()}}
+onload="onStart()"
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+.inline-help-text       {line-height:calc(2.25rem + 2px);}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<h3 class="mt-4">Edit {{competition}} competition <span class="badge badge-pill badge-dark">{{ competition.competitors() }}</span></h3>
+{% if not competition.can_create_first_round() %}
+<p class="my-3">Please assign adjudicators, and couples or individual dancers to the competition, before creating a new round!</p>
+{% endif %}
+{% if competition.mode != g.competition_mode.single_partner %}
+<p class="my-3">If the competition is not {{g.competition_mode.single_partner.value}}, it will require an equal amount of Leads and Follows to be able to configure the first round.</p>
+{% endif %}
+<form id="edit-competition-form" class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ competition_form.hidden_tag() }}
+    <div class="form-row">
+        <div class="col-12 col-md-6">
+            {{ wtf.form_field(competition_form.dancing_class) }}
+        </div>
+        <div class="col-12 col-md-6">
+            {{ wtf.form_field(competition_form.discipline) }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col-12 col-md-6">
+            {{ wtf.form_field(competition_form.when) }}
+        </div>
+        <div class="col-12 col-md-6">
+            {{ wtf.form_field(competition_form.floors) }}
+        </div>
+    </div>
+    {{ wtf.form_field(competition_form.mode, onchange="update()", onclick="update()", onkeyup="update()") }}
+    {{ wtf.form_field(competition_form.qualification) }}
+    {{ wtf.form_field(competition_form.adjudicators) }}
+    {{ wtf.form_field(competition_form.competition_couples, onchange="update()", onclick="update()", onkeyup="update()") }}
+    {{ wtf.form_field(competition_form.competition_leads, onchange="update()", onclick="update()", onkeyup="update()") }}
+    {{ wtf.form_field(competition_form.competition_follows, onchange="update()", onclick="update()", onkeyup="update()") }}
+    <input class="btn btn-primary" id="comp_submit" name="comp_submit" type="submit" value="Save changes">
+    <a role="button" class="btn btn-outline-secondary ml-2" href="{{url_for('adjudication_system.event')}}">Cancel</a>
+</form>
+{% if competition.can_create_first_round() %}
+<h3 class="mt-4">Create first round for {{competition}}</h3>
+<form id="create-round-form" class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ round_form.hidden_tag() }}
+    <div class="form-row">
+        <div class="col-12 col-lg-4">
+            <div class="form-group required">
+                {{ round_form.type.label }}
+                <div class="form-row">
+                    <div class="col-12 col-lg-8">
+                        {{ round_form.type(class_="form-control") }}
+                    </div>
+                </div>
+                <small class="text-muted">{{ round_form.type.description }}</small>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="form-row mb-3">
+                <div class="col-12">
+                    <label>Heats</label>
+                </div>
+                <div class="col-auto">
+                    {{ round_form.heats(class_="form-control", onchange="update()", onclick="update()", onkeyup="update()") }}
+                </div>
+                <div class="col-auto inline-help-text">
+                    of up to <span id="couples-per-heat"></span> couples each
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="form-row mb-3">
+                <div class="col-12">
+                    <label>Target marks</label>
+                </div>
+                <div class="col-auto">
+                    {{ round_form.min_marks(class_="form-control", onchange="update()", onclick="update()", onkeyup="update()") }}
+                </div>
+                <div class="col-auto inline-help-text">
+                     to
+                </div>
+                <div class="col-auto">
+                    {{ round_form.max_marks(class_="form-control", onchange="update()", onclick="update()", onkeyup="update()") }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ wtf.form_field(round_form.dances) }}
+    <div class="form-group">
+        {{ wtf.form_field(round_form.round_submit) }}
+        <a role="button" class="btn btn-outline-secondary ml-2" href="{{url_for('adjudication_system.event')}}">Cancel</a>
+    </div>
+</form>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+onStart = () => {update();}
+update = () => {
+    let couples_input = document.getElementById("competition_couples")
+    let leads_input = document.getElementById("competition_leads")
+    let follows_input = document.getElementById("competition_follows")
+
+    let mode = document.getElementById("mode")
+    if (mode.options[mode.selectedIndex].value == "{{g.competition_mode.single_partner.name}}") {
+        couples_input.disabled = false;
+        leads_input.disabled = true;
+        follows_input.disabled = true;
+    } else {
+        couples_input.disabled = true;
+        leads_input.disabled = false;
+        follows_input.disabled = false;
+    }
+
+    {% if competition.can_create_first_round() %}
+    let couples
+    if (mode.options[mode.selectedIndex].value == "{{g.competition_mode.single_partner.name}}") {
+        couples = document.getElementById("s2id_competition_couples").querySelectorAll('.select2-search-choice').length;
+    } else {
+        let leads = document.getElementById("s2id_competition_leads").querySelectorAll('.select2-search-choice').length;
+        let follows = document.getElementById("s2id_competition_follows").querySelectorAll('.select2-search-choice').length;
+        couples = Math.min(leads, follows);
+    }
+
+    // Couples per heat
+    const couples_span = document.getElementById("couples-per-heat");
+    let heats = document.getElementById("heats").value;
+    if (heats != "" && heats != "0") {couples_span.innerHTML = Math.ceil(couples/heats);}
+    else {couples_span.innerHTML = 0;}
+    {% endif %}
+}
+</script>
+{% endblock %}

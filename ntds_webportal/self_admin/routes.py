@@ -6,7 +6,7 @@ from ntds_webportal.self_admin.forms import SwitchUserForm, CreateOrganizerForm,
     CreateTeamCaptainAccountForm, SystemSetupForm, ResetOrganizerAccountForm
 from ntds_webportal.models import requires_access_level, User, Team, SystemConfiguration, Contestant, \
     StatusInfo, AttendedPreviousTournamentContestant, NotSelectedContestant, EXCLUDED_FROM_CLEARING, \
-    requires_testing_environment
+    requires_testing_environment, Event
 from ntds_webportal.functions import str2bool, reset_tournament_state, \
     make_system_configuration_accessible_to_organizer, generate_maintenance_page
 from ntds_webportal.auth.email import send_organizer_activation_email
@@ -53,11 +53,17 @@ def system_setup():
         organizer.is_active = True
         assistants = User.query.filter(or_(User.access == ACCESS[BLIND_DATE_ASSISTANT],
                                            User.access == ACCESS[CHECK_IN_ASSISTANT],
-                                           User.access == ACCESS[ADJUDICATOR_ASSISTANT])).all()
+                                           User.access == ACCESS[ADJUDICATOR_ASSISTANT],
+                                           User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER],
+                                           User.access == ACCESS[FLOOR_MANAGER])).all()
         for assistant in assistants:
             assistant.is_active = True
         db.session.commit()
         g.ts.organizer_account_set = True
+        db.session.commit()
+        event = Event()
+        event.name = f"{sc.tournament} {sc.year} {sc.city}"
+        db.session.add(event)
         db.session.commit()
         send_organizer_activation_email(organizer.email, organizer.username, organizer_pass,
                                         tournament=reset_organizer_account_form.tournament.data,
@@ -87,7 +93,9 @@ def system_setup():
                 treasurer.email = None
             assistants = User.query.filter(or_(User.access == ACCESS[BLIND_DATE_ASSISTANT],
                                                User.access == ACCESS[CHECK_IN_ASSISTANT],
-                                               User.access == ACCESS[ADJUDICATOR_ASSISTANT])).all()
+                                               User.access == ACCESS[ADJUDICATOR_ASSISTANT],
+                                               User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER],
+                                               User.access == ACCESS[FLOOR_MANAGER])).all()
             for assistant in assistants:
                 assistant.set_password(random_password())
             db.session.commit()
@@ -171,7 +179,6 @@ def system_configuration():
         form.number_of_teamcaptains.data = g.sc.number_of_teamcaptains
 
         form.beginners_level.data = str(g.sc.beginners_level)
-        form.champions_level.data = str(g.sc.beginners_level)
         form.closed_level.data = str(g.sc.closed_level)
         form.breitensport_obliged_blind_date.data = str(g.sc.breitensport_obliged_blind_date)
         form.salsa_competition.data = str(g.sc.salsa_competition)
@@ -233,7 +240,6 @@ def system_configuration():
         g.sc.number_of_teamcaptains = form.number_of_teamcaptains.data
 
         g.sc.beginners_level = str2bool(form.beginners_level.data)
-        g.sc.champions_level = str2bool(form.champions_level.data)
         g.sc.closed_level = str2bool(form.closed_level.data)
         g.sc.breitensport_obliged_blind_date = str2bool(form.breitensport_obliged_blind_date.data)
         g.sc.salsa_competition = str2bool(form.salsa_competition.data)

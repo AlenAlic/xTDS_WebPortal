@@ -1,0 +1,15 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+<h2>{{dancing_round.competition.event}} / {{dancing_round.competition}} / {{dancing_round.type.value}}</h2>
+{% if dancing_round.competition.is_change_per_dance() %}<h3 class="mt-4">Leads</h3>{% endif %}
+{% with dancing_round = dancing_round %}
+    {% include "adjudication_system/_final_evaluation.html" %}
+{% endwith %}
+{% if dancing_round.competition.is_change_per_dance() %}
+    <h3 class="mt-5">Follows</h3>
+    {% with dancing_round = dancing_round, follows = true %}
+        {% include "adjudication_system/_final_evaluation.html" %}
+    {% endwith %}
+{% endif %}
+{% endblock %}

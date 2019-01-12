@@ -1,0 +1,24 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+<h2>{{ g.event }}</h2>
+<h2>Edit dancer</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="form-row">
+        <div class="col-12 col-md-2">
+            {{ wtf.form_field(form.number, disabled=true) }}
+        </div>
+        <div class="col-12 col-md-5">
+            {{ wtf.form_field(form.lead, disabled=true) }}
+        </div>
+        <div class="col-12 col-md-5">
+            {{ wtf.form_field(form.follow, disabled=true) }}
+        </div>
+    </div>
+    {{ wtf.form_field(form.competitions) }}
+    <input class="btn btn-primary mr-2" id="save_changes" name="save_changes" type="submit" value="Save changes">
+    <a role="button" class="btn btn-outline-secondary" href="{{url_for('adjudication_system.available_couples')}}">Cancel</a>
+</form>
+
+{% endblock %}

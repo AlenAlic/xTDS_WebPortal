@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block html_attribs %}style="height:100%"{% endblock html_attribs %}
+{% block body_attribs %}style="height:100%"{% endblock body_attribs %}
+
+{% block navbar %}{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+input[type=checkbox]    {transform:scale(2);}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mx-0" style="height:100%">
+    <div class="col-12 col-md-3 px-4 pt-3 no-print" style="background:var(--light); overflow-y:auto;">
+        <ul class="nav flex-column nav-pills" id="pills-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link btn btn-outline-primary" href="{{ url_for('main.logout') }}">Exit</a>
+            </li>
+            <li class="nav-item mt-3">
+                <a class="nav-link {% if request.path == '/adjudication_system/floor_manager_start_page' %}active{% endif %}" href="{{url_for('adjudication_system.floor_manager_start_page')}}" style="font-size:x-large;"><b>{{g.event}}</b></a>
+            </li>
+            {% if g.competitions is not none %}
+                {% for competition in g.competitions|sort(attribute='when') %}
+                    <li class="nav-item py-0">
+                        <a class="nav-link py-1 disabled" style="font-size:large;"><b>{{competition}}</b></a>
+                    </li>
+                    {% for round in competition.rounds %}
+                        {% if not round.is_final() %}
+                        <li class="nav-item py-0">
+                            <a class="nav-link py-0 {% if request.args.get('round_id')|int == round.round_id %}active{% endif %}" href="{{url_for('adjudication_system.floor_manager', round_id=round.round_id)}}">{{round.type.value}} ({{round.couples|length}})</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+    <div class="col-12 col-md-9 pt-3 pb-5" style="overflow-y:auto;">
+        {{ flash_messages() }}
+        {% block app_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

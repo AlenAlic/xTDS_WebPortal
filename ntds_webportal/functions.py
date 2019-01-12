@@ -195,6 +195,12 @@ def submit_updated_dancing_info(form, contestant):
     di_latin = contestant.competition(LATIN)
     ballroom_parner, latin_partner = di_ballroom.partner, di_latin.partner
     update_dancing_info(form, di_ballroom, di_latin)
+    partner = DancingInfo.query.filter(DancingInfo.contestant_id == ballroom_parner).first()
+    if di_ballroom.role == partner.role:
+        di_ballroom.set_partner(None)
+    partner = DancingInfo.query.filter(DancingInfo.contestant_id == latin_partner).first()
+    if di_latin.role == partner.role:
+        di_latin.set_partner(None)
     db.session.commit()
     if di_ballroom.partner != ballroom_parner:
         send_lost_partner_notification(di_ballroom.contestant_id, BALLROOM, partner_id=ballroom_parner)

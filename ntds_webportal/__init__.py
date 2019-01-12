@@ -15,7 +15,7 @@ import ntds_webportal.data as data
 class MyAdminIndexView(AdminIndexView):
     @expose('/')
     def index(self):
-        if current_user.is_admin():
+        if current_user.is_admin() or current_user.is_tournament_office_manager():
             return self.render(self._template)
         else:
             return redirect(url_for('main.index'))
@@ -40,6 +40,11 @@ class BaseView(ModelView):
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('main.index'))
+
+
+class AdjudicatorSystemView(BaseView):
+    def is_accessible(self):
+        return current_user.is_admin() or current_user.is_tournament_office_manager()
 
 
 class UserView(BaseView):
@@ -92,7 +97,15 @@ class Anonymous(AnonymousUserMixin):
         return False
 
     @staticmethod
-    def allowed():
+    def is_tournament_office_manager():
+        return False
+
+    @staticmethod
+    def is_floor_manager():
+        return False
+
+    @staticmethod
+    def is_adjudicator():
         return False
 
 
@@ -104,6 +117,8 @@ def create_app():
         VolunteerInfo, AdditionalInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, \
         TournamentState, SalsaPartners, PolkaPartners, SystemConfiguration, RaffleConfiguration, \
         AttendedPreviousTournamentContestant, NotSelectedContestant, SuperVolunteer
+    from ntds_webportal.models import Event, Competition, DancingClass, Discipline, Dance, Round, \
+        Heat, Couple, Adjudicator, Mark, CouplePresent, RoundResult, FinalPlacing, DanceActive, CompetitionMode, Dancer
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('config')
@@ -140,6 +155,21 @@ def create_app():
     admin.add_view(BaseView(AttendedPreviousTournamentContestant, db.session))
     admin.add_view(BaseView(NotSelectedContestant, db.session))
     admin.add_view(BaseView(SuperVolunteer, db.session))
+    admin.add_view(AdjudicatorSystemView(Event, db.session))
+    admin.add_view(AdjudicatorSystemView(Competition, db.session))
+    admin.add_view(AdjudicatorSystemView(DancingClass, db.session))
+    admin.add_view(AdjudicatorSystemView(Discipline, db.session))
+    admin.add_view(AdjudicatorSystemView(Dance, db.session))
+    admin.add_view(AdjudicatorSystemView(Adjudicator, db.session))
+    admin.add_view(AdjudicatorSystemView(Dancer, db.session))
+    admin.add_view(AdjudicatorSystemView(Couple, db.session))
+    admin.add_view(AdjudicatorSystemView(Round, db.session))
+    admin.add_view(AdjudicatorSystemView(DanceActive, db.session))
+    admin.add_view(AdjudicatorSystemView(Heat, db.session))
+    admin.add_view(AdjudicatorSystemView(Mark, db.session))
+    admin.add_view(AdjudicatorSystemView(FinalPlacing, db.session))
+    admin.add_view(AdjudicatorSystemView(CouplePresent, db.session))
+    admin.add_view(AdjudicatorSystemView(RoundResult, db.session))
     toolbar.init_app(app)
 
     @app.before_request
@@ -154,6 +184,9 @@ def create_app():
         g.data = data
         g.ts = TournamentState.query.first()
         g.rc = RaffleConfiguration.query.first()
+        g.event = Event.query.first()
+        g.competitions = Competition.query.all()
+        g.competition_mode = CompetitionMode
 
     def create_tournament_state_table():
         if len(TournamentState.query.all()) == 0:
@@ -174,9 +207,13 @@ def create_app():
             db.session.commit()
 
     with app.app_context():
-        create_tournament_state_table()
-        create_system_configuration_table()
-        create_raffle_configuration_table()
+        from sqlalchemy.exc import InternalError
+        try:
+            create_tournament_state_table()
+            create_system_configuration_table()
+            create_raffle_configuration_table()
+        except InternalError:
+            pass
 
     from ntds_webportal.main import bp as main_bp
     app.register_blueprint(main_bp)
@@ -217,7 +254,14 @@ def create_app():
     from ntds_webportal.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
+    from ntds_webportal.adjudication_system import bp as adjudication_system_bp
+    app.register_blueprint(adjudication_system_bp, url_prefix='/adjudication_system')
+
+    from ntds_webportal.adjudication_system.api import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/adjudication_system/api')
+
     return app
 
 
+# noinspection PyPep8
 from ntds_webportal import models

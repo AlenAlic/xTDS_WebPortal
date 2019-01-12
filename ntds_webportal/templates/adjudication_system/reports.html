@@ -1,0 +1,51 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+<h2>{{dancing_round.competition.event}} / {{dancing_round.competition}} / {{dancing_round.type.value}}</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate action="{{url_for('adjudication_system.reports_print', round_id=request.args.get('round_id'))}}" target="_blank">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ wtf.form_field(form.print_submit) }}
+        {{ wtf.form_field(form.show_submit) }}
+    </div>
+    <table>
+        <tbody>
+        <tr>
+            <td class="pl-2 pr-3">{{ wtf.form_field(form.heats_by_number) }}</td>
+            <td class="pr-2">{{ wtf.form_field(form.heats_by_number_copies) }}</td>
+            <td>copies</td>
+        </tr>
+        <tr>
+            <td class="pl-2 pr-3">{{ wtf.form_field(form.heats_by_dance) }}</td>
+            <td class="pr-2">{{ wtf.form_field(form.heats_by_dance_copies) }}</td>
+            <td>copies</td>
+        </tr>
+        <tr>
+            <td class="pl-2 pr-3">{{ wtf.form_field(form.qualified_starts) }}</td>
+            <td class="pr-2">{{ wtf.form_field(form.qualified_starts_copies) }}</td>
+            <td>copies</td>
+        </tr>
+        <tr>
+            <td class="pl-2 pr-3">{{ wtf.form_field(form.adjudication_sheets) }}</td>
+            <td class="pr-2">{{ wtf.form_field(form.adjudication_sheets_copies) }}</td>
+            <td>copies</td>
+        </tr>
+        <tr>
+            <td class="pl-2 pr-3">{{ wtf.form_field(form.placings_after_round, disabled=not dancing_round.is_completed()) }}</td>
+            <td class="pr-2">{{ wtf.form_field(form.placings_after_round_copies, disabled=not dancing_round.is_completed()) }}</td>
+            <td>copies</td>
+        </tr>
+        <tr>
+            <td class="pl-2 pr-3">{{ wtf.form_field(form.final_evaluation, disabled=not (dancing_round.is_final() and dancing_round.is_completed())) }}</td>
+            <td class="pr-2">{{ wtf.form_field(form.final_evaluation_copies, disabled=not (dancing_round.is_final() and dancing_round.is_completed())) }}</td>
+            <td>copies</td>
+        </tr>
+        <tr>
+            <td class="pl-2 pr-3">{{ wtf.form_field(form.tournament_result, disabled=not (dancing_round.is_final() and dancing_round.is_completed())) }}</td>
+            <td class="pr-2">{{ wtf.form_field(form.tournament_result_copies, disabled=not (dancing_round.is_final() and dancing_round.is_completed())) }}</td>
+            <td>copies</td>
+        </tr>
+        </tbody>
+    </table>
+</form>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% if follows is defined %}
+{% set follows = follows %}
+{% else %}
+{% set follows = false %}
+{% endif %}
+{% if empty is defined%}
+{% set skating = dancing_round.skating_summary(follows=follows).empty() %}
+{% else %}
+{% set skating = dancing_round.skating_summary(follows=follows) %}
+{% endif %}
+<style>
+.table-skating, .table-skating td, .table-skating th    {border:1px solid #000;}
+</style>
+<table class="table-sm table-skating print-friendly" style="table-layout:fixed; width:100%; page-break-inside:avoid;">
+    <thead style="text-align:center;">
+        <tr>
+            <th colspan="{{dancing_round.dances|length + 3}}">Final Summary</th>
+        </tr>
+        <tr>
+            <th rowspan="2" style="vertical-align:bottom;">No.</th>
+            <th colspan="{{dancing_round.dances|length}}">Dances</th>
+            <th rowspan="2" style="vertical-align:bottom;">Total</th>
+            <th rowspan="2" style="vertical-align:bottom;">Result</th>
+        </tr>
+        <tr>
+            {% for d in dancing_round.dances %}
+                <th>{{d.tag}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in skating.summary.itertuples() %}
+        <tr>
+            {% for col in row %}
+            <td>{{col}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if skating.show_rules or empty %}
+<div class="row pt-2">
+    <div class="col-6 pr-1">
+        <table class="table-sm table-skating print-friendly" style="table-layout: fixed; width: 100%;">
+            <thead style="text-align:center;">
+                <tr>
+                    <th rowspan="2" style="vertical-align:bottom;">No.</th>
+                    <th colspan="{{dancing_round.couples|length}}">Rule 10</th>
+                    <th rowspan="2" style="vertical-align:bottom;">Result</th>
+                </tr>
+                <tr>
+                    {% for couple in dancing_round.couples %}
+                    <th>1{% if loop.index > 1 %}-{{loop.index}}{% endif %}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in skating.summary_rule_10.skating.itertuples() %}
+                <tr>
+                    {% for col in row %}
+                    <td>{{col}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-6 pl-1">
+        <table class="table-sm table-skating print-friendly" style="table-layout:fixed; width:100%;">
+            <thead style="text-align:center;">
+                <tr>
+                    <th rowspan="2" style="vertical-align:bottom;">No.</th>
+                    <th colspan="{{dancing_round.couples|length}}">Rule 11</th>
+                    <th rowspan="2" style="vertical-align:bottom;">Result</th>
+                </tr>
+                <tr>
+                    {% for couple in dancing_round.couples %}
+                    <th>1{% if loop.index > 1 %}-{{loop.index}}{% endif %}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in skating.summary_rule_11.skating.itertuples() %}
+                <tr>
+                    {% for col in row %}
+                    <td>{{col}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% for dance in dancing_round.dances %}
+<table class="table-sm table-skating print-friendly mt-4" style="table-layout:fixed; width:100%; page-break-inside:avoid;">
+    <thead style="text-align:center;">
+        <tr>
+            <th rowspan="3" style="vertical-align:bottom;">No.</th>
+            <th colspan="{{dancing_round.competition.adjudicators|length + dancing_round.couples|length}}">{{dance}}</th>
+            <th rowspan="3" style="vertical-align:bottom;">Result</th>
+        </tr>
+        <tr>
+            <th colspan="{{dancing_round.competition.adjudicators|length}}">Adjudicators</th>
+            <th colspan="{{dancing_round.couples|length}}">Places</th>
+        </tr>
+        <tr>
+            {% for adjudicator in dancing_round.competition.adjudicators|sort(attribute='tag') %}
+            <th>{{adjudicator.tag}}</th>
+            {% endfor %}
+            {% for couple in dancing_round.couples %}
+            <th>1{% if loop.index > 1 %}-{{loop.index}}{% endif %}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in skating.skating_dances[dance].skating.itertuples() %}
+        <tr>
+            {% for col in row %}
+            <td>{{col}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endfor %}

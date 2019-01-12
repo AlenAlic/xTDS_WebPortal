@@ -1,0 +1,50 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+<h2>{{dancing_round.competition.event}} / {{dancing_round.competition}} / {{dancing_round.type.value}}</h2>
+<h3>Floor management</h3>
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        {% for dance in dancing_round.dances %}
+            <a class="nav-item nav-link {% if request.args.get('dance_id')|int == dance.dance_id|int %}active{% endif %}" href="{{url_for('adjudication_system.floor_management', round_id=dancing_round.round_id, dance_id=dance.dance_id)}}">{{dance}}</a>
+        {% endfor %}
+    </div>
+</nav>
+<form method="POST" enctype="multipart/form-data" novalidate>
+<div role="group" class="my-4">
+    <button class="btn btn-outline-success mr-5" type="submit" name="save">Save checked</button>
+    <button class="btn btn-outline-primary mr-5" name="refresh">Refresh</button>
+    <input type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#uncheckWarning-{{dance.dance_id}}" value="Uncheck all">
+</div>
+<div class="modal fade" id="uncheckWarning-{{dance.dance_id}}" tabindex="-1" role="dialog" aria-labelledby="uncheckWarning-{{dance.dance_id}}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">WARNING!</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p>Resetting the checkmarks for the {{dance}} is permanent.</p>
+                <p></p>
+                <p>Proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-danger" type="submit" name="{{dance.dance_id}}">Yes, uncheck all</button>
+                <button type="button" class="btn btn-outline-secondary ml-2" data-dismiss="modal">No, keep current data</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% for heat in dancing_round.heats %}
+    {% if heat.dance == dance %}
+        <h4>{{heat.dance}} / Heat {{heat.number}}</h4>
+        {% for present in heat.couples_present|sort(attribute='couple.number') %}
+            <div class="form-check form-check-inline mb-3">
+                <input class="form-check-input" type="checkbox" name="{{present.couple_present_id}}" id="{{present.couple_present_id}}" {% if present.present is sameas true %}checked disabled{% endif %}>
+                <label class="form-check-label mr-3" for="{{present.couple_present_id}}">{{present.couple.number}}</label>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+</form>
+{% endblock %}

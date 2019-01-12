@@ -22,22 +22,27 @@ FLOOR_MANAGER = 'floor_manager'
 TEAM_CAPTAIN = 'team_captain'
 TREASURER = 'treasurer'
 DANCER = 'dancer'
-SUPER_VOLUNTEER = 'super-volunteer'
+SUPER_VOLUNTEER = 'super_volunteer'
 ACCESS_LEVELS = {
     ADMIN: 'Admin',
     ORGANIZER: 'Tournament organizer',
     BLIND_DATE_ASSISTANT: 'Blind Date assistant',
     CHECK_IN_ASSISTANT: 'Check-in assistant',
     ADJUDICATOR_ASSISTANT: 'Adjudicator assistant',
+    TOURNAMENT_OFFICE_MANAGER: 'Tournament office manager',
+    FLOOR_MANAGER: 'Floor manager',
     TEAM_CAPTAIN: 'Team captain',
     TREASURER: 'Treasurer',
-    DANCER: 'Dancer'
+    DANCER: 'Dancer',
+    SUPER_VOLUNTEER: 'Super Volunteer',
 }
 
 # Account Names
 BLIND_DATE_ASSISTANT_ACCOUNT_NAME = 'BlindDateAssistant'
 CHECK_IN_ASSISTANT_ACCOUNT_NAME = 'CheckInAssistant'
 ADJUDICATOR_ASSISTANT_ACCOUNT_NAME = 'AdjudicatorAssistant'
+TOURNAMENT_OFFICE_MANAGER_ACCOUNT_NAME = 'TournamentOfficeManager'
+FLOOR_MANAGER_ACCOUNT_NAME = 'FloorManager'
 
 #  Tournaments
 NTDS = 'NTDS'
@@ -141,6 +146,7 @@ COMPETITION_CHOICE = {"": "Choose a competition", BALLROOM: BALLROOM, LATIN: LAT
 
 # All available levels
 LEVEL = 'level'
+TEST = 'TEST'
 BEGINNERS = 'Beginners'
 BREITENSPORT = 'Breitensport'
 AMATEURS = 'Amateurs'
@@ -154,7 +160,7 @@ LEVELS_SORT_ORDER = {BEGINNERS: 0, BREITENSPORT: 1, CLOSED: 2, OPEN_CLASS: 3, NO
 LIONS = 'Lions'
 
 # Dancing roles
-BOTH = 'both'
+BOTH = 'Both'
 ROLE = 'role'
 LEAD = 'Lead'
 FOLLOW = 'Follow'
@@ -163,6 +169,7 @@ ROLES_FORM = {
     LEAD: LEAD,
     FOLLOW: FOLLOW
 }
+OPPOSITE_ROLES = {LEAD: FOLLOW, FOLLOW: LEAD}
 LEVEL_ROLE_DISPLAY = {NO: "-", BEGINNERS: BEGINNERS, BREITENSPORT: BREITENSPORT, CLOSED: CLOSED, OPEN_CLASS: OPEN_CLASS,
                       LEAD: LEAD, FOLLOW: FOLLOW}
 
@@ -227,3 +234,68 @@ REGISTRATION_NOT_STARTED_TEXT = "Cannot enter page. " \
                                 "This page will be accessible after the registration period has started."
 REGISTRATION_NOT_OPEN_TEXT = "Registration is currently closed."
 RAFFLE_NOT_CONFIRMED_TEXT = "Cannot enter page. This page will be accessible after the raffle has taken place."
+
+# Dances
+SLOW_WALTZ = "Slow Waltz"
+TANGO = "Tango"
+VIENNESE_WALTZ = "Viennese Waltz"
+SLOW_FOXTROT = "Slow Foxtrot"
+QUICKSTEP = "Quickstep"
+SAMBA = "Samba"
+CHA_CHA_CHA = "Cha Cha Cha"
+RUMBA = "Rumba"
+PASO_DOBLE = "Paso Doble"
+JIVE = "Jive"
+DANCES = [
+    {"name": SLOW_WALTZ, "tag": "SW"},
+    {"name": TANGO, "tag": "TG"},
+    {"name": VIENNESE_WALTZ, "tag": "VW"},
+    {"name": SLOW_FOXTROT, "tag": "SF"},
+    {"name": QUICKSTEP, "tag": "QS"},
+    {"name": SAMBA, "tag": "SB"},
+    {"name": CHA_CHA_CHA, "tag": "CC"},
+    {"name": RUMBA, "tag": "RB"},
+    {"name": PASO_DOBLE, "tag": "PD"},
+    {"name": JIVE, "tag": "JV"},
+]
+# Basic dances and order
+BALLROOM_DANCES = [SLOW_WALTZ, TANGO, VIENNESE_WALTZ, SLOW_FOXTROT, QUICKSTEP]
+BALLROOM_BASIC_DANCES = [SLOW_WALTZ, TANGO, QUICKSTEP]
+BALLROOM_DANCE_ORDER = {SLOW_WALTZ: 0, TANGO: 1, VIENNESE_WALTZ: 2, SLOW_FOXTROT: 3, QUICKSTEP: 4}
+LATIN_DANCES = [SAMBA, CHA_CHA_CHA, RUMBA, PASO_DOBLE, JIVE]
+LATIN_BASIC_DANCES = [CHA_CHA_CHA, RUMBA, JIVE]
+LATIN_DANCE_ORDER = {SAMBA: 0, CHA_CHA_CHA: 1, RUMBA: 2, PASO_DOBLE: 3, JIVE: 4}
+BASIC_DANCES = {BALLROOM: BALLROOM_BASIC_DANCES, LATIN: LATIN_BASIC_DANCES}
+DANCE_ORDER = {BALLROOM: BALLROOM_DANCE_ORDER, LATIN: LATIN_DANCE_ORDER}
+
+# Classes
+BREITENSPORT_QUALIFICATION = BREITENSPORT + ' (Qualification)'
+DANCING_CLASSES = [
+    TEST,
+    BEGINNERS,
+    BREITENSPORT_QUALIFICATION,
+    AMATEURS,
+    PROFESSIONALS,
+    MASTERS,
+    CHAMPIONS,
+    CLOSED,
+    OPEN_CLASS
+]
+BREITENSPORT_COMPETITIONS = [AMATEURS, PROFESSIONALS, MASTERS, CHAMPIONS]
+BREITENSPORT_ORDER = {AMATEURS: 0, PROFESSIONALS: 1, MASTERS: 2, CHAMPIONS: 3}
+# Classes short names
+SHORT_REPRESENTATIONS = {
+    TEST: TEST,
+    BEGINNERS: BEGINNERS[:3],
+    BREITENSPORT_QUALIFICATION: BREITENSPORT_QUALIFICATION[:2],
+    AMATEURS: AMATEURS[:3],
+    PROFESSIONALS: PROFESSIONALS[:4],
+    MASTERS: MASTERS[:2],
+    CHAMPIONS: CHAMPIONS[:2],
+    CLOSED: CLOSED[:2],
+    OPEN_CLASS: 'OC',
+    BALLROOM: BALLROOM[:2],
+    LATIN: LATIN[:2],
+    SALSA: SALSA,
+    POLKA: POLKA,
+}

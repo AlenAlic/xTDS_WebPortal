@@ -1,0 +1,13 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+<h2>{{ g.event }}</h2>
+<h2>Edit class</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ dancing_class_form.hidden_tag() }}
+    {{ wtf.form_field(dancing_class_form.name) }}
+    <button class="btn btn-primary mr-2" type="submit" name="save_changes">Save changes</button>
+    <button class="btn btn-danger mr-2" type="submit" name="delete_class" {% if not dancing_class.deletable() %}disabled{% endif%}>Delete class</button>
+    <a role="button" class="btn btn-outline-secondary" href="{{url_for('adjudication_system.dancing_classes')}}">Cancel</a>
+</form>
+{% endblock %}

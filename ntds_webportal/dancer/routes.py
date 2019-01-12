@@ -32,4 +32,3 @@ def dancer_data():
         return redirect(url_for('main.dashboard'))
     return render_template('dancer/dancer_data.html', dancer=dancer, form=form, sc=g.sc, feedback_form=feedback_form,
                            timestamp=datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp())
-
