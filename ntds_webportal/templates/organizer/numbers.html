@@ -4,16 +4,23 @@
 {% block app_content %}
 <h2>Numbers of all leads per team</h2>
 <table class="table table-sm">
+    <colgroup>
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 65%;">
+    </colgroup>
     <thead>
         <tr>
-            <th><b>Team</b></th>
-            <th><b>Numbers</b></th>
+            <th>Team</th>
+            <th>Total numbers</th>
+            <th>Numbers of leads in team</th>
         </tr>
     </thead>
     <tbody>
         {% for team in teams %}
         <tr>
             <td>{{ team['city'] }}</td>
+            <td>{{ team['number_of_dancers']|length }}</td>
             <td>{% for c in team['number_of_dancers'] %}{{c.contestant_info.number}}{{ ", " if not loop.last }}{% endfor %}</td>
         </tr>
         {% endfor %}
