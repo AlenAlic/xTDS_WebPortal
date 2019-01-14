@@ -15,6 +15,9 @@ onload="onStart()"
 <h2>Potential adjudicators for the tournament <span class="badge badge-pill badge-dark"><span id="count-adjudicators">{{selected_adjudicators|length}}</span>/{{ adjudicators|length + super_volunteer_adjudicators|length }}</span></h2>
 <p>Super Volunteers (external adjudicators) are shown at the top of the list, with "Super Volunteer" as their team.</p>
 <div id="changes-warning" style="text-align:center;"><h3 class="float-center">Remember to save your changes</h3></div>
+<form method="GET" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-outline-primary float-right" id="submit-download_file" name="download_file" type="submit" value="Download lists of adjudicators">
+</form>
 <form id="breakdown-form" method="POST" enctype="multipart/form-data">
     <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
     <table class="table table-sm mb-0 mt-2" style="font-size:small">

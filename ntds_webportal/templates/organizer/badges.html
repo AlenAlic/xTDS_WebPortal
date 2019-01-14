@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+
+{% block app_content %}
+<h2>Badge information list</h2>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Full name</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Team</th>
+            <th>Number</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for super_volunteer in super_volunteers %}
+        <tr>
+            <td>{{ super_volunteer.get_full_name() }}</td>
+            <td>{{ super_volunteer.first_name }}</td>
+            <td>{{ super_volunteer.get_last_name() }}</td>
+            <td>Super Volunteer</td>
+            <td></td>
+        </tr>
+        {% endfor %}
+        {% for dancer in confirmed_dancers %}
+        <tr>
+            <td>{{ dancer.get_full_name() }}</td>
+            <td>{{ dancer.first_name }}</td>
+            <td>{{ dancer.get_last_name() }}</td>
+            <td>{{ dancer.contestant_info.team.city }}</td>
+            <td>{{ dancer.contestant_info.number }}</td>
+        </tr>
+        {% endfor %}
+        {% for dancer in remaining_dancers %}
+        <tr>
+            <td>{{ dancer.get_full_name() }}</td>
+            <td>{{ dancer.first_name }}</td>
+            <td>{{ dancer.get_last_name() }}</td>
+            <td>{{ dancer.contestant_info.team.city }}</td>
+            <td>{{ dancer.contestant_info.number }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

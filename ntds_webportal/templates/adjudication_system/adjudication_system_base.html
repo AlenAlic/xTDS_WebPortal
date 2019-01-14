@@ -39,7 +39,7 @@
             {% if g.competitions is not none %}
                 {% for competition in g.competitions|sort(attribute='when') %}
                     <li class="nav-item py-0">
-                        <a class="nav-link py-1 {% if request.args.get('competition_id')|int == competition.competition_id %}active{% endif %}" {% if competition.is_configurable() %}href="{{url_for('adjudication_system.competition', competition_id=competition.competition_id)}}"{% endif %} style="font-size:large;"><b>{{competition}}</b></a>
+                        <a class="nav-link py-1 {% if request.args.get('competition_id')|int == competition.competition_id %}active{% endif %}" {% if competition.is_configurable() %}href="{{url_for('adjudication_system.competition', competition_id=competition.competition_id)}}"{% endif %} style="font-size:large;"><b>{{competition}} ({{competition.competitors(true)}})</b></a>
                     </li>
                     {% for round in competition.rounds %}
                         <li class="nav-item py-0">

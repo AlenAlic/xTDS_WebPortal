@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+{% block app_content %}
+<h2>Numbers of all leads per team</h2>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th><b>Team</b></th>
+            <th><b>Numbers</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for team in teams %}
+        <tr>
+            <td>{{ team['city'] }}</td>
+            <td>{% for c in team['number_of_dancers'] %}{{c.contestant_info.number}}{{ ", " if not loop.last }}{% endfor %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

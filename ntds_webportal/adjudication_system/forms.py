@@ -11,7 +11,7 @@ import datetime as dt
 from ntds_webportal.data import *
 from contextlib import suppress
 from ntds_webportal.adjudication_system.validators import UniqueDancer, EqualNumberLeadsFollows, UniqueDancerEdit, \
-    UniqueDancerCompetition, UniqueCompetitionDancer
+    UniqueDancerCompetition, UniqueCompetitionDancer, UniquePerson
 
 
 def get_pk_from_identity(obj):
@@ -72,9 +72,9 @@ class CoupleForm(FlaskForm):
             .filter(DancingClass.name != TEST, Competition.mode == CompetitionMode.single_partner)
             .all() if c.qualification is None and not c.has_rounds()]
 
-    lead = QuerySelectField('Lead', validators=[DataRequired()], render_kw={'data-role': 'select2'}, allow_blank=True,
-                            blank_text='Please select a lead for the couple.')
-    follow = QuerySelectField('Follow', validators=[DataRequired()], render_kw={'data-role': 'select2'},
+    lead = QuerySelectField('Lead', validators=[DataRequired(), UniquePerson()], render_kw={'data-role': 'select2'},
+                            allow_blank=True, blank_text='Please select a lead for the couple.')
+    follow = QuerySelectField('Follow', validators=[DataRequired(), UniquePerson()], render_kw={'data-role': 'select2'},
                               allow_blank=True, blank_text='Please select a follow for the couple.')
     competitions = SelectMultipleField(label="Competitions", validators=[DataRequired(), UniqueDancer()], coerce=int,
                                        render_kw={'data-role': 'select2'})
@@ -253,8 +253,8 @@ class CreateFirstRoundForm(BaseRoundForm):
         self.dances.choices = [(d.dance_id, d) for d in comp.discipline.dances]
         self.dances.validators = [DataRequired(), EqualNumberLeadsFollows()]
         if request.method == "GET":
-            self.min_marks.data = max(int(comp.max_couples() / 2), 1)
-            self.max_marks.data = max(int(comp.max_couples() / 2), 1)
+            self.min_marks.data = min(int(comp.max_couples() / 2), 1)
+            self.max_marks.data = min(int(comp.max_couples() / 2), 1)
             if comp.discipline.name in BASIC_DANCES:
                 self.dances.data = [d.dance_id for d in comp.discipline.dances
                                     if d.name in BASIC_DANCES[comp.discipline.name]]
@@ -286,8 +286,8 @@ class ConfigureNextRoundForm(BaseRoundForm):
         else:
             self.cutoff.choices = dancing_round.get_cutoffs()
         if request.method == "GET":
-            self.min_marks.data = max(int(couples_max / 2), 1)
-            self.max_marks.data = max(int(couples_max / 2), 1)
+            self.min_marks.data = min(int(couples_max / 2), 1)
+            self.max_marks.data = min(int(couples_max / 2), 1)
             if dancing_round.competition.discipline.name in BASIC_DANCES:
                 if dancing_round.is_completed():
                     self.dances.data = [d.dance_id for d in dancing_round.dances]

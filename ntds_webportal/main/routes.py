@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, flash, g, request, Markup
+from flask import render_template, url_for, redirect, flash, g, request, Markup, current_app
 from flask_login import current_user, login_user, login_required, logout_user
 from ntds_webportal import db
 from ntds_webportal.main import bp
@@ -41,6 +41,16 @@ def index():
     if not g.sc.website_accessible:
         return render_template('inactive.html', title='Inactive', login_form=form)
     return render_template('index.html', title='Home', login_form=form)
+
+
+@bp.route('/sw.js', methods=['GET'])
+def sw():
+    return current_app.send_static_file('sw.js')
+
+
+@bp.route('/offline', methods=['GET'])
+def offline():
+    return render_template('offline.html')
 
 
 @bp.route('/logout', methods=['GET'])

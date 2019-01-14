@@ -110,7 +110,13 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of confirmed dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.diet_allergies', title='Diet/Allergies', text='Get a list of all allergies and dietary wishes of dancers and Super Volunteers.', image='food.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.diet_allergies', title='Diet/Allergies', text='Get a list of all allergies and dietary wishes of confirmed dancers and Super Volunteers.', image='food.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.badges', title='Badges', text='Get a list of the data needed for badges.', image='badges.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.numbers', title='Dancer numbers', text='Get a list of the numbers of all confirmed dancers per team.', image='numbers.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>

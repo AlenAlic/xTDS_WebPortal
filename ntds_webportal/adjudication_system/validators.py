@@ -70,3 +70,10 @@ class UniqueCompetitionDancer(object):
             if form.dancer.number in [d.number for d in comp.dancers()]:
                 raise ValidationError(field.gettext(f"Cannot add {form.dancer} to {comp}. He/She is already dancing "
                                                     f"there as a {OPPOSITE_ROLES[form.dancer.role]}."))
+
+
+class UniquePerson(object):
+    """Checks if there are no double dancers in the competition."""
+    def __call__(self, form, field):
+        if form.lead.data.number == form.follow.data.number:
+            raise ValidationError(field.gettext(f"{form.lead.data} cannot dance with himself or herself."))

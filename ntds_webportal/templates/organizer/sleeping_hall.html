@@ -21,7 +21,7 @@
         {% for team in teams %}
         <tr>
             <td>{{ team['city'] }}</td>
-            <td>{{ team['number_of_dancers'] }}</td>
+            <td>{{ team['number_of_dancers']|length }}</td>
         </tr>
         {% endfor %}
         <tr>

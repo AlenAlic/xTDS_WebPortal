@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+{% endblock navbar %}
+
+{% block app_content %}
+<h1>OFFLINE</h1>
+<h3>Welcome to the xTDS WebPortal</h3>
+<p>It is currently active for the {{g.sc.tournament}} {{g.sc.year}} in {{g.sc.city}}.</p>
+<p>You are currently offline, and can therefore not log in.</p>
+<a class="btn btn-outline-success my-3" href="" onclick="location.reload(true);">Reload page</a>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

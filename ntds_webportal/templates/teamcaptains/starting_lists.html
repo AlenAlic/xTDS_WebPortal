@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h2>Starting lists for tournament  <span class="badge badge-pill badge-dark">{{all_competition_dancers|length}}/{{all_dancers|length}}</span></h2>
+{% if g.sc.check_in_accessible() %}
+<h2>Starting lists for tournament <span class="badge badge-pill badge-dark">{{all_competition_dancers|length}}/{{all_dancers|length}}</span></h2>
+{% if all_competition_dancers|length == 0 %}
+<p>There are no dancers from your team on the starting lists yet.</p>
+{% endif %}
 {% for competition in competitions|sort(attribute='when') %}
 {% if competition.mode == g.competition_mode.single_partner %}
 <h3>{{competition}}{# <span class="badge badge-pill badge-dark">{{competitions[competition]|length}}</span>#}</h3>
@@ -59,4 +63,8 @@
 </table>
 {% endif %}
 {% endfor %}
+{% else %}
+<h2>Starting lists for tournament</h2>
+<p>Registration for the competitions has not started yet.</p>
+{% endif %}
 {% endblock %}

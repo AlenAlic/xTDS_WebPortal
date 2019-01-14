@@ -167,6 +167,10 @@ class TeamFinancialOverview:
         nbs, pbs = self.get_bags(paid)
         return nts + nms + nbs, pts + pms + pbs
 
+    def total_refund_price(self):
+        prices = self.prices()
+        return sum([prices[d.contestant_info.student] for d in self.dancers if d.payment_info.has_refund()])
+
     def finances_overview(self):
         number_students_paid, students_paid = self.get_students(True)
         number_students_unpaid, students_unpaid,  = self.get_students(False)
@@ -259,6 +263,7 @@ class TeamFinancialOverview:
                      'price_total': (students_unpaid + students_paid +
                                      non_students_paid + non_students_unpaid +
                                      phd_students_unpaid + phd_students_paid +
-                                     merchandise_unpaid + merchandise_paid)
+                                     merchandise_unpaid + merchandise_paid),
+                     'total_refund': self.total_refund_price()
                      })
         return result

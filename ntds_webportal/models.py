@@ -601,6 +601,9 @@ class PaymentInfo(db.Model):
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
+    def has_refund(self):
+        return self.full_refund is True or self.partial_refund is True
+
     def all_paid(self, set_paid=None):
         if set_paid is not None:
             if set_paid:
@@ -1407,12 +1410,18 @@ class Competition(db.Model):
         else:
             return not self.first_round().has_heats()
 
-    def competitors(self):
-        if self.mode == CompetitionMode.single_partner:
-            return f"{len(self.couples)} couple{'' if len(self.couples) == 1 else 's'}"
+    def competitors(self, numbers_only=False):
+        if not numbers_only:
+            if self.mode == CompetitionMode.single_partner:
+                return f"{len(self.couples)} couple{'' if len(self.couples) == 1 else 's'}"
+            else:
+                return f"{len(self.leads)} lead{'' if len(self.leads) == 1 else 's'} / {len(self.follows)} " \
+                    f"follow{'' if len(self.follows) == 1 else 's'}"
         else:
-            return f"{len(self.leads)} lead{'' if len(self.leads) == 1 else 's'} / {len(self.follows)} " \
-                f"follow{'' if len(self.follows) == 1 else 's'}"
+            if self.mode == CompetitionMode.single_partner:
+                return f"{len(self.couples)}"
+            else:
+                return f"{len(self.leads)}/{len(self.follows)}"
 
     def dancers(self):
         return [d for d in self.leads + self.follows]

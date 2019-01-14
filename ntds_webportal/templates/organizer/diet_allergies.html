@@ -54,10 +54,10 @@ visibility:hidden
         </tbody>
     </table>
 </div>
-<div id="changes-warning" style="text-align:center;display:none;"><h3 class="float-center">Remember to save your changes</h3></div>
+<div id="changes-warning" style="text-align:center;display:none;"><h3 class="float-center no-print">Remember to save your changes</h3></div>
 <form id="breakdown-form" method="POST" enctype="multipart/form-data" novalidate>
     <button class="btn btn-outline-secondary no-print" type="button" onclick="printSummary()">Print summary</button>
-    <button class="btn btn-outline-secondary no-print ml-2" type="button" onclick="printPage()">Print everything</button>
+    <button class="btn btn-outline-secondary no-print ml-2" type="button" onclick="printPage()">Print list</button>
     <input class="btn btn-primary no-print float-right" id="submit" name="submit" type="submit" value="Save changes">
     <table class="table table-sm mt-2" id="diet-table">
     <colgroup>
@@ -103,7 +103,10 @@ function printSummary() {
     form.classList.remove("no-print");
 }
 function printPage() {
+    let form = document.getElementById("special-table-container");
+    form.classList.add("no-print");
     window.print();
+    form.classList.remove("no-print");
 }
 function getNotes() {
     let table = document.getElementById("diet-table");

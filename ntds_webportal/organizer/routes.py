@@ -310,12 +310,12 @@ def edit_dancing_info(number):
     return render_template('organizer/edit_dancing_info.html', data=data, form=form, dancer=dancer)
 
 
+# noinspection PyTypeChecker
 @bp.route('/finances_overview', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def finances_overview():
-    # WISH - Discuss with "Penny" for what to add - downloads for total page and summary pages
     all_teams = db.session.query(Team)
     if g.sc.tournament == NTDS:
         all_teams = all_teams.filter(Team.country == NETHERLANDS).all()
@@ -362,6 +362,31 @@ def finances_overview():
     german_teams = [team for team in teams if team['team'].country == GERMANY]
     other_teams = [team for team in teams if
                    team['team'].country != NETHERLANDS and team['team'].country != GERMANY]
+    download = request.args
+    if 'download_file' in download:
+        header = {'Team': 0, '# Dancers': 1, 'Owed': 2, 'Received': 3, 'Difference': 4, 'Refund': 5}
+        fn = f'finances_overview_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
+        output = BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        f = wb.add_format({'text_wrap': True, 'bold': True})
+        acc = wb.add_format({'num_format': 44})
+        ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
+        for name, index in header.items():
+            ws.write(0, index, name, f)
+        ws.set_column(0, 0, 30)
+        ws.set_column(1, 1, 10)
+        ws.set_column(2, 5, 15)
+        for i, team in enumerate(teams, 1):
+            ws.write(i, 0, team['team'].name)
+            ws.write(i, 1, team['finances']['number_of_dancers'])
+            ws.write(i, 2, round(team['finances']['price_total']/100, 2), acc)
+            ws.write(i, 3, round(team['team'].amount_paid/100, 2), acc)
+            ws.write(i, 4, round(team['team'].amount_paid-team['finances']['price_total']/100, 2), acc)
+            ws.write(i, 5, round(team['finances']['total_refund']/100, 2), acc)
+        ws.freeze_panes(1, 0)
+        wb.close()
+        output.seek(0)
+        return send_file(output, as_attachment=True, attachment_filename=fn)
     return render_template('organizer/finances_overview.html', teams=teams, data=data,
                            dutch_teams=dutch_teams, german_teams=german_teams, other_teams=other_teams)
 
@@ -462,9 +487,9 @@ def sleeping_hall():
     teams = [{'city': team_captain.team.city,
               'number_of_dancers': db.session.query(Contestant).join(ContestantInfo, StatusInfo, AdditionalInfo)
              .filter(ContestantInfo.team == team_captain.team, StatusInfo.status == CONFIRMED,
-                     AdditionalInfo.sleeping_arrangements.is_(True)).count()} for team_captain in team_captains]
+                     AdditionalInfo.sleeping_arrangements.is_(True)).all()} for team_captain in team_captains]
     super_volunteers = SuperVolunteer.query.filter(SuperVolunteer.sleeping_arrangements.is_(True)).all()
-    total = sum([team['number_of_dancers'] for team in teams]) + len(super_volunteers)
+    total = sum([len(team['number_of_dancers']) for team in teams]) + len(super_volunteers)
     form = request.args
     if 'download_file' in form:
         fn = f'sleeping_hall_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
@@ -472,31 +497,36 @@ def sleeping_hall():
         wb = xlsxwriter.Workbook(output, {'in_memory': True})
         f = wb.add_format({'text_wrap': True, 'bold': True})
         la = wb.add_format({'align': 'left'})
-        ws = wb.add_worksheet()
+        ws = wb.add_worksheet(name='Summary')
         ws.write(0, 0, 'Team', f)
         ws.write(0, 1, 'People in sleeping hall (Total: {total})'.format(total=total), f)
         for d in range(0, len(teams)):
             ws.write(d + 1, 0, teams[d]['city'])
-            ws.write(d + 1, 1, teams[d]['number_of_dancers'], la)
+            ws.write(d + 1, 1, len(teams[d]['number_of_dancers']), la)
         ws.write(len(teams) + 1, 0, 'Super Volunteers')
-        ws.write(len(teams) + 1, 1, super_volunteers, la)
+        ws.write(len(teams) + 1, 1, len(super_volunteers), la)
         ws.set_column(0, 0, 30)
         ws.set_column(1, 1, 40)
+        ws.freeze_panes(1, 0)
+        ws = wb.add_worksheet(name='People in Sleeping Hall')
+        ws.write(0, 0, 'Name', f)
+        ws.write(0, 1, 'Team', f)
+        dancers = sorted(Contestant.query.join(StatusInfo, AdditionalInfo, ContestantInfo)
+                         .filter(StatusInfo.status == CONFIRMED, AdditionalInfo.sleeping_arrangements.is_(True)).all(),
+                         key=lambda x: x.contestant_info.team.city)
+        for i, p in enumerate(dancers, 1):
+            ws.write(i, 0, p.get_full_name())
+            ws.write(i, 1, p.contestant_info.team.city)
+        for i, p in enumerate(super_volunteers, len(dancers) + 1):
+            ws.write(i, 0, p.get_full_name())
+            ws.write(i, 1, 'Super Volunteer')
+        ws.set_column(0, 0, 40)
+        ws.set_column(1, 1, 30)
         ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
     return render_template('organizer/sleeping_hall.html', teams=teams, super_volunteers=super_volunteers, total=total)
-
-
-@bp.route('/view_super_volunteer/<int:number>', methods=[GET])
-@login_required
-@requires_access_level([ACCESS[ORGANIZER]])
-def view_super_volunteer(number):
-    super_volunteer = SuperVolunteer.query.filter(SuperVolunteer.volunteer_id == number).first()
-    form = SuperVolunteerForm()
-    form.populate(super_volunteer)
-    return render_template('organizer/view_super_volunteer.html', form=form)
 
 
 @bp.route('/diet_allergies', methods=[GET, POST])
@@ -558,6 +588,46 @@ def diet_allergies():
             return redirect(url_for('organizer.diet_allergies'))
     return render_template('organizer/diet_allergies.html',
                            people=people, total=total, no_special_diet=no_special_diet, old_notes=old_notes)
+
+
+@bp.route('/badges', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def badges():
+    dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status != CANCELLED).all()
+    dancers.sort(key=lambda x: (x.contestant_info.team.name, x.contestant_info.number))
+    confirmed_dancers = [d for d in dancers if d.status_info.status == CONFIRMED]
+    remaining_dancers = [d for d in dancers if d.status_info.status != CONFIRMED]
+    super_volunteers = SuperVolunteer.query.all()
+    return render_template('organizer/badges.html', confirmed_dancers=confirmed_dancers,
+                           super_volunteers=super_volunteers, remaining_dancers=remaining_dancers)
+
+
+@bp.route('/numbers', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def numbers():
+    team_captains = db.session.query(User).filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True))\
+        .order_by(User.username).all()
+    teams = \
+        [{'city': team_captain.team.city, 'number_of_dancers':
+            [c for c in Contestant.query.join(ContestantInfo, StatusInfo, AdditionalInfo)
+                .filter(ContestantInfo.team == team_captain.team, StatusInfo.status == CONFIRMED)
+                .order_by(ContestantInfo.number).all()
+             if c.status_info.dancing_lead()]} for team_captain in team_captains]
+    return render_template('organizer/numbers.html', teams=teams)
+
+
+@bp.route('/view_super_volunteer/<int:number>', methods=[GET])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def view_super_volunteer(number):
+    super_volunteer = SuperVolunteer.query.filter(SuperVolunteer.volunteer_id == number).first()
+    form = SuperVolunteerForm()
+    form.populate(super_volunteer)
+    return render_template('organizer/view_super_volunteer.html', form=form)
 
 
 @bp.route('/adjudicators_overview', methods=['GET', 'POST'])
@@ -627,6 +697,77 @@ def adjudicators_overview():
                 return redirect(url_for('organizer.adjudicators_overview'))
             else:
                 flash("Adjudicator tags are not unique.", "alert-warning")
+    form = request.args
+    if 'download_file' in form:
+        fn = f'adjudicators_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
+        output = BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        f = wb.add_format({'text_wrap': True, 'bold': True})
+        ws = wb.add_worksheet(name="adjudicators")
+        ws.write(0, 0, 'Selected to adjudicate', f)
+        ws.write(0, 1, 'Dancer', f)
+        ws.write(0, 2, 'Team', f)
+        ws.write(0, 3, 'E-mail', f)
+        ws.write(0, 4, 'Wants to adjudicate Ballroom?', f)
+        ws.write(0, 5, 'Has Ballroom license?', f)
+        ws.write(0, 6, 'Highest achieved level in Ballroom', f)
+        ws.write(0, 7, 'Wants to adjudicate Latin?', f)
+        ws.write(0, 8, 'Has Latin license?', f)
+        ws.write(0, 9, 'Highest achieved level in Latin', f)
+        ws.write(0, 10, 'Dancing Ballroom?', f)
+        ws.write(0, 11, 'Dancing Latin?', f)
+        if g.sc.polka_competition:
+            ws.write(0, 13, 'Wants to adjudicate Polka?', f)
+            ws.set_column(12, 12, 0)
+            ws.set_column(13, 13, 10)
+        if g.sc.salsa_competition:
+            ws.write(0, 12, 'Wants to adjudicate Salsa?', f)
+            ws.set_column(12, 12, 10)
+            ws.set_column(13, 13, 10)
+        ws.set_column(0, 0, 10)
+        ws.set_column(1, 1, 25)
+        ws.set_column(2, 2, 15)
+        ws.set_column(3, 3, 35)
+        ws.set_column(4, 9, 10)
+        ws.set_column(10, 11, 15)
+        for i, adj in enumerate(super_volunteer_adjudicators, 1):
+            ws.write(i, 0, 'Yes' if adj.selected_adjudicator else '')
+            ws.write(i, 1, adj.get_full_name())
+            ws.write(i, 2, 'Super Volunteer')
+            ws.write(i, 3, adj.email)
+            ws.write(i, 4, adj.jury_ballroom)
+            ws.write(i, 5, adj.license_jury_ballroom)
+            ws.write(i, 6, adj.level_ballroom)
+            ws.write(i, 7, adj.jury_latin)
+            ws.write(i, 8, adj.license_jury_latin)
+            ws.write(i, 9, adj.level_latin)
+            ws.write(i, 10, '-')
+            ws.write(i, 11, '-')
+            if g.sc.salsa_competition:
+                ws.write(i, 12, adj.jury_salsa)
+            if g.sc.polka_competition:
+                ws.write(i, 13, adj.jury_polka)
+        for i, adj in enumerate(adjudicators, 1 + len(super_volunteer_adjudicators)):
+            ws.write(i, 0, 'Yes' if adj.volunteer_info.selected_adjudicator else '')
+            ws.write(i, 1, adj.get_full_name())
+            ws.write(i, 2, adj.contestant_info.team.city)
+            ws.write(i, 3, adj.email)
+            ws.write(i, 4, adj.volunteer_info.jury_ballroom)
+            ws.write(i, 5, adj.volunteer_info.license_jury_ballroom)
+            ws.write(i, 6, adj.volunteer_info.level_ballroom)
+            ws.write(i, 7, adj.volunteer_info.jury_latin)
+            ws.write(i, 8, adj.volunteer_info.license_jury_latin)
+            ws.write(i, 9, adj.volunteer_info.level_latin)
+            ws.write(i, 10, adj.competition(BALLROOM).level)
+            ws.write(i, 11, adj.competition(LATIN).level)
+            if g.sc.salsa_competition:
+                ws.write(i, 12, adj.volunteer_info.jury_salsa)
+            if g.sc.polka_competition:
+                ws.write(i, 13, adj.volunteer_info.jury_polka)
+        ws.freeze_panes(1, 0)
+        wb.close()
+        output.seek(0)
+        return send_file(output, as_attachment=True, attachment_filename=fn)
     return render_template('organizer/adjudicators_overview.html', adjudicators=adjudicators, tags=tags,
                            super_volunteer_adjudicators=super_volunteer_adjudicators,
                            selected_adjudicators=selected_adjudicators)
