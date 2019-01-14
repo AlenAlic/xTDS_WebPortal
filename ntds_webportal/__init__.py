@@ -207,12 +207,12 @@ def create_app():
             db.session.commit()
 
     with app.app_context():
-        from sqlalchemy.exc import InternalError
+        from sqlalchemy.exc import InternalError, ProgrammingError
         try:
             create_tournament_state_table()
             create_system_configuration_table()
             create_raffle_configuration_table()
-        except InternalError:
+        except (InternalError, ProgrammingError) as e:
             pass
 
     from ntds_webportal.main import bp as main_bp
