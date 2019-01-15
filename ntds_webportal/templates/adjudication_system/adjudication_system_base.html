@@ -16,7 +16,7 @@
     or request.path == '/adjudication_system/disciplines' or request.path[:36] == '/adjudication_system/edit_discipline'
     or request.path == '/adjudication_system/dancing_classes' or request.path[:39] == '/adjudication_system/edit_dancing_class'
     or request.path == '/adjudication_system/available_adjudicators' or request.path == '/adjudication_system/adjudicator_assignments'
-    or request.path == '/adjudication_system/available_dancers'
+    or request.path == '/adjudication_system/available_dancers' or request.path[:32] == '/adjudication_system/edit_dancer'
     or request.path == '/adjudication_system/available_couples' or request.path[:32] == '/adjudication_system/edit_couple'
 %}
 
@@ -24,28 +24,36 @@
 <div class="row mx-0" style="height:100%">
     <div class="col-2 px-4 pt-3 no-print" style="background:var(--light); overflow-y:auto;">
         <ul class="nav flex-column nav-pills" id="pills-tab" role="tablist">
+            {% if current_user.is_tournament_office_manager() %}
             <li class="nav-item">
                 <a class="nav-link btn btn-outline-primary" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
             </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link btn btn-outline-primary" href="{{ url_for('main.logout') }}">Logout</a>
+            </li>
+            {% endif %}
             {% if g.event is not none %}
                 <li class="nav-item mt-3">
-                    <a class="nav-link {% if event_active %}active{% endif %}" href="{{url_for('adjudication_system.event')}}" style="font-size:x-large;"><b>{{g.event}}</b></a>
+                    <a class="nav-link {% if event_active and current_user.is_tournament_office_manager() %}active{% endif %} {% if not current_user.is_tournament_office_manager() %}disabled{% endif %}" href="{% if current_user.is_tournament_office_manager() %}{{url_for('adjudication_system.event')}}{% else %}javascript:void(0);{% endif %}" style="font-size:x-large;"><b>{{g.event}}</b></a>
                 </li>
             {% else %}
                 <li class="nav-item mt-3">
-                    <a class="nav-link {% if event_active %}active{% endif %}" href="{{url_for('adjudication_system.event')}}" style="font-size:x-large;"><b>New event</b></a>
+                    <a class="nav-link {% if event_active and current_user.is_tournament_office_manager() %}active{% endif %}" href="{% if current_user.is_tournament_office_manager() %}{{url_for('adjudication_system.event')}}{% else %}javascript:void(0);{% endif %}" style="font-size:x-large;"><b>New event</b></a>
                 </li>
             {% endif %}
             {% if g.competitions is not none %}
                 {% for competition in g.competitions|sort(attribute='when') %}
                     <li class="nav-item py-0">
-                        <a class="nav-link py-1 {% if request.args.get('competition_id')|int == competition.competition_id %}active{% endif %}" {% if competition.is_configurable() %}href="{{url_for('adjudication_system.competition', competition_id=competition.competition_id)}}"{% endif %} style="font-size:large;"><b>{{competition}} ({{competition.competitors(true)}})</b></a>
+                        <a class="nav-link py-1 {% if request.args.get('competition_id')|int == competition.competition_id %}active{% endif %} {% if not current_user.is_tournament_office_manager() %}disabled{% endif %}" href="{% if competition.is_configurable() and current_user.is_tournament_office_manager() %}{{url_for('adjudication_system.competition', competition_id=competition.competition_id)}}{% else %}javascript:void(0);{% endif %}" style="font-size:large;"><b>{{competition}} ({{competition.competitors(true)}})</b></a>
                     </li>
+                    {% if not current_user.is_tournament_office_manager() %}
                     {% for round in competition.rounds %}
                         <li class="nav-item py-0">
                             <a class="nav-link py-0 {% if request.args.get('round_id')|int == round.round_id %}active{% endif %}" href="{{url_for('adjudication_system.progress', round_id=round.round_id)}}">{{round.type.value}} ({{round.couples|length}})</a>
                         </li>
                     {% endfor %}
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         </ul>
@@ -64,33 +72,33 @@
                     <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Competition dependencies</b>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/adjudication_system/dances' or request.path[:31] == '/adjudication_system/edit_dance'%}active{% endif %}"
+                    <a class="nav-link {% if request.path == '/adjudication_system/dances' or request.path[:31] == '/adjudication_system/edit_dance'%}active{% endif %} {% if not current_user.is_tournament_office_manager() %}disabled{% endif %}"
                        href="{{url_for('adjudication_system.dances')}}">Dances</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/adjudication_system/disciplines' or request.path[:36] == '/adjudication_system/edit_discipline'%}active{% endif %}"
+                    <a class="nav-link {% if request.path == '/adjudication_system/disciplines' or request.path[:36] == '/adjudication_system/edit_discipline'%}active{% endif %} {% if not current_user.is_tournament_office_manager() %}disabled{% endif %}"
                        href="{{url_for('adjudication_system.disciplines')}}">Disciplines</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/adjudication_system/dancing_classes' or request.path[:39] == '/adjudication_system/edit_dancing_class'%}active{% endif %}"
+                    <a class="nav-link {% if request.path == '/adjudication_system/dancing_classes' or request.path[:39] == '/adjudication_system/edit_dancing_class'%}active{% endif %} {% if not current_user.is_tournament_office_manager() %}disabled{% endif %}"
                        href="{{url_for('adjudication_system.dancing_classes')}}">Classes</a>
                 </li>
                 <li class="nav-item">
                     <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Adjudication</b>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/adjudication_system/available_adjudicators'%}active{% endif %}"
+                    <a class="nav-link {% if request.path == '/adjudication_system/available_adjudicators'%}active{% endif %} {% if not current_user.is_tournament_office_manager() %}disabled{% endif %}"
                        href="{{url_for('adjudication_system.available_adjudicators')}}">Adjudicators</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/adjudication_system/adjudicator_assignments'%}active{% endif %} {% if g.event is none or not g.event.has_competitions() %}disabled{% endif %}"
+                    <a class="nav-link {% if request.path == '/adjudication_system/adjudicator_assignments'%}active{% endif %} {% if g.event is none or not g.event.has_competitions() or not current_user.is_tournament_office_manager() %}disabled{% endif %}"
                        href="{% if g.event is not none %}{{url_for('adjudication_system.adjudicator_assignments')}}{% else %}javascript:void(0);{% endif %}">Assignments</a>
                 </li>
                 <li class="nav-item">
                     <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Competition nexus</b>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/adjudication_system/available_dancers'%}active{% endif %} {% if g.event is none or not g.event.has_competitions() %}disabled{% endif %}"
+                    <a class="nav-link {% if request.path == '/adjudication_system/available_dancers' or request.path[:32] == '/adjudication_system/edit_dancer' %}active{% endif %} {% if g.event is none or not g.event.has_competitions() %}disabled{% endif %}"
                        href="{% if g.event is not none %}{{url_for('adjudication_system.available_dancers')}}{% else %}javascript:void(0);{% endif %}">Dancers</a>
                 </li>
                 <li class="nav-item">

@@ -236,9 +236,6 @@ def create_app():
     from ntds_webportal.raffle import bp as raffle_bp
     app.register_blueprint(raffle_bp, url_prefix='/raffle')
 
-    from ntds_webportal.blind_date_assistant import bp as blind_date_assistant_bp
-    app.register_blueprint(blind_date_assistant_bp, url_prefix='/blind_date_assistant')
-
     from ntds_webportal.check_in_assistant import bp as check_in_assistant_bp
     app.register_blueprint(check_in_assistant_bp, url_prefix='/check_in_assistant')
 

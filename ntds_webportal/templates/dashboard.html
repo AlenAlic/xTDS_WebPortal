@@ -140,9 +140,9 @@ onload="onStart()"
 </div>
 <h2>Switch account</h2>
 <div class="row" style="visibility:hidden">
-    <!--{% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistant account. This will log you out of the Organizer account.', image='view_couples.png' %}-->
-        <!--{% include '_dashboard_page.html' %}-->
-    <!--{% endwith %}-->
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistant account. This will log you out of the Organizer account.', image='view_couples.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_cia', title='Check-In Assistant', text='Switch to the Check-In Assistant account. This will log you out of the Organizer account.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
@@ -152,30 +152,9 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_tom', title='Tournament Office Manager', text='Switch to the Tournament Office Manager account. This will log you out of the Organizer account.', image='tournament_office_account.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.sc.check_in_accessible(), url='organizer.switch_to_fm', title='Floor Manager', text='Switch to the Floor Manager account. This will log you out of the Organizer account.', image='floor_manager.png' %}
+    {% with accessible=g.sc.main_raffle_result_visible, url='organizer.switch_to_fm', title='Floor Manager', text='Switch to the Floor Manager account. This will log you out of the Organizer account.', image='floor_manager.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-</div>
-{% endif %}
-
-{% if current_user.is_bda() %}
-<div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple', title='Ballroom Blind Date Couples', text='Create new blind date couples for Standard and Latin.', image='view_couples.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% if g.sc.salsa_competition is sameas true %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_salsa', title='Salsa Blind Date Couples', text='Create new blind date couples for Salsa.', image='salsa.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% endif %}
-    {% if g.sc.polka_competition is sameas true %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_polka', title='Polka Blind Date Couples', text='Create new blind date couples for Latin.', image='polka.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% endif %}
 </div>
 {% endif %}
 

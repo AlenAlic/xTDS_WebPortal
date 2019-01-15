@@ -460,7 +460,7 @@ def adjudicator_assignments():
 
 @bp.route('/available_dancers', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER], ACCESS[BLIND_DATE_ASSISTANT]])
 def available_dancers():
     form = DancerForm()
     if request.method == POST:
@@ -522,7 +522,7 @@ def available_dancers():
 
 @bp.route('/edit_dancer/<int:dancer_id>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER], ACCESS[BLIND_DATE_ASSISTANT]])
 def edit_dancer(dancer_id):
     dancer = Dancer.query.filter(Dancer.dancer_id == dancer_id).first()
     if dancer is not None:
@@ -542,7 +542,7 @@ def edit_dancer(dancer_id):
 
 @bp.route('/available_couples', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER], ACCESS[BLIND_DATE_ASSISTANT]])
 def available_couples():
     form = CoupleForm()
     if request.method == POST:
@@ -626,7 +626,7 @@ def available_couples():
 
 @bp.route('/edit_couple/<int:couple_id>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER], ACCESS[BLIND_DATE_ASSISTANT]])
 def edit_couple(couple_id):
     couple = Couple.query.filter(Couple.couple_id == couple_id).first()
     if couple is not None:
@@ -646,7 +646,7 @@ def edit_couple(couple_id):
 
 @bp.route('/delete_couple/<int:couple_id>', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER], ACCESS[BLIND_DATE_ASSISTANT]])
 def delete_couple(couple_id):
     couple = Couple.query.filter(Couple.couple_id == couple_id).first()
     if couple is not None:
