@@ -195,7 +195,11 @@ class User(UserMixin, Anonymous, db.Model):
             return 0
 
     def has_dancers_registered(self):
-        return self.registered_dancers() > 0
+        count = 0
+        if self.is_tc():
+            count += Contestant.query.join(StatusInfo, ContestantInfo) \
+                .filter(ContestantInfo.team == current_user.team).count()
+        return count > 0
 
     def number_of_dancers_with_status(self, status):
         count = 0
