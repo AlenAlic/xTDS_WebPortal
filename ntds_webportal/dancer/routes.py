@@ -24,7 +24,7 @@ def dancer_data():
         flash('Privacy policy accepted.', 'alert-success')
         dancer.status_info.set_status(REGISTERED)
         db.session.commit()
-        return redirect(url_for('dancer.dancer_data'))
+        return redirect(url_for('url_dancer.dancer_data'))
     if feedback_form.validate_on_submit():
         flash('Feedback sent to team captain.', 'alert-success')
         dancer.status_info.feedback_about_information = feedback_form.feedback.data
