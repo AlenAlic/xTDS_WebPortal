@@ -99,11 +99,11 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == '/adjudication_system/available_dancers' or request.path[:32] == '/adjudication_system/edit_dancer' %}active{% endif %} {% if g.event is none or not g.event.has_competitions() %}disabled{% endif %}"
-                       href="{% if g.event is not none %}{{url_for('adjudication_system.available_dancers')}}{% else %}javascript:void(0);{% endif %}">Dancers</a>
+                       href="{% if g.event is not none and g.event.has_competitions() %}{{url_for('adjudication_system.available_dancers')}}{% else %}javascript:void(0);{% endif %}">Dancers</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == '/adjudication_system/available_couples' or request.path[:32] == '/adjudication_system/edit_couple' %}active{% endif %} {% if g.event is none or not g.event.has_competitions() %}disabled{% endif %}"
-                       href="{% if g.event is not none %}{{url_for('adjudication_system.available_couples')}}{% else %}javascript:void(0);{% endif %}">Couples</a>
+                       href="{% if g.event is not none and g.event.has_competitions() %}{{url_for('adjudication_system.available_couples')}}{% else %}javascript:void(0);{% endif %}">Couples</a>
                 </li>
             </ul>
         {% endif %}

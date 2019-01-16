@@ -8,8 +8,8 @@
 
 {% block styles %}
 {{ super() }}
-{{ select2_form_css() }}
 <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+{{ select2_form_css() }}
 <style>
 /* Base formatting */
 @media (min-width:1440px){.container{max-width:1410px}}

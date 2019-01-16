@@ -1476,7 +1476,7 @@ class Discipline(db.Model):
     discipline_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     competitions = db.relationship("Competition", back_populates="discipline")
-    dances = db.relationship("Dance", back_populates="discipline", cascade='delete, delete-orphan')
+    dances = db.relationship("Dance", back_populates="discipline")
 
     def __repr__(self):
         return '{}'.format(self.name)

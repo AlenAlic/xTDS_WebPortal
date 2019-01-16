@@ -1003,7 +1003,7 @@ def adjudication():
                         if result_placing[i] == 1:
                             result_map.update({i: str(counter)})
                         else:
-                            result_map.update({i: str(counter) + ' - ' + str(counter+result_placing[i]-1)})
+                            result_map.update({i: str(counter) + ' - ' + str(counter + result_placing[i] - 1)})
                         counter += result_placing[i]
                     for result in dancing_round.round_results:
                         result.placing = result_map[result.marks]
