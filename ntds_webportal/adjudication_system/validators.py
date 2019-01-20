@@ -56,12 +56,6 @@ class UniqueDancerCompetition(object):
                 raise ValidationError(field.gettext(CANNOT_SAVE_COMPETITION.format(d=dancer, role="follow")))
 
 
-class UniqueTag(object):
-    """Checks if the adjudicator tag is unique."""
-    def __call__(self, form, field):
-        tags = [a.tag for a in Adjudicator.query.all()]
-
-
 class UniqueCompetitionDancer(object):
     """Checks if a dancer is already in the selected competitions."""
     def __call__(self, form, field):

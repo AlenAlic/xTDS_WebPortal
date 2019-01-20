@@ -65,8 +65,8 @@ class EditDancerForm(FlaskForm):
 class CoupleForm(FlaskForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.lead.query = Dancer.query.filter(Dancer.role == LEAD)
-        self.follow.query = Dancer.query.filter(Dancer.role == FOLLOW)
+        self.lead.query = Dancer.query.filter(Dancer.role == LEAD).order_by(Dancer.name)
+        self.follow.query = Dancer.query.filter(Dancer.role == FOLLOW).order_by(Dancer.name)
         self.competitions.choices = [(c.competition_id, c) for c in Competition.query.join(
             DancingClass, Competition.dancing_class_id == DancingClass.dancing_class_id)
             .filter(DancingClass.name != TEST, Competition.mode == CompetitionMode.single_partner)
@@ -136,7 +136,7 @@ class DancingClassForm(FlaskForm):
     dancing_class_submit = SubmitField('Create Class')
 
 
-class CreateAdjudicatorFromContestant(FlaskForm):
+class CreateAdjudicatorFromContestantForm(FlaskForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.contestant.query = Contestant.query.join(StatusInfo).filter(StatusInfo.status == CONFIRMED)
@@ -146,7 +146,7 @@ class CreateAdjudicatorFromContestant(FlaskForm):
     adjudicator_contestant_submit = SubmitField('Create adjudicator')
 
 
-class CreateAdjudicatorFromSuperVolunteer(FlaskForm):
+class CreateAdjudicatorFromSuperVolunteerForm(FlaskForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.super_volunteer.query = SuperVolunteer.query

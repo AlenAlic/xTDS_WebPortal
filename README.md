@@ -1,4 +1,4 @@
-# NTDS_webportal
+# xTDS WebPortal
 Version [0.8.0][CHANGELOG]
 
 A web portal for registration and selection for the NTDS.

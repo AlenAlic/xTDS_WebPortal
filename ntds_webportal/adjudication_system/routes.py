@@ -4,8 +4,8 @@ from ntds_webportal import db
 from ntds_webportal.adjudication_system import bp
 from ntds_webportal.adjudication_system.forms import SplitForm, EventForm, CompetitionForm, \
     CreateFirstRoundForm, DefaultCompetitionForm, ConfigureNextRoundForm, DanceForm, DisciplineForm, DancingClassForm, \
-    PrintReportsForm, CoupleForm, DancerForm, EditDancerForm, EditCoupleForm, CreateAdjudicatorFromContestant, \
-    CreateAdjudicatorFromSuperVolunteer
+    PrintReportsForm, CoupleForm, DancerForm, EditDancerForm, EditCoupleForm, CreateAdjudicatorFromContestantForm, \
+    CreateAdjudicatorFromSuperVolunteerForm
 from ntds_webportal.models import requires_access_level, requires_adjudicator_access_level, Event, Competition, \
     DancingClass, Discipline, Dance, Round, RoundType, Adjudicator, Couple, CouplePresent, RoundResult, DanceActive, \
     Dancer, CompetitionMode, create_couples_list, ADJUDICATOR_SYSTEM_TABLES, DancingInfo, StatusInfo
@@ -367,8 +367,8 @@ def edit_dancing_class(dancing_class_id):
 @requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER], ACCESS[ADJUDICATOR_ASSISTANT]])
 def available_adjudicators():
     all_adjudicators = Adjudicator.query.order_by(Adjudicator.name).all()
-    contestant_form = CreateAdjudicatorFromContestant()
-    super_volunteer_form = CreateAdjudicatorFromSuperVolunteer()
+    contestant_form = CreateAdjudicatorFromContestantForm()
+    super_volunteer_form = CreateAdjudicatorFromSuperVolunteerForm()
     if request.method == POST:
         if contestant_form.adjudicator_contestant_submit.name in request.form:
             if contestant_form.validate_on_submit():
@@ -534,6 +534,14 @@ def edit_dancer(dancer_id):
                 db.session.commit()
                 flash(f"Edited {dancer} ({dancer.role}).")
                 return redirect(url_for('adjudication_system.available_dancers'))
+        if 'delete_dancer' in request.form:
+            if dancer.deletable():
+                flash(f"Deleted {dancer} ({dancer.role}).")
+                db.session.delete(dancer)
+                db.session.commit()
+            else:
+                flash(f"Cannot delete {dancer} ({dancer.role}).")
+            return redirect(url_for('adjudication_system.available_dancers'))
     else:
         flash("Invalid id.")
         return redirect(url_for('adjudication_system.available_dancers'))
