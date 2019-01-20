@@ -24,7 +24,7 @@ onload="onStart()"
 </div>
 <h2>Available Teamcaptains and Treasurers</h2>
 <!--<a href="{{ url_for('self_admin.create_team_captain') }}" class="btn btn-primary">Create new Team captain/Treasurer account</a>-->
-<table class="table table-sm">
+<table class="table table-sm table-responsive">
     <colgroup>
         <col span="1" style="width: 20%;">
         <col span="1" style="width: 20%;">
@@ -58,7 +58,7 @@ onload="onStart()"
 {% if current_user.is_admin() %}
 <!--<a href="{{ url_for('self_admin.create_team_account') }}" class="btn btn-primary">Create new Team</a>-->
 {% endif %}
-<table class="table table-sm">
+<table class="table table-sm table-responsive">
     <colgroup>
         <col span="1" style="width: 40%;">
         <col span="1" style="width: 30%;">
