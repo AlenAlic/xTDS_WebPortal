@@ -477,7 +477,6 @@ def maintenance():
     form = request.args
     if '502_page' in form:
         generate_maintenance_page()
-    # form = request.form
     if 'maintenance_mode_on' in form:
         g.sc.website_accessible = False
         db.session.commit()
@@ -510,7 +509,6 @@ def clear_tables():
 @requires_access_level([ACCESS[ADMIN]])
 @requires_testing_environment
 def test_populate():
-    # LONG TERM - Add user account to dancer accounts.
     form = request.args
     if len(form) > 0:
         clear_tables()

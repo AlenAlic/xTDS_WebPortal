@@ -10,7 +10,7 @@ visibility:hidden
 
 {% block app_content %}
 <h2>Summary</h2>
-<table class="table table-sm table-responsive mb-0">
+<table class="table table-sm mb-0">
     <colgroup>
         <col span="1" style="width: 75%;">
         <col span="1" style="width: 25%;">
@@ -40,7 +40,7 @@ visibility:hidden
 <h2>There are no people with dietary requirements and/or allergies</h2>
 {% else %}
 <div id="special-table-container" style="display:none;">
-    <table class="table table-sm table-responsive mt-2" id="diet-summary-table">
+    <table class="table table-sm mt-2" id="diet-summary-table">
         <colgroup>
             <col span="1" style="width: 75%;">
             <col span="1" style="width: 25%;">
@@ -59,7 +59,7 @@ visibility:hidden
     <button class="btn btn-outline-secondary no-print" type="button" onclick="printSummary()">Print summary</button>
     <button class="btn btn-outline-secondary no-print ml-2" type="button" onclick="printPage()">Print list</button>
     <input class="btn btn-primary no-print float-right" id="submit" name="submit" type="submit" value="Save changes">
-    <table class="table table-sm table-responsive mt-2" id="diet-table">
+    <table class="table table-sm mt-2" id="diet-table">
     <colgroup>
         <col span="1" style="width: 25%;">
         <col span="1" style="width: 45%;">

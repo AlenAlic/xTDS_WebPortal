@@ -64,26 +64,7 @@ These dancers have been selected by the system, but this is only visible for you
 
 <h2>Automatically add dancers to tournament</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-    <table style="margin-bottom:0;" class="table table-sm table-no-top vertical-line-bottom table-responsive">
-        <colgroup>
-            <col span="1" style="width: 80%;">
-            <col span="1" style="width: 20%;">
-        </colgroup>
-        <tbody>
-            <tr>
-                <td>Balance out the selected dancers by reducing all the differences to 0 (if possible). The system will stop adding dancers when it is done.</td>
-                <td align="right"><button type="submit" id="submit-balance_raffle" name="balance_raffle" class="btn btn-primary btn-sm loading-btn">Balance raffle</button></td>
-            </tr>
-            <tr>
-                <td>Add random dancers until all the tournament spots are taken. This will attempt to balance the raffle first.</td>
-                <td align="right"><button type="submit" id="submit-finish_raffle" name="finish_raffle" class="btn btn-primary btn-sm loading-btn">Fill raffle</button></td>
-            </tr>
-            <tr>
-                <td>Add random dancers that are not staying in the sleeping hall, until all the tournament spots are taken. This will <b>not</b> attempt to balance the raffle first.</td>
-                <td align="right"><button type="submit" id="submit-finish_raffle_with_sleeping_spots" name="finish_raffle_with_sleeping_spots" class="btn btn-primary btn-sm loading-btn">Fill raffle (no sleeping hall)</button></td>
-            </tr>
-        </tbody>
-    </table>
+
     <table class="table table-sm table-vertical-lines-head table-responsive">
         <colgroup>
             {% for n in range(g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) %}
@@ -93,6 +74,18 @@ These dancers have been selected by the system, but this is only visible for you
             <col span="1" style="width: 15%;">
         </colgroup>
         <thead>
+            <tr>
+                <td colspan="{{ 1 + g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length}}">Balance out the selected dancers by reducing all the differences to 0 (if possible). The system will stop adding dancers when it is done.</td>
+                <td align="right"><button type="submit" id="submit-balance_raffle" name="balance_raffle" class="btn btn-primary btn-sm loading-btn">Balance raffle</button></td>
+            </tr>
+            <tr>
+                <td colspan="{{ 1 + g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length}}">Add random dancers until all the tournament spots are taken. This will attempt to balance the raffle first.</td>
+                <td align="right"><button type="submit" id="submit-finish_raffle" name="finish_raffle" class="btn btn-primary btn-sm loading-btn">Fill raffle</button></td>
+            </tr>
+            <tr>
+                <td colspan="{{ 1 + g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length}}">Add random dancers that are not staying in the sleeping hall, until all the tournament spots are taken. This will <b>not</b> attempt to balance the raffle first.</td>
+                <td align="right"><button type="submit" id="submit-finish_raffle_with_sleeping_spots" name="finish_raffle_with_sleeping_spots" class="btn btn-primary btn-sm loading-btn">Fill raffle (no sleeping hall)</button></td>
+            </tr>
             <tr>
                 <td colspan="{{ 1 + g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length}}">
                     These controls allow you to select a random group of dancers. You can target specific combinations, and the system will try to find a balanced group for it.
