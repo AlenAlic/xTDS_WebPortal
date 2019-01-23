@@ -11,7 +11,7 @@
                 </div>
             </div>
         </div>
-        <div id="collapse-{{notification.notification_id}}" class="collapse {% if opened and notification.unread %}in{% endif %}" role="tabpanel" aria-labelledby="heading-{{notification.notification_id}}">
+        <div id="collapse-{{notification.notification_id}}" class="collapse {% if opened and (notification.unread or notification.sender is none) %}show_{% endif %}" role="tabpanel" aria-labelledby="heading-{{notification.notification_id}}">
             <div class="card-body notification-text">{{notification.text}}</div>
             <div class=card-footer>
                 {% if notification.unread %}

@@ -193,6 +193,7 @@ def system_configuration():
         form.finances_partial_refund.data = str(g.sc.finances_partial_refund)
         form.finances_partial_refund_percentage.data = g.sc.finances_partial_refund_percentage
         frd = datetime.datetime.utcfromtimestamp(g.sc.finances_refund_date)
+        frd += datetime.timedelta(days=-1)
         form.finances_refund_date.data = datetime.date(frd.year, frd.month, frd.day)
 
         form.first_time_ask.data = str(g.sc.first_time_ask)
@@ -255,6 +256,7 @@ def system_configuration():
         g.sc.finances_partial_refund_percentage = form.finances_partial_refund_percentage.data
         frd = datetime.datetime(form.finances_refund_date.data.year, form.finances_refund_date.data.month,
                                 form.finances_refund_date.data.day, 3, 0, 0, 0)
+        frd += datetime.timedelta(days=1)
         g.sc.finances_refund_date = frd.replace(tzinfo=datetime.timezone.utc).timestamp()
 
         g.sc.first_time_ask = str2bool(form.first_time_ask.data)

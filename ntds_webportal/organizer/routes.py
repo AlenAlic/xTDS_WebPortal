@@ -4,7 +4,7 @@ from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, SalsaPartners, PolkaPartners, VolunteerInfo, \
-    requires_tournament_state, SuperVolunteer, Adjudicator
+    requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo
 from ntds_webportal.functions import submit_updated_dancing_info, random_password
 from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm
 from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm
@@ -362,6 +362,20 @@ def finances_overview():
     german_teams = [team for team in teams if team['team'].country == GERMANY]
     other_teams = [team for team in teams if
                    team['team'].country != NETHERLANDS and team['team'].country != GERMANY]
+    totals = {
+        'number_of_students': sum([team['finances']['number_of_students'] for team in teams]),
+        'number_of_phd_students': sum([team['finances']['number_of_phd_students'] for team in teams]),
+        'number_of_non_students': sum([team['finances']['number_of_non_students'] for team in teams]),
+        'number_of_dancers': 0,
+        'number_of_merchandise': sum([team['finances']['number_of_merchandise'] for team in teams]),
+        'owed': sum([team['finances']['price_total'] for team in teams]),
+        'received': sum([team['team'].amount_paid for team in teams]),
+        'difference': 0,
+        'refund': sum([team['finances']['total_refund'] for team in teams])
+    }
+    totals['difference'] = totals['received'] - totals['owed']
+    totals['number_of_dancers'] = totals['number_of_students'] + totals['number_of_phd_students'] \
+                                  + totals['number_of_non_students']
     download = request.args
     if 'download_file' in download:
         header = {'Team': 0, '# Dancers': 1, 'Owed': 2, 'Received': 3, 'Difference': 4, 'Refund': 5}
@@ -370,34 +384,56 @@ def finances_overview():
         wb = xlsxwriter.Workbook(output, {'in_memory': True})
         f = wb.add_format({'text_wrap': True, 'bold': True})
         acc = wb.add_format({'num_format': 44})
+        total_acc = wb.add_format({'num_format': 44, 'bold': True})
         ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
         for name, index in header.items():
             ws.write(0, index, name, f)
         ws.set_column(0, 0, 30)
         ws.set_column(1, 1, 10)
         ws.set_column(2, 5, 15)
+        totals = {'dancers': 0, 'owed': 0, 'received': 0, 'difference': 0, 'refund': 0}
         for i, team in enumerate(teams, 1):
             ws.write(i, 0, team['team'].name)
             ws.write(i, 1, team['finances']['number_of_dancers'])
             ws.write(i, 2, round(team['finances']['price_total']/100, 2), acc)
             ws.write(i, 3, round(team['team'].amount_paid/100, 2), acc)
-            ws.write(i, 4, round(team['team'].amount_paid-team['finances']['price_total']/100, 2), acc)
+            ws.write(i, 4, round((team['team'].amount_paid-team['finances']['price_total'])/100, 2), acc)
             ws.write(i, 5, round(team['finances']['total_refund']/100, 2), acc)
+            totals['dancers'] += team['finances']['number_of_dancers']
+            totals['owed'] += team['finances']['price_total']
+            totals['received'] += team['team'].amount_paid
+            totals['refund'] += team['finances']['total_refund']
+        totals['difference'] = totals['received'] - totals['owed']
+        ws.write(len(teams) + 1, 1, totals['dancers'], wb.add_format({'bold': True}))
+        ws.write(len(teams) + 1, 2, round(totals['owed']/100, 2), total_acc)
+        ws.write(len(teams) + 1, 3, round(totals['received'] / 100, 2), total_acc)
+        ws.write(len(teams) + 1, 4, round(totals['difference'] / 100, 2), total_acc)
+        ws.write(len(teams) + 1, 5, round(totals['refund'] / 100, 2), total_acc)
         ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
-    return render_template('organizer/finances_overview.html', teams=teams, data=data,
+    return render_template('organizer/finances_overview.html', teams=teams, totals=totals,
                            dutch_teams=dutch_teams, german_teams=german_teams, other_teams=other_teams)
 
 
-@bp.route('/remove_payment_requirement/<number>', methods=['GET', 'POST'])
+@bp.route('/remove_payment_requirement/<int:number>', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def remove_payment_requirement(number):
     dancer = StatusInfo.query.filter(StatusInfo.contestant_id == number).first()
     dancer.remove_payment_requirement()
+    return redirect(url_for('organizer.finances_overview'))
+
+
+@bp.route('/add_refund/<int:number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def add_refund(number):
+    dancer = PaymentInfo.query.filter(PaymentInfo.contestant_id == number).first()
+    dancer.set_refund()
     return redirect(url_for('organizer.finances_overview'))
 
 

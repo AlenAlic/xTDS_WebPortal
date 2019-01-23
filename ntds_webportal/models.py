@@ -659,6 +659,13 @@ class PaymentInfo(db.Model):
         self.full_refund = False
         db.session.commit()
 
+    def set_refund(self):
+        if g.sc.finances_full_refund:
+            self.full_refund = True
+        if g.sc.finances_partial_refund:
+            self.partial_refund = True
+        db.session.commit()
+
     def to_dict(self):
         data = {
             'entry_paid': self.entry_paid,
@@ -1090,6 +1097,9 @@ class SystemConfiguration(db.Model):
         if self.bag_sold:
             counter += 1
         return counter
+
+    def refund(self):
+        return self.finances_full_refund or self.finances_partial_refund
 
 
 class RaffleConfiguration(db.Model):
