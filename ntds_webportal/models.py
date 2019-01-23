@@ -16,7 +16,7 @@ import enum
 import random
 from random import shuffle
 import itertools
-from adjudication_system.skating import SkatingDance, SkatingSummary, CompetitionResult
+from adjudication_system.skating import SkatingDance, SkatingSummary, CompetitionResult, RankingReport
 
 
 USERS = 'users'
@@ -1386,6 +1386,9 @@ class Competition(db.Model):
         elif self.mode == CompetitionMode.change_per_round or self.mode == CompetitionMode.change_per_dance:
             return create_couples_list(leads=self.leads, follows=self.follows)
 
+    def is_single_partner(self):
+        return self.mode == CompetitionMode.single_partner
+
     def is_random_single_partner(self):
         return self.mode == CompetitionMode.random_single_partner
 
@@ -1646,6 +1649,12 @@ class Couple(db.Model):
 
     def deletable(self):
         return len(self.rounds) == 0 and len(self.heats) == 0
+
+    def teams(self):
+        if self.lead.team == self.follow.team:
+            return self.lead.team
+        else:
+            return f"{self.lead.team} / {self.follow.team}"
 
 
 class RoundType(enum.Enum):
@@ -1991,6 +2000,9 @@ class Round(db.Model):
 
     def skating_summary(self, follows=False):
         return SkatingSummary(dancing_round=self, follows=follows)
+
+    def ranking_report(self):
+        return RankingReport(self.competition)
 
     def deactivate(self):
         for dance in self.dance_active:

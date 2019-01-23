@@ -14,6 +14,7 @@ from ntds_webportal.data import *
 from datetime import datetime, timedelta
 import statistics
 from sqlalchemy import or_
+from adjudication_system.skating import generate_placings
 
 
 def reset():
@@ -1000,19 +1001,7 @@ def adjudication():
                         result.marks = couple_marks[couple]
                         result.round = dancing_round
                     round_result_list = [r.marks for r in dancing_round.round_results]
-                    unique_results = list(set(round_result_list))
-                    unique_results.sort(reverse=True)
-                    result_placing = {}
-                    for i in set(round_result_list):
-                        result_placing.update({i: round_result_list.count(i)})
-                    result_map = {}
-                    counter = 1
-                    for i in unique_results:
-                        if result_placing[i] == 1:
-                            result_map.update({i: str(counter)})
-                        else:
-                            result_map.update({i: str(counter) + ' - ' + str(counter + result_placing[i] - 1)})
-                        counter += result_placing[i]
+                    result_map = generate_placings(round_result_list)
                     for result in dancing_round.round_results:
                         result.placing = result_map[result.marks]
                     if dancing_round.type == RoundType.re_dance:
