@@ -1,4 +1,4 @@
-# NTDS_webportal
+# xTDS WebPortal
 Version [0.8.0][CHANGELOG]
 
 A web portal for registration and selection for the NTDS.
@@ -49,13 +49,12 @@ Based on Flask and Python
     - [x] Raffle system
     - [x] Statistics
     - [x] Config
-  - [ ] Export to BAD
+  - [x] Export to BAD
 
 
 - Logged in - Blind date assistant
   - [x] Dashboard
   - [x] Registration page for blind date couples
-  - [ ] Overview of available blind daters (name, team, id, per category) - Requires an extra password
 
 
 ## General features
@@ -63,7 +62,7 @@ Messagin system for users
   - [x] Send to specific (group of) users
   - [x] Read/Unread status
   - [x] Archive
-  - [ ] Soft delete
+  - [x] Reply
 
 
 [CHANGELOG]: ./CHANGELOG.md

@@ -88,7 +88,44 @@
             {% if current_user.is_organizer() %}
             <td style="text-align:right">
                 {% if cancelable is sameas true %}
-                <a role="button" class="btn btn-danger" href="{{ url_for('organizer.remove_payment_requirement', number=dancer.contestant_id) }}">Remove payment req.</a>
+                    {% if g.sc.refund() and not dancer.payment_info.has_refund()  %}
+                    <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#add-refund-{{dancer.contestant_id}}">Give refund</button>
+                    <div align="left" class="modal fade" id="add-refund-{{dancer.contestant_id}}" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you wish to give a refund to {{dancer.get_full_name()}}?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{ url_for('organizer.add_refund', number=dancer.contestant_id) }}" class="btn btn-primary">Yes, give refund</a>
+                                    <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, do not give refund</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#remove-payment-{{dancer.contestant_id}}">Remove payment req.</button>
+                <div align="left" class="modal fade" id="remove-payment-{{dancer.contestant_id}}" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">WARNING!</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you wish to remove the payment requirement for {{dancer.get_full_name()}}?</p>
+                                {% if dancer.payment_info.has_refund() %}<p>Doing so will also remove the refund for {{dancer.first_name}}.</p>{% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <a href="{{ url_for('organizer.remove_payment_requirement', number=dancer.contestant_id) }}" class="btn btn-primary">Yes, remove payment requirement</a>
+                                <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, keep payment requirement</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% endif %}
             </td>
             {% endif %}

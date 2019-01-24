@@ -3,7 +3,7 @@
 <h2>Selected by system</h2>
 These dancers have been selected by the system, but this is only visible for you at the moment. Please mark the dancers and add them to confirm that they are selected.
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-    <table class="table table-clickable-checkbox">
+    <table class="table table-clickable-checkbox table-responsive">
         <colgroup>
             <col span="1" style="width: 5%;">
             <col span="1" style="width: 15%;">
@@ -64,27 +64,8 @@ These dancers have been selected by the system, but this is only visible for you
 
 <h2>Automatically add dancers to tournament</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-    <table style="margin-bottom:0;" class="table table-sm table-no-top vertical-line-bottom">
-        <colgroup>
-            <col span="1" style="width: 80%;">
-            <col span="1" style="width: 20%;">
-        </colgroup>
-        <tbody>
-            <tr>
-                <td>Balance out the selected dancers by reducing all the differences to 0 (if possible). The system will stop adding dancers when it is done.</td>
-                <td align="right"><button type="submit" id="submit-balance_raffle" name="balance_raffle" class="btn btn-primary btn-sm loading-btn">Balance raffle</button></td>
-            </tr>
-            <tr>
-                <td>Add random dancers until all the tournament spots are taken. This will attempt to balance the raffle first.</td>
-                <td align="right"><button type="submit" id="submit-finish_raffle" name="finish_raffle" class="btn btn-primary btn-sm loading-btn">Fill raffle</button></td>
-            </tr>
-            <tr>
-                <td>Add random dancers that are not staying in the sleeping hall, until all the tournament spots are taken. This will <b>not</b> attempt to balance the raffle first.</td>
-                <td align="right"><button type="submit" id="submit-finish_raffle_with_sleeping_spots" name="finish_raffle_with_sleeping_spots" class="btn btn-primary btn-sm loading-btn">Fill raffle (no sleeping hall)</button></td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-vertical-lines-head">
+
+    <table class="table table-sm table-vertical-lines-head table-responsive">
         <colgroup>
             {% for n in range(g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) %}
             <col span="1" style="width: {{ 80 / (g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) }}%;">
@@ -93,6 +74,18 @@ These dancers have been selected by the system, but this is only visible for you
             <col span="1" style="width: 15%;">
         </colgroup>
         <thead>
+            <tr>
+                <td colspan="{{ 1 + g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length}}">Balance out the selected dancers by reducing all the differences to 0 (if possible). The system will stop adding dancers when it is done.</td>
+                <td align="right"><button type="submit" id="submit-balance_raffle" name="balance_raffle" class="btn btn-primary btn-sm loading-btn">Balance raffle</button></td>
+            </tr>
+            <tr>
+                <td colspan="{{ 1 + g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length}}">Add random dancers until all the tournament spots are taken. This will attempt to balance the raffle first.</td>
+                <td align="right"><button type="submit" id="submit-finish_raffle" name="finish_raffle" class="btn btn-primary btn-sm loading-btn">Fill raffle</button></td>
+            </tr>
+            <tr>
+                <td colspan="{{ 1 + g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length}}">Add random dancers that are not staying in the sleeping hall, until all the tournament spots are taken. This will <b>not</b> attempt to balance the raffle first.</td>
+                <td align="right"><button type="submit" id="submit-finish_raffle_with_sleeping_spots" name="finish_raffle_with_sleeping_spots" class="btn btn-primary btn-sm loading-btn">Fill raffle (no sleeping hall)</button></td>
+            </tr>
             <tr>
                 <td colspan="{{ 1 + g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length}}">
                     These controls allow you to select a random group of dancers. You can target specific combinations, and the system will try to find a balanced group for it.
@@ -111,7 +104,7 @@ These dancers have been selected by the system, but this is only visible for you
                 {% for comp in g.data.ALL_COMPETITIONS %}
                     {% for level in g.sc.get_participating_levels_including_not_dancing() %}
                     <th>{% if level == g.data.NO %}{{ g.data.NOT_DANCING }}{% else %}{{ level }}{% endif %}
-                        <input class="checkbox filter-checkbox {{comp}}-checkbox" type="checkbox" onclick="filterLevels(this)" value="y"></th>
+                        <input class="checkbox filter-checkbox {{comp}}-checkbox" type="checkbox" onclick="filterLevels(this, false)" value="y"></th>
                     {% endfor %}
                 {% endfor %}
                 <th colspan="2"># dancers available</th>
@@ -138,4 +131,70 @@ These dancers have been selected by the system, but this is only visible for you
             {% endfor %}
         </tbody>
     </table>
+</form>
+<h2>Add specific dancers to tournament</h2>
+<p>Select any specific dancers you want to add to the system. This will bypass the automatic balancing of the system. Dancers that are part of a couple will all be selected.</p>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <div class="card">
+        <div class="card-header" role="button" id="select-single-dancers" data-toggle="collapse" href="#collapse-select-single-dancers" aria-expanded="true" aria-controls="collapse-select-single-dancers">
+            <b class="card-title">Select specific dancers</b>
+        </div>
+        <div id="collapse-select-single-dancers" class=" collapse" role="tabpanel" aria-labelledby="heading-select-single-dancers">
+            <table class="table table-clickable-checkbox table-responsive">
+                <colgroup>
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 15%;">
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 15%;">
+                    <col span="1" style="width: 8%;">
+                    <col span="1" style="width: 7%;">
+                    <col span="1" style="width: 9%;">
+                    <col span="1" style="width: 8%;">
+                    <col span="1" style="width: 7%;">
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 1%;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th colspan="4">Personal</th>
+                        <th colspan="3">Ballroom</th>
+                        <th colspan="3">Latin</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Dancer</th>
+                        <th>Email</th>
+                        <th>Team</th>
+                        <th>Level</th>
+                        <th>Role</th>
+                        <th>Partner</th>
+                        <th>Level</th>
+                        <th>Role</th>
+                        <th>Partner</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for dancer in raffle_sys.registered_dancers %}
+                    <tr class="checkbox-row">
+                        <td>{{ dancer.contestant_id }}</td>
+                        <td>{{ dancer.get_full_name() }}</td>
+                        <td>{{ dancer.email }}</td>
+                        <td>{{ dancer.contestant_info.team }}</td>
+                        <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
+                        <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
+                        <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner, show_number=True) }}</td>
+                        <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
+                        <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
+                        <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner, show_number=True) }}</td>
+                        <td><input class="checkbox confirmed-checkbox" type="checkbox" value="y" style="visibility:hidden" id="specific-{{ dancer.contestant_id }}" name="specific-{{ dancer.contestant_id }}"></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" id="submit-select_specific_dancers" name="select_specific_dancers" class="btn btn-primary loading-btn ml-2 mb-2">Select dancers</button>
+            <div class=card-footer><small style="visibility: hidden">Footer</small></div>
+        </div>
+    </div>
 </form>

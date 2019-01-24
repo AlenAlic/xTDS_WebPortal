@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h2>{% if user is none %}Create{% else %}Edit{% endif %} {% if assistant == data.BLIND_DATE_ASSISTANT %}Blind Date{% else %}Check-in{% endif %} assistant account</h2>
+<h2>{% if user is none %}Create{% else %}Edit{% endif %} {% if assistant == g.data.BLIND_DATE_ASSISTANT %}Blind Date Assistant{% elif assistant == g.data.CHECK_IN_ASSISTANT %}Check-In Assistant{% elif assistant == g.data.ADJUDICATOR_ASSISTANT %}Adjudicator Assistant{% elif assistant == g.data.TOURNAMENT_OFFICE_MANAGER %}Tournament Office Manager{% elif assistant == g.data.FLOOR_MANAGER %}Floor Manager{% endif %} account</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     {{ wtf.form_field(form.username, disabled='') }}

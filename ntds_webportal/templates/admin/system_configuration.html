@@ -32,7 +32,6 @@ visibility:hidden
     {{ wtf.form_field(form.number_of_teamcaptains) }}
     <h3>Tournament levels</h3>
     {{ wtf.form_field(form.beginners_level) }}
-    {{ wtf.form_field(form.champions_level) }}
     {{ wtf.form_field(form.closed_level) }}
     {{ wtf.form_field(form.breitensport_obliged_blind_date) }}
     {{ wtf.form_field(form.salsa_competition) }}
@@ -66,8 +65,8 @@ visibility:hidden
     {{ wtf.form_field(form.merchandise_closing_date) }}
     <div class="form-group required">
         <div class="input-group">
-            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Configure System">&nbsp;
-            <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
+            <input class="btn btn-primary mr-2" id="submit" name="submit" type="submit" value="Configure System">&nbsp;
+            <a role="button" class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Cancel</a>
         </div>
     </div>
 </form>

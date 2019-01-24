@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, g, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager, current_user, logout_user
+from flask_login import LoginManager, current_user, logout_user, AnonymousUserMixin
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_mail import Mail
@@ -15,13 +15,10 @@ import ntds_webportal.data as data
 class MyAdminIndexView(AdminIndexView):
     @expose('/')
     def index(self):
-        if not current_user.is_authenticated:
-            return redirect(url_for('main.index'))
+        if current_user.is_admin() or current_user.is_tournament_office_manager():
+            return self.render(self._template)
         else:
-            if current_user.is_admin():
-                return self.render(self._template)
-            else:
-                return redirect(url_for('main.index'))
+            return redirect(url_for('main.index'))
 
 
 db = SQLAlchemy()
@@ -36,15 +33,18 @@ toolbar = DebugToolbarExtension()
 
 class BaseView(ModelView):
     column_hide_backrefs = False
-    page_size = 100
+    page_size = 1000
 
     def is_accessible(self):
-        if current_user.is_authenticated:
-            return current_user.is_admin()
-        return False
+        return current_user.is_admin()
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('main.index'))
+
+
+class AdjudicatorSystemView(BaseView):
+    def is_accessible(self):
+        return current_user.is_admin() or current_user.is_tournament_office_manager()
 
 
 class UserView(BaseView):
@@ -58,6 +58,57 @@ class UserView(BaseView):
             User.set_password(form.password2.data)
 
 
+class Anonymous(AnonymousUserMixin):
+
+    @staticmethod
+    def is_admin():
+        return False
+
+    @staticmethod
+    def is_organizer():
+        return False
+
+    @staticmethod
+    def is_tc():
+        return False
+
+    @staticmethod
+    def is_treasurer():
+        return False
+
+    @staticmethod
+    def is_bda():
+        return False
+
+    @staticmethod
+    def is_cia():
+        return False
+
+    @staticmethod
+    def is_ada():
+        return False
+
+    @staticmethod
+    def is_dancer():
+        return False
+
+    @staticmethod
+    def is_super_volunteer():
+        return False
+
+    @staticmethod
+    def is_tournament_office_manager():
+        return False
+
+    @staticmethod
+    def is_floor_manager():
+        return False
+
+    @staticmethod
+    def is_adjudicator():
+        return False
+
+
 def create_app():
     """
     Create instance of website.
@@ -66,15 +117,19 @@ def create_app():
         VolunteerInfo, AdditionalInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, \
         TournamentState, SalsaPartners, PolkaPartners, SystemConfiguration, RaffleConfiguration, \
         AttendedPreviousTournamentContestant, NotSelectedContestant, SuperVolunteer
+    from ntds_webportal.models import Event, Competition, DancingClass, Discipline, Dance, Round, \
+        Heat, Couple, Adjudicator, Mark, CouplePresent, RoundResult, FinalPlacing, DanceActive, CompetitionMode, Dancer
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('config')
     app.config.from_pyfile('config.py')
+    app.url_map.strict_slashes = False
 
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:'))
     login.init_app(app)
     login.login_view = 'main.index'
+    login.anonymous_user = Anonymous
     bootstrap.init_app(app)
     moment.init_app(app)
     mail.init_app(app)
@@ -100,6 +155,21 @@ def create_app():
     admin.add_view(BaseView(AttendedPreviousTournamentContestant, db.session))
     admin.add_view(BaseView(NotSelectedContestant, db.session))
     admin.add_view(BaseView(SuperVolunteer, db.session))
+    admin.add_view(AdjudicatorSystemView(Event, db.session))
+    admin.add_view(AdjudicatorSystemView(Competition, db.session))
+    admin.add_view(AdjudicatorSystemView(DancingClass, db.session))
+    admin.add_view(AdjudicatorSystemView(Discipline, db.session))
+    admin.add_view(AdjudicatorSystemView(Dance, db.session))
+    admin.add_view(AdjudicatorSystemView(Adjudicator, db.session))
+    admin.add_view(AdjudicatorSystemView(Dancer, db.session))
+    admin.add_view(AdjudicatorSystemView(Couple, db.session))
+    admin.add_view(AdjudicatorSystemView(Round, db.session))
+    admin.add_view(AdjudicatorSystemView(DanceActive, db.session))
+    admin.add_view(AdjudicatorSystemView(Heat, db.session))
+    admin.add_view(AdjudicatorSystemView(Mark, db.session))
+    admin.add_view(AdjudicatorSystemView(FinalPlacing, db.session))
+    admin.add_view(AdjudicatorSystemView(CouplePresent, db.session))
+    admin.add_view(AdjudicatorSystemView(RoundResult, db.session))
     toolbar.init_app(app)
 
     @app.before_request
@@ -114,6 +184,9 @@ def create_app():
         g.data = data
         g.ts = TournamentState.query.first()
         g.rc = RaffleConfiguration.query.first()
+        g.event = Event.query.first()
+        g.competitions = Competition.query.all()
+        g.competition_mode = CompetitionMode
 
     def create_tournament_state_table():
         if len(TournamentState.query.all()) == 0:
@@ -134,9 +207,13 @@ def create_app():
             db.session.commit()
 
     with app.app_context():
-        create_tournament_state_table()
-        create_system_configuration_table()
-        create_raffle_configuration_table()
+        from sqlalchemy.exc import InternalError, ProgrammingError
+        try:
+            create_tournament_state_table()
+            create_system_configuration_table()
+            create_raffle_configuration_table()
+        except (InternalError, ProgrammingError) as e:
+            pass
 
     from ntds_webportal.main import bp as main_bp
     app.register_blueprint(main_bp)
@@ -159,9 +236,6 @@ def create_app():
     from ntds_webportal.raffle import bp as raffle_bp
     app.register_blueprint(raffle_bp, url_prefix='/raffle')
 
-    from ntds_webportal.blind_date_assistant import bp as blind_date_assistant_bp
-    app.register_blueprint(blind_date_assistant_bp, url_prefix='/blind_date_assistant')
-
     from ntds_webportal.check_in_assistant import bp as check_in_assistant_bp
     app.register_blueprint(check_in_assistant_bp, url_prefix='/check_in_assistant')
 
@@ -177,7 +251,14 @@ def create_app():
     from ntds_webportal.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
+    from ntds_webportal.adjudication_system import bp as adjudication_system_bp
+    app.register_blueprint(adjudication_system_bp, url_prefix='/adjudication_system')
+
+    from ntds_webportal.adjudication_system.api import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/adjudication_system/api')
+
     return app
 
 
+# noinspection PyPep8
 from ntds_webportal import models

@@ -1,4 +1,4 @@
-<table class="table table-sm table-list mb-0">
+<table class="table table-sm table-list table-responsive mb-0">
     <colgroup>
         {% for n in range(g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) %}
         <col span="1" style="width: {{ 80 / (g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) }}%;">
@@ -18,7 +18,7 @@
             {% for comp in g.data.ALL_COMPETITIONS %}
                 {% for level in g.sc.get_participating_levels_including_not_dancing() %}
                 <th>{% if level == g.data.NO %}{{ g.data.NOT_DANCING }}{% else %}{{ level }}{% endif %}
-                    <input class="checkbox filter-checkbox {{comp}}-checkbox" type="checkbox" onclick="filterLevels(this, false)" value="y"></th>
+                    <input class="checkbox filter-checkbox{{source}} {{comp}}-checkbox{{source}}" type="checkbox" onclick="filterLevels(this, false, '{{source}}')" value="y"></th>
                 {% endfor %}
             {% endfor %}
             <th># dancers available</th>
@@ -26,7 +26,7 @@
     </thead>
     <tbody>
         {% for comb, val in raffle_sys.available_combinations(partners=true, source=source).items() %}
-        <tr class="checkbox-filter">
+        <tr class="checkbox-filter{{source}}">
             {% for comp in g.data.ALL_COMPETITIONS %}
                 {% for level in g.sc.get_participating_levels_including_not_dancing() %}
                     {% if comp == g.data.BALLROOM %}

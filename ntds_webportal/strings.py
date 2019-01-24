@@ -35,3 +35,7 @@ def string_group_matched_incomplete_reducing_difference(group):
 
 def string_group_matched_incomplete_team_captain_exception(group):
     return string_group(group, GROUP_MATCHED_INCOMPLETE_TEAM_CAPTAIN_EXCEPTION)
+
+
+def string_group_guaranteed_exception(group):
+    return string_group(group, GROUP_MATCHED_INCOMPLETE_GENERAL_EXCEPTION)

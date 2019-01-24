@@ -36,3 +36,12 @@
     {% endif %}
 </div>
 {% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+{% endblock %}

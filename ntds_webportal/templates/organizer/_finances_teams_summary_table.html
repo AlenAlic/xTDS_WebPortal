@@ -1,56 +1,74 @@
+<form method="GET" enctype="multipart/form-data" novalidate>
+    <input class="btn btn-outline-primary float-right my-2" id="submit-download_file" name="download_file" type="submit" value="Download overview">
+</form>
 <form method="POST" enctype="multipart/form-data" novalidate>
     <input class="btn btn-outline-primary my-2" id="submit" name="submit" type="submit" value="Save changes">
-    <table class="table table-sm">
+    <table class="table table-sm table-responsive">
         <colgroup>
             {% if g.sc.phd_student_category is sameas true %}
                 <col span="1" style="width: 20%;">
-                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 8%;">
             {% else %}
-                <col span="1" style="width: 30%;">
+                <col span="1" style="width: 28%;">
             {% endif %}
-            <col span="1" style="width: 10%;">
-            <col span="1" style="width: 10%;">
-            <col span="1" style="width: 10%;">
-            <col span="1" style="width: 20%;">
-            <col span="1" style="width: 10%;">
-            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 8%;">
+            <col span="1" style="width: 8%;">
+            <col span="1" style="width: 8%;">
+            <col span="1" style="width: 16%;">
+            <col span="1" style="width: 9%;">
+            <col span="1" style="width: 8%;">
+            <col span="1" style="width: 15%;">
         </colgroup>
         <thead>
-            <tr>
-                <th><b>Team</b></th>
-                <th style="text-align:right"><b># Students</b></th>
+            <tr class="finances-summary-row">
+                <th>Team</th>
+                <th>Students</th>
                 {% if g.sc.phd_student_category is sameas true %}
-                    <th style="text-align:right"><b># PhD-students</b></th>
+                    <th>PhD students</th>
                 {% endif %}
-                <th style="text-align:right"><b># Non-students</b></th>
-                <th style="text-align:right"><b># Merchandise</b></th>
-                <th style="text-align:right"><b>Total amount owed</b></th>
-                <th style="text-align:right"><b>Total amount recieved</b></th>
-                <th style="text-align:right"><b>Difference</b></th>
+                <th>Non students</th>
+                <th>Merchandise</th>
+                <th>Owed</th>
+                <th>Received</th>
+                <th>Difference</th>
+                <th>Refund</th>
             </tr>
         </thead>
         <tbody>
             {% for team in teams %}
-                <tr class="
-                {% if team['team'].amount_paid == team['finances']['price_total'] and team['finances']['price_total'] > 0 %}table-success
-                {% elif team['team'].amount_paid < team['finances']['price_total'] %}table-danger
-                {% elif team['team'].amount_paid > team['finances']['price_total'] %}table-warning
-                {% endif %}">
-                    <td>{{ team['team'].name }}</td>
-                    <td style="text-align:right">{{ team['finances']['number_of_students'] }}</td>
-                    {% if g.sc.phd_student_category is sameas true %}
-                        <td style="text-align:right">{{ team['finances']['number_of_phd_students'] }}</td>
-                    {% endif %}
-                    <td style="text-align:right">{{ team['finances']['number_of_non_students'] }}</td>
-                    <td style="text-align:right">{{ team['finances']['number_of_merchandise'] }}</td>
-                    <td style="text-align:right">{{ data.euros(team['finances']['price_total']) }}</td>
-                    <td style="text-align:right">
-                        <input class="form-control" type="text" id="{{ team['team'].team_id }}" name="{{ team['team'].team_id }}" style="text-align:right;"
-                               placeholder="{% if team['team'].amount_paid == 0 %}€0.00{% else %}{{ data.euros(team['team'].amount_paid) }}{% endif %}">
-                    </td>
-                    <td style="text-align:right">{{ data.euros(team['team'].amount_paid-team['finances']['price_total']) }}</td>
-                </tr>
+            <tr class="finances-summary-row {% if team['team'].amount_paid == team['finances']['price_total'] and team['finances']['price_total'] > 0 %}table-success
+            {% elif team['team'].amount_paid < team['finances']['price_total'] %}table-danger
+            {% elif team['team'].amount_paid > team['finances']['price_total'] %}table-warning{% endif %}">
+                <td>{{ team['team'].name }}</td>
+                <td>{{ team['finances']['number_of_students'] }}</td>
+                {% if g.sc.phd_student_category is sameas true %}
+                <td>{{ team['finances']['number_of_phd_students'] }}</td>
+                {% endif %}
+                <td>{{ team['finances']['number_of_non_students'] }}</td>
+                <td>{{ team['finances']['number_of_merchandise'] }}</td>
+                <td>{{ g.data.euros(team['finances']['price_total']) }}</td>
+                <td>
+                    <input class="form-control px-0 py-0" type="number" min="0" step="0.01" id="{{ team['team'].team_id }}" name="{{ team['team'].team_id }}" style="text-align:right; height:auto;"
+                           placeholder="{% if team['team'].amount_paid > 0 %}{{ g.data.euros(team['team'].amount_paid) }}{% endif %}"
+                           data-toggle="tooltip" data-placement="top" title="{{ g.data.euros(team['team'].amount_paid) }}">
+                </td>
+                <td>{{ g.data.euros(team['team'].amount_paid-team['finances']['price_total']) }}</td>
+                <td>{{ g.data.euros(team['finances']['total_refund']) }}</td>
+            </tr>
             {% endfor %}
+            <tr class="finances-summary-row">
+                <td></td>
+                <td>{{ totals['number_of_students'] }}</td>
+                {% if g.sc.phd_student_category is sameas true %}
+                <td>{{ totals['number_of_phd_students'] }}</td>
+                {% endif %}
+                <td>{{ totals['number_of_non_students'] }}</td>
+                <td>{{ totals['number_of_merchandise'] }}</td>
+                <td>{{ g.data.euros(totals['owed']) }}</td>
+                <td>{{ g.data.euros(totals['received']) }}</td>
+                <td>{{ g.data.euros(totals['difference']) }}</td>
+                <td>{{ g.data.euros(totals['refund']) }}</td>
+            </tr>
         </tbody>
     </table>
 </form>

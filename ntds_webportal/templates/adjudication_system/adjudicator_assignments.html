@@ -1,0 +1,61 @@
+{% if current_user.is_ada() %}
+{% extends 'base.html' %}
+{% else %}
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+{% endif %}
+
+{% block styles %}
+{{ super() }}
+<style>
+input[type=checkbox]    {transform:scale(2);}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<h2>{{ g.event }} - Adjudicator assignments</h2>
+{% if all_adjudicators|length == 0 %}
+<p>There are no adjudicators to assign to competitions.</p>
+{% else %}
+    {% if g.event.has_competitions() %}
+    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+        <button class="btn btn-primary mb-2" type="submit" name="save_assignments">Save assignments</button>
+        <table class="table table-sm">
+            <tbody>
+                {% for date in g.event.unique_dates() %}
+                    <tr>
+                        <th colspan="2" rowspan="2" style="border-top:none; vertical-align:bottom;"></th>
+                        <th style="border-top:none;" colspan="{{g.event.competitions_on_day(date)|length}}"><h4 class="{% if loop.index > 1 %}mt-4{% endif %}">{{date.strftime("%A, %d %B")}}</h4></th>
+                    </tr>
+                    <tr>
+                        {% for comp in g.event.competitions_on_day(date) %}
+                        <th style="text-align:center;"><span id="{{comp.competition_id}}">{{comp.adjudicators|length}}</span></th>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Adjudicator</th>
+                        <th>#</th>
+                        {% for comp in g.event.competitions_on_day(date) %}
+                        <th style="text-align:center;">{{ comp.short_repr() }}</th>
+                        {% endfor %}
+                    </tr>
+                    {% for adjudicator in all_adjudicators %}
+                    <tr class="adjudicator-row">
+                        <td>{{adjudicator}}</td>
+                        <td>{{adjudicator.assignments_on_day(date)}}</td>
+                        {% for comp in g.event.competitions_on_day(date) %}
+                        <td align="center" style="vertical-align:middle;">
+                            <input type="checkbox" name="{{comp.competition_id}}-{{adjudicator.adjudicator_id}}" {% if not comp.is_configurable() %}disabled{% endif %}
+                                   id="{{comp.competition_id}}-{{adjudicator.adjudicator_id}}" {% if adjudicator in comp.adjudicators %}checked{% endif %}>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+    {% else %}
+    <p>There are no competitions to assign the adjudicators to.</p>
+    {% endif %}
+{% endif %}
+{% endblock %}

@@ -10,7 +10,7 @@
                 {% endif %}
             {% endif %}
             <img src="{{url_for('static', filename='dashboard_images/'+image)}}" class="card-img-top mx-auto" style="max-width: 128px; max-height: 128px; margin-top: 16px;">
-            <div class="card-body" style="text-align: center;">
+            <div class="card-body pb-2" style="text-align:center;">
                 <h4 class="card-title">{{ title }}</h4>
                 {% if text is defined %}
                     <p class="card-text">{{ text }}</p>

@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, flash, g, request, Markup
+from flask import render_template, url_for, redirect, flash, g, request, Markup, current_app
 from flask_login import current_user, login_user, login_required, logout_user
 from ntds_webportal import db
 from ntds_webportal.main import bp
@@ -43,6 +43,16 @@ def index():
     return render_template('index.html', title='Home', login_form=form)
 
 
+@bp.route('/sw.js', methods=['GET'])
+def sw():
+    return current_app.send_static_file('sw.js')
+
+
+@bp.route('/offline', methods=['GET'])
+def offline():
+    return render_template('offline.html')
+
+
 @bp.route('/logout', methods=['GET'])
 @login_required
 def logout():
@@ -66,6 +76,10 @@ def dashboard():
         if finalize_merchandise:
             flash("Please check the merchandise tab. The last date for ordering merchandise has passed.")
         return render_template('dashboard.html', finalize_merchandise=finalize_merchandise)
+    if current_user.is_bda():
+        return redirect(url_for('adjudication_system.available_couples'))
+    if current_user.is_floor_manager():
+        return redirect(url_for('adjudication_system.floor_manager_start_page'))
     return render_template('dashboard.html')
 
 

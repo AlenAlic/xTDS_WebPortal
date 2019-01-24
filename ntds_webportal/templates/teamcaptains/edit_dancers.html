@@ -95,7 +95,7 @@
 </table>
 {% else %}
 <a href="{{ url_for('teamcaptains.edit_dancers', wide=0) }}" class="btn btn-outline-secondary mb-2">Short view</a>
-<table id="wide-table" class="table table-hover table-sm">
+<table id="wide-table" class="table table-hover table-responsive table-sm">
 <thead>
 <tr>
     <th colspan="2" style="font-weight: normal;"><input class="form-control" type="text" id="wide-table-filterNameInput" onkeyup="filterWide('wide-table')" placeholder="Name..."></th>

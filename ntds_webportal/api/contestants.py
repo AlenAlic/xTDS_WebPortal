@@ -6,23 +6,6 @@ from ntds_webportal.api import bp
 from ntds_webportal.data import *
 
 
-# @bp.route('/contestants/<path:api_call>', methods=["GET", "PATCH"])
-# @login_required
-# @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
-# def contestants(api_call):
-#     contestant_id, api_call = contestant_api_id_filter(api_call)
-#     dancer = Contestant.query.get_or_404(contestant_id)
-#     if request.method == "PATCH":
-#         attribute = dancer
-#         for attr in api_call[:-1]:
-#             attribute = getattr(attribute, attr)
-#         last_attr = getattr(attribute, api_call[-1])
-#         if isinstance(last_attr, bool) and api_call[-1] in ['']:
-#             deep_setattr(dancer, '.'.join(api_call), not last_attr)
-#             db.session.commit()
-#     return jsonify(contestant_api_filter(dancer.to_dict(), api_call))
-
-
 @bp.route('/contestants/<int:contestant_id>', methods=["GET"])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])

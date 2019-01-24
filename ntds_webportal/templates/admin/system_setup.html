@@ -38,7 +38,7 @@ Reset the xTDS WebPortal before you can reset the Organizer account.
 The system configuration is accessible to the organizer.
 {% else %}
 <p>Make the system configuration form accessible to the organizer. This is for <b>emergencies</b> only.</p>
-<a class="btn btn-warning" href="{{url_for('self_admin.system_setup')}}?access_system_configuration" style="text-decoration:none">System Configuration Accessible</a>
+<a class="btn btn-outline-primary" href="{{url_for('self_admin.system_setup')}}?access_system_configuration" style="text-decoration:none">System Configuration Accessible</a>
 {% endif %}
 {% endblock %}
 

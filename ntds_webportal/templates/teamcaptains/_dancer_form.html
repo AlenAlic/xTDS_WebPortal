@@ -138,8 +138,8 @@
         <label class="control-label col-lg-2" ></label>
         <div class="col-lg-10">
             <div class="input-group">
-                <input class="btn btn-primary" id="submit" name="submit" type="submit" {% if mode == 'view' %}disabled{% endif %} value="{% if mode == 'edit' %}Save changes{% elif mode == 'view' %}Accept privacy conditions{% else %}Register dancer{% endif %}">&nbsp;
-                <a role="button" class="btn btn-outline-secondary ml-2" href="{% if mode == 'edit' %}{{ url_for('teamcaptains.edit_dancers', wide=wide) }}{% else %}{{ url_for('main.index') }}{% endif %}">Cancel</a>
+                <input class="btn btn-primary mr-2 my-1" id="submit" name="submit" type="submit" {% if mode == 'view' %}disabled{% endif %} value="{% if mode == 'edit' %}Save changes{% elif mode == 'view' %}Accept privacy conditions{% else %}Register dancer{% endif %}">&nbsp;
+                <a role="button" class="btn btn-outline-secondary my-1" href="{% if mode == 'edit' %}{{ url_for('teamcaptains.edit_dancers', wide=wide) }}{% else %}{{ url_for('main.index') }}{% endif %}">Cancel</a>
             </div>
         </div>
     </div>
@@ -168,8 +168,8 @@
         <label class="control-label col-lg-2" ></label>
         <div class="col-lg-10">
             <div class="input-group">
-                <input class="btn btn-primary" id="submit_dancer_feedback" name="submit_dancer_feedback" type="submit" value="Send feedback to team captain">&nbsp;
-                <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
+                <input class="btn btn-primary mr-2 my-1" id="submit_dancer_feedback" name="submit_dancer_feedback" type="submit" value="Send feedback to team captain">&nbsp;
+                <a role="button" class="btn btn-outline-secondary my-1" href="{{ url_for('main.index') }}">Cancel</a>
             </div>
         </div>
     </div>

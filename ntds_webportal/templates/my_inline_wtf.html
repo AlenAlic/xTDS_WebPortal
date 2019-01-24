@@ -1,0 +1,32 @@
+{% macro form_field(field, button_map={}) %}
+
+{# workaround from flask-bootstrap #}
+{% if field.flags.required and not required in kwargs %}
+{% set kwargs = dict(required=True, **kwargs) %}
+{% endif %}
+
+{% if field.widget.input_type == 'checkbox' %}
+    <div class="form-check form-check-inline">
+        {{field(class="form-check-input mr-2")|safe}}
+        <label for="{{field.name|safe}}" class="form-check-label" >{{field.label.text|safe}}</label>
+    </div>
+{%- elif field.type == 'SubmitField' -%}
+    {# deal with jinja scoping issues? #}
+    {% set field_kwargs = kwargs %}
+    {# note: same issue as above - should check widget, not field type #}
+    {{field(class='btn btn-%s' % button_map.get(field.name, 'primary'), **field_kwargs)}}
+{% else -%}
+    <div class="form-group{%- if field.flags.required %} required{% endif -%}">
+    {{field.label()}}
+    {% if field.errors %}{% set field_class = "form-control is-invalid" %}{% else %}{% set field_class = "form-control" %}{% endif -%}
+    {{field(class=field_class , **kwargs)|safe}}
+    {%- if field.errors %}
+        {%- for error in field.errors %}
+            <div class="invalid-feedback">{{error}}</div>
+        {%- endfor %}
+    {%- elif field.description -%}
+        <small class="text-muted">{{field.description|safe}}</small>
+    {%- endif %}
+    </div>
+{% endif %}
+{% endmacro %}

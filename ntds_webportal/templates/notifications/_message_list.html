@@ -11,37 +11,37 @@
                 </div>
             </div>
         </div>
-        <div id="collapse-{{notification.notification_id}}" class="collapse {% if opened and notification.unread %}in{% endif %}" role="tabpanel" aria-labelledby="heading-{{notification.notification_id}}">
+        <div id="collapse-{{notification.notification_id}}" class="collapse {% if opened and (notification.unread or notification.sender is none) %}show_{% endif %}" role="tabpanel" aria-labelledby="heading-{{notification.notification_id}}">
             <div class="card-body notification-text">{{notification.text}}</div>
             <div class=card-footer>
                 {% if notification.unread %}
-                <a class="btn btn-outline-dark mr-2" href="{{url_for('notifications.read', notification=notification.notification_id)}}">
+                <a class="btn btn-outline-dark mr-2 my-1" href="{{url_for('notifications.read', notification=notification.notification_id)}}">
                     <img class="mr-2" src="{{url_for('static', filename='octicons/mail-read.svg')}}">Mark as read
                 </a>
                 {% else %}
-                <a class="btn btn-outline-dark mr-2" href="{{url_for('notifications.unread', notification=notification.notification_id)}}">
+                <a class="btn btn-outline-dark mr-2 my-1" href="{{url_for('notifications.unread', notification=notification.notification_id)}}">
                     <img class="mr-2" src="{{url_for('static', filename='octicons/mail.svg')}}">Mark as unread
                 </a>
                 {% endif%}
 
                 {% if notification.archived %}
-                <a class="btn btn-outline-dark mr-2" href="{{url_for('notifications.unarchive',notification=notification.notification_id)}}">
+                <a class="btn btn-outline-dark mr-5 my-1" href="{{url_for('notifications.unarchive',notification=notification.notification_id)}}">
                     <img class="mr-2" src="{{url_for('static', filename='octicons/file-symlink-directory.svg')}}">Move to inbox
                 </a>
                 {% else %}
-                <a class="btn btn-outline-dark mr-2" href="{{url_for('notifications.archive',notification=notification.notification_id)}}">
+                <a class="btn btn-outline-dark mr-5 my-1" href="{{url_for('notifications.archive',notification=notification.notification_id)}}">
                     <img class="mr-2" src="{{url_for('static', filename='octicons/archive.svg')}}">Archive
                 </a>
                 {% endif%}
 
                 {% if notification.sender is not none %}
-                <a class="btn btn-outline-dark ml-5" href="{{url_for('notifications.create', user_id=notification.sender_id, notification_id=notification.notification_id)}}">
+                <a class="btn btn-outline-dark mr-2 my-1" href="{{url_for('notifications.create', user_id=notification.sender_id, notification_id=notification.notification_id)}}">
                     <img class="mr-2" src="{{url_for('static', filename='octicons/reply.svg')}}">Reply
                 </a>
                 {% endif %}
 
                 {% if notification.destination %}
-                <a style="float: right" class="btn btn-outline-dark mr-2" href="{{url_for('notifications.goto',notification=notification.notification_id)}}">
+                <a style="float: right" class="btn btn-outline-dark" href="{{url_for('notifications.goto',notification=notification.notification_id)}}">
                     <img class="mr-2" src="{{url_for('static', filename='octicons/rocket.svg')}}">Goto
                 </a>
                 {% endif %}

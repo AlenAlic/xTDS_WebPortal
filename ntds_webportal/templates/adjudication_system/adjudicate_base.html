@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block html_attribs %}style="height:100%"{% endblock html_attribs %}
+{% block body_attribs %}style="height:100%"{% endblock body_attribs %}
+
+{% block styles %}
+{{ super() }}
+<style>
+.nav-link.disabled {cursor :default;}
+@page { size: 210mm 297mm; margin: 15mm 15mm 15mm 15mm; }
+@media only print {.no-print, .no-print * {display: none !important; } .center-container {flex: 0 0 100% !important; max-width: 100% !important} h2 { display: none; }}
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<div class="px-0 py-2" style="overflow-y: auto;">
+    {{ flash_messages() }}
+    {% block app_content %}{% endblock %}
+</div>
+{% endblock %}

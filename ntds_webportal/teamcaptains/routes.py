@@ -7,7 +7,7 @@ from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContes
 from ntds_webportal.teamcaptains.email import send_dancer_user_account_email
 from ntds_webportal.models import User, requires_access_level, Contestant, ContestantInfo, DancingInfo, \
     StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification, AdditionalInfo, Team, \
-    requires_tournament_state
+    requires_tournament_state, Competition
 from ntds_webportal.functions import get_dancing_categories, submit_contestant, \
     get_total_dancer_price_list, random_password
 import ntds_webportal.functions as func
@@ -811,3 +811,39 @@ def tournament_check_in():
     return render_template('teamcaptains/tournament_check_in.html', ts=ts, data=data,
                            confirmed_dancers=[d.to_dict() for d in confirmed_dancers],
                            checked_in_dancers=checked_in_dancers, cancelled_dancers=cancelled_dancers)
+
+
+@bp.route('/starting_lists', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[TEAM_CAPTAIN]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def starting_lists():
+    contestants = Contestant.query.join(ContestantInfo, StatusInfo)\
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED).all()
+    competitions = Competition.query.all()
+    competitions = {c: [] for c in competitions}
+    all_competition_dancers = []
+    for contestant in contestants:
+        for d in contestant.dancers:
+            couples = d.couples()
+            for c in couples:
+                for comp in c.competitions:
+                    if c not in competitions[comp]:
+                        competitions[comp].append(c)
+                        if c.lead.contestant.contestant_info.team == current_user.team:
+                            all_competition_dancers.append(c.lead.contestant)
+                        if c.follow.contestant.contestant_info.team == current_user.team:
+                            all_competition_dancers.append(c.follow.contestant)
+            for comp in d.competitions():
+                if d not in competitions[comp]:
+                    competitions[comp].append(d)
+                    all_competition_dancers.append(contestant)
+    competitions = {c: sorted(competitions[c], key=lambda x: x.number)
+                    for c in competitions if len(competitions[c]) > 0}
+    all_dancers = DancingInfo.query.join(StatusInfo, DancingInfo.contestant_id == StatusInfo.contestant_id) \
+        .join(ContestantInfo, DancingInfo.contestant_id == ContestantInfo.contestant_id) \
+        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED,
+                DancingInfo.level != NO).all()
+    competitions = {c: competitions[c] for c in competitions if c.dancing_class.name != TEST}
+    return render_template('teamcaptains/starting_lists.html', contestants=contestants, competitions=competitions,
+                           all_dancers=all_dancers, all_competition_dancers=all_competition_dancers)

@@ -1,5 +1,13 @@
 {% extends admin_base_template %}
 
+{% block head_css %}
+{{ super() }}
+<style>
+@media (min-width:1440px){.container{width:1410px}}
+@media (min-width:1690px){.container{width:1660px}}
+</style>
+{% endblock %}
+
 {% block brand %}
     <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">Dashboard</a>
 {% endblock %}

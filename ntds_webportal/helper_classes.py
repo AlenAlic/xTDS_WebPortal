@@ -1,7 +1,7 @@
 from ntds_webportal import db
 from ntds_webportal.models import SystemConfiguration, Contestant, ContestantInfo, StatusInfo, DancingInfo
 from ntds_webportal.data import *
-from sqlalchemy import or_, and_
+from sqlalchemy import or_
 
 
 class TeamPossiblePartners:
@@ -124,7 +124,7 @@ class TeamFinancialOverview:
     def get_dancers(self, price_category, paid):
         prices = self.student_prices()
         dancers = [prices[dancer.contestant_info.student] for dancer in self.dancers if
-                   dancer.contestant_info.student == price_category and dancer.payment_info.entry_paid is paid]
+                   dancer.contestant_info.student == price_category and dancer.payment_info.all_paid() is paid]
         return dancers
 
     def get_students(self, paid):
@@ -166,6 +166,10 @@ class TeamFinancialOverview:
         nms, pms = self.get_mugs(paid)
         nbs, pbs = self.get_bags(paid)
         return nts + nms + nbs, pts + pms + pbs
+
+    def total_refund_price(self):
+        prices = self.prices()
+        return sum([prices[d.contestant_info.student] for d in self.dancers if d.payment_info.has_refund()])
 
     def finances_overview(self):
         number_students_paid, students_paid = self.get_students(True)
@@ -259,6 +263,7 @@ class TeamFinancialOverview:
                      'price_total': (students_unpaid + students_paid +
                                      non_students_paid + non_students_unpaid +
                                      phd_students_unpaid + phd_students_paid +
-                                     merchandise_unpaid + merchandise_paid)
+                                     merchandise_unpaid + merchandise_paid),
+                     'total_refund': self.total_refund_price()
                      })
         return result

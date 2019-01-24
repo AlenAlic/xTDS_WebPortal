@@ -1,59 +1,127 @@
 {% extends "base.html" %}
 
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+.adj-input          {font-size:small; height:auto;}
+</style>
+{% endblock %}
+
 {% block app_content %}
-
-<h2>Adjudicators for the tournament</h2>
+<h2>Potential adjudicators for the tournament <span class="badge badge-pill badge-dark"><span id="count-adjudicators">{{selected_adjudicators|length}}</span>/{{ adjudicators|length + super_volunteer_adjudicators|length }}</span></h2>
+<p>Super Volunteers (external adjudicators) are shown at the top of the list, with "Super Volunteer" as their team.</p>
+<div id="changes-warning" style="text-align:center;"><h3 class="float-center">Remember to save your changes</h3></div>
 <form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-outline-primary" id="submit-download_file" name="download_file" type="submit" value="Download lists of adjudicators">
+    <input class="btn btn-outline-primary float-right" id="submit-download_file" name="download_file" type="submit" value="Download lists of adjudicators">
 </form>
-<div style="height:10px;"></div>
-<!--<button id="expand-all" type="button" class="btn btn-default" onclick="expandAll()" disabled>Show all</button>-->
-<!--<button id="collapse-all" type="button" class="btn btn-default" onclick="collapseAll()">Hide all</button>-->
-<button id="toggle-all" type="button" class="btn btn-outline-secondary my-2" onclick="toggleAll()">Hide all</button>
-<div id="accordion">
-    {% with type=data.BALLROOM, adjudicators=ballroom_adjudicators %}
-        {% include 'organizer/_adjudicator_list.html' %}
-    {% endwith %}
-    {% with type=data.LATIN, adjudicators=latin_adjudicators %}
-        {% include 'organizer/_adjudicator_list.html' %}
-    {% endwith %}
-    {% if g.sc.salsa_competition is sameas true %}
-        {% with type=data.SALSA, adjudicators=salsa_adjudicators %}
-            {% include 'organizer/_adjudicator_list.html' %}
-        {% endwith %}
-    {% endif %}
-    {% if g.sc.polka_competition is sameas true %}
-        {% with type=data.POLKA, adjudicators=polka_adjudicators %}
-            {% include 'organizer/_adjudicator_list.html' %}
-        {% endwith %}
-    {% endif %}
-</div>
-
+<form id="breakdown-form" method="POST" enctype="multipart/form-data">
+    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save changes">
+    <table class="table table-sm mb-0 mt-2" style="font-size:small">
+        <colgroup>
+            <col span="1" style="width: 3%;">
+            <col span="1" style="width: 5%;">
+            <col span="1" style="width: 11%;">
+            <col span="1" style="width: 12%;">
+            <col span="1" style="width: 5%;">
+            <col span="1" style="width: 5%;">
+            <col span="1" style="width: 8%;">
+            <col span="1" style="width: 5%;">
+            <col span="1" style="width: 5%;">
+            <col span="1" style="width: 8%;">
+            <col span="1" style="width: 7%;">
+            <col span="1" style="width: 6%;">
+            <col span="1" style="width: 20%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th colspan="2"></th>
+                <th colspan="2">Personal</th>
+                <th colspan="3">Ballroom</th>
+                <th colspan="3">Latin</th>
+                <th colspan="2">Dancing</th>
+                <th></th>
+            </tr>
+            <tr>
+                <th></th>
+                <th>Tag</th>
+                <th>Name</th>
+                <th>Team</th>
+                <th>Wants to adjudicate?</th>
+                <th>Has license?</th>
+                <th>Highest achieved level</th>
+                <th>Wants to adjudicate?</th>
+                <th>Has license?</th>
+                <th>Highest achieved level</th>
+                <th>Dancing Ballroom</th>
+                <th>Dancing Latin</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for adjudicator in super_volunteer_adjudicators %}
+                <tr>
+                    <td align="center">
+                        <input class="adjudicator" onclick="updateCount()" type="checkbox" id="checked-super_volunteer-{{adjudicator.volunteer_id}}" name="checked-super_volunteer-{{adjudicator.volunteer_id}}" {% if adjudicator.selected_adjudicator %}checked{% endif %}>
+                    </td>
+                    <td>
+                        <input type="text" required maxlength="5" class="form-control adj-input px-1 py-0"
+                               id="tag-super_volunteer-{{adjudicator.volunteer_id}}" name="tag-super_volunteer-{{adjudicator.volunteer_id}}"
+                               value="{% if adjudicator.user.adjudicator is none %}{{tags[adjudicator]}}{% else %}{{adjudicator.user.adjudicator.tag}}{% endif %}">
+                    </td>
+                    <td>{{ adjudicator.get_full_name() }}</td>
+                    <td>Super Volunteer</td>
+                    <td>{{ adjudicator.jury_ballroom }}</td>
+                    <td>{{ adjudicator.license_jury_ballroom }}</td>
+                    <td>{{ adjudicator.level_ballroom }}</td>
+                    <td>{{ adjudicator.jury_latin }}</td>
+                    <td>{{ adjudicator.license_jury_latin }}</td>
+                    <td>{{ adjudicator.level_latin }}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><input class="form-control adj-input px-1 py-0" type="text" id="super_volunteer-{{adjudicator.volunteer_id}}" name="super_volunteer-{{adjudicator.volunteer_id}}" value="{{adjudicator.adjudicator_notes}}"></td>
+                </tr>
+            {% endfor %}
+            {% for adjudicator in adjudicators %}
+                <tr>
+                    <td align="center">
+                        <input class="adjudicator" onclick="updateCount()" type="checkbox" id="checked-contestant-{{adjudicator.contestant_id}}" name="checked-contestant-{{adjudicator.contestant_id}}" {% if adjudicator.volunteer_info.selected_adjudicator %}checked{% endif %}>
+                    </td>
+                    <td>
+                        <input type="text" required maxlength="5" class="form-control adj-input px-1 py-0"
+                               id="tag-contestant-{{adjudicator.contestant_id}}" name="tag-contestant-{{adjudicator.contestant_id}}"
+                               value="{% if adjudicator.user.adjudicator is none %}{{tags[adjudicator]}}{% else %}{{adjudicator.user.adjudicator.tag}}{% endif %}">
+                    </td>
+                    <td>{{ adjudicator.get_full_name() }}</td>
+                    <td>{{ adjudicator.contestant_info.team.name }}</td>
+                    <td>{{ adjudicator.volunteer_info.jury_ballroom }}</td>
+                    <td>{{ adjudicator.volunteer_info.license_jury_ballroom }}</td>
+                    <td>{{ adjudicator.volunteer_info.level_ballroom }}</td>
+                    <td>{{ adjudicator.volunteer_info.jury_latin }}</td>
+                    <td>{{ adjudicator.volunteer_info.license_jury_latin }}</td>
+                    <td>{{ adjudicator.volunteer_info.level_latin }}</td>
+                    <td>{{ g.data.LEVEL_ROLE_DISPLAY[adjudicator.dancing_information(g.data.BALLROOM).level] }}</td>
+                    <td>{{ g.data.LEVEL_ROLE_DISPLAY[adjudicator.dancing_information(g.data.LATIN).level] }}</td>
+                    <td><input class="form-control adj-input px-1 py-0" type="text" id="contestant-{{adjudicator.contestant_id}}" name="contestant-{{adjudicator.contestant_id}}" value="{{adjudicator.volunteer_info.adjudicator_notes}}"></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script>
-<!--function expandAll() {-->
-    <!--$('#accordion .panel-collapse').collapse('show');-->
-    <!--document.getElementById('expand-all').setAttribute("disabled","disabled");-->
-    <!--document.getElementById('collapse-all').removeAttribute("disabled");-->
-<!--}-->
-<!--function collapseAll() {-->
-    <!--$('#accordion .panel-collapse').collapse('hide');-->
-    <!--document.getElementById('collapse-all').setAttribute("disabled","disabled");-->
-    <!--document.getElementById('expand-all').removeAttribute("disabled");-->
-<!--}-->
-function toggleAll() {
-    var btn = document.getElementById('toggle-all');
-    var txt = btn.textContent || btn.innerText;
-    if (txt == "Show all") {
-        $('#accordion .collapse').collapse('show');
-        btn.innerHTML = 'Hide all'
-    } else {
-        $('#accordion .collapse').collapse('hide');
-        btn.innerHTML = 'Show all'
-    }
+function onStart() {
+    updateCount()
+}
+function updateCount() {
+    let count = document.getElementById("count-adjudicators");
+    count.innerHTML = document.querySelectorAll(".adjudicator:checked").length
 }
 </script>
 {% endblock %}

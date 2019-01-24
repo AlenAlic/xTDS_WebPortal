@@ -18,11 +18,6 @@ onload="onStart()"
     {% with url='self_admin.debug_tools', title='Debug Tools', text='Tools to debug the site.', image='debug_tools.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {#
-    {% with url='self_admin.users_lists', title='Users list', text='Download a list of usernames, email, and default passwords.', image='users_list.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    #}
 </div>
 <h2>System management</h2>
 <div class="row" style="visibility:hidden">
@@ -99,7 +94,7 @@ onload="onStart()"
 </div>
 <h2>Pre-tournament</h2>
 <div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', loading_screen=true, title='Finances', text='Overview of payment data of the dancers that have been confirmed for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% if g.sc.merchandise() is sameas true %}
@@ -107,34 +102,34 @@ onload="onStart()"
             {% include '_dashboard_page.html' %}
         {% endwith %}
     {% endif %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.sleeping_hall', title='Sleeping Hall', text='Get a list of confirmed dancers per team that will be staying in the sleeping hall.', image='sleeping_hall.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.diet_allergies', title='Diet/Allergies', text='Get a list of all allergies and dietary wishes of dancers and Super Volunteers. Work in progress. Coming in a future build.', image='food.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.diet_allergies', title='Diet/Allergies', text='Get a list of all allergies and dietary wishes of confirmed dancers and Super Volunteers.', image='food.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.badges', title='Badges', text='Get a list of the data needed for badges.', image='badges.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.numbers', title='Dancer numbers', text='Get a list of the numbers of all confirmed dancers per team.', image='numbers.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
 <h2>Volunteering system</h2>
 <div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.system_configured, url='volunteering.register', title='Registration for Super-volunteers/external adjudicators', text='Work in progress.', image='register_contestant.png' %}
+    {% with accessible=g.ts.system_configured, url='volunteering.register', title='Registration for Super Volunteers', text='Share this page for Super Volunteers to register through.', image='register_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.ts.system_configured, url='volunteering.volunteers', title='Volunteers', text='Overview of Super-volunteers and confirmed volunteering dancers.', image='volunteers.png' %}
+    {% with accessible=g.ts.system_configured, url='volunteering.volunteers', title='Volunteers', text='Overview of Super Volunteers and confirmed volunteering dancers.', image='volunteers.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=false, url='main.todo', title='Volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
-<h2>Adjudication system</h2>
-<div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-</div>
 <h2>BAD exports</h2>
 <div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Download files to setup BAD. (In essence done, but might be changed a bit due to input from Marek)', image='BAD.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.bad', title='Export to BAD', text='Download files to setup BAD.', image='BAD.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -149,27 +144,12 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_ada', title='Adjudicator Assistant', text='Switch to the Adjudicator Assistant account. This will log you out of the Organizer account.', image='adjudicators.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-</div>
-{% endif %}
-
-{% if current_user.is_bda() %}
-<div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple', title='Ballroom Blind Date Couples', text='Create new blind date couples for Standard and Latin.', image='view_couples.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_tom', title='Tournament Office Manager', text='Switch to the Tournament Office Manager account. This will log you out of the Organizer account.', image='tournament_office_account.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.dancing_info_list', title='Dancing information', text='Change the level and/or role confirmed dancers are dancing in.', image='edit_contestant.png' %}
+    {% with accessible=g.sc.main_raffle_result_visible, url='organizer.switch_to_fm', title='Floor Manager', text='Switch to the Floor Manager account. This will log you out of the Organizer account.', image='floor_manager.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% if g.sc.salsa_competition is sameas true %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_salsa', title='Salsa Blind Date Couples', text='Create new blind date couples for Salsa.', image='salsa.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% endif %}
-    {% if g.sc.polka_competition is sameas true %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='blind_date_assistant.create_couple_polka', title='Polka Blind Date Couples', text='Create new blind date couples for Latin.', image='polka.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% endif %}
 </div>
 {% endif %}
 
@@ -186,6 +166,23 @@ onload="onStart()"
 
 {% if current_user.is_ada() %}
 <div class="row" style="visibility:hidden">
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers and Super Volunteers that want to adjudicate.', image='adjudicators.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.main_raffle_result_visible and g.event is not none, url='adjudication_system.adjudicator_assignments', title='Adjudicator Assignment', text='Assignments for the selected adjudicators.', image='adjudicate.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+</div>
+{% endif %}
+
+{% if current_user.is_tournament_office_manager() %}
+<div class="row" style="visibility:hidden">
+    {% with accessible=g.ts.main_raffle_result_visible, url='admin.index', title="Database", text="Database access, just in case.", image='admin.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='adjudication_system.event', title="Tournament Office", text="Manage the tournament from here.", image='medal.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.adjudicators_overview', title='Adjudicators overview', text='Overview of confirmed dancers that want to adjudicate.', image='adjudicators.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
@@ -240,13 +237,23 @@ onload="onStart()"
     {% with accessible=g.sc.check_in_accessible(), url='teamcaptains.tournament_check_in', title='Tournament check-in', text='Shows who from your team has checked in at the tournament desk.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
+    {% with accessible=g.sc.check_in_accessible(), url='teamcaptains.starting_lists', title='Tournament starting lists', text='Shows the starting lists for the competitions of the tournament.', image='starting_lists.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
 {% endif %}
 </div>
 {% endif %}
 
 {% if current_user.is_dancer() %}
 <div class="row" style="visibility:hidden">
-    {% with wants_attention=dancer.status_info.feedback_about_information, url='dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
+    {% if current_user.is_adjudicator() %}
+        {% if current_user.adjudicator.has_assignments() %}
+            {% with accessible=g.sc.check_in_accessible(), url='adjudication_system.adjudicator_dashboard', title='Adjudication assignments.', text='Adjudication assignments for this tournament.', image='adjudicate.png' %}
+                {% include '_dashboard_page.html' %}
+            {% endwith %}
+        {% endif %}
+    {% endif %}
+    {% with wants_attention=dancer.status_info.feedback_about_information, url='url_dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=false, url='main.todo', title='My volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}
@@ -257,6 +264,13 @@ onload="onStart()"
 
 {% if current_user.is_super_volunteer() %}
 <div class="row" style="visibility:hidden">
+    {% if current_user.is_adjudicator() %}
+        {% if current_user.adjudicator.has_assignments() %}
+            {% with accessible=g.sc.check_in_accessible(), url='adjudication_system.adjudicator_dashboard', title='Adjudication', text='Adjudication assignments for this tournament.', image='adjudicate.png' %}
+                {% include '_dashboard_page.html' %}
+            {% endwith %}
+        {% endif %}
+    {% endif %}
     {% with url='volunteering.super_volunteer_data', title='My signup information', text='View your signup information.', image='dancer_profile.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}

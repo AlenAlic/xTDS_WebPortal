@@ -1,0 +1,32 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+<h2>{{ g.event }}</h2>
+<h2>Edit dancer</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="form-row">
+        <div class="col-12 col-md-6">
+            {{ wtf.form_field(form.name, disabled=true) }}
+        </div>
+        <div class="col-12 col-md-6">
+            {{ wtf.form_field(form.role, disabled=true) }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col-12 col-md-6">
+            {{ wtf.form_field(form.team, disabled=true) }}
+        </div>
+        <div class="col-12 col-md-6">
+            {{ wtf.form_field(form.number, disabled=true) }}
+        </div>
+    </div>
+    {{ wtf.form_field(form.partners, disabled=true) }}
+    {{ wtf.form_field(form.competitions) }}
+    <small class="mb-2" style="display:block;">Dancers are only deletable when they have no partners and are not part of any competition.</small>
+    <input class="btn btn-primary mr-2" id="save_changes" name="save_changes" type="submit" value="Save changes">
+    <button class="btn btn-danger mr-2" type="submit" name="delete_dancer" {% if not dancer.deletable() %}disabled{% endif%}>Delete dancer</button>
+    <a role="button" class="btn btn-outline-secondary" href="{{url_for('adjudication_system.available_dancers')}}">Cancel</a>
+</form>
+
+{% endblock %}

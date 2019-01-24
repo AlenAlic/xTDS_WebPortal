@@ -3,9 +3,9 @@ from flask_login import login_required, logout_user, login_user
 from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
-    StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, TournamentState, \
-    SalsaPartners, PolkaPartners, VolunteerInfo, requires_tournament_state, SuperVolunteer
-from ntds_webportal.functions import submit_updated_dancing_info, get_dancing_categories, random_password
+    StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, SalsaPartners, PolkaPartners, VolunteerInfo, \
+    requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo
+from ntds_webportal.functions import submit_updated_dancing_info, random_password
 from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm
 from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm
 from ntds_webportal.organizer.email import send_registration_open_email, send_gdpr_reminder_email
@@ -64,7 +64,9 @@ def user_list():
     bda = db.session.query(User).filter(User.access == ACCESS[BLIND_DATE_ASSISTANT]).first()
     chi = db.session.query(User).filter(User.access == ACCESS[CHECK_IN_ASSISTANT]).first()
     ada = db.session.query(User).filter(User.access == ACCESS[ADJUDICATOR_ASSISTANT]).first()
-    return render_template('organizer/user_list.html', data=data, users=users, bda=bda, chi=chi, ada=ada)
+    tom = db.session.query(User).filter(User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER]).first()
+    fm = db.session.query(User).filter(User.access == ACCESS[FLOOR_MANAGER]).first()
+    return render_template('organizer/user_list.html', users=users, bda=bda, chi=chi, ada=ada, tom=tom, fm=fm)
 
 
 def assistant_account(access_level):
@@ -78,6 +80,10 @@ def assistant_account(access_level):
             form.username.data = CHECK_IN_ASSISTANT_ACCOUNT_NAME
         elif access_level == ADJUDICATOR_ASSISTANT:
             form.username.data = ADJUDICATOR_ASSISTANT_ACCOUNT_NAME
+        elif access_level == TOURNAMENT_OFFICE_MANAGER:
+            form.username.data = TOURNAMENT_OFFICE_MANAGER_ACCOUNT_NAME
+        elif access_level == FLOOR_MANAGER:
+            form.username.data = FLOOR_MANAGER_ACCOUNT_NAME
         if form.validate_on_submit():
             user = User()
             user.username = form.username.data
@@ -111,8 +117,7 @@ def blind_date_assistant_account():
     form, user, submit = assistant_account(BLIND_DATE_ASSISTANT)
     if submit:
         return redirect(url_for('organizer.user_list'))
-    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
-                           assistant=BLIND_DATE_ASSISTANT)
+    return render_template('organizer/assistant_account.html', form=form, user=user, assistant=BLIND_DATE_ASSISTANT)
 
 
 @bp.route('/check_in_assistant_account', methods=['GET', 'POST'])
@@ -123,8 +128,7 @@ def check_in_assistant_account():
     form, user, submit = assistant_account(CHECK_IN_ASSISTANT)
     if submit:
         return redirect(url_for('organizer.user_list'))
-    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
-                           assistant=CHECK_IN_ASSISTANT)
+    return render_template('organizer/assistant_account.html', form=form, user=user, assistant=CHECK_IN_ASSISTANT)
 
 
 @bp.route('/adjudicator_assistant_account', methods=['GET', 'POST'])
@@ -135,8 +139,30 @@ def adjudicator_assistant_account():
     form, user, submit = assistant_account(ADJUDICATOR_ASSISTANT)
     if submit:
         return redirect(url_for('organizer.user_list'))
-    return render_template('organizer/assistant_account.html', data=data, form=form, user=user,
-                           assistant=ADJUDICATOR_ASSISTANT)
+    return render_template('organizer/assistant_account.html', form=form, user=user, assistant=ADJUDICATOR_ASSISTANT)
+
+
+@bp.route('/tournament_office_manager_account', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(SYSTEM_CONFIGURED)
+def tournament_office_manager_account():
+    form, user, submit = assistant_account(TOURNAMENT_OFFICE_MANAGER)
+    if submit:
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/assistant_account.html', form=form, user=user,
+                           assistant=TOURNAMENT_OFFICE_MANAGER)
+
+
+@bp.route('/floor_manager_account', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(SYSTEM_CONFIGURED)
+def floor_manager_account():
+    form, user, submit = assistant_account(FLOOR_MANAGER)
+    if submit:
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/assistant_account.html', form=form, user=user, assistant=FLOOR_MANAGER)
 
 
 @bp.route('/change_email/<number>', methods=['GET', 'POST'])
@@ -277,19 +303,19 @@ def edit_dancing_info(number):
         form.populate(dancer)
     if request.method == POST:
         form.custom_validate()
-    if form.validate_on_submit():
-        flash('{} data has been changed successfully.'.format(submit_updated_dancing_info(form, contestant=dancer)),
-              'alert-success')
-        return redirect(url_for('organizer.dancing_info_list'))
+        if form.validate_on_submit():
+            flash('{} data has been changed successfully.'.format(submit_updated_dancing_info(form, contestant=dancer)),
+                  'alert-success')
+            return redirect(url_for('organizer.dancing_info_list'))
     return render_template('organizer/edit_dancing_info.html', data=data, form=form, dancer=dancer)
 
 
+# noinspection PyTypeChecker
 @bp.route('/finances_overview', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def finances_overview():
-    # WISH - Discuss with "Penny" for what to add - downloads for total page and summary pages
     all_teams = db.session.query(Team)
     if g.sc.tournament == NTDS:
         all_teams = all_teams.filter(Team.country == NETHERLANDS).all()
@@ -300,8 +326,8 @@ def finances_overview():
             changes = False
             for team in all_teams:
                 amount_paid = request.form.get(str(team.team_id))
-                if amount_paid != '' and amount_paid is not None:
-                    amount_paid = int(float(amount_paid)*100)
+                if amount_paid != ''.strip() and amount_paid is not None:
+                    amount_paid = int(round(float(amount_paid)*100))
                     if team.amount_paid != amount_paid:
                         team.amount_paid = amount_paid
                         changes = True
@@ -336,18 +362,78 @@ def finances_overview():
     german_teams = [team for team in teams if team['team'].country == GERMANY]
     other_teams = [team for team in teams if
                    team['team'].country != NETHERLANDS and team['team'].country != GERMANY]
-    return render_template('organizer/finances_overview.html', teams=teams, data=data,
+    totals = {
+        'number_of_students': sum([team['finances']['number_of_students'] for team in teams]),
+        'number_of_phd_students': sum([team['finances']['number_of_phd_students'] for team in teams]),
+        'number_of_non_students': sum([team['finances']['number_of_non_students'] for team in teams]),
+        'number_of_dancers': 0,
+        'number_of_merchandise': sum([team['finances']['number_of_merchandise'] for team in teams]),
+        'owed': sum([team['finances']['price_total'] for team in teams]),
+        'received': sum([team['team'].amount_paid for team in teams]),
+        'difference': 0,
+        'refund': sum([team['finances']['total_refund'] for team in teams])
+    }
+    totals['difference'] = totals['received'] - totals['owed']
+    totals['number_of_dancers'] = totals['number_of_students'] + totals['number_of_phd_students'] \
+                                  + totals['number_of_non_students']
+    download = request.args
+    if 'download_file' in download:
+        header = {'Team': 0, '# Dancers': 1, 'Owed': 2, 'Received': 3, 'Difference': 4, 'Refund': 5}
+        fn = f'finances_overview_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
+        output = BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        f = wb.add_format({'text_wrap': True, 'bold': True})
+        acc = wb.add_format({'num_format': 44})
+        total_acc = wb.add_format({'num_format': 44, 'bold': True})
+        ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
+        for name, index in header.items():
+            ws.write(0, index, name, f)
+        ws.set_column(0, 0, 30)
+        ws.set_column(1, 1, 10)
+        ws.set_column(2, 5, 15)
+        totals = {'dancers': 0, 'owed': 0, 'received': 0, 'difference': 0, 'refund': 0}
+        for i, team in enumerate(teams, 1):
+            ws.write(i, 0, team['team'].name)
+            ws.write(i, 1, team['finances']['number_of_dancers'])
+            ws.write(i, 2, round(team['finances']['price_total']/100, 2), acc)
+            ws.write(i, 3, round(team['team'].amount_paid/100, 2), acc)
+            ws.write(i, 4, round((team['team'].amount_paid-team['finances']['price_total'])/100, 2), acc)
+            ws.write(i, 5, round(team['finances']['total_refund']/100, 2), acc)
+            totals['dancers'] += team['finances']['number_of_dancers']
+            totals['owed'] += team['finances']['price_total']
+            totals['received'] += team['team'].amount_paid
+            totals['refund'] += team['finances']['total_refund']
+        totals['difference'] = totals['received'] - totals['owed']
+        ws.write(len(teams) + 1, 1, totals['dancers'], wb.add_format({'bold': True}))
+        ws.write(len(teams) + 1, 2, round(totals['owed']/100, 2), total_acc)
+        ws.write(len(teams) + 1, 3, round(totals['received'] / 100, 2), total_acc)
+        ws.write(len(teams) + 1, 4, round(totals['difference'] / 100, 2), total_acc)
+        ws.write(len(teams) + 1, 5, round(totals['refund'] / 100, 2), total_acc)
+        ws.freeze_panes(1, 0)
+        wb.close()
+        output.seek(0)
+        return send_file(output, as_attachment=True, attachment_filename=fn)
+    return render_template('organizer/finances_overview.html', teams=teams, totals=totals,
                            dutch_teams=dutch_teams, german_teams=german_teams, other_teams=other_teams)
 
 
-@bp.route('/remove_payment_requirement/<number>', methods=['GET', 'POST'])
+@bp.route('/remove_payment_requirement/<int:number>', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def remove_payment_requirement(number):
     dancer = StatusInfo.query.filter(StatusInfo.contestant_id == number).first()
-    dancer.payment_required = False
-    db.session.commit()
+    dancer.remove_payment_requirement()
+    return redirect(url_for('organizer.finances_overview'))
+
+
+@bp.route('/add_refund/<int:number>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def add_refund(number):
+    dancer = PaymentInfo.query.filter(PaymentInfo.contestant_id == number).first()
+    dancer.set_refund()
     return redirect(url_for('organizer.finances_overview'))
 
 
@@ -437,9 +523,9 @@ def sleeping_hall():
     teams = [{'city': team_captain.team.city,
               'number_of_dancers': db.session.query(Contestant).join(ContestantInfo, StatusInfo, AdditionalInfo)
              .filter(ContestantInfo.team == team_captain.team, StatusInfo.status == CONFIRMED,
-                     AdditionalInfo.sleeping_arrangements.is_(True)).count()} for team_captain in team_captains]
-    super_volunteers = len(SuperVolunteer.query.all())
-    total = sum([team['number_of_dancers'] for team in teams]) + super_volunteers
+                     AdditionalInfo.sleeping_arrangements.is_(True)).all()} for team_captain in team_captains]
+    super_volunteers = SuperVolunteer.query.filter(SuperVolunteer.sleeping_arrangements.is_(True)).all()
+    total = sum([len(team['number_of_dancers']) for team in teams]) + len(super_volunteers)
     form = request.args
     if 'download_file' in form:
         fn = f'sleeping_hall_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
@@ -447,31 +533,36 @@ def sleeping_hall():
         wb = xlsxwriter.Workbook(output, {'in_memory': True})
         f = wb.add_format({'text_wrap': True, 'bold': True})
         la = wb.add_format({'align': 'left'})
-        ws = wb.add_worksheet()
+        ws = wb.add_worksheet(name='Summary')
         ws.write(0, 0, 'Team', f)
         ws.write(0, 1, 'People in sleeping hall (Total: {total})'.format(total=total), f)
         for d in range(0, len(teams)):
             ws.write(d + 1, 0, teams[d]['city'])
-            ws.write(d + 1, 1, teams[d]['number_of_dancers'], la)
+            ws.write(d + 1, 1, len(teams[d]['number_of_dancers']), la)
         ws.write(len(teams) + 1, 0, 'Super Volunteers')
-        ws.write(len(teams) + 1, 1, super_volunteers, la)
+        ws.write(len(teams) + 1, 1, len(super_volunteers), la)
         ws.set_column(0, 0, 30)
         ws.set_column(1, 1, 40)
+        ws.freeze_panes(1, 0)
+        ws = wb.add_worksheet(name='People in Sleeping Hall')
+        ws.write(0, 0, 'Name', f)
+        ws.write(0, 1, 'Team', f)
+        dancers = sorted(Contestant.query.join(StatusInfo, AdditionalInfo, ContestantInfo)
+                         .filter(StatusInfo.status == CONFIRMED, AdditionalInfo.sleeping_arrangements.is_(True)).all(),
+                         key=lambda x: x.contestant_info.team.city)
+        for i, p in enumerate(dancers, 1):
+            ws.write(i, 0, p.get_full_name())
+            ws.write(i, 1, p.contestant_info.team.city)
+        for i, p in enumerate(super_volunteers, len(dancers) + 1):
+            ws.write(i, 0, p.get_full_name())
+            ws.write(i, 1, 'Super Volunteer')
+        ws.set_column(0, 0, 40)
+        ws.set_column(1, 1, 30)
         ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
     return render_template('organizer/sleeping_hall.html', teams=teams, super_volunteers=super_volunteers, total=total)
-
-
-@bp.route('/view_super_volunteer/<int:number>', methods=[GET])
-@login_required
-@requires_access_level([ACCESS[ORGANIZER]])
-def view_super_volunteer(number):
-    super_volunteer = SuperVolunteer.query.filter(SuperVolunteer.volunteer_id == number).first()
-    form = SuperVolunteerForm()
-    form.populate(super_volunteer)
-    return render_template('organizer/view_super_volunteer.html', form=form)
 
 
 @bp.route('/diet_allergies', methods=[GET, POST])
@@ -535,86 +626,214 @@ def diet_allergies():
                            people=people, total=total, no_special_diet=no_special_diet, old_notes=old_notes)
 
 
+@bp.route('/badges', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def badges():
+    dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status != CANCELLED).all()
+    dancers.sort(key=lambda x: (x.contestant_info.team.name, x.contestant_info.number))
+    confirmed_dancers = [d for d in dancers if d.status_info.status == CONFIRMED]
+    remaining_dancers = [d for d in dancers if d.status_info.status != CONFIRMED]
+    super_volunteers = SuperVolunteer.query.all()
+    return render_template('organizer/badges.html', confirmed_dancers=confirmed_dancers,
+                           super_volunteers=super_volunteers, remaining_dancers=remaining_dancers)
+
+
+@bp.route('/numbers', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def numbers():
+    team_captains = db.session.query(User).filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True))\
+        .order_by(User.username).all()
+    teams = \
+        [{'city': team_captain.team.city, 'number_of_dancers':
+            [c for c in Contestant.query.join(ContestantInfo, StatusInfo, AdditionalInfo)
+                .filter(ContestantInfo.team == team_captain.team, StatusInfo.status == CONFIRMED)
+                .order_by(ContestantInfo.number).all()
+             if c.status_info.dancing_lead()]} for team_captain in team_captains]
+    return render_template('organizer/numbers.html', teams=teams)
+
+
+@bp.route('/view_super_volunteer/<int:number>', methods=[GET])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def view_super_volunteer(number):
+    super_volunteer = SuperVolunteer.query.filter(SuperVolunteer.volunteer_id == number).first()
+    form = SuperVolunteerForm()
+    form.populate(super_volunteer)
+    return render_template('organizer/view_super_volunteer.html', form=form)
+
+
 @bp.route('/adjudicators_overview', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS[ORGANIZER], ACCESS[ADJUDICATOR_ASSISTANT]])
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[ADJUDICATOR_ASSISTANT], ACCESS[TOURNAMENT_OFFICE_MANAGER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def adjudicators_overview():
-    # PRIORITY - Add Super Volunteers
-    # LONG TERM - Completely new system - Print login sheets - schedule available on personal page - assignment system
-    ts = TournamentState.query.first()
-    ballroom_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo)\
-        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_ballroom != NO)\
-        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_ballroom), ContestantInfo.team_id)\
-        .all()
-    latin_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo, DancingInfo) \
-        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_latin != NO) \
-        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_latin), ContestantInfo.team_id) \
-        .all()
-    salsa_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
-        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_salsa != NO) \
-        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_salsa), ContestantInfo.team_id) \
-        .all()
-    polka_adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
-        .filter(StatusInfo.status == CONFIRMED, VolunteerInfo.jury_polka != NO) \
-        .order_by(case({YES: 0, MAYBE: 1, NO: 2}, value=VolunteerInfo.jury_polka), ContestantInfo.team_id) \
-        .all()
+    adjudicators = Contestant.query.join(VolunteerInfo, StatusInfo, ContestantInfo) \
+        .filter(StatusInfo.status == CONFIRMED, or_(VolunteerInfo.jury_ballroom != NO, VolunteerInfo.jury_latin != NO))\
+        .order_by(Contestant.first_name).all()
+    super_volunteer_adjudicators = SuperVolunteer.query\
+        .filter(or_(SuperVolunteer.jury_ballroom != NO, SuperVolunteer.jury_latin != NO))\
+        .order_by(SuperVolunteer.first_name).all()
+    selected_adjudicators = [a for a in adjudicators if a.volunteer_info.selected_adjudicator] + \
+                            [a for a in super_volunteer_adjudicators if a.selected_adjudicator]
+    form = request.form
+    tags = generate_tags(adjudicators + super_volunteer_adjudicators)
+    if request.method == POST:
+        if 'submit' in form:
+            submitted_tags = [form.get(f"tag-contestant-{a.contestant_id}") for a in adjudicators] + \
+                             [form.get(f"tag-super_volunteer-{a.volunteer_id}") for a in super_volunteer_adjudicators]
+            if sorted(set(tags.values())) == sorted(set(submitted_tags)):
+                for adjudicator in adjudicators:
+                    adjudicator.volunteer_info.selected_adjudicator = \
+                        f"checked-contestant-{adjudicator.contestant_id}" in form
+                    adjudicator.volunteer_info.adjudicator_notes = form.get(f"contestant-{adjudicator.contestant_id}")
+                    if adjudicator.volunteer_info.selected_adjudicator:
+                        check_adjudicator = Adjudicator.query\
+                            .filter(Adjudicator.name == adjudicator.get_full_name()).first()
+                        if check_adjudicator is None:
+                            new_adjudicator = Adjudicator()
+                            new_adjudicator.name = adjudicator.get_full_name()
+                            new_adjudicator.tag = form.get(f"tag-contestant-{adjudicator.contestant_id}")
+                            new_adjudicator.user = adjudicator.user
+                            db.session.add(new_adjudicator)
+                        else:
+                            if adjudicator.user.adjudicator is not None:
+                                adjudicator.user.adjudicator.name = adjudicator.get_full_name()
+                                adjudicator.user.adjudicator.tag = \
+                                    form.get(f"tag-contestant-{adjudicator.contestant_id}")
+                    else:
+                        adjudicator.user.adjudicator = None
+                for adjudicator in super_volunteer_adjudicators:
+                    adjudicator.selected_adjudicator = f"checked-super_volunteer-{adjudicator.volunteer_id}" in form
+                    adjudicator.adjudicator_notes = form.get(f"super_volunteer-{adjudicator.volunteer_id}")
+                    if adjudicator.selected_adjudicator:
+                        check_adjudicator = Adjudicator.query\
+                            .filter(Adjudicator.name == adjudicator.get_full_name()).first()
+                        if check_adjudicator is None:
+                            new_adjudicator = Adjudicator()
+                            new_adjudicator.name = adjudicator.get_full_name()
+                            new_adjudicator.tag = form.get(f"tag-super_volunteer-{adjudicator.volunteer_id}")
+                            new_adjudicator.user = adjudicator.user
+                            db.session.add(new_adjudicator)
+                        else:
+                            if adjudicator.user.adjudicator is not None:
+                                adjudicator.user.adjudicator.name = adjudicator.get_full_name()
+                                adjudicator.user.adjudicator.tag = \
+                                    form.get(f"tag-super_volunteer-{adjudicator.volunteer_id}")
+                    else:
+                        adjudicator.user.adjudicator = None
+                for adjudicator in Adjudicator.query.all():
+                    if adjudicator.user is None:
+                        db.session.delete(adjudicator)
+                db.session.commit()
+                flash('Changes saved.', 'alert-success')
+                return redirect(url_for('organizer.adjudicators_overview'))
+            else:
+                flash("Adjudicator tags are not unique.", "alert-warning")
     form = request.args
     if 'download_file' in form:
-        fn = 'adjudicators_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
+        fn = f'adjudicators_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
         output = BytesIO()
         wb = xlsxwriter.Workbook(output, {'in_memory': True})
         f = wb.add_format({'text_wrap': True, 'bold': True})
-        adjudicators = {BALLROOM: ballroom_adjudicators, LATIN: latin_adjudicators, SALSA: salsa_adjudicators,
-                        POLKA: polka_adjudicators}
-        for comp, adj in adjudicators.items():
-            ws = wb.add_worksheet(name=comp)
-            ws.write(0, 0, 'Dancer', f)
-            ws.write(0, 1, 'Team', f)
-            ws.write(0, 2, 'E-mail', f)
-            ws.write(0, 3, 'Wants to adjudicate?', f)
-            if comp == BALLROOM or comp == LATIN:
-                ws.write(0, 4, 'Has license?', f)
-                ws.write(0, 5, 'Highest achieved level', f)
-                ws.write(0, 6, 'Dancing Ballroom?', f)
-                ws.write(0, 7, 'Dancing Latin?', f)
-                ws.set_column(0, 7, 30)
-                for d in range(0, len(adj)):
-                    ws.write(d + 1, 0, adj[d].get_full_name())
-                    ws.write(d + 1, 1, adj[d].contestant_info.team.name)
-                    ws.write(d + 1, 2, adj[d].email)
-                    if comp == BALLROOM:
-                        wants_to = adj[d].volunteer_info.jury_ballroom
-                        lic = adj[d].volunteer_info.license_jury_ballroom
-                        lvl = adj[d].volunteer_info.level_ballroom
-                    else:
-                        wants_to = adj[d].volunteer_info.jury_latin
-                        lic = adj[d].volunteer_info.license_jury_latin
-                        lvl = adj[d].volunteer_info.level_latin
-                    ws.write(d + 1, 3, wants_to)
-                    ws.write(d + 1, 4, lic)
-                    ws.write(d + 1, 5, lvl)
-                    dc = get_dancing_categories(adj[d].dancing_info)
-                    ws.write(d + 1, 6, dc[BALLROOM].level)
-                    ws.write(d + 1, 7, dc[LATIN].level)
-            else:
-                ws.set_column(0, 3, 30)
-                for d in range(0, len(adj)):
-                    ws.write(d + 1, 0, adj[d].get_full_name())
-                    ws.write(d + 1, 1, adj[d].contestant_info.team.name)
-                    ws.write(d + 1, 2, adj[d].email)
-                    if comp == SALSA:
-                        wants_to = adj[d].volunteer_info.jury_salsa
-                    else:
-                        wants_to = adj[d].volunteer_info.jury_polka
-                    ws.write(d + 1, 3, wants_to)
-            ws.freeze_panes(1, 0)
+        ws = wb.add_worksheet(name="adjudicators")
+        ws.write(0, 0, 'Selected to adjudicate', f)
+        ws.write(0, 1, 'Dancer', f)
+        ws.write(0, 2, 'Team', f)
+        ws.write(0, 3, 'E-mail', f)
+        ws.write(0, 4, 'Wants to adjudicate Ballroom?', f)
+        ws.write(0, 5, 'Has Ballroom license?', f)
+        ws.write(0, 6, 'Highest achieved level in Ballroom', f)
+        ws.write(0, 7, 'Wants to adjudicate Latin?', f)
+        ws.write(0, 8, 'Has Latin license?', f)
+        ws.write(0, 9, 'Highest achieved level in Latin', f)
+        ws.write(0, 10, 'Dancing Ballroom?', f)
+        ws.write(0, 11, 'Dancing Latin?', f)
+        if g.sc.polka_competition:
+            ws.write(0, 13, 'Wants to adjudicate Polka?', f)
+            ws.set_column(12, 12, 0)
+            ws.set_column(13, 13, 10)
+        if g.sc.salsa_competition:
+            ws.write(0, 12, 'Wants to adjudicate Salsa?', f)
+            ws.set_column(12, 12, 10)
+            ws.set_column(13, 13, 10)
+        ws.set_column(0, 0, 10)
+        ws.set_column(1, 1, 25)
+        ws.set_column(2, 2, 15)
+        ws.set_column(3, 3, 35)
+        ws.set_column(4, 9, 10)
+        ws.set_column(10, 11, 15)
+        for i, adj in enumerate(super_volunteer_adjudicators, 1):
+            ws.write(i, 0, 'Yes' if adj.selected_adjudicator else '')
+            ws.write(i, 1, adj.get_full_name())
+            ws.write(i, 2, 'Super Volunteer')
+            ws.write(i, 3, adj.email)
+            ws.write(i, 4, adj.jury_ballroom)
+            ws.write(i, 5, adj.license_jury_ballroom)
+            ws.write(i, 6, adj.level_ballroom)
+            ws.write(i, 7, adj.jury_latin)
+            ws.write(i, 8, adj.license_jury_latin)
+            ws.write(i, 9, adj.level_latin)
+            ws.write(i, 10, '-')
+            ws.write(i, 11, '-')
+            if g.sc.salsa_competition:
+                ws.write(i, 12, adj.jury_salsa)
+            if g.sc.polka_competition:
+                ws.write(i, 13, adj.jury_polka)
+        for i, adj in enumerate(adjudicators, 1 + len(super_volunteer_adjudicators)):
+            ws.write(i, 0, 'Yes' if adj.volunteer_info.selected_adjudicator else '')
+            ws.write(i, 1, adj.get_full_name())
+            ws.write(i, 2, adj.contestant_info.team.city)
+            ws.write(i, 3, adj.email)
+            ws.write(i, 4, adj.volunteer_info.jury_ballroom)
+            ws.write(i, 5, adj.volunteer_info.license_jury_ballroom)
+            ws.write(i, 6, adj.volunteer_info.level_ballroom)
+            ws.write(i, 7, adj.volunteer_info.jury_latin)
+            ws.write(i, 8, adj.volunteer_info.license_jury_latin)
+            ws.write(i, 9, adj.volunteer_info.level_latin)
+            ws.write(i, 10, adj.competition(BALLROOM).level)
+            ws.write(i, 11, adj.competition(LATIN).level)
+            if g.sc.salsa_competition:
+                ws.write(i, 12, adj.volunteer_info.jury_salsa)
+            if g.sc.polka_competition:
+                ws.write(i, 13, adj.volunteer_info.jury_polka)
+        ws.freeze_panes(1, 0)
         wb.close()
         output.seek(0)
         return send_file(output, as_attachment=True, attachment_filename=fn)
-    return render_template('organizer/adjudicators_overview.html', ts=ts, data=data,
-                           ballroom_adjudicators=ballroom_adjudicators, latin_adjudicators=latin_adjudicators,
-                           salsa_adjudicators=salsa_adjudicators, polka_adjudicators=polka_adjudicators)
+    return render_template('organizer/adjudicators_overview.html', adjudicators=adjudicators, tags=tags,
+                           super_volunteer_adjudicators=super_volunteer_adjudicators,
+                           selected_adjudicators=selected_adjudicators)
+
+
+def generate_tags(adjudicators):
+    tags = {a: f"{a.first_name[:2]}{a.last_name[0]}".upper() for a in adjudicators}
+    non_unique_tags = list(set([tags[a] for a in adjudicators if list(tags.values()).count(tags[a]) > 1]))
+    for tag in non_unique_tags:
+        tags_to_modify = {a: tags[a] for a in adjudicators if tags[a] == tag}
+        for i, adj in enumerate(tags_to_modify, 1):
+            tags[adj] = f"{tags[adj]}{i}"
+    return tags
+
+
+def update_adjudicator(form, adjudicator, selected=False):
+    if selected:
+        check_adjudicator = Adjudicator.query.filter(Adjudicator.name == adjudicator.get_full_name()).first()
+        if check_adjudicator is None:
+            new_adjudicator = Adjudicator()
+            new_adjudicator.name = adjudicator.get_full_name()
+            new_adjudicator.tag = form.get(f"tag-contestant-{adjudicator.contestant_id}")
+            new_adjudicator.user = adjudicator.user
+            db.session.add(new_adjudicator)
+        else:
+            if adjudicator.user.adjudicator is not None:
+                adjudicator.user.adjudicator.name = adjudicator.get_full_name()
+                adjudicator.user.adjudicator.tag = form.get(f"tag-contestant-{adjudicator.contestant_id}")
+    else:
+        adjudicator.user.adjudicator = None
 
 
 @bp.route('/BAD', methods=['GET', 'POST'])
@@ -622,7 +841,7 @@ def adjudicators_overview():
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(SYSTEM_CONFIGURED)
 def bad():
-    # PRIORITY - Update (see mail to Marek)
+    # NEXT TOURNAMENT - Update inclusion of adjudicators accounts
     form = request.args
     if 'download_createUniverse' in form:
         output = StringIO(render_template('organizer/_BAD_createUniverse.sql'))
@@ -707,4 +926,35 @@ def switch_to_ada():
         login_user(ada)
     else:
         flash('Adjudicator Assistant account not created.')
+    return redirect(url_for('main.index'))
+
+
+@bp.route('/switch_to_tom', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def switch_to_tom():
+    tom = User.query.filter(User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER]).first()
+    if tom is not None:
+        logout_user()
+        login_user(tom)
+    else:
+        flash('Tournament Office Manager account not created.')
+    return redirect(url_for('main.index'))
+
+
+@bp.route('/switch_to_fm', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def switch_to_fm():
+    fm = User.query.filter(User.access == ACCESS[FLOOR_MANAGER]).first()
+    if fm is not None:
+        if g.event is not None:
+            logout_user()
+            login_user(fm)
+        else:
+            flash('There is no event yet.')
+    else:
+        flash('Floor Manager account not created.')
     return redirect(url_for('main.index'))

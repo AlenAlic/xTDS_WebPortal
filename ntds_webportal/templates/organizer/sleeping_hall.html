@@ -10,7 +10,7 @@
     <input class="btn btn-outline-primary" id="submit-download_file" name="download_file" type="submit" value="Download list">
 </form>
 <div style="height:10px;"></div>
-<table class="table table-sm">
+<table class="table table-sm table-responsive">
     <thead>
         <tr>
             <th><b>Team</b></th>
@@ -21,12 +21,12 @@
         {% for team in teams %}
         <tr>
             <td>{{ team['city'] }}</td>
-            <td>{{ team['number_of_dancers'] }}</td>
+            <td>{{ team['number_of_dancers']|length }}</td>
         </tr>
         {% endfor %}
         <tr>
-            <td>Super volunteers</td>
-            <td>{{super_volunteers}}</td>
+            <td>Super Volunteers</td>
+            <td>{{super_volunteers|length}}</td>
         </tr>
     </tbody>
 </table>
