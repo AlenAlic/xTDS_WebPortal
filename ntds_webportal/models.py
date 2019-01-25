@@ -1678,6 +1678,10 @@ class RoundType(enum.Enum):
     final = "Final"
 
 
+ROUND_SHORT_NAMES = {RoundType.general_look.value: 'GL', RoundType.first_round: '1st', RoundType.re_dance: 'R',
+                     RoundType.intermediate_round: 'I', RoundType.semi_final: 'SF', RoundType.final: 'F'}
+
+
 class Round(db.Model):
     __tablename__ = TABLE_ROUND
     round_id = db.Column(db.Integer, primary_key=True)
@@ -1697,6 +1701,9 @@ class Round(db.Model):
 
     def __repr__(self):
         return '{comp} {type}'.format(comp=self.competition, type=self.type.value)
+
+    def short_name(self):
+        return ROUND_SHORT_NAMES[self.type]
 
     def is_completed(self):
         if not self.is_final():

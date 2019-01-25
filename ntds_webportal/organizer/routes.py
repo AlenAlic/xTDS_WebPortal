@@ -374,8 +374,8 @@ def finances_overview():
         'refund': sum([team['finances']['total_refund'] for team in teams])
     }
     totals['difference'] = totals['received'] - totals['owed']
-    totals['number_of_dancers'] = totals['number_of_students'] + totals['number_of_phd_students'] \
-                                  + totals['number_of_non_students']
+    totals['number_of_dancers'] = sum([totals['number_of_students'], totals['number_of_phd_students'],
+                                       totals['number_of_non_students']])
     download = request.args
     if 'download_file' in download:
         header = {'Team': 0, '# Dancers': 1, 'Owed': 2, 'Received': 3, 'Difference': 4, 'Refund': 5}
