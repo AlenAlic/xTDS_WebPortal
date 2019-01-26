@@ -18,7 +18,7 @@ onload="onStart()"
 {% endmacro %}
 
 {% block app_content %}
-<h2>{{dancing_round.competition.event}} / {{dancing_round.competition}} / {{dancing_round.type.value}}</h2>
+<h2>{{dancing_round.competition.event}} / {{dancing_round.competition}} ({{dancing_round.competition.short_mode_name()}}) / {{dancing_round.type.value}}</h2>
 {% if dancing_round.first_round_after_qualification_split() or dancing_round.is_completed() %}
     <h3 class="mt-4">Configure next round</h3>
     <form method="POST" enctype="multipart/form-data" novalidate>
@@ -55,8 +55,13 @@ onload="onStart()"
                                 <tr>
                                     <td><input type="checkbox" onchange="update()" id="{{dancer['dancer'].dancer_id}}" name="{{dancer['dancer'].dancer_id}}" checked {% if dancing_round.has_next_round() %}disabled{% endif %}></td>
                                     <td>{{dancer['dancer'].number}}</td>
+                                    {% if dancing_round.is_final() %}
+                                    <td>-</td>
+                                    <td>-</td>
+                                    {% else %}
                                     <td>{{dancer['placing']}}</td>
                                     <td>{% if dancer['crosses'] > -1 %}{{dancer['crosses']}}{% endif %}</td>
+                                    {% endif %}
                                     <td>{% if dancer['lead'] %}{{dancer['dancer'].name}}{% endif %}</td>
                                     <td>{% if dancer['follow'] %}{{dancer['dancer'].name}}{% endif %}</td>
                                     <td>{{dancer['dancer'].team}}</td>

@@ -1322,6 +1322,10 @@ class CompetitionMode(enum.Enum):
     change_per_dance = "Change partner per dance"
 
 
+COMPETITION_SHORT_NAMES = {CompetitionMode.single_partner: 'SP', CompetitionMode.random_single_partner: 'RSP',
+                           CompetitionMode.change_per_round: 'CPR', CompetitionMode.change_per_dance: 'CPD'}
+
+
 class Competition(db.Model):
     __tablename__ = TABLE_COMPETITION
     competition_id = db.Column(db.Integer, primary_key=True)
@@ -1407,6 +1411,9 @@ class Competition(db.Model):
 
     def is_change_per_dance(self):
         return self.mode == CompetitionMode.change_per_dance
+
+    def short_mode_name(self):
+        return COMPETITION_SHORT_NAMES[self.mode]
 
     def has_rounds(self):
         return len(self.rounds) > 0
@@ -1678,7 +1685,7 @@ class RoundType(enum.Enum):
     final = "Final"
 
 
-ROUND_SHORT_NAMES = {RoundType.general_look.value: 'GL', RoundType.first_round: '1st', RoundType.re_dance: 'R',
+ROUND_SHORT_NAMES = {RoundType.general_look: 'GL', RoundType.first_round: '1st', RoundType.re_dance: 'R',
                      RoundType.intermediate_round: 'I', RoundType.semi_final: 'SF', RoundType.final: 'F'}
 
 
@@ -1817,6 +1824,9 @@ class Round(db.Model):
 
     def is_dance_active(self, dance):
         return [d for d in self.dance_active if d.dance == dance][0].is_active
+
+    def dance_couples(self, dance):
+        return [c for couples in [h.couples for h in self.heats if h.dance == dance] for c in couples]
 
     def number_of_heats(self, dance):
         return len([h for h in self.heats if h.dance == dance])
@@ -2018,8 +2028,8 @@ class Round(db.Model):
     def skating_summary(self, follows=False):
         return SkatingSummary(dancing_round=self, follows=follows)
 
-    def ranking_report(self):
-        return RankingReport(self.competition)
+    def ranking_report(self, follows=False):
+        return RankingReport(self.competition, follows=follows)
 
     def deactivate(self):
         for dance in self.dance_active:
