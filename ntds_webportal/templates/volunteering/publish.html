@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{% include 'volunteering/volunteering_nav.html' %}
+{% if task_list|length > 0 %}
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#publish" type="button">Publish Shifts</button>
+    <div align="left" class="modal fade" id="publish" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">WARNING!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p>You are about to publish a number of shifts. This will make the shifts visible to team captains.</p>
+                    <p>Are you sure you want to publish the shifts?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary">Yes, publish</button>
+                    <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, do not publish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="mt-2">
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            {% for task in task_list %}
+            <a class="nav-item nav-link {% if (loop.index == 1 and request.args.get('task_id') is none) or request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-tab" data-toggle="tab" href="#nav-task-{{task.shift_info_id}}" role="tab" aria-controls="nav-task-{{task.shift_info_id}}" aria-selected="true">{{task}}</a>
+            {% endfor %}
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        {% for task in task_list %}
+        <div class="tab-pane fade show {% if (loop.index == 1 and request.args.get('task_id') is none) or request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}" role="tabpanel" aria-labelledby="nav-task-{{task.shift_info_id}}-tab">
+            {% if task_list[task]|length > 0 %}
+            <table class="table table-sm">
+                <colgroup>
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 25%;">
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 5%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Start</th>
+                    <th>Location</th>
+                    <th>Published</th>
+                    <th colspan="2">Slots Filled</th>
+                    <th>Assigned Team(s)</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for shift in task_list[task] %}
+                <tr>
+                    <td>{{shift.start()}}-{{shift.stop()}} ({{shift.start_day()}})</td>
+                    <td>{{shift.info.location}}</td>
+                    <td>{{g.data.TF[shift.published]}}</td>
+                    <td>{{shift.filled_slots()}}/{{shift.max_slots()}}</td>
+                    <td>
+                        {% for volunteer in shift.volunteers() %}
+                        {{volunteer}}{% if not loop.last %}<br/>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for volunteer in shift.teams() %}
+                        {{volunteer}}{% if not loop.last %}<br/>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{% if not shift.published %}<input type="checkbox" name="{{shift.shift_id}}" onchange="this.checked=this.checked"></td>{% endif %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            There are no {{task}} shifts.
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</form>
+{% else %}
+<p>There are no shifts to publish.</p>
+{% endif %}
+{% endblock %}

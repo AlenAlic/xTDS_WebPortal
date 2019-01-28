@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{% if current_user.is_organizer() %}
+    {% include 'volunteering/volunteering_nav.html' %}
+    <a class="btn btn-primary mb-2" href="{{ url_for('volunteering.create_shift') }}" role="button">Add new Shift</a>
+    {% if task_list|length > 0 %}
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            {% for task in task_list %}
+            <a class="nav-item nav-link {% if (loop.index == 1 and request.args.get('task_id') is none) or request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-tab" data-toggle="tab" href="#nav-task-{{task.shift_info_id}}" role="tab" aria-controls="nav-task-{{task.shift_info_id}}" aria-selected="true">{{task}}</a>
+            {% endfor %}
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        {% for task in task_list %}
+        <div class="tab-pane fade show {% if (loop.index == 1 and request.args.get('task_id') is none) or request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}" role="tabpanel" aria-labelledby="nav-task-{{task.shift_info_id}}-tab">
+            {% if task_list[task]|length > 0 %}
+            <table class="table table-sm table-hover">
+                <colgroup>
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 25%;">
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 5%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Start</th>
+                    <th>Location</th>
+                    <th>Published</th>
+                    <th colspan="2">Slots Filled</th>
+                    <th>Assigned Team(s)</th>
+                    <th>Mandatory</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for shift in task_list[task] %}
+                <tr class="clickable-row" data-href="{{ url_for('volunteering.single_shift', shift_id=shift.shift_id) }}">
+                    <td>{{shift.start()}}-{{shift.stop()}} ({{shift.start_day()}})</td>
+                    <td>{{shift.info.location}}</td>
+                    <td>{{g.data.TF[shift.published]}}</td>
+                    <td>{{shift.filled_slots()}}/{{shift.max_slots()}}</td>
+                    <td>
+                        {% for s in shift.slots %}
+                        {{s.name()}}{% if not loop.last %}<br/>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for s in shift.slots %}
+                        {{s.team_name()}}{% if not loop.last %}<br/>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for s in shift.slots %}
+                        {{g.data.TF[s.mandatory]}}{% if not loop.last %}<br/>{% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            There are no {{task}} shifts.
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>There are no tasks to create shifts for. Please create a task first.</p>
+    {% endif %}
+{% else %}
+    {#<nav class="nav nav-tabs mb-2">
+        <a class="nav-item nav-link {% if request.path == '/volunteering/shifts' %}active{% endif %}" href="{{url_for('volunteering.shifts')}}">Shifts</a>
+        <a class="nav-item nav-link">Stats</a>
+    </nav>#}
+    <h2>Available Shifts</h2>
+    {% if task_list|length > 0 %}
+    <nav>
+        <div class="nav nav-tabs" role="tablist">
+            {% for task in task_list %}
+            <a class="nav-item nav-link {% if (loop.index == 1 and request.args.get('task_id') is none) or request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-tab-2" data-toggle="tab" href="#nav-task-{{task.shift_info_id}}-2" role="tab" aria-controls="nav-task-{{task.shift_info_id}}-2" aria-selected="true">
+                {{task}}<span class="badge badge-pill badge-dark"></span>
+            </a>
+            {% endfor %}
+        </div>
+    </nav>
+    <div class="tab-content">
+        {% for task in task_list %}
+        <div class="tab-pane fade show {% if (loop.index == 1 and request.args.get('task_id') is none) or request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-2" role="tabpanel" aria-labelledby="nav-task-{{task.shift_info_id}}-tab-2">
+            {% if task_list[task]|length > 0 %}
+            <table class="table table-sm table-hover">
+                <colgroup>
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 35%;">
+                    <col span="1" style="width: 20%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Start</th>
+                    <th>Location</th>
+                    <th colspan="2">Slots Claimed</th>
+                    <th>Team</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for shift in task_list[task] %}
+                {% for slot in shift.available_slots(current_user.team) %}
+                <tr class="clickable-row" data-href="{{ url_for('volunteering.shift_slot', slot_id=slot.slot_id) }}">
+                    {% if loop.index == 1 %}
+                    <td>{{slot.shift.start()}}-{{slot.shift.stop()}} ({{slot.shift.start_day()}})</td>
+                    <td>{{slot.shift.info.location}}</td>
+                    <td>{{slot.shift.claimed_slots()}}/{{slot.shift.max_slots()}}</td>
+                    {% else %}
+                    <td class="border-top-0" colspan="3"></td>
+                    {% endif %}
+                    <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{slot.name()}}</td>
+                    <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{slot.team_name()}}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            There are no {{task}} shifts available.
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>The organization has not published any volunteering shifts, or there are no shifts available for your team yet. Please check back later.</p>
+    {% endif %}
+{% endif %}
+{% endblock %}

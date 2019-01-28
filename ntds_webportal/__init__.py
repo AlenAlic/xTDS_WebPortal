@@ -115,8 +115,8 @@ def create_app():
     """
     from ntds_webportal.models import User, Team, Contestant, ContestantInfo, DancingInfo, StatusInfo, PaymentInfo, \
         VolunteerInfo, AdditionalInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, \
-        TournamentState, SalsaPartners, PolkaPartners, SystemConfiguration, RaffleConfiguration, \
-        AttendedPreviousTournamentContestant, NotSelectedContestant, SuperVolunteer
+        TournamentState, SystemConfiguration, RaffleConfiguration, AttendedPreviousTournamentContestant, \
+        NotSelectedContestant, SuperVolunteer, ShiftInfo, Shift, ShiftSlot
     from ntds_webportal.models import Event, Competition, DancingClass, Discipline, Dance, Round, \
         Heat, Couple, Adjudicator, Mark, CouplePresent, RoundResult, FinalPlacing, DanceActive, CompetitionMode, Dancer
 
@@ -147,14 +147,15 @@ def create_app():
     admin.add_view(BaseView(Notification, db.session))
     admin.add_view(BaseView(PartnerRequest, db.session))
     admin.add_view(BaseView(NameChangeRequest, db.session))
-    admin.add_view(BaseView(SalsaPartners, db.session))
-    admin.add_view(BaseView(PolkaPartners, db.session))
     admin.add_view(BaseView(TournamentState, db.session))
     admin.add_view(BaseView(SystemConfiguration, db.session))
     admin.add_view(BaseView(RaffleConfiguration, db.session))
     admin.add_view(BaseView(AttendedPreviousTournamentContestant, db.session))
     admin.add_view(BaseView(NotSelectedContestant, db.session))
     admin.add_view(BaseView(SuperVolunteer, db.session))
+    admin.add_view(BaseView(ShiftInfo, db.session))
+    admin.add_view(BaseView(Shift, db.session))
+    admin.add_view(BaseView(ShiftSlot, db.session))
     admin.add_view(AdjudicatorSystemView(Event, db.session))
     admin.add_view(AdjudicatorSystemView(Competition, db.session))
     admin.add_view(AdjudicatorSystemView(DancingClass, db.session))
@@ -184,6 +185,7 @@ def create_app():
         g.data = data
         g.ts = TournamentState.query.first()
         g.rc = RaffleConfiguration.query.first()
+        g.unpublished_shifts = len(Shift.query.filter(Shift.published.is_(False)).all())
         g.event = Event.query.first()
         g.competitions = Competition.query.all()
         g.competition_mode = CompetitionMode
@@ -212,7 +214,7 @@ def create_app():
             create_tournament_state_table()
             create_system_configuration_table()
             create_raffle_configuration_table()
-        except (InternalError, ProgrammingError) as e:
+        except (InternalError, ProgrammingError):
             pass
 
     from ntds_webportal.main import bp as main_bp

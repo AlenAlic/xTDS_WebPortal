@@ -6,7 +6,7 @@ from ntds_webportal.self_admin.forms import SwitchUserForm, CreateOrganizerForm,
     CreateTeamCaptainAccountForm, SystemSetupForm, ResetOrganizerAccountForm
 from ntds_webportal.models import requires_access_level, User, Team, SystemConfiguration, Contestant, \
     StatusInfo, AttendedPreviousTournamentContestant, NotSelectedContestant, EXCLUDED_FROM_CLEARING, \
-    requires_testing_environment, Event
+    requires_testing_environment, Event, SuperVolunteer
 from ntds_webportal.functions import str2bool, reset_tournament_state, \
     make_system_configuration_accessible_to_organizer, generate_maintenance_page
 from ntds_webportal.auth.email import send_organizer_activation_email
@@ -76,14 +76,6 @@ def system_setup():
     else:
         form = request.args
         if 'reset_website' in form:
-            dancer_accounts = User.query.filter(User.access == ACCESS[DANCER]).all()
-            for dancer in dancer_accounts:
-                db.session.delete(dancer)
-            db.session.commit()
-            super_volunteer_accounts = User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER]).all()
-            for super_volunteer in super_volunteer_accounts:
-                db.session.delete(super_volunteer)
-            db.session.commit()
             non_admins = User.query.filter(User.access > ACCESS[ADMIN]).all()
             for na in non_admins:
                 na.is_active = False
@@ -138,6 +130,18 @@ def system_setup():
                     attendee.email = dancer.email.lower()
                     attendee.tournament = g.sc.tournament
                     db.session.add(attendee)
+            db.session.commit()
+            super_volunteers = SuperVolunteer.query.all()
+            for super_volunteer in super_volunteers:
+                db.session.delete(super_volunteer)
+            db.session.commit()
+            dancer_accounts = User.query.filter(User.access == ACCESS[DANCER]).all()
+            for dancer in dancer_accounts:
+                db.session.delete(dancer)
+            db.session.commit()
+            super_volunteer_accounts = User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER]).all()
+            for super_volunteer in super_volunteer_accounts:
+                db.session.delete(super_volunteer)
             db.session.commit()
             reset_tournament_state()
             db.session.commit()
@@ -305,7 +309,8 @@ def switch_user():
     form.submit.label.text = 'Switch to team captain'
     users = User.query.join(Team).filter(User.is_active.is_(True), User.user_id != current_user.user_id,
                                          or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]),
-                                         Team.country != NETHERLANDS).order_by(Team.city).all()
+                                         Team.country != NETHERLANDS, Team.name != TEAM_SUPER_VOLUNTEER)\
+        .order_by(Team.city).all()
     form.user.choices = map(lambda user_map: (user_map.user_id, user_map.username), users)
     dancer_super_volunteer_form = SwitchUserForm()
     dancer_super_volunteer_form.user.label.text = 'Switch to a dancer or Super Volunteer User account'
@@ -371,7 +376,7 @@ def switch_to_team_captain(name):
 def user_list():
     users = User.query.filter(or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]))\
         .order_by(case({True: 0, False: 1}, value=User.is_active), User.team_id).all()
-    teams = Team.query.all()
+    teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
     organizer = db.session.query(User).filter(User.access == ACCESS[ORGANIZER]).first()
     return render_template('admin/user_list.html', data=data, users=users, teams=teams, organizer=organizer)
 
@@ -432,7 +437,7 @@ def create_team_account():
 @requires_access_level([ACCESS[ADMIN]])
 def create_team_captain():
     form = CreateTeamCaptainAccountForm()
-    query = Team.query.filter(~exists().where(User.team))
+    query = Team.query.filter(~exists().where(User.team), Team.name != TEAM_SUPER_VOLUNTEER)
     if len(query.all()) > 0:
         form.team.query = query
         if form.validate_on_submit():

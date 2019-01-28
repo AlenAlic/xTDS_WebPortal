@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{% include 'volunteering/volunteering_nav.html' %}
+<a class="btn btn-primary mb-2" href="{{ url_for('volunteering.create_task') }}" role="button">Add new task</a>
+{% if task_list | length > 0 %}
+<table class="table table-sm table-hover">
+<colgroup>
+    <col span="1" style="width: 20%;">
+    <col span="1" style="width: 20%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 35%;">
+</colgroup>
+<thead>
+<tr>
+    <th>Task</th>
+    <th>Coordinator</th>
+    <th>Location</th>
+    <th>Description</th>
+</tr>
+</thead>
+<tbody>
+{% for type in task_list %}
+<tr class="clickable-row" data-href="{{ url_for('volunteering.edit_task', shift_id=type.shift_info_id) }}">
+    <td>{{type.name}}</td>
+    <td>{{type.coordinator}}</td>
+    <td>{{type.location}}</td>
+    <td>{{type.description}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<p>There are no Tasks yet.</p>
+{% endif %}
+{% endblock %}

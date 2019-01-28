@@ -111,11 +111,7 @@ checkbox                        {cursor:pointer}
                 {% endif %}
             {% else %}
                 <form class="form-inline ">
-                    {% if current_user.is_dancer() %}
-                        <span class="navbar-text mx-0 mx-md-2 my-1 my-md-0">Welcome, {{ current_user.dancer.get_full_name() }}</span>
-                    {% else %}
-                        <span class="navbar-text mx-0 mx-md-2 my-1 my-md-0">Welcome, {{ current_user.username }}</span>
-                    {% endif %}
+                    <span class="navbar-text mx-0 mx-md-2 my-1 my-md-0">Welcome, {% if current_user.is_dancer() or current_user.is_super_volunteer() %}{{ current_user.get_full_name() }}{% else %}{{ current_user.username }}{% endif %}</span>
                     <a href="{{ url_for('main.logout') }}" class="form-control btn btn-outline-primary mx-0 mx-md-2 my-1 my-md-0">Logout</a>
                 </form>
             {% endif %}
@@ -140,7 +136,9 @@ checkbox                        {cursor:pointer}
 
 {% block scripts %}
 {{ super() }}
+{#
 <!--<script type="text/javascript" src="{{url_for('static', filename='js/xtds_main.js')}}"></script>-->
+#}
 {{ select2_form_js() }}
 <script>
 $(document).ready(function($) {
@@ -202,4 +200,7 @@ $(document).ready(function($) {
 {%- endmacro %}
 {% macro bag_icon() -%}
 &#x1f45c;
+{%- endmacro %}
+{% macro check_mark_icon() -%}
+&#x2713;
 {%- endmacro %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h2>Assigned Shifts{% if slots|length > 0 %} <span class="badge badge-pill badge-dark">{{ slots|length }}</span>{% endif %}</h2>
+{% if slots|length > 0 %}
+{% for slot in slots %}
+<div class="block">
+    <a class="my-2" data-toggle="collapse" href="#slot-{{slot.slot_id}}" role="button">
+        <b style="font-size:large;">{{slot.shift}}{% if slot.shift.stop_time < now %} {{check_mark_icon()}}{% endif %}</b>
+    </a>
+    <table class="table table-sm collapse {% if slot.shift.stop_time >= now %}show{% endif %}" id="slot-{{slot.slot_id}}">
+        <tbody>
+        <tr>
+            <td class="border-top-0">
+                <b>Location</b><br/>
+                {{slot.shift.info.location}}
+            </td>
+        </tr>
+        <tr>
+            <td class="border-top-0">
+                <b>Coordinator</b><br/>
+                {{slot.shift.info.coordinator}}
+            </td>
+        </tr>
+        <tr>
+            <td class="border-top-0 pb-5">
+                <b>Description</b><br/>
+                {{slot.shift.info.description}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+{% endfor %}
+{% else %}
+<p>You have not been assigned any shifts.</p>
+{% endif %}
+{% endblock %}

@@ -1,6 +1,6 @@
 # noinspection PyProtectedMember
 from wtforms.validators import ValidationError
-from ntds_webportal.models import Competition, CompetitionMode, Couple, Adjudicator
+from ntds_webportal.models import Competition, CompetitionMode, Couple
 from ntds_webportal.data import OPPOSITE_ROLES
 
 

@@ -1,6 +1,7 @@
 from flask import g, flash
 from ntds_webportal import db
-from ntds_webportal.models import User, Contestant, ContestantInfo, StatusInfo, RaffleConfiguration, Notification
+from ntds_webportal.models import User, Contestant, ContestantInfo, StatusInfo, RaffleConfiguration, Notification, \
+    SuperVolunteer
 from ntds_webportal.functions import get_dancing_categories
 from ntds_webportal.strings import *
 from ntds_webportal.data import *
@@ -72,7 +73,8 @@ class RaffleSystem(Balance):
         return [d for d in self.selected_dancers + self.confirmed_dancers if d.additional_info.sleeping_arrangements]
 
     def number_of_sleeping_spots(self):
-        return len(self.sleeping_spots())
+        return len(self.sleeping_spots()) + \
+               len(SuperVolunteer.query.filter(SuperVolunteer.sleeping_arrangements.is_(True)).all())
 
     def first_time_dancers(self):
         return [dancer for dancer in self.registered_dancers if dancer.contestant_info.first_time]
@@ -542,7 +544,7 @@ class RaffleSystem(Balance):
                             if di.level in [BREITENSPORT, BEGINNERS]:
                                 count.append(1)
                     count = len(count)
-                ordered_teams += [{'team': team,'max_dancers': min(count, maximum_dancers)}]
+                ordered_teams += [{'team': team, 'max_dancers': min(count, maximum_dancers)}]
             for _ in range(0, len(guaranteed_dancers)):
                 for team in ordered_teams:
                     selected_dancers = [d for d in self.selected_dancers if
@@ -704,6 +706,7 @@ class RaffleSystem(Balance):
                       f"You cannot add more dancers."
         return message
 
+    # TODO Selection flash string
     def select_specific_dancers(self, form):
         if not self.full():
             dancers = [d for d in self.registered_dancers if f"specific-{d.contestant_id}" in form]

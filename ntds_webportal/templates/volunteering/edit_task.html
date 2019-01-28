@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{% with title="Edit task", editing=true %}
+    {% include 'volunteering/_task_form.html' %}
+{% endwith %}
+{% endblock %}

@@ -117,13 +117,23 @@ onload="onStart()"
 </div>
 <h2>Volunteering system</h2>
 <div class="row" style="visibility:hidden">
+    {% if g.ts.super_volunteer_registration_open %}
+        {% set super_volunteer_registration_management_text = 'Manage when the registration for Super Volunteers is active. New registrations are currently accepted.' %}
+        {% set super_volunteer_registration_image = 'registration_open.png' %}
+    {% else %}
+        {% set super_volunteer_registration_management_text = 'Manage when the registration for Super Volunteers is active. New registrations are currently not possible.' %}
+        {% set super_volunteer_registration_image = 'registration_closed.png' %}
+    {% endif %}
+    {% with accessible=g.ts.website_accessible_to_teamcaptains, url='volunteering.super_volunteers_management', title='Super Volunteer registration management', text=super_volunteer_registration_management_text, image=super_volunteer_registration_image %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
     {% with accessible=g.ts.system_configured, url='volunteering.register', title='Registration for Super Volunteers', text='Share this page for Super Volunteers to register through.', image='register_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.ts.system_configured, url='volunteering.volunteers', title='Volunteers', text='Overview of Super Volunteers and confirmed volunteering dancers.', image='volunteers.png' %}
+    {% with accessible=g.ts.registration_period_started, url='volunteering.volunteers', title='Volunteers', text='Overview of Super Volunteers and confirmed volunteering dancers.', image='volunteers.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=false, url='main.todo', title='Volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}
+    {% with accessible=g.ts.registration_period_started, url='volunteering.shifts', title='Volunteering System', text='Create and manage volunteering shifts', image='volunteering.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -135,10 +145,10 @@ onload="onStart()"
 </div>
 <h2>Switch account</h2>
 <div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistant account. This will log you out of the Organizer account.', image='view_couples.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_cia', title='Check-In Assistant', text='Switch to the Check-In Assistant account. This will log you out of the Organizer account.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_cia', title='Check-In Assistant', text='Switch to the Check-In Assistant account. This will log you out of the Organizer account.', image='checked_in.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_bda', title='Blind Date Assistant', text='Switch to the Blind Date Assistant account. This will log you out of the Organizer account.', image='view_couples.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_ada', title='Adjudicator Assistant', text='Switch to the Adjudicator Assistant account. This will log you out of the Organizer account.', image='adjudicators.png' %}
@@ -147,7 +157,7 @@ onload="onStart()"
     {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_tom', title='Tournament Office Manager', text='Switch to the Tournament Office Manager account. This will log you out of the Organizer account.', image='tournament_office_account.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.sc.main_raffle_result_visible, url='organizer.switch_to_fm', title='Floor Manager', text='Switch to the Floor Manager account. This will log you out of the Organizer account.', image='floor_manager.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.switch_to_fm', title='Floor Manager', text='Switch to the Floor Manager account. This will log you out of the Organizer account.', image='floor_manager.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -231,6 +241,9 @@ onload="onStart()"
     {% endwith %}
 {% endif %}
 {% if current_user.is_tc() %}
+    {% with accessible=g.ts.volunteering_system_open, url='volunteering.shifts', title='Volunteering Shifts', text='Mange volunteering shifts for your team and dancers.', image='volunteering.png' %}
+        {% include '_dashboard_page.html' %}
+    {% endwith %}
     <!--{% with accessible=g.ts.main_raffle_result_visible, url='teamcaptains.bus_to_brno', title='Bus to Brno', text='Register dancers to travel to Brno by bus. Organized by team Düsseldorf and Bielefeld.', image='bus.png' %}-->
         <!--{% include '_dashboard_page.html' %}-->
     <!--{% endwith %}-->
@@ -256,7 +269,7 @@ onload="onStart()"
     {% with wants_attention=dancer.status_info.feedback_about_information, url='url_dancer.dancer_data', title='My signup information', text='View the signup information your teamcaptain submitted.', image='dancer_profile.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=false, url='main.todo', title='My volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}
+    {% with accessible=g.ts.volunteering_system_open, count=current_user.assigned_shifts()|length, show_zero=g.ts.volunteering_system_open, url='volunteering.user_volunteering_shifts', title='My volunteer shifts', text='View the volunteering shifts that you have been assigned to.', image='volunteering.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
@@ -274,7 +287,7 @@ onload="onStart()"
     {% with url='volunteering.super_volunteer_data', title='My signup information', text='View your signup information.', image='dancer_profile.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=false, url='main.todo', title='My volunteer shifts', text='Coming in a future version.', image='volunteering.png' %}
+    {% with accessible=g.ts.volunteering_system_open, count=current_user.assigned_shifts()|length, show_zero=g.ts.volunteering_system_open, url='volunteering.user_volunteering_shifts', title='My volunteer shifts', text='View the volunteering shifts that you have been assigned to.', image='volunteering.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>

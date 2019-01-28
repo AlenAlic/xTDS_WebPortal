@@ -1,0 +1,8 @@
+<nav class="nav nav-tabs mb-2">
+    {% if not g.ts.volunteering_system_open %}
+    <a class="nav-item nav-link {% if request.path == '/volunteering/volunteering_management' %}active{% endif %}" href="{{url_for('volunteering.volunteering_management')}}">Grant access to system</a>
+    {% endif %}
+    <a class="nav-item nav-link {% if request.path == '/volunteering/tasks' %}active{% endif %}" href="{{url_for('volunteering.tasks')}}">Tasks</a>
+    <a class="nav-item nav-link {% if request.path == '/volunteering/shifts' %}active{% endif %}" href="{{url_for('volunteering.shifts')}}">Shifts</a>
+    <a class="nav-item nav-link {% if request.path == '/volunteering/publish' %}active{% endif %}" href="{{url_for('volunteering.publish')}}">Publish <span class="badge badge-pill badge-dark">{{g.unpublished_shifts}}</span></a>
+</nav>

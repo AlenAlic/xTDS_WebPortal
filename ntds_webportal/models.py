@@ -111,6 +111,13 @@ class User(UserMixin, Anonymous, db.Model):
             return f'{self.super_volunteer}'
         return f'{self.username}'
 
+    def get_full_name(self):
+        if self.is_dancer():
+            return self.dancer.get_full_name()
+        if self.is_super_volunteer():
+            return self.super_volunteer.get_full_name()
+        return f'{self.username}'
+
     def get_id(self):
         return self.user_id
 
@@ -228,6 +235,15 @@ class User(UserMixin, Anonymous, db.Model):
     def has_messages_access(self):
         return self.access in MESSAGES_ACCESS
 
+    def assigned_shifts(self):
+        if g.ts.volunteering_system_open:
+            return ShiftSlot.query.filter(ShiftSlot.user == self).all()
+        else:
+            return []
+
+    def has_shifts_assigned(self):
+        return len(self.assigned_shifts()) > 0
+
 
 class Team(db.Model):
     __tablename__ = TEAMS
@@ -246,7 +262,10 @@ class Team(db.Model):
 
     def is_active(self):
         team_captain = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.team_id == self.team_id).first()
-        return team_captain.is_active is True
+        if team_captain is not None:
+            return team_captain.is_active is True
+        else:
+            return True
 
     def confirmed_dancers(self):
         return Contestant.query.join(ContestantInfo, StatusInfo)\
@@ -952,6 +971,7 @@ class TournamentState(db.Model):
     raffle_completed_message_sent = db.Column(db.Boolean, nullable=False, default=False)
     merchandise_finalized = db.Column(db.Boolean, nullable=False, default=False)
     super_volunteer_registration_open = db.Column(db.Boolean, nullable=False, default=False)
+    volunteering_system_open = db.Column(db.Boolean, nullable=False, default=False)
     dancers_imported = db.Column(db.Boolean, nullable=False, default=False)
     couples_imported = db.Column(db.Boolean, nullable=False, default=False)
 
@@ -985,26 +1005,6 @@ class TournamentState(db.Model):
     #         return REGISTRATION_NOT_OPEN_TEXT
     #     if not self.main_raffle_result_visible:
     #         return RAFFLE_NOT_CONFIRMED_TEXT
-
-
-class SalsaPartners(db.Model):
-    __tablename__ = 'salsa_partners'
-    couple_id = db.Column(db.Integer, primary_key=True)
-    lead_id = db.Column(db.Integer, nullable=False)
-    follow_id = db.Column(db.Integer, nullable=False)
-
-    def __repr__(self):
-        return 'Lead: {} - Follow {}'.format(self.lead_id, self.follow_id)
-
-
-class PolkaPartners(db.Model):
-    __tablename__ = 'polka_partners'
-    couple_id = db.Column(db.Integer, primary_key=True)
-    lead_id = db.Column(db.Integer, nullable=False)
-    follow_id = db.Column(db.Integer, nullable=False)
-
-    def __repr__(self):
-        return 'Lead: {} - Follow {}'.format(self.lead_id, self.follow_id)
 
 
 class SystemConfiguration(db.Model):
@@ -1203,6 +1203,120 @@ class SuperVolunteer(db.Model):
         self.jury_salsa = form.jury_salsa.data
         self.jury_polka = form.jury_polka.data
         self.remark = form.remark.data
+
+
+class ShiftInfo(db.Model):
+    __tablename__ = 'shift_info'
+    shift_info_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32))
+    description = db.Column(db.Text())
+    coordinator = db.Column(db.String(32))  # Maybe link to person.
+    location = db.Column(db.String(32))
+    shifts = db.relationship("Shift")
+
+    def __repr__(self):
+        return f"{self.name}"
+
+
+class Shift(db.Model):
+    __tablename__ = 'shift'
+    shift_id = db.Column(db.Integer, primary_key=True)
+    info_id = db.Column(db.Integer, db.ForeignKey('shift_info.shift_info_id'))
+    info = db.relationship("ShiftInfo", back_populates="shifts", uselist=False)
+    slots = db.relationship("ShiftSlot", cascade='all, delete-orphan')
+    start_time = db.Column(db.DateTime)
+    stop_time = db.Column(db.DateTime)
+    published = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f"{self.info}: {self.start()}-{self.stop()}, {self.start_day()}"
+
+    def slots_available(self, team=None):
+        for s in self.slots:
+            if team is None or s.assigned_team is None or s.assigned_team is team:
+                if s.user is None:
+                    return True
+        return False
+
+    def duration(self):
+        pass
+
+    def at_time(self, t):
+        return self.start_time <= t <= self.stop_time
+
+    def max_slots(self):
+        return len(self.slots)
+
+    def claimed_slots(self):
+        return len([s for s in self.slots if s.team is not None])
+
+    def filled_slots(self):
+        return len([s for s in self.slots if s.user is not None])
+
+    def start(self):
+        return self.start_time.strftime("%H:%M")
+
+    def stop(self):
+        return self.stop_time.strftime("%H:%M")
+
+    def start_day(self):
+        return self.start_time.strftime("%A")
+
+    def stop_day(self):
+        return self.stop_time.strftime("%A")
+
+    def has_volunteers(self):
+        return len([s.user for s in self.slots if s.user is not None]) > 0
+
+    def volunteers(self):
+        return [f"{slot.name()}" for slot in self.slots]
+
+    def teams(self):
+        return [f"{slot.team_name()}" for slot in self.slots]
+
+    def available_slots(self, team=None):
+        return [s for s in self.slots if s.team == team or s.team is None and s.user is None and not s.mandatory]
+
+    def has_slots_available(self, team=None):
+        return len(self.available_slots(team)) > 0
+
+
+class ShiftSlot(db.Model):
+    __tablename__ = 'shift_slots'
+    slot_id = db.Column(db.Integer, primary_key=True)
+    shift_id = db.Column(db.Integer, db.ForeignKey('shift.shift_id'))
+    shift = db.relationship("Shift", back_populates="slots")
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
+    team = db.relationship("Team")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    user = db.relationship("User")
+    mandatory = db.Column(db.Boolean, nullable=False, default=False)
+
+    def fill_with(self, user):
+        if user is not None:
+            self.user = user
+
+    def clear(self):
+        self.user = None
+
+    def name(self):
+        if self.user is not None:
+            if self.user.is_dancer():
+                if current_user.is_organizer():
+                    return f"{self.user} ({self.user.team})"
+                else:
+                    return f"{self.user}"
+            elif self.user.is_super_volunteer():
+                return f"{self.user} (Super Volunteer)"
+        return "-"
+
+    def team_name(self):
+        if self.team is not None:
+            return self.team.name
+        return "-"
+
+    def user_assigned_to_shift(self, user):
+        return user in [slot.user for slot in self.shift.slots if slot.user is not None and slot is not self]
 
 
 TABLE_EVENT = 'event'

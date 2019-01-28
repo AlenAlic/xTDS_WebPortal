@@ -1,0 +1,13 @@
+<h2>{{title}}</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.name) }}
+    {{ wtf.form_field(form.coordinator) }}
+    {{ wtf.form_field(form.location) }}
+    {{ wtf.form_field(form.description) }}
+    {{ wtf.form_field(form.submit) }}
+    {% if editing %}
+    <a class="btn btn-outline-danger" href="{{ url_for('volunteering.delete_task', shift_info_id=task.shift_info_id) }}" role="button">Delete</a>
+    {% endif %}
+    <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.tasks') }}">Cancel</a>
+</form>

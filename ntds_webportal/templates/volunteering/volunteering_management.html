@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{% include 'volunteering/volunteering_nav.html' %}
+{% if not g.ts.volunteering_system_open %}
+<p>The volunteering system page is not yet accessible by anyone, the page is greyed out. You can grant everyone access with the button below.</p>
+<p>Granting access will not send any special messages, and will not allow anyone to see any Shifts that have not been published yet.</p>
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#openVolunteeringSystem"><b>Grant access to volunteering system</b></button>
+<div class="modal fade" id="openVolunteeringSystem" tabindex="-1" role="dialog" aria-labelledby="openVolunteeringSystem" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Volunteering System Access</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to grant teamcaptains, Super Volunteers and dancers access to the volunteering system?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{{url_for('volunteering.volunteering_management')}}?open_volunteering_system" class="btn btn-primary mr-2">Yes, grant acces</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<p>The volunteering system page is accessible to all users.</p>
+{% endif %}
+{% endblock %}

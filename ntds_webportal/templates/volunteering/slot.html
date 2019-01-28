@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h4>{{slot.shift}}</h4>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.volunteer) }}
+    {% if current_user.is_organizer() %}
+    {{ wtf.form_field(form.team) }}
+    {{ wtf.form_field(form.mandatory) }}
+    {% endif %}
+    {{ wtf.form_field(form.submit) }}
+    {% if current_user.is_tc() %}
+        {% if not slot.mandatory %}
+        {% if slot.team == current_user.team %}
+        <button class="btn btn-outline-primary" id="release" name="release">Release claim for slot</button>
+        {% else %}
+        <button class="btn btn-outline-primary" id="claim" name="claim">Claim slot for my team</button>
+        {% endif %}
+        {% endif %}
+    {% endif %}
+    {% if current_user.is_organizer() %}
+    <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.single_shift', shift_id=slot.shift.shift_id) }}">Cancel</a>
+    {% else %}
+    <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.shifts', task_id=slot.shift.info.shift_info_id) }}">Return</a>
+    {% endif %}
+</form>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ select2_form_js() }}
+<script>
+const noVolunteer = () => {
+    let volunteer = document.getElementById("volunteer");
+    let team = document.getElementById("s2id_team").querySelectorAll('.select2-search-choice').length;
+    if (team == 0) {volunteer.removeAttribute('disabled');}
+    else {volunteer.setAttribute('disabled', true);}
+}
+</script>
+{% endblock %}
