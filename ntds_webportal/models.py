@@ -1208,10 +1208,10 @@ class SuperVolunteer(db.Model):
 class ShiftInfo(db.Model):
     __tablename__ = 'shift_info'
     shift_info_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32))
+    name = db.Column(db.String(128))
     description = db.Column(db.Text())
-    coordinator = db.Column(db.String(32))  # Maybe link to person.
-    location = db.Column(db.String(32))
+    coordinator = db.Column(db.String(128))  # Maybe link to person.
+    location = db.Column(db.String(256))
     shifts = db.relationship("Shift")
 
     def __repr__(self):

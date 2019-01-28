@@ -3,7 +3,7 @@
 {% block app_content %}
 {% if current_user.is_organizer() %}
     {% include 'volunteering/volunteering_nav.html' %}
-    <a class="btn btn-primary mb-2" href="{{ url_for('volunteering.create_shift') }}" role="button">Add new Shift</a>
+    <a class="btn btn-primary mb-2" href="{{ url_for('volunteering.create_shift') }}" role="button">Add new shift</a>
     {% if task_list|length > 0 %}
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
