@@ -314,7 +314,7 @@ def edit_dancing_info(number):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def finances_overview():
-    all_teams = Team.query(Team).filter(Team.name != TEAM_SUPER_VOLUNTEER)
+    all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER)
     if g.sc.tournament == NTDS:
         all_teams = all_teams.filter(Team.country == NETHERLANDS).all()
     else:
