@@ -202,7 +202,14 @@ def shifts():
             .order_by(Shift.start_time).all()
         shift_list = [s for s in shift_list if s.has_slots_available(current_user.team)]
     task_list = {task: [shift for shift in shift_list if shift.info == task] for task in all_tasks}
-    if current_user.is_tc():
+    if current_user.is_organizer():
+        filled_list = {task: sum([shift.filled_slots() for shift in shift_list if shift.info == task])
+                       for task in all_tasks}
+        slots_list = {task: sum([len(shift.slots) for shift in shift_list if shift.info == task])
+                      for task in all_tasks}
+        return render_template('volunteering/shifts.html', shifts=shift_list, task_list=task_list,
+                               filled_list=filled_list, slots_list=slots_list)
+    else:
         task_list = {task: task_list[task] for task in task_list if len(task_list[task]) > 0}
         all_volunteers = Contestant.query.join(ContestantInfo, StatusInfo)\
             .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED)\
@@ -211,7 +218,6 @@ def shifts():
         sorted_shifts = {day: [s for s in shift_list if s.start_time.date() == day] for day in days}
         return render_template('volunteering/shifts.html', shifts=shift_list, task_list=task_list,
                                all_volunteers=all_volunteers, sorted_shifts=sorted_shifts)
-    return render_template('volunteering/shifts.html', shifts=shift_list, task_list=task_list)
 
 
 @bp.route('/shift/<int:shift_id>', methods=['GET'])
