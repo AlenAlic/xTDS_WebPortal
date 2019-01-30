@@ -26,7 +26,8 @@
     <nav class="mt-2">
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             {% for task in task_list %}
-            <a class="nav-item nav-link {% if (loop.index == 1 and request.args.get('task_id') is none) or request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-tab" data-toggle="tab" href="#nav-task-{{task.shift_info_id}}" role="tab" aria-controls="nav-task-{{task.shift_info_id}}" aria-selected="true">{{task}}</a>
+            <a class="nav-item nav-link {% if (loop.index == 1 and request.args.get('task_id') is none) or request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}"
+               id="nav-task-{{task.shift_info_id}}-tab" data-toggle="tab" href="#nav-task-{{task.shift_info_id}}" role="tab" aria-controls="nav-task-{{task.shift_info_id}}" aria-selected="true">{{task}} <span class="badge badge-pill badge-dark">{{count_list[task]}}</span></a>
             {% endfor %}
         </div>
     </nav>

@@ -413,7 +413,9 @@ def publish():
     all_tasks = ShiftInfo.query.order_by(ShiftInfo.name).all()
     shift_list = Shift.query.order_by(Shift.start_time).all()
     task_list = {task: [shift for shift in shift_list if shift.info == task] for task in all_tasks}
-    return render_template('volunteering/publish.html', shifts=shift_list, task_list=task_list)
+    count_list = {task: len([shift for shift in shift_list if shift.info == task and not shift.published])
+                  for task in all_tasks}
+    return render_template('volunteering/publish.html', shifts=shift_list, task_list=task_list, count_list=count_list)
 
 
 @bp.route('/team_hours', methods=['GET', 'POST'])
