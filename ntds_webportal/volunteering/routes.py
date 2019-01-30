@@ -341,9 +341,9 @@ def shift_slot(slot_id):
                             test_shifts = [s for s in test_shifts if not (slot.shift.stop_time <= s.start_time or
                                                                           slot.shift.start_time >= s.stop_time)]
                             if len(test_shifts) > 0:
-                                flash(f"Cannot add {volunteer} to {slot.shift}. {volunteer} is already assigned "
-                                      f"to {test_shifts[0]} at the same time.", "alert-warning")
-                                return redirect(url_for('volunteering.single_shift', shift_id=slot.shift.shift_id))
+                                flash(Markup(f"Added {volunteer} to {slot.shift}.<br/>{volunteer} is already assigned "
+                                             f"to {test_shifts[0]} at the same time, so make sure that this is is "
+                                             f"possible!"), "alert-warning")
                         slot.user = volunteer
                         slot.team = team
                         if volunteer is not None and team is not None:
@@ -366,7 +366,7 @@ def shift_slot(slot_id):
                                                                       slot.shift.start_time > s.stop_time)]
                         if len(test_shifts) > 0:
                             flash(Markup(f"Cannot add {volunteer} to {slot.shift}.<br/>{volunteer} is already assigned "
-                                         f"to {test_shifts[0]}."), "alert-warning")
+                                         f"to {test_shifts[0]}."), "alert-danger")
                             return redirect(url_for('volunteering.shift_slot', slot_id=slot.slot_id))
                         if not slot.user_assigned_to_shift(volunteer):
                             slot.user = volunteer
