@@ -36,7 +36,7 @@ def create_super_volunteer_user_account(form, super_volunteer):
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     form = SuperVolunteerForm()
-    if g.ts.super_volunteer_registration_open:
+    if g.ts.super_volunteer_registration_open or current_user.is_organizer():
         if request.method == 'POST':
             form.custom_validate()
             all_users = User.query.all()
