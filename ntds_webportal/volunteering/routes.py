@@ -443,6 +443,15 @@ def team_hours():
     return render_template('volunteering/team_hours.html', hours=hours)
 
 
+@bp.route('/super_volunteers_overview', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def super_volunteers_overview():
+    all_super_volunteers = SuperVolunteer.query.order_by(SuperVolunteer.first_name).all()
+    all_super_volunteers = [v for v in all_super_volunteers if v.user.team.name == TEAM_SUPER_VOLUNTEER]
+    return render_template('volunteering/super_volunteers_overview.html', all_super_volunteers=all_super_volunteers)
+
+
 @bp.route('/user_volunteering_shifts', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[DANCER], ACCESS[SUPER_VOLUNTEER]])

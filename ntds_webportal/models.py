@@ -235,27 +235,29 @@ class User(UserMixin, Anonymous, db.Model):
     def has_messages_access(self):
         return self.access in MESSAGES_ACCESS
 
-    def assigned_shifts(self):
+    def assigned_shifts(self, include_unpublished=False):
         if g.ts.volunteering_system_open:
-            slots = self.assigned_slots()
+            slots = self.assigned_slots(include_unpublished)
             return sorted([s.shift for s in slots], key=lambda x: x.start_time)
         else:
             return []
 
-    def has_shifts_assigned(self):
-        return len(self.assigned_shifts()) > 0
+    def has_shifts_assigned(self, include_unpublished=False):
+        return len(self.assigned_shifts(include_unpublished)) > 0
 
-    def assigned_slots(self):
+    def assigned_slots(self, include_unpublished=False):
         if g.ts.volunteering_system_open:
-            return ShiftSlot.query.join(Shift).filter(ShiftSlot.user == self, Shift.published.is_(True)).all()
+            return ShiftSlot.query.join(Shift)\
+                .filter(ShiftSlot.user == self, or_(Shift.published.is_(True),
+                                                    Shift.published.is_(not include_unpublished))).all()
         else:
             return []
 
-    def number_of_assigned_shifts(self):
-        return len(self.assigned_slots())
+    def number_of_assigned_shifts(self, include_unpublished=False):
+        return len(self.assigned_slots(include_unpublished))
 
-    def assigned_hours(self):
-        return hours_delta(sum([s.duration() for s in self.assigned_slots()], timedelta(0, 0)))
+    def assigned_hours(self, include_unpublished=False):
+        return hours_delta(sum([s.duration() for s in self.assigned_slots(include_unpublished)], timedelta(0, 0)))
 
 
 class Team(db.Model):
@@ -546,7 +548,7 @@ class VolunteerInfo(db.Model):
     def volunteering(self):
         return self.volunteer != NO or self.first_aid != NO or self.emergency_response_officer != NO
 
-    def adjudicating(self):
+    def wants_to_adjudicate(self):
         return self.jury_ballroom != NO or self.jury_latin != NO or self.jury_salsa != NO or self.jury_polka != NO
 
     def to_dict(self):
@@ -1199,7 +1201,7 @@ class SuperVolunteer(db.Model):
     def volunteering(self):
         return self.first_aid != NO or self.emergency_response_officer != NO
 
-    def adjudicating(self):
+    def wants_to_adjudicate(self):
         return self.jury_ballroom != NO or self.jury_latin != NO or self.jury_salsa != NO or self.jury_polka != NO
     
     def update_data(self, form):
