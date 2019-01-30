@@ -48,37 +48,6 @@
     </tr>
     {% endif %}
     {% endfor %}
-    <!--{% for volunteer in all_super_volunteers %}-->
-    <!--{% set assigned_shifts = volunteer.user.assigned_shifts(true) %}-->
-    <!--{% if assigned_shifts|length > 0 %}-->
-        <!--{% for shift in assigned_shifts %}-->
-            <!--<tr>-->
-                <!--{% if loop.index == 1%}-->
-                <!--<td>{{volunteer}}</td>-->
-                <!--<td>{{g.data.TF[volunteer.wants_to_adjudicate()]}}</td>-->
-                <!--<td>{{volunteer.first_aid}}</td>-->
-                <!--<td>{{volunteer.emergency_response_officer}}</td>-->
-                <!--<td>{{volunteer.user.number_of_assigned_shifts(true)}}</td>-->
-                <!--<td>{{volunteer.user.assigned_hours(true)}}</td>-->
-                <!--{% else %}-->
-                <!--<td class="{% if loop.index > 1 %}border-top-0{% endif %}" colspan="6"></td>-->
-                <!--{% endif %}-->
-                <!--<td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{shift.start()}}-{{shift.stop()}} ({{shift.start_day()}})</td>-->
-                <!--<td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{shift.info}}</td>-->
-            <!--</tr>-->
-        <!--{% endfor %}-->
-    <!--{% else %}-->
-        <!--<tr>-->
-            <!--<td>{{volunteer}}</td>-->
-            <!--<td>{{g.data.TF[volunteer.wants_to_adjudicate()]}}</td>-->
-            <!--<td>{{volunteer.first_aid}}</td>-->
-            <!--<td>{{volunteer.emergency_response_officer}}</td>-->
-            <!--<td>-</td>-->
-            <!--<td>-</td>-->
-            <!--<td colspan="2"></td>-->
-        <!--</tr>-->
-    <!--{% endif %}-->
-    <!--{% endfor %}-->
     </tbody>
 </table>
 
