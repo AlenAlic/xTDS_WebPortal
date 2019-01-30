@@ -55,7 +55,7 @@ def start():
         return redirect(url_for('raffle.completed'))
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
-        all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
+        all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
         teams = [{'team': team, 'id': team.city,
                   'id_title': team.city + '-title'} for team in all_teams]
         for t in teams:
@@ -87,7 +87,7 @@ def completed():
         return redirect(url_for('raffle.confirmed'))
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
-        all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
+        all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
         teams = [{'team': team, 'id': team.city,
                   'id_title': team.city + '-title'} for team in all_teams]
         for t in teams:
@@ -135,7 +135,7 @@ def confirmed():
         return redirect(url_for('raffle.completed'))
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
-        all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
+        all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
         teams = [{'team': team, 'id': team.city,
                   'id_title': team.city + '-title'} for team in all_teams]
         for t in teams:
@@ -278,7 +278,7 @@ def test_completed():
         return redirect(url_for('raffle.test_confirmed'))
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
-        all_teams = Team.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
+        all_teams = Team.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
         teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
                   'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
         for t in teams:
@@ -339,7 +339,7 @@ def test_confirmed():
         flash(f"All {CONFIRMED} dancers are now {SELECTED}.")
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
-        all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
+        all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
         teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
                   'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
         for t in teams:

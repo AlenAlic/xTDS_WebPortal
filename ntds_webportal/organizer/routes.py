@@ -223,7 +223,7 @@ def registration_overview():
         .order_by(ContestantInfo.team_id,
                   case({CONFIRMED: 0, SELECTED: 1, REGISTERED: 2, CANCELLED: 3}, value=StatusInfo.status),
                   Contestant.first_name).all()
-    all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
+    all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
     dancers = [{'country': team.country, 'name': team.name, 'id': team.city,
                 'dancers': len(Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == team)
                                .order_by(Contestant.first_name).all())} for team in all_teams]
@@ -314,7 +314,7 @@ def edit_dancing_info(number):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def finances_overview():
-    all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER)
+    all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION)
     if g.sc.tournament == NTDS:
         all_teams = all_teams.filter(Team.country == NETHERLANDS).all()
     else:
@@ -850,7 +850,7 @@ def bad():
         output = BytesIO(output.read().encode('utf-8-sig'))
         return send_file(output, as_attachment=True, attachment_filename="createDB.sql")
     if 'download_createTournament' in form:
-        teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
+        teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
         dancers = Contestant.query.join(StatusInfo)\
             .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED)).all()
         registered_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == REGISTERED).all()

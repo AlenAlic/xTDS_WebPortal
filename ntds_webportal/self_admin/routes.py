@@ -309,7 +309,8 @@ def switch_user():
     form.submit.label.text = 'Switch to team captain'
     users = User.query.join(Team).filter(User.is_active.is_(True), User.user_id != current_user.user_id,
                                          or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]),
-                                         Team.country != NETHERLANDS, Team.name != TEAM_SUPER_VOLUNTEER)\
+                                         Team.country != NETHERLANDS,
+                                         Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION)\
         .order_by(Team.city).all()
     form.user.choices = map(lambda user_map: (user_map.user_id, user_map.username), users)
     dancer_super_volunteer_form = SwitchUserForm()
@@ -376,7 +377,7 @@ def switch_to_team_captain(name):
 def user_list():
     users = User.query.filter(or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]))\
         .order_by(case({True: 0, False: 1}, value=User.is_active), User.team_id).all()
-    teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
+    teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
     organizer = db.session.query(User).filter(User.access == ACCESS[ORGANIZER]).first()
     return render_template('admin/user_list.html', data=data, users=users, teams=teams, organizer=organizer)
 
@@ -437,7 +438,8 @@ def create_team_account():
 @requires_access_level([ACCESS[ADMIN]])
 def create_team_captain():
     form = CreateTeamCaptainAccountForm()
-    query = Team.query.filter(~exists().where(User.team), Team.name != TEAM_SUPER_VOLUNTEER)
+    query = Team.query.filter(~exists().where(User.team),
+                              Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION)
     if len(query.all()) > 0:
         form.team.query = query
         if form.validate_on_submit():

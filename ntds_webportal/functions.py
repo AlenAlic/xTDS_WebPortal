@@ -11,7 +11,7 @@ import os
 
 
 def active_teams():
-    teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
+    teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
     return [t for t in teams if t.is_active()]
 
 

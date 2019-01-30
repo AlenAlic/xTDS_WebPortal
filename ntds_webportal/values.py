@@ -112,6 +112,7 @@ CITIES = [
 ]
 CITIES.sort()
 TEAM_SUPER_VOLUNTEER = "Super Volunteer"
+TEAM_ORGANIZATION = "Organization"
 
 # Basic options
 NONE = 'None'

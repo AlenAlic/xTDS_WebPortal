@@ -66,6 +66,7 @@ class ShiftForm(FlaskForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.team.choices = [(0, '')] + \
+                            [(t.team_id, t) for t in Team.query.filter(Team.name == TEAM_ORGANIZATION).all()] + \
                             [(t.team_id, t) for t in Team.query.filter(Team.name == TEAM_SUPER_VOLUNTEER).all()] + \
                             [(t.team_id, t) for t in Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
                              if t.is_active()]
@@ -116,6 +117,7 @@ class ShiftSlotForm(FlaskForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.team.choices = [(0, '')] + \
+                            [(t.team_id, t) for t in Team.query.filter(Team.name == TEAM_ORGANIZATION).all()] + \
                             [(t.team_id, t) for t in Team.query.filter(Team.name == TEAM_SUPER_VOLUNTEER).all()] + \
                             [(t.team_id, t) for t in Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
                              if t.is_active()]

@@ -277,8 +277,10 @@ class Team(db.Model):
         team_captain = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.team_id == self.team_id).first()
         if team_captain is not None:
             return team_captain.is_active is True
-        else:
+        elif self.name == TEAM_SUPER_VOLUNTEER or self.name == TEAM_ORGANIZATION:
             return True
+        else:
+            return False
 
     def confirmed_dancers(self):
         return Contestant.query.join(ContestantInfo, StatusInfo)\

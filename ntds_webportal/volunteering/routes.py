@@ -10,7 +10,7 @@ from ntds_webportal.organizer.email import send_super_volunteer_user_account_ema
 from ntds_webportal.data import *
 from sqlalchemy import or_, and_
 from datetime import timedelta, datetime
-from ntds_webportal.functions import str2bool, active_teams, hours_delta
+from ntds_webportal.functions import str2bool, hours_delta
 
 
 def create_super_volunteer_user_account(form, super_volunteer):
@@ -23,7 +23,10 @@ def create_super_volunteer_user_account(form, super_volunteer):
     super_volunteer_account.is_active = True
     super_volunteer_account.send_new_messages_email = True
     super_volunteer_account.super_volunteer = super_volunteer
-    super_volunteer_account.team = Team.query.filter(Team.name == TEAM_SUPER_VOLUNTEER).first()
+    if current_user.is_organizer():
+        super_volunteer_account.team = Team.query.filter(Team.name == TEAM_ORGANIZATION).first()
+    else:
+        super_volunteer_account.team = Team.query.filter(Team.name == TEAM_SUPER_VOLUNTEER).first()
     db.session.add(super_volunteer_account)
     db.session.commit()
     send_super_volunteer_user_account_email(super_volunteer_account, super_volunteer.get_full_name(),
@@ -118,7 +121,7 @@ def volunteering_management():
     form = request.args
     if 'open_volunteering_system' in form:
         g.ts.volunteering_system_open = True
-        users = User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER]).all()
+        users = User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER], User.team.is_(None)).all()
         super_volunteer_team = Team.query.filter(Team.name == TEAM_SUPER_VOLUNTEER).first()
         for user in users:
             user.team = super_volunteer_team
@@ -429,7 +432,9 @@ def publish():
 @login_required
 @requires_access_level([ACCESS[ORGANIZER]])
 def team_hours():
-    all_teams = active_teams()
+    all_teams = Team.query.order_by(Team.name).all()
+    all_teams = sorted([t for t in all_teams if t.is_active()], reverse=True,
+                       key=lambda x: (x.name == TEAM_ORGANIZATION, x.name == TEAM_SUPER_VOLUNTEER))
     hours = {t: {'total': hours_delta(sum([s.duration() for s in ShiftSlot.query.filter(ShiftSlot.team == t).all()],
                                           timedelta(0, 0))),
                  'assigned': hours_delta(sum([s.duration() for s in [slot for slot in ShiftSlot.query
