@@ -3,7 +3,6 @@
 {% block app_content %}
 <div class="no-print">
 {% include 'volunteering/volunteering_nav.html' %}
-<p>This overview includes unpublished hours.</p>
 </div>
 <table class="table table-sm">
     <colgroup>
@@ -29,14 +28,15 @@
     </thead>
     <tbody>
     {% for volunteer in all_super_volunteers %}
+    {% set assigned_shifts = volunteer.user.assigned_shifts(true) %}
+    {% if volunteer.user.adjudicator is none or assigned_shifts|length > 0 %}
     <tr>
         <td>{{volunteer}}</td>
         <td>{{g.data.TF[volunteer.wants_to_adjudicate()]}}</td>
         <td>{{volunteer.first_aid}}</td>
         <td>{{volunteer.emergency_response_officer}}</td>
-        {% set assigned_shifts = volunteer.user.assigned_shifts(true) %}
         {% if assigned_shifts|length > 0 %}
-        <td>{{volunteer.user.number_of_assigned_shifts(true)}}</td>
+        <td>{{assigned_shifts|length}}</td>
         <td>{{volunteer.user.assigned_hours(true)}}</td>
         <td> {% for shift in assigned_shifts %} {{shift.start()}}-{{shift.stop()}} ({{shift.start_day()}}){% if not loop.last %}<br/>{% endif %}{% endfor %}</td>
         <td>{% for shift in assigned_shifts %}{{shift.info}}{% if not loop.last %}<br/>{% endif %}{% endfor %}</td>
@@ -46,6 +46,7 @@
         <td colspan="2"></td>
         {% endif %}
     </tr>
+    {% endif %}
     {% endfor %}
     <!--{% for volunteer in all_super_volunteers %}-->
     <!--{% set assigned_shifts = volunteer.user.assigned_shifts(true) %}-->
