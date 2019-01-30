@@ -16,3 +16,10 @@ def uniquify(seq):
     s = list(s)
     s.sort()
     return s if len(seq) > 0 else []
+
+
+def hours_delta(td):
+    seconds = td.total_seconds()
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    return f'{"{:02d}".format(int(hours))}:{"{:02d}".format(int(minutes))}'

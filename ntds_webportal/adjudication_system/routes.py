@@ -772,7 +772,7 @@ def progress():
                     if len(leads) == len(follows):
                         couples = create_couples_list(leads=leads, follows=follows)
                     else:
-                        flash(f"Cannot configure the next round {len(leads)} leads and {len(follows)} follows. "
+                        flash(f"Cannot configure the next round with {len(leads)} leads and {len(follows)} follows. "
                               f"Please check the list again.", "alert-warning")
                         return render_template('adjudication_system/progress.html', dancing_round=dancing_round,
                                                round_form=round_form)

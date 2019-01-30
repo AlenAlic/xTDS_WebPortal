@@ -7,10 +7,10 @@ from ntds_webportal.email import send_email
 from ntds_webportal.values import *
 from functools import wraps
 from time import time
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 import datetime
 import jwt
-from ntds_webportal.base_functions import str2bool
+from ntds_webportal.base_functions import str2bool, hours_delta
 from sqlalchemy import or_
 import enum
 import random
@@ -237,12 +237,25 @@ class User(UserMixin, Anonymous, db.Model):
 
     def assigned_shifts(self):
         if g.ts.volunteering_system_open:
-            return ShiftSlot.query.filter(ShiftSlot.user == self).all()
+            slots = self.assigned_slots()
+            return sorted([s.shift for s in slots], key=lambda x: x.start_time)
         else:
             return []
 
     def has_shifts_assigned(self):
         return len(self.assigned_shifts()) > 0
+
+    def assigned_slots(self):
+        if g.ts.volunteering_system_open:
+            return ShiftSlot.query.filter(ShiftSlot.user == self).all()
+        else:
+            return []
+
+    def number_of_assigned_shifts(self):
+        return len(self.assigned_slots())
+
+    def assigned_hours(self):
+        return hours_delta(sum([s.duration() for s in self.assigned_slots()], timedelta(0, 0)))
 
 
 class Team(db.Model):
@@ -511,6 +524,9 @@ class VolunteerInfo(db.Model):
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
+
+    def wants_to_volunteer(self):
+        return self.volunteer != NO or self.first_aid != NO or self.emergency_response_officer != NO
 
     def not_volunteering(self):
         self.volunteer = NO
@@ -1239,7 +1255,7 @@ class Shift(db.Model):
         return False
 
     def duration(self):
-        pass
+        return self.stop_time - self.start_time
 
     def at_time(self, t):
         return self.start_time <= t <= self.stop_time
@@ -1248,7 +1264,7 @@ class Shift(db.Model):
         return len(self.slots)
 
     def claimed_slots(self):
-        return len([s for s in self.slots if s.team is not None])
+        return len([s for s in self.slots if s.team is not None or s.team is None and s.mandatory])
 
     def filled_slots(self):
         return len([s for s in self.slots if s.user is not None])
@@ -1275,7 +1291,10 @@ class Shift(db.Model):
         return [f"{slot.team_name()}" for slot in self.slots]
 
     def available_slots(self, team=None):
-        return [s for s in self.slots if s.team == team or s.team is None and s.user is None and not s.mandatory]
+        slots = [s for s in self.slots if s.team == team or s.team is None and s.user is None and not s.mandatory]
+        mandatory_slots = [s for s in self.slots if s.team is None and s.user is not None and s.mandatory]
+        mandatory_slots = [s for s in mandatory_slots if s.user.team == team]
+        return list(set(slots + mandatory_slots))
 
     def has_slots_available(self, team=None):
         return len(self.available_slots(team)) > 0
@@ -1317,6 +1336,12 @@ class ShiftSlot(db.Model):
 
     def user_assigned_to_shift(self, user):
         return user in [slot.user for slot in self.shift.slots if slot.user is not None and slot is not self]
+
+    def duration(self):
+        return self.shift.duration()
+
+    def organization_shift(self):
+        return self.mandatory and self.team is None
 
 
 TABLE_EVENT = 'event'

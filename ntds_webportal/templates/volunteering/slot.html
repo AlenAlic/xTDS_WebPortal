@@ -22,7 +22,11 @@
     {% if current_user.is_organizer() %}
     <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.single_shift', shift_id=slot.shift.shift_id) }}">Cancel</a>
     {% else %}
-    <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.shifts', task_id=slot.shift.info.shift_info_id) }}">Return</a>
+        {% if request.args.get('task_id') is none %}
+        <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.shifts', task_id=slot.shift.info.shift_info_id) }}">Return</a>
+        {% else %}
+        <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.shifts', task_id=request.args.get('task_id')) }}">Return</a>
+        {% endif %}
     {% endif %}
 </form>
 {% endblock %}

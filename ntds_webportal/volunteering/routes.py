@@ -10,7 +10,7 @@ from ntds_webportal.organizer.email import send_super_volunteer_user_account_ema
 from ntds_webportal.data import *
 from sqlalchemy import or_, and_
 from datetime import timedelta, datetime
-from ntds_webportal.functions import str2bool
+from ntds_webportal.functions import str2bool, active_teams, hours_delta
 
 
 def create_super_volunteer_user_account(form, super_volunteer):
@@ -197,13 +197,20 @@ def shifts():
         shift_list = Shift.query.order_by(Shift.start_time).all()
     else:
         shift_list = Shift.query.join(ShiftSlot)\
-            .filter(or_(ShiftSlot.team == current_user.team,
-                        and_(ShiftSlot.team_id.is_(None), ShiftSlot.mandatory.is_(False))), Shift.published.is_(True))\
+            .filter(or_(ShiftSlot.team == current_user.team, Shift.published.is_(True),
+                        and_(ShiftSlot.team_id.is_(None), ShiftSlot.mandatory.is_(False))))\
             .order_by(Shift.start_time).all()
         shift_list = [s for s in shift_list if s.has_slots_available(current_user.team)]
     task_list = {task: [shift for shift in shift_list if shift.info == task] for task in all_tasks}
     if current_user.is_tc():
         task_list = {task: task_list[task] for task in task_list if len(task_list[task]) > 0}
+        all_volunteers = Contestant.query.join(ContestantInfo, StatusInfo)\
+            .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED)\
+            .order_by(Contestant.first_name).all()
+        days = sorted(set([s.start_time.date() for s in shift_list]))
+        sorted_shifts = {day: [s for s in shift_list if s.start_time.date() == day] for day in days}
+        return render_template('volunteering/shifts.html', shifts=shift_list, task_list=task_list,
+                               all_volunteers=all_volunteers, sorted_shifts=sorted_shifts)
     return render_template('volunteering/shifts.html', shifts=shift_list, task_list=task_list)
 
 
@@ -309,6 +316,7 @@ def delete_shift(shift_id):
 def shift_slot(slot_id):
     slot = ShiftSlot.query.get(slot_id)
     form = ShiftSlotForm()
+    task_id = request.args.get("task_id", default=None)
     if current_user.is_tc():
         form.submit.label.text = 'Assign dancer'
         form.volunteer.description = 'Assigning a dancer to this shift wil automatically claim the shift for your team.'
@@ -321,6 +329,14 @@ def shift_slot(slot_id):
                 team = Team.query.get(form.team.data) if form.team.data > 0 else None
                 if current_user.is_organizer():
                     if not slot.user_assigned_to_shift(volunteer):
+                        if volunteer is not None:
+                            test_shifts = Shift.query.join(ShiftSlot).filter(ShiftSlot.user == volunteer).all()
+                            test_shifts = [s for s in test_shifts if not (slot.shift.stop_time <= s.start_time or
+                                                                          slot.shift.start_time >= s.stop_time)]
+                            if len(test_shifts) > 0:
+                                flash(f"Cannot add {volunteer} to {slot.shift}. {volunteer} is already assigned "
+                                      f"to {test_shifts[0]} at the same time.", "alert-warning")
+                                return redirect(url_for('volunteering.single_shift', shift_id=slot.shift.shift_id))
                         slot.user = volunteer
                         slot.team = team
                         if volunteer is not None and team is not None:
@@ -338,11 +354,20 @@ def shift_slot(slot_id):
                 else:
                     slot.team = current_user.team
                     if volunteer is not None:
+                        test_shifts = Shift.query.join(ShiftSlot).filter(ShiftSlot.user == volunteer).all()
+                        test_shifts = [s for s in test_shifts if not (slot.shift.stop_time < s.start_time or
+                                                                      slot.shift.start_time > s.stop_time)]
+                        if len(test_shifts) > 0:
+                            flash(Markup(f"Cannot add {volunteer} to {slot.shift}.<br/>{volunteer} is already assigned "
+                                         f"to {test_shifts[0]}."), "alert-warning")
+                            return redirect(url_for('volunteering.shift_slot', slot_id=slot.slot_id))
                         if not slot.user_assigned_to_shift(volunteer):
                             slot.user = volunteer
                             db.session.commit()
                             flash(f'Assigned {volunteer} to shift {slot.shift}.')
-                            return redirect(url_for('volunteering.shifts', task_id=slot.shift.info.shift_info_id))
+                            return redirect(url_for('volunteering.shifts',
+                                                    task_id=task_id if task_id is not None
+                                                    else slot.shift.info.shift_info_id))
                         else:
                             flash(f'Cannot assign {volunteer}, he/she is already assigned to a slot in this shift.',
                                   'alert-warning')
@@ -350,18 +375,23 @@ def shift_slot(slot_id):
                         flash(f'Cleared slot of shift {slot.shift}.')
                         slot.user = None
                         db.session.commit()
-                        return redirect(url_for('volunteering.shifts', task_id=slot.shift.info.shift_info_id))
-        if 'claim' in request.form:
-            slot.team = current_user.team
-            db.session.commit()
-            flash(f'Claimed slot in shift {slot.shift}.')
-            return redirect(url_for('volunteering.shifts', task_id=slot.shift.info.shift_info_id))
-        if 'release' in request.form:
-            slot.user = None
-            slot.team = None
-            db.session.commit()
-            flash(f'Released slot in shift {slot.shift}.')
-            return redirect(url_for('volunteering.shifts', task_id=slot.shift.info.shift_info_id))
+                        return redirect(url_for('volunteering.shifts',
+                                                task_id=task_id if task_id is not None
+                                                else slot.shift.info.shift_info_id))
+        if current_user.is_tc():
+            if 'claim' in request.form:
+                slot.team = current_user.team
+                db.session.commit()
+                flash(f'Claimed slot in shift {slot.shift}.')
+                return redirect(url_for('volunteering.shifts',
+                                        task_id=task_id if task_id is not None else slot.shift.info.shift_info_id))
+            if 'release' in request.form:
+                slot.user = None
+                slot.team = None
+                db.session.commit()
+                flash(f'Released slot in shift {slot.shift}.')
+                return redirect(url_for('volunteering.shifts',
+                                        task_id=task_id if task_id is not None else slot.shift.info.shift_info_id))
     form.populate(slot)
     return render_template('volunteering/slot.html', slot=slot, form=form)
 
@@ -384,6 +414,19 @@ def publish():
     shift_list = Shift.query.order_by(Shift.start_time).all()
     task_list = {task: [shift for shift in shift_list if shift.info == task] for task in all_tasks}
     return render_template('volunteering/publish.html', shifts=shift_list, task_list=task_list)
+
+
+@bp.route('/team_hours', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def team_hours():
+    all_teams = active_teams()
+    hours = {t: {'total': hours_delta(sum([s.duration() for s in ShiftSlot.query.filter(ShiftSlot.team == t).all()],
+                                          timedelta(0, 0))),
+                 'assigned': hours_delta(sum([s.duration() for s in [slot for slot in ShiftSlot.query
+                                             .filter(ShiftSlot.team == t).all() if slot.user is not None]],
+                                             timedelta(0, 0)))} for t in all_teams}
+    return render_template('volunteering/team_hours.html', hours=hours)
 
 
 @bp.route('/user_volunteering_shifts', methods=['GET', 'POST'])

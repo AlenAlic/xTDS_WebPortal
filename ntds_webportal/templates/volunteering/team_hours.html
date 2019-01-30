@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{% include 'volunteering/volunteering_nav.html' %}
+<table class="table-sm ">
+    <thead>
+        <tr style="font-size:large;">
+            <th style="text-align:right;">Team</th>
+            <th class="pl-4">Assigned</th>
+            <th class="pl-4">Filled hours</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for t in hours %}
+    <tr>
+        <th style="text-align:right;">{{t}}</th>
+        <td class="pl-4">{{hours[t].total}}</td>
+        <td class="pl-4">{{hours[t].assigned}} / {{hours[t].total}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
