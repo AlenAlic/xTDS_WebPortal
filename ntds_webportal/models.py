@@ -247,7 +247,7 @@ class User(UserMixin, Anonymous, db.Model):
 
     def assigned_slots(self):
         if g.ts.volunteering_system_open:
-            return ShiftSlot.query.filter(ShiftSlot.user == self).all()
+            return ShiftSlot.query.join(Shift).filter(ShiftSlot.user == self, Shift.published.is_(True)).all()
         else:
             return []
 
