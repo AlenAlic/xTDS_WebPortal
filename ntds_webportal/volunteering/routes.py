@@ -197,8 +197,9 @@ def shifts():
         shift_list = Shift.query.order_by(Shift.start_time).all()
     else:
         shift_list = Shift.query.join(ShiftSlot)\
-            .filter(or_(ShiftSlot.team == current_user.team, Shift.published.is_(True),
-                        and_(ShiftSlot.team_id.is_(None), ShiftSlot.mandatory.is_(False))))\
+            .filter(or_(ShiftSlot.team == current_user.team,
+                        and_(ShiftSlot.team_id.is_(None), ShiftSlot.mandatory.is_(False))),
+                    Shift.published.is_(True))\
             .order_by(Shift.start_time).all()
         shift_list = [s for s in shift_list if s.has_slots_available(current_user.team)]
     task_list = {task: [shift for shift in shift_list if shift.info == task] for task in all_tasks}
