@@ -133,7 +133,7 @@ def volunteering_management():
 @login_required
 @requires_access_level([ACCESS[ORGANIZER]])
 def tasks():
-    task_list = ShiftInfo.query.all()
+    task_list = ShiftInfo.query.order_by(ShiftInfo.name).all()
     return render_template('volunteering/tasks.html', task_list=task_list)
 
 

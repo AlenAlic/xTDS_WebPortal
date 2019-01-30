@@ -69,7 +69,8 @@ class ShiftForm(FlaskForm):
                             [(t.team_id, t) for t in Team.query.filter(Team.name == TEAM_SUPER_VOLUNTEER).all()] + \
                             [(t.team_id, t) for t in Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER).all()
                              if t.is_active()]
-        self.type.choices = [(0, '')] + [(s.shift_info_id, s.name) for s in ShiftInfo.query.all()]
+        self.type.choices = [(0, '')] + [(s.shift_info_id, s.name) for s in
+                                         ShiftInfo.query.order_by(ShiftInfo.name).all()]
         start = datetime.fromtimestamp(g.sc.tournament_starting_date)
         default_start = datetime(year=start.year, month=start.month, day=start.day, hour=9, minute=0, second=0)
         default_stop = default_start.replace(hour=10)
