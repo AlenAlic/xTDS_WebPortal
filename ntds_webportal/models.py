@@ -1316,6 +1316,9 @@ class ShiftSlot(db.Model):
     user = db.relationship("User")
     mandatory = db.Column(db.Boolean, nullable=False, default=False)
 
+    def __repr__(self):
+        return f"Slot {self.slot_id} - {self.shift}"
+
     def fill_with(self, user):
         if user is not None:
             self.user = user
