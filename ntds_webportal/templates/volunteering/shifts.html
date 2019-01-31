@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% macro day_shifts(day, shifts) %}
-<table class="table table-sm table-hover print-block">
+<table class="table table-sm table-hover">
     <colgroup>
         <col span="1" style="width: 10%;">
         <col span="1" style="width: 25%;">
@@ -18,7 +18,7 @@
         <col span="1" style="width: 5%;">
     </colgroup>
     <thead>
-    <tr><td colspan="6"><h2>{{day.strftime("%A")}}</h2></td></tr>
+    <tr><td class="border-top-0" colspan="6"><h2>{{day.strftime("%A")}}</h2></td></tr>
     <tr>
         <th>Time</th>
         <th>Shift</th>
@@ -124,21 +124,23 @@
     {% endif %}
 {% else %}
     <div class="no-print">
-    {% if task_list|length > 0 %}
-    <nav>
-        <div class="nav nav-tabs" role="tablist">
-            <a class="nav-item nav-link" id="nav-task-volunteers-tab" data-toggle="tab" href="#nav-task-volunteers" role="tab" aria-controls="nav-task-volunteers" aria-selected="true">Volunteers</a>
-            <a class="nav-item nav-link {% if not request.args.get('task_id')|int > 0 %}active{% endif %}" id="nav-task-overview-tab" data-toggle="tab" href="#nav-task-overview" role="tab" aria-controls="nav-task-overview" aria-selected="true">All shifts</a>
-            {% for task in task_list %}
-            <a class="nav-item nav-link {% if request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-tab-2" data-toggle="tab" href="#nav-task-{{task.shift_info_id}}-2" role="tab" aria-controls="nav-task-{{task.shift_info_id}}-2" aria-selected="true">
-                {{task}}<span class="badge badge-pill badge-dark"></span>
-            </a>
-            {% endfor %}
-        </div>
-    </nav>
+        <h4>Hours filled: {{hours.filled}} / {{hours.total}} <span class="pl-3" style="font-size:large;"> (Plus {{hours.freelance}} additional hours, arranged individually with the organization)</span></h4>
+        {% if task_list|length > 0 %}
+        <nav>
+            <div class="nav nav-tabs" role="tablist">
+                <a class="nav-item nav-link" id="nav-task-volunteers-tab" data-toggle="tab" href="#nav-task-volunteers" role="tab" aria-controls="nav-task-volunteers" aria-selected="true">Volunteers</a>
+                <a class="nav-item nav-link {% if not request.args.get('task_id')|int > 0 %}active{% endif %}" id="nav-task-overview-tab" data-toggle="tab" href="#nav-task-overview" role="tab" aria-controls="nav-task-overview" aria-selected="true">All shifts</a>
+                {% for task in task_list %}
+                <a class="nav-item nav-link {% if request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-tab-2" data-toggle="tab" href="#nav-task-{{task.shift_info_id}}-2" role="tab" aria-controls="nav-task-{{task.shift_info_id}}-2" aria-selected="true">
+                    {{task}}<span class="badge badge-pill badge-dark"></span>
+                </a>
+                {% endfor %}
+            </div>
+        </nav>
     </div>
     <div class="tab-content">
         <div class="tab-pane fade show" id="nav-task-volunteers" role="tabpanel" aria-labelledby="nav-task-volunteers-tab">
+            <button class="btn btn-outline-primary no-print mx-1 my-1" onclick="window.print();">Print</button>
             <table class="table table-sm">
                 <colgroup>
                     <col span="1" style="width: 19%;">
@@ -152,13 +154,13 @@
                 </colgroup>
                 <thead>
                 <tr>
-                    <th>Dancer</th>
-                    <th>Wants to volunteer?</th>
-                    <th>First Aid</th>
-                    <th>Emergency Response Officer</th>
-                    <th># shifts</th>
-                    <th>Total hours</th>
-                    <th colspan="2">Assigned shifts</th>
+                    <th class="border-top-0">Dancer</th>
+                    <th class="border-top-0">Wants to volunteer?</th>
+                    <th class="border-top-0">First Aid</th>
+                    <th class="border-top-0">Emergency Response Officer</th>
+                    <th class="border-top-0"># shifts</th>
+                    <th class="border-top-0">Total hours</th>
+                    <th class="border-top-0" colspan="2">Assigned shifts</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -197,9 +199,12 @@
             </table>
         </div>
         <div class="tab-pane fade show {% if request.args.get('task_id')|int == 0 or request.args.get('task_id') is none %}active{% endif %}" id="nav-task-overview" role="tabpanel" aria-labelledby="nav-task-overview-tab">
+            <button class="btn btn-outline-primary no-print mx-1 my-1" onclick="window.print();">Print</button>
+            <div style="page-break-inside:avoid;">
             {% for day in sorted_shifts %}
             {{ day_shifts(day, sorted_shifts[day]) }}
             {% endfor %}
+            </div>
         </div>
         {% for task in task_list %}
         <div class="tab-pane fade show {% if request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-2" role="tabpanel" aria-labelledby="nav-task-{{task.shift_info_id}}-tab-2">

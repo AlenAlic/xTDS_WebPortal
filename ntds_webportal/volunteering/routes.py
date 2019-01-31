@@ -221,8 +221,16 @@ def shifts():
             .order_by(Contestant.first_name).all()
         days = sorted(set([s.start_time.date() for s in shift_list]))
         sorted_shifts = {day: [s for s in shift_list if s.start_time.date() == day] for day in days}
+        team_slots = ShiftSlot.query.filter(ShiftSlot.team == current_user.team).all()
+        team_slots = [s for s in team_slots if s.shift.published]
+        organization_slots = ShiftSlot.query.filter(ShiftSlot.mandatory.is_(True), ShiftSlot.user_id.isnot(None)).all()
+        organization_slots = [s for s in organization_slots if s.user.team == current_user.team and s.shift.published]
+        hours = {'total': hours_delta(sum([s.duration() for s in team_slots], timedelta(0, 0))),
+                 'filled': hours_delta(sum([s.duration() for s in team_slots if s.user is not None], timedelta(0, 0))),
+                 'freelance': hours_delta(sum([s.duration() for s in organization_slots], timedelta(0, 0)))
+                 }
         return render_template('volunteering/shifts.html', shifts=shift_list, task_list=task_list,
-                               all_volunteers=all_volunteers, sorted_shifts=sorted_shifts)
+                               all_volunteers=all_volunteers, sorted_shifts=sorted_shifts, hours=hours)
 
 
 @bp.route('/shift/<int:shift_id>', methods=['GET'])
@@ -440,10 +448,12 @@ def team_hours():
     all_teams = Team.query.order_by(Team.name).all()
     all_teams = sorted([t for t in all_teams if t.is_active()], reverse=True,
                        key=lambda x: (x.name == TEAM_ORGANIZATION, x.name == TEAM_SUPER_VOLUNTEER))
-    hours = {t: {'total': hours_delta(sum([s.duration() for s in ShiftSlot.query.filter(ShiftSlot.team == t).all()],
+    hours = {t: {'total': hours_delta(sum([s.duration() for s in ShiftSlot.query
+                                          .filter(ShiftSlot.team == t, ShiftSlot.mandatory.is_(True)).all()],
                                           timedelta(0, 0))),
                  'assigned': hours_delta(sum([s.duration() for s in [slot for slot in ShiftSlot.query
-                                             .filter(ShiftSlot.team == t).all() if slot.user is not None]],
+                                             .filter(ShiftSlot.team == t, ShiftSlot.mandatory.is_(True)).all()
+                                                                     if slot.user is not None]],
                                              timedelta(0, 0)))} for t in all_teams}
     return render_template('volunteering/team_hours.html', hours=hours)
 

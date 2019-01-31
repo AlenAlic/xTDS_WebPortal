@@ -96,8 +96,9 @@ class ShiftForm(FlaskForm):
                                      "corresponding to one volunteer.")
     team = SelectField('Team', coerce=int, render_kw={'data-role': 'select2'},
                        description="Assigning a team will assign each of the slots that get created to that team.")
-    mandatory = SelectField('Mandatory', validators=[IsBoolean()],
-                            choices=[('', '')] + [(k, v) for k, v in YN.items()])
+    mandatory = SelectField('Mandatory', validators=[IsBoolean()], choices=[('', '')] + [(k, v) for k, v in YN.items()],
+                            description="Making a slot mandatory, will not allow the assigned team to give that slot "
+                                        "away to a different team.")
     submit = SubmitField('Create Shift')
 
     def populate(self, shift):
@@ -136,8 +137,9 @@ class ShiftSlotForm(FlaskForm):
     volunteer = SelectField(coerce=int, render_kw={'data-role': 'select2'})
     team = SelectField('Team', coerce=int, render_kw={'data-role': 'select2'}, default=0,
                        description="Warning! Changing the team will drop the volunteer if it is not his/her team.")
-    mandatory = SelectField('Mandatory', validators=[IsBoolean()],
-                            choices=[('', '')] + [(k, v) for k, v in YN.items()])
+    mandatory = SelectField('Mandatory', validators=[IsBoolean()], choices=[('', '')] + [(k, v) for k, v in YN.items()],
+                            description="Making a slot mandatory, will not allow the assigned team to give that slot "
+                                        "away to a different team.")
     submit = SubmitField('Save')
 
     def populate(self, slot):
