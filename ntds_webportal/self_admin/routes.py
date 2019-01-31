@@ -231,72 +231,73 @@ def system_configuration():
         if not str2bool(form.finances_full_refund.data) and not str2bool(form.finances_partial_refund.data):
             # form.finances_refund_date.data = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
             form.finances_refund_date.data = datetime.date.today()
-    if form.validate_on_submit():
-        g.sc.tournament = form.tournament.data
-        g.sc.year = form.year.data
-        g.sc.city = form.city.data
-        tsd = datetime.datetime(form.tournament_starting_date.data.year, form.tournament_starting_date.data.month,
-                                form.tournament_starting_date.data.day, 3, 0, 0, 0)
-        g.sc.tournament_starting_date = tsd.replace(tzinfo=datetime.timezone.utc).timestamp()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            g.sc.tournament = form.tournament.data
+            g.sc.year = form.year.data
+            g.sc.city = form.city.data
+            tsd = datetime.datetime(form.tournament_starting_date.data.year, form.tournament_starting_date.data.month,
+                                    form.tournament_starting_date.data.day, 3, 0, 0, 0)
+            g.sc.tournament_starting_date = tsd.replace(tzinfo=datetime.timezone.utc).timestamp()
 
-        g.sc.main_page_link = form.main_page_link.data
-        g.sc.terms_and_conditions_link = form.terms_and_conditions_link.data
+            g.sc.main_page_link = form.main_page_link.data
+            g.sc.terms_and_conditions_link = form.terms_and_conditions_link.data
 
-        g.sc.number_of_teamcaptains = form.number_of_teamcaptains.data
+            g.sc.number_of_teamcaptains = form.number_of_teamcaptains.data
 
-        g.sc.beginners_level = str2bool(form.beginners_level.data)
-        g.sc.closed_level = str2bool(form.closed_level.data)
-        g.sc.breitensport_obliged_blind_date = str2bool(form.breitensport_obliged_blind_date.data)
-        g.sc.salsa_competition = str2bool(form.salsa_competition.data)
-        g.sc.polka_competition = str2bool(form.polka_competition.data)
+            g.sc.beginners_level = str2bool(form.beginners_level.data)
+            g.sc.closed_level = str2bool(form.closed_level.data)
+            g.sc.breitensport_obliged_blind_date = str2bool(form.breitensport_obliged_blind_date.data)
+            g.sc.salsa_competition = str2bool(form.salsa_competition.data)
+            g.sc.polka_competition = str2bool(form.polka_competition.data)
 
-        g.sc.student_price = form.student_price.data
-        g.sc.non_student_price = form.non_student_price.data
-        g.sc.phd_student_category = str2bool(form.phd_student_category.data)
-        g.sc.phd_student_price = form.phd_student_price.data
+            g.sc.student_price = form.student_price.data
+            g.sc.non_student_price = form.non_student_price.data
+            g.sc.phd_student_category = str2bool(form.phd_student_category.data)
+            g.sc.phd_student_price = form.phd_student_price.data
 
-        g.sc.finances_full_refund = str2bool(form.finances_full_refund.data)
-        g.sc.finances_partial_refund = str2bool(form.finances_partial_refund.data)
-        g.sc.finances_partial_refund_percentage = form.finances_partial_refund_percentage.data
-        frd = datetime.datetime(form.finances_refund_date.data.year, form.finances_refund_date.data.month,
-                                form.finances_refund_date.data.day, 3, 0, 0, 0)
-        frd += datetime.timedelta(days=1)
-        g.sc.finances_refund_date = frd.replace(tzinfo=datetime.timezone.utc).timestamp()
+            g.sc.finances_full_refund = str2bool(form.finances_full_refund.data)
+            g.sc.finances_partial_refund = str2bool(form.finances_partial_refund.data)
+            g.sc.finances_partial_refund_percentage = form.finances_partial_refund_percentage.data
+            frd = datetime.datetime(form.finances_refund_date.data.year, form.finances_refund_date.data.month,
+                                    form.finances_refund_date.data.day, 3, 0, 0, 0)
+            frd += datetime.timedelta(days=1)
+            g.sc.finances_refund_date = frd.replace(tzinfo=datetime.timezone.utc).timestamp()
 
-        g.sc.first_time_ask = str2bool(form.first_time_ask.data)
-        g.sc.ask_diet_allergies = str2bool(form.ask_diet_allergies.data)
-        g.sc.ask_volunteer = str2bool(form.ask_volunteer.data)
-        g.sc.ask_first_aid = str2bool(form.ask_first_aid.data)
-        g.sc.ask_emergency_response_officer = str2bool(form.ask_emergency_response_officer.data)
-        g.sc.ask_adjudicator_highest_achieved_level = str2bool(form.ask_adjudicator_highest_achieved_level.data)
-        g.sc.ask_adjudicator_certification = str2bool(form.ask_adjudicator_certification.data)
+            g.sc.first_time_ask = str2bool(form.first_time_ask.data)
+            g.sc.ask_diet_allergies = str2bool(form.ask_diet_allergies.data)
+            g.sc.ask_volunteer = str2bool(form.ask_volunteer.data)
+            g.sc.ask_first_aid = str2bool(form.ask_first_aid.data)
+            g.sc.ask_emergency_response_officer = str2bool(form.ask_emergency_response_officer.data)
+            g.sc.ask_adjudicator_highest_achieved_level = str2bool(form.ask_adjudicator_highest_achieved_level.data)
+            g.sc.ask_adjudicator_certification = str2bool(form.ask_adjudicator_certification.data)
 
-        g.sc.t_shirt_sold = str2bool(form.t_shirt_sold.data)
-        g.sc.t_shirt_price = form.t_shirt_price.data
-        g.sc.mug_sold = str2bool(form.mug_sold.data)
-        g.sc.mug_price = form.mug_price.data
-        g.sc.bag_sold = str2bool(form.bag_sold.data)
-        g.sc.bag_price = form.bag_price.data
-        g.sc.merchandise_link = form.merchandise_link.data
-        if not str2bool(form.t_shirt_sold.data) and not str2bool(form.mug_sold.data) and \
-                not str2bool(form.bag_sold.data):
-            g.sc.merchandise_closing_date = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
-        else:
-            mcd = datetime.datetime(form.merchandise_closing_date.data.year, form.merchandise_closing_date.data.month,
-                                    form.merchandise_closing_date.data.day, 3, 0, 0, 0)
-            mcd += datetime.timedelta(days=1)
-            g.sc.merchandise_closing_date = mcd.replace(tzinfo=datetime.timezone.utc).timestamp()
+            g.sc.t_shirt_sold = str2bool(form.t_shirt_sold.data)
+            g.sc.t_shirt_price = form.t_shirt_price.data
+            g.sc.mug_sold = str2bool(form.mug_sold.data)
+            g.sc.mug_price = form.mug_price.data
+            g.sc.bag_sold = str2bool(form.bag_sold.data)
+            g.sc.bag_price = form.bag_price.data
+            g.sc.merchandise_link = form.merchandise_link.data
+            if not str2bool(form.t_shirt_sold.data) and not str2bool(form.mug_sold.data) and \
+                    not str2bool(form.bag_sold.data):
+                g.sc.merchandise_closing_date = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
+            else:
+                mcd = datetime.datetime(form.merchandise_closing_date.data.year, form.merchandise_closing_date.data.month,
+                                        form.merchandise_closing_date.data.day, 3, 0, 0, 0)
+                mcd += datetime.timedelta(days=1)
+                g.sc.merchandise_closing_date = mcd.replace(tzinfo=datetime.timezone.utc).timestamp()
 
-        db.session.commit()
-        flash("Configuration saved.", "alert-success")
-        if g.ts.system_configured:
-            g.sc.system_configuration_accessible = False
-        else:
-            g.ts.system_configured = True
-        db.session.commit()
-        if current_user.is_organizer():
-            return redirect(url_for('main.dashboard'))
-        return redirect(url_for('self_admin.system_configuration'))
+            db.session.commit()
+            flash("Configuration saved.", "alert-success")
+            if g.ts.system_configured:
+                g.sc.system_configuration_accessible = False
+            else:
+                g.ts.system_configured = True
+            db.session.commit()
+            if current_user.is_organizer():
+                return redirect(url_for('main.dashboard'))
+            return redirect(url_for('self_admin.system_configuration'))
     return render_template('admin/system_configuration.html', form=form)
 
 

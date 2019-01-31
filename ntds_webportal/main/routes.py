@@ -86,12 +86,9 @@ def dashboard():
 @bp.route('/todo', methods=['GET'])
 @login_required
 def todo():
-    # GENERAL
-    # LONG TERM - Create template for cards, using call function of Jinja
     # ADMIN
-    # LONG TERM - Change so that teams and team captain/treasurer accounts are made at the same time
     # WISH - Make "Tournament" section in system setup throw warnings when doing something stupid
-    # NEXT TOURNAMENT - number of allowed team captains based on size of teams?
+    # NEXT TOURNAMENT - number of allowed team captains based on size of teams? Ask @ team captain meeting
 
     # ORGANIZER
     # NEXT TOURNAMENT - Allow organizer to select what team captain to activate

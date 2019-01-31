@@ -18,12 +18,11 @@ onload="onStart()"
     {% with url='self_admin.create_team_account', title='Create new Team', image='team.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with url='self_admin.create_team_captain', title='Create new Teamcaptain and Treasurer account', image='register_contestant.png' %}
+    {% with url='self_admin.create_team_captain', title='Create new Team accounts', image='register_contestant.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
 <h2>Available Teamcaptains and Treasurers</h2>
-<!--<a href="{{ url_for('self_admin.create_team_captain') }}" class="btn btn-primary">Create new Team captain/Treasurer account</a>-->
 <table class="table table-sm">
     <colgroup>
         <col span="1" style="width: 20%;">
