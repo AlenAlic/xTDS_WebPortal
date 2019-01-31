@@ -7,10 +7,12 @@
         <meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
         <meta name="theme-color" content="#ffffff">
         <meta charset="UTF-8">
+        <meta name="Description" content="Portal for organizing an ETDS or NTDS.">
 
 
         <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
         <!--Favicons-->
         <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
@@ -60,27 +62,36 @@
 
 
 /* Print tools */
-.pagebreak { page-break-before: always; }
-.print-friendly { page-break-inside:avoid; page-break-after:auto }
-tr    { page-break-inside:avoid; page-break-after:auto }
-td    { page-break-inside:avoid; page-break-after:auto }
-thead { display:table-header-group }
-tfoot { display:table-footer-group }
-@media print {.no-print, .no-print * {display: none !important; } }
+@page               {size: 210mm 297mm; margin: 15mm 15mm 15mm 15mm;}
+.pagebreak          {page-break-before: always;}
+.print-block        {page-break-after:always;}
+.print-friendly     {page-break-inside:avoid; page-break-after:auto}
+tr                  {page-break-inside:avoid; page-break-after:auto}
+td                  {page-break-inside:avoid; page-break-after:auto}
+thead               {display:table-header-group}
+tfoot               {display:table-footer-group}
+@media print        {.no-print, .no-print * {display:none !important;}}
 
 /* Misc. */
-checkbox {cursor: pointer}
-.decorative-checkbox {cursor: default !important}
-.checkbox-row {cursor: pointer}
-.thumbnail.info {background-color:#d9edf7; }
-.container-hidden {visibility:hidden;}
-.notification-text {white-space: pre-line;}
+checkbox                        {cursor:pointer}
+.decorative-checkbox            {cursor:default !important}
+.checkbox-row                   {cursor:pointer}
+.thumbnail.info                 {background-color:#d9edf7; }
+.container-hidden               {visibility:hidden;}
+.notification-text              {white-space:pre-line;}
+.clickable, .clickable-row      {cursor:pointer;}
+.nav-link.disabled              {cursor:default;}
+.finances-summary-row td:not(:first-child), .finances-summary-row th:not(:first-child)
+                                {text-align:right;}
+.finances-totals-row            {font-weight:bold;}
+.table-disabled                 {cursor:not-allowed;}
+.table-disabled:hover           {background:inherit !important;}
 
 /* API coloring for team captain "Edit Finances" tab */
-.api-pending {background-color:var(--info) !important;}
-.api-success {background-color:var(--success) !important;}
-.api-warning {background-color:var(--warning) !important;}
-.api-failed {background-color: #ffdcdc !important;}
+.api-pending    {background-color:var(--info) !important;}
+.api-success    {background-color:var(--success) !important;}
+.api-warning    {background-color:var(--warning) !important;}
+.api-failed     {background-color: #ffdcdc !important;}
 </style>
 
 <style>
@@ -124,7 +135,7 @@ body {
 </style>
 
     </head>
-    <body>
+    <body >
     
 <nav class="navbar sticky-top navbar-expand-md navbar-light bg-light no-print navbar-default">
     <div class="container">
@@ -137,8 +148,10 @@ body {
 <div id="container-hidden" class="container mt-3" style="padding-bottom:20px; ">
     
     
-        
+
     
+
+
 
     
 <div class="centered-text">
@@ -155,52 +168,42 @@ body {
 
 
 </div>
-<!--<nav class="navbar-defaul navbar-fixed-bottom" style="padding-top:60px;">-->
-    <!--<div class="container">-->
-        <!--<p class="navbar-text">Place sticky footer content here.</p>-->
-    <!--</div>-->
-<!--</nav>-->
 
 
     
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
-<script>
-moment.locale("en");
-function flask_moment_render(elem) {
-    $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
-    $(elem).removeClass('flask-moment').show();
-}
-function flask_moment_render_all() {
-    $('.flask-moment').each(function() {
-        flask_moment_render(this);
-        if ($(this).data('refresh')) {
-            (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
-        }
-    })
-}
-$(document).ready(function() {
-    flask_moment_render_all();
-});
-</script>
+    
+    <script type="text/javascript" src="/static/loading/loading.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/popper.min.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/js/moment-with-locales.min.js"></script>
+    <script>
+    moment.locale("en");
+    function flask_moment_render(elem) {
+        $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+        $(elem).removeClass('flask-moment').show();
+    }
+    function flask_moment_render_all() {
+        $('.flask-moment').each(function() {
+            flask_moment_render(this);
+            if ($(this).data('refresh')) {
+                (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
+            }
+        })
+    }
+    $(document).ready(function() {
+        flask_moment_render_all();
+    });
+    </script>
+
 
 <script type="text/javascript" src="/static/select2/select2.min.js"></script>
 <script type="text/javascript" src="/static/select2/form.js"></script>
 
-<script type="text/javascript" src="/static/loading/loading.js"></script>
 <script>
-<!--$(document).ready(function($) {-->
-    <!--$(".clickable-row").css("cursor", "pointer")-->
-    <!--$(".clickable-row").click(function() {-->
-        <!--window.open($(this).data("href"));-->
-    <!--});-->
-<!--});-->
 $(document).ready(function($) {
-    $(".clickable-row").css("cursor", "pointer")
     $(".clickable-row").click(function() {
         window.location = $(this).data("href");
     });
