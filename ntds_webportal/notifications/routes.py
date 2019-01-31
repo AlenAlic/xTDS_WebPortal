@@ -11,7 +11,6 @@ from sqlalchemy import or_
 @bp.route('/messages', methods=['GET'])
 @login_required
 def messages():
-    # WISH - Filter messages based on title
     inbox_messages = Notification.query.filter_by(user=current_user, archived=False)\
         .order_by(Notification.notification_id.desc(), Notification.unread.desc()).all()
     archived_messages = Notification.query.filter_by(user=current_user, archived=True) \

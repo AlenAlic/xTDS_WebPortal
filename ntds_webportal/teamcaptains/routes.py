@@ -130,8 +130,9 @@ def register_dancer(number):
         flash('The registration of {} has been cancelled.'.format(changed_dancer.get_full_name()), 'alert-info')
         text = f"{changed_dancer.get_full_name()} from team {changed_dancer.contestant_info.team.name} " \
                f"has cancelled his/her registration.\n"
-        n = Notification(title=f"Cancelled registration, previously {status}", text=text,
-                         user=User.query.filter(User.access == ACCESS[ORGANIZER]).first())
+        title = f"Cancelled registration, previously {status} " \
+            f"- {changed_dancer.get_full_name()} ({changed_dancer.contestant_info.team})"
+        n = Notification(title=title, text=text, user=User.query.filter(User.access == ACCESS[ORGANIZER]).first())
         n.send()
     elif register == 1:
         changed_dancer.status_info.set_status(REGISTERED)

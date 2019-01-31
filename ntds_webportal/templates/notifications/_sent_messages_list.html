@@ -1,8 +1,8 @@
 {% if notifications|length > 0 %}
 <div id="accordion">
     {% for notification in notifications %}
-    <div class="card">
-        <div style="background-color:#f5f5f5" class="card-header" role="button" id="heading-{{notification.notification_id}}" data-toggle="collapse" href="#collapse-{{notification.notification_id}}" aria-expanded="false" aria-controls="collapse-{{notification.notification_id}}">
+    <div class="card mb-1">
+        <div style="background-color:#f5f5f5" class="card-header py-1" role="button" id="heading-{{notification.notification_id}}" data-toggle="collapse" href="#collapse-{{notification.notification_id}}" aria-expanded="false" aria-controls="collapse-{{notification.notification_id}}">
             <div class="card-title" style="font-size:small;font-weight:normal">
                 <div class="row">
                     <div class="col-sm-12 col-md-3 col-lg-3">{{notification.user}}</div>
