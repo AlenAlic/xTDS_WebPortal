@@ -18,7 +18,7 @@
 {% endif %}
 <h2>Merchandise</h2>
 {% if g.sc.t_shirt_sold is sameas true %}
-<table class="table table-sm table-responsive">
+<table class="table table-sm">
     <thead>
     <tr><th colspan="2"><b>T-shirts</b></th></tr>
     <tr><th><b>Size</b></th><th style="text-align:right"><b>Quantity</b></th></tr>
@@ -63,7 +63,7 @@
         </div>
         <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
             {% if dancers|length > 0 %}
-            <table class="table table-sm table-responsive mb-0">
+            <table class="table table-sm mb-0">
                 <colgroup>
                     <col span="1" style="width: 20%;">
                     <col span="1" style="width: 30%;">

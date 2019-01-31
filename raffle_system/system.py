@@ -666,7 +666,8 @@ class RaffleSystem(Balance):
                         if not self.exceed_max(groups) and self.check_list_of_groups(groups):
                             self.add_groups(groups)
                             self.update_states()
-                            message = 'Selected {}.'.format(group.get_dancers_summary())
+                            print_group = DancingGroup(dancers_input=[d for grp in groups for d in grp.dancers])
+                            message = 'Selected {}.'.format(print_group.get_dancers_summary())
                             break
         else:
             message = f"The maximum number of dancers ({self.config.maximum_number_of_dancers}) has been reached. " \
@@ -699,14 +700,14 @@ class RaffleSystem(Balance):
                             if not self.exceed_max(groups) and self.check_list_of_groups(groups):
                                 self.add_groups(groups)
                                 self.update_states()
-                                message = 'Selected {}.'.format(group.get_dancers_summary())
+                                print_group = DancingGroup(dancers_input=[d for grp in groups for d in grp.dancers])
+                                message = 'Selected {}.'.format(print_group.get_dancers_summary())
                                 break
         else:
             message = f"The maximum number of dancers ({self.config.maximum_number_of_dancers}) has been reached. " \
                       f"You cannot add more dancers."
         return message
 
-    # TODO Selection flash string
     def select_specific_dancers(self, form):
         if not self.full():
             dancers = [d for d in self.registered_dancers if f"specific-{d.contestant_id}" in form]

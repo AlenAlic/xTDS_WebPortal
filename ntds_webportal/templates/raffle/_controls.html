@@ -3,7 +3,7 @@
 <h2>Selected by system</h2>
 These dancers have been selected by the system, but this is only visible for you at the moment. Please mark the dancers and add them to confirm that they are selected.
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-    <table class="table table-clickable-checkbox table-responsive">
+    <table class="table table-clickable-checkbox">
         <colgroup>
             <col span="1" style="width: 5%;">
             <col span="1" style="width: 15%;">
@@ -65,7 +65,7 @@ These dancers have been selected by the system, but this is only visible for you
 <h2>Automatically add dancers to tournament</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
 
-    <table class="table table-sm table-vertical-lines-head table-responsive">
+    <table class="table table-sm table-vertical-lines-head">
         <colgroup>
             {% for n in range(g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) %}
             <col span="1" style="width: {{ 80 / (g.sc.get_participating_levels_including_not_dancing()|length * g.data.ALL_COMPETITIONS|length) }}%;">
@@ -140,7 +140,7 @@ These dancers have been selected by the system, but this is only visible for you
             <b class="card-title">Select specific dancers</b>
         </div>
         <div id="collapse-select-single-dancers" class=" collapse" role="tabpanel" aria-labelledby="heading-select-single-dancers">
-            <table class="table table-clickable-checkbox table-responsive">
+            <table class="table table-clickable-checkbox">
                 <colgroup>
                     <col span="1" style="width: 5%;">
                     <col span="1" style="width: 15%;">
@@ -194,7 +194,6 @@ These dancers have been selected by the system, but this is only visible for you
                 </tbody>
             </table>
             <button type="submit" id="submit-select_specific_dancers" name="select_specific_dancers" class="btn btn-primary loading-btn ml-2 mb-2">Select dancers</button>
-            <div class=card-footer><small style="visibility: hidden">Footer</small></div>
         </div>
     </div>
 </form>

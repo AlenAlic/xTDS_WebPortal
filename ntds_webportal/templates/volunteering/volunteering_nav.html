@@ -5,6 +5,6 @@
     <a class="nav-item nav-link {% if request.path == '/volunteering/tasks' %}active{% endif %}" href="{{url_for('volunteering.tasks')}}">Tasks</a>
     <a class="nav-item nav-link {% if request.path == '/volunteering/shifts' %}active{% endif %}" href="{{url_for('volunteering.shifts')}}">Shifts</a>
     <a class="nav-item nav-link {% if request.path == '/volunteering/publish' %}active{% endif %}" href="{{url_for('volunteering.publish')}}">Publish <span class="badge badge-pill badge-dark">{{g.unpublished_shifts}}</span></a>
-    <a class="nav-item nav-link {% if request.path == '/volunteering/team_hours' %}active{% endif %}" href="{{url_for('volunteering.team_hours')}}">Mandatory team hours</a>
+    <a class="nav-item nav-link {% if request.path == '/volunteering/team_hours' %}active{% endif %}" href="{{url_for('volunteering.team_hours')}}">Team hours</a>
     <a class="nav-item nav-link {% if request.path == '/volunteering/super_volunteers_overview' %}active{% endif %}" href="{{url_for('volunteering.super_volunteers_overview')}}">Super Volunteers overview</a>
 </nav>

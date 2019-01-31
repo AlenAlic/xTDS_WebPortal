@@ -27,29 +27,25 @@
             {% include 'raffle/_summary.html' %}
         {% endwith %}
 
-        {% set width = 0 %}
-        {% if raffle_sys.selected_dancers|length > 0 %}{% set width = width + 1 %}{% endif %}
-        {% if raffle_sys.confirmed_dancers|length > 0 %}{% set width = width + 1 %}{% endif %}
-        {% if raffle_sys.registered_dancers|length > 0 %}{% set width = width + 1 %}{% endif %}
         {% if raffle_sys.selected_dancers|length > 0 and raffle_sys.confirmed_dancers|length > 0 %}{% set width_md = true %}{% else %}{% set width_md = false %}{% endif %}
 
         <h2>Overview</h2>
         <div class="row">
             {% if raffle_sys.selected_dancers|length > 0 %}
-            <div class="col-sm-12 col-md-6 col-lg-{{ 12//width }}">
+            <div class="col-sm-12 col-lg-6">
                 {% with subtitle='Selected', dancers=raffle_sys.selected_dancers, stats=raffle_sys.get_stats(g.data.SELECTED) %}
                     {% include 'raffle/_stats.html' %}
                 {% endwith %}
             </div>
             {% endif %}
             {% if raffle_sys.confirmed_dancers|length > 0 %}
-            <div class="col-sm-12 col-md-6 col-lg-{{ 12//width }}">
+            <div class="col-sm-12 col-lg-6">
                 {% with subtitle='Confirmed', dancers=raffle_sys.confirmed_dancers, stats=raffle_sys.get_stats(g.data.CONFIRMED) %}
                     {% include 'raffle/_stats.html' %}
                 {% endwith %}
             </div>
             {% endif %}
-            <div class="col-sm-12 col-md-{%if width_md%}12{%else%}6{%endif%} col-lg-{{ 12//width }}">
+            <div class="col-sm-12 col-lg-{%if width_md%}12{%else%}6{%endif%}">
                 {% with subtitle='Available', dancers=raffle_sys.registered_dancers, stats=raffle_sys.get_stats(g.data.REGISTERED) %}
                     {% include 'raffle/_stats.html' %}
                 {% endwith %}

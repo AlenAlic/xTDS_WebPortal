@@ -64,6 +64,8 @@ class DancingGroup(Balance):
     def get_dancers_summary(self):
         f = '{name} ({team})'
         dancers = [f.format(name=d.get_full_name(), team=d.contestant_info.team.name) for d in self.dancers[:-1]]
+        if len(self.dancers) == 1:
+            return f.format(name=self.dancers[0].get_full_name(), team=self.dancers[0].contestant_info.team.name)
         last_dancer = 'and {}'.format(f.format(name=self.dancers[-1].get_full_name(),
                                                team=self.dancers[-1].contestant_info.team.name))
         dancers.append(last_dancer)
