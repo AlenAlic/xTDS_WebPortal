@@ -123,9 +123,9 @@
     <p>There are no tasks to create shifts for. Please create a task first.</p>
     {% endif %}
 {% else %}
+    {% if task_list|length > 0 %}
     <div class="no-print">
-        <h4>Hours filled: {{hours.filled}} / {{hours.total}} <span class="pl-3" style="font-size:large;"> (Plus {{hours.freelance}} additional hours, arranged individually with the organization)</span></h4>
-        {% if task_list|length > 0 %}
+        <h4>Hours filled: {{hours.filled}} / {{hours.total}}{% if hours.freelance != '00:00' %}<span class="pl-3" style="font-size:large;"> (Plus {{hours.freelance}} additional hours, arranged individually with the organization)</span>{% endif %}</h4>
         <nav>
             <div class="nav nav-tabs" role="tablist">
                 <a class="nav-item nav-link" id="nav-task-volunteers-tab" data-toggle="tab" href="#nav-task-volunteers" role="tab" aria-controls="nav-task-volunteers" aria-selected="true">Volunteers</a>
