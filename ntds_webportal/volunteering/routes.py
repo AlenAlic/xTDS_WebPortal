@@ -223,7 +223,8 @@ def shifts():
         sorted_shifts = {day: [s for s in shift_list if s.start_time.date() == day] for day in days}
         team_slots = ShiftSlot.query.filter(ShiftSlot.team == current_user.team).all()
         team_slots = [s for s in team_slots if s.shift.published]
-        organization_slots = ShiftSlot.query.filter(ShiftSlot.mandatory.is_(True), ShiftSlot.user_id.isnot(None)).all()
+        organization_slots = ShiftSlot.query.filter(ShiftSlot.mandatory.is_(True), ShiftSlot.user_id.isnot(None),
+                                                    ShiftSlot.team_id.is_(None)).all()
         organization_slots = [s for s in organization_slots if s.user.team == current_user.team and s.shift.published]
         hours = {'total': hours_delta(sum([s.duration() for s in team_slots], timedelta(0, 0))),
                  'filled': hours_delta(sum([s.duration() for s in team_slots if s.user is not None], timedelta(0, 0))),
