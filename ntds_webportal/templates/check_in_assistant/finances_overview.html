@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<nav class="nav nav-tabs mb-2">
+    {% for t in all_teams %}
+    <a class="nav-item nav-link loading-btn {% if t == team %}active{% endif %}" href="{{url_for('check_in_assistant.finances_overview', team_id=t.team_id)}}">{{t}}</a>
+    {% endfor %}
+</nav>
+{% if (confirmed_dancers|length + cancelled_dancers|length) > 0 %}
+<h2>{{team}}</h2>
+{% with finances=finances %}
+    {% include 'teamcaptains/_finances_summary.html' %}
+{% endwith %}
+<h2>Received by organization:</h2>
+<div style="font-size:x-large">{{ g.data.euros(team.amount_paid) }} / {{ g.data.euros(finances['price_total']) }}</div>
+{% with status='Confirmed dancers', finances=finances, dancers=confirmed_dancers %}
+    {% include 'teamcaptains/_finances_list.html' %}
+{% endwith %}
+{% with status='Cancelled dancers', finances=finances, dancers=cancelled_dancers, cancelable=false %}
+    {% include 'teamcaptains/_finances_list.html' %}
+{% endwith %}
+{% with status='Refunds', finances=finances, dancers=refund_dancers %}
+    {% include 'teamcaptains/_refund_list.html' %}
+{% endwith %}
+{% else %}
+<h2>Team {{team}} has no registered dancers.</h2>
+{% endif %}
+{% endblock %}

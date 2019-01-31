@@ -165,10 +165,10 @@ onload="onStart()"
 
 {% if current_user.is_cia() %}
 <div class="row" style="visibility:hidden">
-    {% with accessible=g.ts.main_raffle_result_visible, url='check_in_assistant.tournament_check_in', title='Tournament check-in', text='Check in dancers from teams.', image='checked_in.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='check_in_assistant.tournament_check_in', loading_screen=true, title='Tournament check-in', text='Check in dancers from teams.', image='checked_in.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
-    {% with accessible=g.ts.main_raffle_result_visible, url='organizer.finances_overview', title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
+    {% with accessible=g.ts.main_raffle_result_visible, url='check_in_assistant.finances_overview', loading_screen=true, title='Finances', text='Overview of payment data of the dancers that have been selected for the tournament.', image='euro.png' %}
         {% include '_dashboard_page.html' %}
     {% endwith %}
 </div>
