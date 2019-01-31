@@ -52,7 +52,7 @@ class ShiftTypeForm(FlaskForm):
     name = StringField('Type name', validators=[DataRequired()])
     coordinator = StringField('Coordinator')
     location = StringField('Location')
-    description = TextAreaField('Description')
+    description = TextAreaField('Description', render_kw={"rows": "10"})
     submit = SubmitField('Create task')
 
     def populate(self, shift_info):
