@@ -247,13 +247,14 @@ class User(UserMixin, Anonymous, db.Model):
 
     def assigned_slots(self, include_unpublished=False):
         if g.ts.volunteering_system_open:
-            return ShiftSlot.query.join(Shift)\
-                .filter(ShiftSlot.user == self, or_(Shift.published.is_(True),
-                                                    Shift.published.is_(not include_unpublished))).all()
+            slots = ShiftSlot.query.join(Shift).filter(or_(Shift.published.is_(True),
+                                                           Shift.published.is_(not include_unpublished)),
+                                                       ShiftSlot.user == self).all()
+            return sorted(slots, key=lambda x: x.shift.start_time)
         else:
             return []
 
-    def number_of_assigned_shifts(self, include_unpublished=False):
+    def number_of_assigned_slots(self, include_unpublished=False):
         return len(self.assigned_slots(include_unpublished))
 
     def assigned_hours(self, include_unpublished=False):
@@ -1346,6 +1347,9 @@ class ShiftSlot(db.Model):
 
     def organization_shift(self):
         return self.mandatory and self.team is None
+
+    def is_editable(self, team):
+        return self.shift.published and self.team == team or self.team is None and not self.mandatory
 
 
 TABLE_EVENT = 'event'

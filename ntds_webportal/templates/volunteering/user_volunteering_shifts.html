@@ -5,7 +5,7 @@
 {% if slots|length > 0 %}
 {% for slot in slots %}
 <div class="block">
-    <a class="my-2" data-toggle="collapse" href="#slot-{{slot.slot_id}}" role="button">
+    <a class="text-decoration-none my-2" data-toggle="collapse" href="#slot-{{slot.slot_id}}" role="button">
         <b style="font-size:large;">{{slot.shift}}{% if slot.shift.stop_time < now %} {{check_mark_icon()}}{% endif %}</b>
     </a>
     <table class="table table-sm collapse {% if slot.shift.stop_time >= now %}show{% endif %}" id="slot-{{slot.slot_id}}">

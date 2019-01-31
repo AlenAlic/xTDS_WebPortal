@@ -201,7 +201,8 @@ def shifts():
     else:
         shift_list = Shift.query.join(ShiftSlot)\
             .filter(or_(ShiftSlot.team == current_user.team,
-                        and_(ShiftSlot.team_id.is_(None), ShiftSlot.mandatory.is_(False))),
+                        and_(ShiftSlot.team_id.is_(None), ShiftSlot.mandatory.is_(False)),
+                        and_(ShiftSlot.user_id.isnot(None), ShiftSlot.mandatory.is_(True))),
                     Shift.published.is_(True))\
             .order_by(Shift.start_time).all()
         shift_list = [s for s in shift_list if s.has_slots_available(current_user.team)]
@@ -328,6 +329,10 @@ def shift_slot(slot_id):
     form = ShiftSlotForm()
     task_id = request.args.get("task_id", default=None)
     if current_user.is_tc():
+        if not slot.is_editable(current_user.team):
+            flash("You cannot edit this shift, it is not part of your team!", "alert-warning")
+            return redirect(url_for('volunteering.shifts',
+                                    task_id=task_id if task_id is not None else slot.shift.info.shift_info_id))
         form.submit.label.text = 'Assign dancer'
         form.volunteer.description = 'Assigning a dancer to this shift wil automatically claim the shift for your team.'
         form.mandatory.validators = []

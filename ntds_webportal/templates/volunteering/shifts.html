@@ -31,7 +31,7 @@
     <tbody>
     {% for shift in shifts %}
     {% for slot in shift.available_slots(current_user.team) %}
-    <tr class="{% if slot.organization_shift() %}table-secondary table-disabled{% else %}clickable-row{% endif %}"
+    <tr class="{% if slot.organization_shift() %}table-disabled{% else %}clickable-row{% endif %}"
         data-href="{% if not slot.organization_shift() %}{{ url_for('volunteering.shift_slot', slot_id=slot.slot_id, task_id=0) }}{% endif %}">
         {% if loop.index == 1 %}
         <td>{{slot.shift.start()}}-{{slot.shift.stop()}}</td>
@@ -124,11 +124,6 @@
     {% endif %}
 {% else %}
     <div class="no-print">
-    {#<nav class="nav nav-tabs mb-2">
-        <a class="nav-item nav-link {% if request.path == '/volunteering/shifts' %}active{% endif %}" href="{{url_for('volunteering.shifts')}}">Shifts</a>
-        <a class="nav-item nav-link">Stats</a>
-    </nav>#}
-    <h2>Available Shifts</h2>
     {% if task_list|length > 0 %}
     <nav>
         <div class="nav nav-tabs" role="tablist">
@@ -168,22 +163,22 @@
                 </thead>
                 <tbody>
                 {% for volunteer in all_volunteers %}
-                {% set assigned_shifts = volunteer.user.assigned_shifts() %}
-                {% if assigned_shifts|length > 0 %}
-                    {% for shift in assigned_shifts %}
+                {% set assigned_slots = volunteer.user.assigned_slots() %}
+                {% if assigned_slots|length > 0 %}
+                    {% for slot in assigned_slots %}
                         <tr>
                             {% if loop.index == 1%}
                             <td>{{volunteer}}</td>
                             <td>{{volunteer.volunteer_info.volunteer}}</td>
                             <td>{{volunteer.volunteer_info.first_aid}}</td>
                             <td>{{volunteer.volunteer_info.emergency_response_officer}}</td>
-                            <td>{{volunteer.user.number_of_assigned_shifts()}}</td>
+                            <td>{{volunteer.user.number_of_assigned_slots()}}</td>
                             <td>{{volunteer.user.assigned_hours()}}</td>
                             {% else %}
                             <td class="{% if loop.index > 1 %}border-top-0{% endif %}" colspan="6"></td>
                             {% endif %}
-                            <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{shift.start()}}-{{shift.stop()}} ({{shift.start_day()}})</td>
-                            <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{shift.info}}</td>
+                            <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{slot.shift.start()}}-{{slot.shift.stop()}} ({{slot.shift.start_day()}})</td>
+                            <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{slot.shift.info}}</td>
                         </tr>
                     {% endfor %}
                 {% else %}
@@ -229,7 +224,7 @@
                 <tbody>
                 {% for shift in task_list[task] %}
                 {% for slot in shift.available_slots(current_user.team) %}
-                <tr class="{% if slot.organization_shift() %}table-secondary table-disabled{% else %}clickable-row{% endif %}"
+                <tr class="{% if slot.organization_shift() %}table-disabled{% else %}clickable-row{% endif %}"
                     data-href="{% if not slot.organization_shift() %}{{ url_for('volunteering.shift_slot', slot_id=slot.slot_id) }}{% endif %}">
                     {% if loop.index == 1 %}
                     <td>{{slot.shift.start()}}-{{slot.shift.stop()}} ({{slot.shift.start_day()}})</td>
