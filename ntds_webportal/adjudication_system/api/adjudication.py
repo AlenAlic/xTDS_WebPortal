@@ -1,12 +1,13 @@
 from flask import jsonify, request
 from flask_login import login_required
 from ntds_webportal import db
-from ntds_webportal.models import Mark, Round, Adjudicator, Dance, FinalPlacing
+from ntds_webportal.models import Mark, Round, Adjudicator, Dance, FinalPlacing, requires_adjudicator_access_level
 from ntds_webportal.adjudication_system.api import bp
 
 
 @bp.route('/round/<int:round_id>/adjudicator/<int:adjudicator_id>/dance/<int:dance_id>', methods=["GET"])
 @login_required
+@requires_adjudicator_access_level
 def adjudicator_round(round_id, adjudicator_id, dance_id):
     dancing_round = Round.query.get_or_404(round_id)
     adjudicator = Adjudicator.query.get_or_404(adjudicator_id)
@@ -16,6 +17,7 @@ def adjudicator_round(round_id, adjudicator_id, dance_id):
 
 @bp.route('/mark/<int:mark_id>/mark', methods=["GET", "PATCH"])
 @login_required
+@requires_adjudicator_access_level
 def mark_mark(mark_id):
     mark = Mark.query.get_or_404(mark_id)
     if request.method == "PATCH":
@@ -28,6 +30,7 @@ def mark_mark(mark_id):
 
 @bp.route('/mark/<int:mark_id>/notes', methods=["GET", "PATCH"])
 @login_required
+@requires_adjudicator_access_level
 def mark_notes(mark_id):
     mark = Mark.query.get_or_404(mark_id)
     if request.method == "PATCH":
@@ -43,6 +46,7 @@ def mark_notes(mark_id):
 
 @bp.route('/final_placing/<int:final_placing_id>/final_placing/<int:place>', methods=["GET", "PATCH"])
 @login_required
+@requires_adjudicator_access_level
 def final_placing_final_placing(final_placing_id, place):
     placing = FinalPlacing.query.get_or_404(final_placing_id)
     if request.method == "PATCH":

@@ -54,3 +54,18 @@
     </table>
 </form>
 {% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+publishHeatList = method => {
+    fetch("/adjudication_system/api/to/publish_heat_list/" + {{dancing_round.round_id}}, {method: method})
+    .then(function(response) {return response.json();})
+    .then(function(result) {console.log(result);
+        if (result) {alert("Heat list for {{dancing_round}} PUBLISHED to the app.\n\nIt is now visible to the outside world.");}
+        else {alert("Heat list for {{dancing_round}} RETRACTED from the app.\n\nThis heat list is no longer visible to the outside world.");}
+    })
+    .catch(function(error) {console.log('Error: \n', error); });
+}
+</script>
+{% endblock %}

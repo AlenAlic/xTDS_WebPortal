@@ -1,12 +1,14 @@
-from flask import jsonify, request
+from flask import jsonify, request, render_template
 from flask_login import login_required
 from ntds_webportal import db
-from ntds_webportal.models import Round, DanceActive
+from ntds_webportal.models import Round, DanceActive, requires_access_level
 from ntds_webportal.adjudication_system.api import bp
+from ntds_webportal.data import *
 
 
 @bp.route('/to/round/<int:round_id>', methods=["GET", "PATCH"])
 @login_required
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
 def to_toggle_round(round_id):
     dancing_round = Round.query.get_or_404(round_id)
     if request.method == "PATCH":
@@ -19,6 +21,7 @@ def to_toggle_round(round_id):
 
 @bp.route('/to/round/<int:round_id>/dance/<int:dance_id>', methods=["GET", "PATCH"])
 @login_required
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
 def to_toggle_round_dance(round_id, dance_id):
     dancing_round = Round.query.get_or_404(round_id)
     dance = DanceActive.query.filter(DanceActive.round == dancing_round, DanceActive.dance_id == dance_id)\
