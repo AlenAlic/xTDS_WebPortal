@@ -331,6 +331,8 @@ class EditContestantForm(BaseContestantForm):
                 latin_query.filter(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)) \
                     .order_by(Contestant.first_name)
             self.latin_partner.query = latin_query
+            if dancer.payment_info.all_paid():
+                self.student.render_kw = {'disabled': ''}
 
     def custom_validate(self, dancer):
         if dancer.status_info.status == SELECTED or dancer.status_info.status == CONFIRMED:
@@ -344,6 +346,7 @@ class EditContestantForm(BaseContestantForm):
             self.latin_blind_date.data = str(dancer.competition(LATIN).blind_date)
             self.latin_partner.data = db.session.query(Contestant).join(ContestantInfo) \
                 .filter(Contestant.contestant_id == dancer.competition(LATIN).partner).first()
+            self.student.data = dancer.contestant_info.student
         super().custom_validate()
         self.full_name.data = dancer.get_full_name()
     
