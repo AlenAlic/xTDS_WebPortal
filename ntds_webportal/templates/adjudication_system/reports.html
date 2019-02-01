@@ -7,6 +7,8 @@
     <div class="form-group">
         {{ wtf.form_field(form.print_submit) }}
         {{ wtf.form_field(form.show_submit) }}
+        {% if not dancing_round.is_final() %}<button class="btn btn-success" type="button" onclick="publishHeatList('POST')">Publish heat list to app</button>{% endif %}
+        <button class="btn btn-warning" type="button" onclick="publishHeatList('DELETE')">Clear heat list in app</button>
     </div>
     <table>
         <tbody>
