@@ -10,6 +10,7 @@
         {% if not dancing_round.is_final() %}<button class="btn btn-success" type="button" onclick="publishHeatList('POST')">Publish heat list to app</button>{% endif %}
         <button class="btn btn-warning" type="button" onclick="publishHeatList('DELETE')">Clear heat list in app</button>
     </div>
+    <h4 id="published">{% if dancing_round.is_published() %}Published{% endif %}</h4>
     <table>
         <tbody>
         <tr>
@@ -60,12 +61,18 @@
 {% block scripts %}
 {{ super() }}
 <script>
+published = published => {
+    text = document.getElementById('published');
+    if (published) {text.innerHTML = "Published"}
+    else {text.innerHTML = ""}
+}
 publishHeatList = method => {
     fetch("/adjudication_system/api/to/publish_heat_list/" + {{dancing_round.round_id}}, {method: method})
     .then(function(response) {return response.json();})
-    .then(function(result) {console.log(result);
+    .then(function(result) {
         if (result) {alert("Heat list for {{dancing_round}} PUBLISHED to the app.\n\nIt is now visible to the outside world.");}
         else {alert("Heat list for {{dancing_round}} RETRACTED from the app.\n\nThis heat list is no longer visible to the outside world.");}
+        published(result);
     })
     .catch(function(error) {console.log('Error: \n', error); });
 }

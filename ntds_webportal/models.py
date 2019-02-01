@@ -1866,6 +1866,11 @@ class Round(db.Model):
     def short_name(self):
         return ROUND_SHORT_NAMES[self.type]
 
+    def is_published(self):
+        if self.competition.heat_list is None:
+            return False
+        return self.__repr__() in self.competition.heat_list
+
     def is_completed(self):
         if not self.is_final():
             return len(self.round_results) > 0
