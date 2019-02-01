@@ -1,7 +1,10 @@
 {% extends 'bootstrap_base.html' %}
 
+{% block metas %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock %}
+
 {% block styles %}
-{{ super() }}
 <style>
 body                        {font-family:"Trebuchet MS",Helvetica,sans-serif;}
 @page                       {size:210mm 297mm; margin:20mm 10mm 10mm 10mm;}
@@ -18,7 +21,6 @@ body                        {font-family:"Trebuchet MS",Helvetica,sans-serif;}
 {% endblock %}
 
 {% block content %}
-<div class="container">
 {% set dance_heat_list, dance_lead_follow_list = dancing_round.dance_heat_list(), dancing_round.dance_lead_follow_list() %}
 <table class="report" id="heats-by-start">
     <thead>
@@ -68,8 +70,6 @@ body                        {font-family:"Trebuchet MS",Helvetica,sans-serif;}
     </tbody>
 </table>
 {% endif %}
-</div>
 {% endblock %}
 
-{% block scripts %}
-{% endblock %}
+{% block scripts %}{% endblock %}
