@@ -1233,7 +1233,7 @@ class ShiftInfo(db.Model):
     description = db.Column(db.Text())
     coordinator = db.Column(db.String(128))  # Maybe link to person.
     location = db.Column(db.String(256))
-    shifts = db.relationship("Shift")
+    shifts = db.relationship("Shift", cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         return f"{self.name}"

@@ -185,7 +185,7 @@ def create_app():
         g.data = data
         g.ts = TournamentState.query.first()
         g.rc = RaffleConfiguration.query.first()
-        g.unpublished_shifts = len(Shift.query.filter(Shift.published.is_(False)).all())
+        g.unpublished_shifts = len(Shift.query.filter(Shift.published.is_(False), Shift.info_id.isnot(None)).all())
         g.event = Event.query.first()
         g.competitions = Competition.query.all()
         g.competition_mode = CompetitionMode
