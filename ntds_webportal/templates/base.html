@@ -167,12 +167,21 @@ $(document).ready(function($) {
 
 
 {% macro react() %}
+{#
 {% if config.get('ENV') == g.data.DEBUG_ENV %}
 <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 {% else %}
 <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+{% endif %}
+#}
+{% if config.get('ENV') == g.data.DEBUG_ENV %}
+<script src="{{url_for('static', filename='react/react.development.js')}}"></script>
+<script src="{{url_for('static', filename='react/react-dom.development.js')}}"></script>
+{% else %}
+<script src="{{url_for('static', filename='react/react.production.js')}}"></script>
+<script src="{{url_for('static', filename='react/react-dom.production.js')}}"></script>
 {% endif %}
 <script src="{{url_for('static', filename='src/BuildTools.js')}}"></script>
 <script src="{{url_for('static', filename='src/Components.js')}}"></script>
