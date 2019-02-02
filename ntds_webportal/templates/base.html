@@ -180,8 +180,8 @@ $(document).ready(function($) {
 <script src="{{url_for('static', filename='react/react.development.js')}}"></script>
 <script src="{{url_for('static', filename='react/react-dom.development.js')}}"></script>
 {% else %}
-<script src="{{url_for('static', filename='react/react.production.js')}}"></script>
-<script src="{{url_for('static', filename='react/react-dom.production.js')}}"></script>
+<script src="{{url_for('static', filename='react/react.production.min.js')}}"></script>
+<script src="{{url_for('static', filename='react/react-dom.production.min.js')}}"></script>
 {% endif %}
 <script src="{{url_for('static', filename='src/BuildTools.js')}}"></script>
 <script src="{{url_for('static', filename='src/Components.js')}}"></script>
