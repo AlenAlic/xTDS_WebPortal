@@ -146,7 +146,10 @@ class User(UserMixin, Anonymous, db.Model):
         return self.access == ACCESS[DANCER]
 
     def is_super_volunteer(self):
-        return self.access == ACCESS[SUPER_VOLUNTEER]
+        return self.access == ACCESS[SUPER_VOLUNTEER] and self.team.name == TEAM_SUPER_VOLUNTEER
+
+    def is_team_organization(self):
+        return self.access == ACCESS[SUPER_VOLUNTEER] and self.team.name == TEAM_ORGANIZATION
 
     def is_tournament_office_manager(self):
         return self.access == ACCESS[TOURNAMENT_OFFICE_MANAGER]
@@ -1328,13 +1331,10 @@ class ShiftSlot(db.Model):
 
     def name(self):
         if self.user is not None:
-            if self.user.is_dancer():
-                if current_user.is_organizer():
-                    return f"{self.user} ({self.user.team})"
-                else:
-                    return f"{self.user}"
-            elif self.user.is_super_volunteer():
-                return f"{self.user} (Super Volunteer)"
+            if current_user.is_organizer():
+                return f"{self.user} ({self.user.team})"
+            else:
+                return f"{self.user}"
         return "-"
 
     def team_name(self):
