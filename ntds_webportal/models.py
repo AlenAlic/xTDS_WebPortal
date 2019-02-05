@@ -107,7 +107,7 @@ class User(UserMixin, Anonymous, db.Model):
     def __repr__(self):
         if self.is_dancer():
             return f'{self.dancer}'
-        if self.is_super_volunteer():
+        if self.is_super_volunteer() or self.is_team_organization():
             return f'{self.super_volunteer}'
         return f'{self.username}'
 

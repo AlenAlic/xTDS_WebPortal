@@ -259,6 +259,9 @@ def create_app():
     from ntds_webportal.adjudication_system.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/adjudication_system/api')
 
+    from ntds_webportal.app import bp as app_bp
+    app.register_blueprint(app_bp, url_prefix='/app')
+
     return app
 
 
