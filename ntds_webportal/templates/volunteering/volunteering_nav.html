@@ -7,4 +7,5 @@
     <a class="nav-item nav-link {% if request.path == '/volunteering/publish' %}active{% endif %}" href="{{url_for('volunteering.publish')}}">Publish <span class="badge badge-pill badge-dark">{{g.unpublished_shifts}}</span></a>
     <a class="nav-item nav-link {% if request.path == '/volunteering/team_hours' %}active{% endif %}" href="{{url_for('volunteering.team_hours')}}">Team hours</a>
     <a class="nav-item nav-link {% if request.path == '/volunteering/super_volunteers_overview' %}active{% endif %}" href="{{url_for('volunteering.super_volunteers_overview')}}">Super Volunteers overview</a>
+    <a class="nav-item nav-link {% if request.path == '/volunteering/organization_overview' %}active{% endif %}" href="{{url_for('volunteering.organization_overview')}}">Organization overview</a>
 </nav>

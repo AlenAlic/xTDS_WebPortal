@@ -468,6 +468,15 @@ def super_volunteers_overview():
     return render_template('volunteering/super_volunteers_overview.html', all_super_volunteers=all_super_volunteers)
 
 
+@bp.route('/organization_overview', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def organization_overview():
+    all_super_volunteers = SuperVolunteer.query.order_by(SuperVolunteer.first_name).all()
+    all_super_volunteers = [v for v in all_super_volunteers if v.user.team.name == TEAM_ORGANIZATION]
+    return render_template('volunteering/organization_overview.html', all_super_volunteers=all_super_volunteers)
+
+
 @bp.route('/user_volunteering_shifts', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[DANCER], ACCESS[SUPER_VOLUNTEER]])
