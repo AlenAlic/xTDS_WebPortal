@@ -379,8 +379,8 @@ def shift_slot(slot_id):
                     slot.team = current_user.team
                     if volunteer is not None:
                         test_shifts = Shift.query.join(ShiftSlot).filter(ShiftSlot.user == volunteer).all()
-                        test_shifts = [s for s in test_shifts if not (slot.shift.stop_time < s.start_time or
-                                                                      slot.shift.start_time > s.stop_time)]
+                        test_shifts = [s for s in test_shifts if not (slot.shift.stop_time <= s.start_time or
+                                                                      slot.shift.start_time >= s.stop_time)]
                         if len(test_shifts) > 0:
                             flash(Markup(f"Cannot add {volunteer} to {slot.shift}.<br/>{volunteer} is already assigned "
                                          f"to {test_shifts[0]}."), "alert-danger")
