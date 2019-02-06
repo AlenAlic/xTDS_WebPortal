@@ -7,7 +7,7 @@
 {% endif %}
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {% if current_user.is_organizer() is sameas true %}<fieldset disabled>{% endif %}
+    {% if current_user.is_organizer() and mode == 'view' %}<fieldset disabled>{% endif %}
     <h3>Personal information</h3>
     {{ reg_wtf.form_field(form.first_name, placeholder='First name') }}
     {{ reg_wtf.form_field(form.prefixes, placeholder='Prefix') }}
@@ -53,7 +53,7 @@
     {% if mode == 'register' %}
         {% include 'privacy/checkbox.html' %}
     {% endif %}
-    {% if current_user.is_organizer() is sameas true %}</fieldset>{% endif %}
+    {% if current_user.is_organizer() and mode == 'view' %}</fieldset>{% endif %}
     <div class="form-group row">
         <label class="control-label col-lg-2" ></label>
         <div class="input-group col-lg-10">
