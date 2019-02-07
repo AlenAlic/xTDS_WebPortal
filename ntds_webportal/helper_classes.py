@@ -124,7 +124,7 @@ class TeamFinancialOverview:
     def get_dancers(self, price_category, paid):
         prices = self.student_prices()
         dancers = [prices[dancer.contestant_info.student] for dancer in self.dancers if
-                   dancer.contestant_info.student == price_category and dancer.payment_info.all_paid() is paid]
+                   dancer.contestant_info.student == price_category and dancer.payment_info.entry_paid is paid]
         return dancers
 
     def get_students(self, paid):
