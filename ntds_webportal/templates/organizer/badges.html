@@ -11,6 +11,7 @@
             <th>Last name</th>
             <th>Team</th>
             <th>Number</th>
+            <th>Diet/Allergies</th>
         </tr>
     </thead>
     <tbody>
@@ -21,6 +22,7 @@
             <td>{{ super_volunteer.get_last_name() }}</td>
             <td>Super Volunteer</td>
             <td></td>
+            <td>{{ super_volunteer.organization_diet_notes }}</td>
         </tr>
         {% endfor %}
         {% for dancer in confirmed_dancers %}
@@ -30,6 +32,7 @@
             <td>{{ dancer.get_last_name() }}</td>
             <td>{{ dancer.contestant_info.team.city }}</td>
             <td>{{ dancer.contestant_info.number }}</td>
+            <td>{{ dancer.contestant_info.organization_diet_notes }}</td>
         </tr>
         {% endfor %}
         {% for dancer in remaining_dancers %}
@@ -39,6 +42,7 @@
             <td>{{ dancer.get_last_name() }}</td>
             <td>{{ dancer.contestant_info.team.city }}</td>
             <td>{{ dancer.contestant_info.number }}</td>
+            <td>{{ dancer.contestant_info.organization_diet_notes }}</td>
         </tr>
         {% endfor %}
     </tbody>
