@@ -90,9 +90,8 @@ def get_total_dancer_price_list(dancer):
     price = TeamFinancialOverview(current_user)
     prices = price.prices()
     price = prices[dancer.contestant_info.student] + prices[dancer.merchandise_info.t_shirt]
-    student_string = {STUDENT: 'Student', NON_STUDENT: 'Non-student', PHD_STUDENT: 'PhD-student'}
     description = f"{g.sc.tournament} {g.sc.city} {g.sc.year} - " \
-                  f"{student_string[dancer.contestant_info.student]} entry fee"
+                  f"{STUDENT_STRING[dancer.contestant_info.student]} entry fee"
     if dancer.merchandise_info.t_shirt != NO:
         description += " + t-shirt"
     if dancer.merchandise_info.mug:

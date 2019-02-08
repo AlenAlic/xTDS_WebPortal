@@ -13,6 +13,7 @@ body                        {font-family:"Trebuchet MS",Helvetica,sans-serif;}
 .title-box                  {font-size:1.5rem; font-weight:bold; border:2pt solid black; text-align:left; padding-left:0.5em !important;}
 .report tr td,              {font-size:large;}
 .separator                  {clear:both; width:100%; border-bottom:1pt solid black;}
+.grey-separator             {clear:both; width:100%; border-bottom:1pt solid lightgrey;}
 .top-row                    {font-weight:bold;}
 .first-col                  {padding-left:1em; padding-right:0.5em; text-align:left;}
 .heat-by-start-no-col, .heat-by-dance-col
@@ -36,7 +37,7 @@ body                        {font-family:"Trebuchet MS",Helvetica,sans-serif;}
     </thead>
     <tbody>
         {% for couple in dancing_round.couples|sort(attribute='number') %}
-        <tr>
+        <tr class="grey-separator">
             <td class="first-col">{{couple.number}}</td>
             {% for dance in dancing_round.dances %}
             <td class="heat-by-start-no-col"><b>{{dance_heat_list[dance.tag][couple.number]}}</b>{% if dancing_round.competition.is_change_per_dance() %}: {{dance_lead_follow_list[dance.tag][couple.number]}}{% endif %}</td>
@@ -60,7 +61,7 @@ body                        {font-family:"Trebuchet MS",Helvetica,sans-serif;}
     </thead>
     <tbody>
         {% for couple in dancing_round.couples|sort(attribute='follow.number') %}
-        <tr>
+        <tr class="grey-separator">
             <td class="first-col">{{couple.follow.number}}</td>
             {% for dance in dancing_round.dances %}
             <td class="heat-by-start-no-col"><b>{{dance_heat_list[dance.tag][couple.number]}}</b>{% if dancing_round.competition.is_change_per_dance() %}: {{dance_lead_follow_list[dance.tag][couple.follow.number]}}{% endif %}</td>

@@ -136,6 +136,7 @@ STUDENT_TEXT = {STUDENT: 'Student', NON_STUDENT: NO, PHD_STUDENT: 'PhD-student'}
 BAG = 'bag'
 MUG = 'mug'
 FIRST_TIME = 'first_time'
+STUDENT_STRING = {STUDENT: 'Student', NON_STUDENT: 'Non-student', PHD_STUDENT: 'PhD-student'}
 
 # Categories
 COMPETITION = 'competition'
