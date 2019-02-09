@@ -30,7 +30,7 @@ input[type=checkbox]:checked + label
 <nav class="mb-2">
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
         {% for dance in dancing_round.dances %}
-            {% if dancing_round.round_results|length == 0 %}<button id="dance-{{dance.dance_id}}" class="btn btn-sm btn-{% if dancing_round.is_dance_active(dance) %}danger{% else %}success{% endif %}" onclick="toggleDanceAPI(this)">{% if dancing_round.is_dance_active(dance) %}Disable{% else %}Enable{% endif %}</button>{% endif %}
+            {% if dancing_round.round_results|length == 0 %}<button data-id="{{dance.dance_id}}" id="dance-{{dance.dance_id}}" class="btn btn-sm btn-{% if dancing_round.is_dance_active(dance) %}danger{% else %}success{% endif %}" onclick="toggleDanceAPI(this)">{% if dancing_round.is_dance_active(dance) %}Disable{% else %}Enable{% endif %}</button>{% endif %}
             <a class="nav-item nav-link mr-5 {% if request.args.get('dance_id')|int == dance.dance_id|int %}active{% endif %}" href="{{url_for('adjudication_system.adjudication', round_id=dancing_round.round_id, dance_id=dance.dance_id)}}">{{dance}}</a>
         {% endfor %}
     </div>
@@ -107,7 +107,7 @@ toggleRoundAPI = () => {
     .catch(function(error) {console.log('Error: \n', error); });
 }
 toggleDanceAPI = btn => {
-    fetch("/adjudication_system/api/to/round/" + {{dancing_round.round_id}} + "/dance/" + btn.id, {method: "PATCH"})
+    fetch("/adjudication_system/api/to/round/" + {{dancing_round.round_id}} + "/dance/" + btn.dataset.id, {method: "PATCH"})
     .then(function(response) {return response.json();})
     .then(function(result) {location.reload(true);})
     .catch(function(error) {console.log('Error: \n', error); });
