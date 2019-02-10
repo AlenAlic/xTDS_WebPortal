@@ -138,3 +138,8 @@ def profile():
                                treasurer_active=treasurer.is_active, send_email_form=send_email_form)
     else:
         return render_template('profile.html', form=form, send_email_form=send_email_form)
+
+
+@bp.route('/request_test', methods=['GET'])
+def request_test():
+    return render_template('request_test.html')

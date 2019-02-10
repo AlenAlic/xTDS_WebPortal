@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+		<title>Request test</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body >
+		<div>
+			<h1>Request test</h1>
+			<button onClick="fetchTest()">Fetch</button>
+			<button onClick="axiosTest()">Axios</button>
+			<button onClick="ajaxTest()">Ajax</button>
+            <button onClick="location.reload()">Reload</button>
+		</div>
+		<h3>Fetch</h3>
+		<pre id="fetch"></pre>
+		<h3>Axios</h3>
+		<pre id="axios"></pre>
+		<h3>Ajax</h3>
+		<pre id="ajax"></pre>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script>
+			fetchTest = () => (
+				fetch("/adjudication_system/api/app/competition_list", {method: "GET"})
+				.then(response => response.json())
+				.then(result => {
+					console.log(result)
+					const output = document.getElementById('fetch');
+					output.innerHTML = JSON.stringify(result, undefined, 2);
+				})
+			)
+			axiosTest = () => (
+				axios.get("/adjudication_system/api/app/competition_list")
+				.then(function (response) {
+					console.log(response);
+					const output = document.getElementById('axios');
+					output.innerHTML = JSON.stringify(response.data, undefined, 2);
+				})
+				.catch(function (error) {
+					// handle error
+					console.log(error);
+				})
+				.then(function () {
+					// always executed
+				})
+			)
+			ajaxTest = () => (
+				$.get("/adjudication_system/api/app/competition_list", function(data, status){
+					console.log(data);
+					const output = document.getElementById('ajax');
+					output.innerHTML = JSON.stringify(data, undefined, 2);
+				})
+			)
+		</script>
+    </body>
+</html>
