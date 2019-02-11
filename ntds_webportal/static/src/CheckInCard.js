@@ -1,3 +1,5 @@
+"use strict";
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -6,11 +8,42 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var classNames = function classNames() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+    }
+
+    return args.join(' ');
+};
 var countCheckedIn = function countCheckedIn(obj) {
     return obj.status_info.checked_in;
 };
-var getFullName = function getFullName(obj) {
-    return obj.full_name;
+
+var Icon = function Icon(_ref) {
+    var _ref$variant = _ref.variant,
+        variant = _ref$variant === undefined ? "alert" : _ref$variant,
+        _ref$className = _ref.className,
+        className = _ref$className === undefined ? "mx-1" : _ref$className;
+
+    return React.createElement("img", { className: className, style: { width: "20px", height: "20px" }, src: "/static/octicons/" + variant + ".svg" });
+};
+var Button = function Button(_ref2) {
+    var _ref2$variant = _ref2.variant,
+        variant = _ref2$variant === undefined ? "primary" : _ref2$variant,
+        text = _ref2.text,
+        size = _ref2.size,
+        className = _ref2.className,
+        onClick = _ref2.onClick,
+        _ref2$type = _ref2.type,
+        type = _ref2$type === undefined ? "button" : _ref2$type;
+
+    var classPrefix = "btn";
+    var classes = classNames(className, classPrefix, classPrefix + "-" + variant, size && classPrefix + "-" + size);
+    return React.createElement(
+        "button",
+        { className: classes, onClick: onClick, type: type },
+        text
+    );
 };
 
 var CheckInCard = function (_React$Component) {

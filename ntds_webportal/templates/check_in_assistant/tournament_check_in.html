@@ -9,7 +9,7 @@
 <button id="collapse-all" type="button" class="btn btn-outline-primary" onclick="collapseAll()">Collapse all</button>
 <div style="height:20px;"></div>
 
-<div id="accordion" style="visibility:hidden">
+<div id="accordion" style="">
 {% for team in teams %}<div id="render-team-{{team['team_id']}}"></div>{% endfor%}
 </div>
 
@@ -24,7 +24,6 @@
     {% for team in teams %}
     ReactDOM.render(e(CheckInCard, {start_dancers:{{team["dancers"] | tojson}},  team_id:'{{team["team_id"]}}',  teamName:'{{team["name"]}}'}), document.getElementById('render-team-{{team["team_id"]}}'));
     {% endfor %}
-    var accordion = document.getElementById('accordion').style.visibility = "visible";
 </script>
 <script>
 function collapseAll() {

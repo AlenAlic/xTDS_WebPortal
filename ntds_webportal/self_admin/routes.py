@@ -281,9 +281,11 @@ def system_configuration():
             g.sc.merchandise_link = form.merchandise_link.data
             if not str2bool(form.t_shirt_sold.data) and not str2bool(form.mug_sold.data) and \
                     not str2bool(form.bag_sold.data):
-                g.sc.merchandise_closing_date = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
+                g.sc.merchandise_closing_date = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)\
+                    .timestamp()
             else:
-                mcd = datetime.datetime(form.merchandise_closing_date.data.year, form.merchandise_closing_date.data.month,
+                mcd = datetime.datetime(form.merchandise_closing_date.data.year,
+                                        form.merchandise_closing_date.data.month,
                                         form.merchandise_closing_date.data.day, 3, 0, 0, 0)
                 mcd += datetime.timedelta(days=1)
                 g.sc.merchandise_closing_date = mcd.replace(tzinfo=datetime.timezone.utc).timestamp()
