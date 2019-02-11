@@ -69,6 +69,17 @@ def contestants_payment_info_all_paid(contestant_id):
     return jsonify(dancer.to_dict())
 
 
+@bp.route('/contestants/<int:contestant_id>/payment_info/entry_paid', methods=["PATCH"])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+def contestants_payment_info_entry_paid(contestant_id):
+    dancer = Contestant.query.get_or_404(contestant_id)
+    if request.method == "PATCH":
+        dancer.payment_info.entry_paid = not dancer.payment_info.entry_paid
+        db.session.commit()
+    return jsonify(dancer.to_dict())
+
+
 @bp.route('/contestants/<int:contestant_id>/payment_info/merchandise_paid', methods=["PATCH"])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])

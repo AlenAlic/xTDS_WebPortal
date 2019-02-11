@@ -1,4 +1,4 @@
-from flask import render_template, g, request, flash, redirect, url_for
+from flask import render_template, g, request, flash, redirect, url_for, jsonify
 from flask_login import login_required
 from ntds_webportal import db
 from ntds_webportal.check_in_assistant import bp
@@ -6,7 +6,6 @@ from ntds_webportal.models import requires_access_level, requires_tournament_sta
     StatusInfo, User
 from ntds_webportal.data import *
 from ntds_webportal.functions import active_teams
-from ntds_webportal.api.teams import team_confirmed_dancers
 from ntds_webportal.helper_classes import TeamFinancialOverview
 
 
@@ -16,9 +15,15 @@ from ntds_webportal.helper_classes import TeamFinancialOverview
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def tournament_check_in():
     teams = active_teams()
-    teams = [{'team_id': team.team_id, 'name': team.name,
-              'dancers': team_confirmed_dancers(team.team_id).json} for team in teams]
     return render_template('check_in_assistant/tournament_check_in.html', teams=teams)
+
+
+@bp.route('/check_in_teams', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[CHECK_IN_ASSISTANT]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def check_in_teams():
+    return jsonify([{'team_id': team.team_id, 'name': team.name} for team in active_teams()])
 
 
 @bp.route('/finances_overview', methods=['GET', 'POST'])
