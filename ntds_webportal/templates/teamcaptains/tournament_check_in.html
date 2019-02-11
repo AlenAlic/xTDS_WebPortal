@@ -4,7 +4,8 @@
 <h2>Dancers that have checked in at the tournament desk <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ checked_in_dancers|length }}/{{ confirmed_dancers|length }}</span></h2>
 <table class="table table-sm mb-5">
     <colgroup>
-        <col span="1" style="width: 40%"/>
+        <col span="1" style="width: 25%"/>
+        <col span="1" style="width: 15%"/>
         <col span="1" style="width: 15%"/>
         <col span="1" style="width: 15%"/>
         <col span="1" style="width: 15%"/>
@@ -13,7 +14,8 @@
     <thead>
         <tr>
             <th>Dancer</th>
-            <th>Paid</th>
+            <th>Paid entry fee</th>
+            <th>Paid merchandise</th>
             <th>Received merchandise</th>
             <th>Received starting number</th>
             <th>Checked in</th>
@@ -21,12 +23,19 @@
     </thead>
     <tbody>
     {% for dancer in confirmed_dancers %}
-        <tr class="{% if dancer.status_info.checked_in == true %}table-success{% endif %}">
+        <tr class="{% if dancer.status_info.checked_in %}table-success{% endif %}">
             <td>{{ dancer['full_name'] }}</td>
             <td>
-                {% with flag=dancer['payment_info']['all_paid'] %}
+                {% with flag=dancer['payment_info']['entry_paid'] %}
                     {% include 'components/true_false_icon.html' %}
                 {% endwith %}
+            </td>
+            <td>
+                {% if dancer['merchandise_info']['ordered_merchandise'] %}
+                    {% with flag=dancer['payment_info']['merchandise_paid'] %}
+                        {% include 'components/true_false_icon.html' %}
+                    {% endwith %}
+                {% endif %}
             </td>
             <td>
                 {% if dancer['merchandise_info']['ordered_merchandise'] %}
