@@ -349,6 +349,10 @@ class EditContestantForm(BaseContestantForm):
             self.student.data = dancer.contestant_info.student
         super().custom_validate()
         self.full_name.data = dancer.get_full_name()
+        if datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp() > g.sc.merchandise_closing_date:
+            self.t_shirt.data = dancer.merchandise_info.t_shirt
+            self.mug.data = str(dancer.merchandise_info.mug)
+            self.bag.data = str(dancer.merchandise_info.bag)
     
     def populate(self, dancer):
         super().populate(dancer)
