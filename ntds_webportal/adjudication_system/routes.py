@@ -441,7 +441,7 @@ def delete_adjudicator(adjudicator_id):
 @requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER], ACCESS[ADJUDICATOR_ASSISTANT]])
 def adjudicator_assignments():
     if g.event is not None:
-        all_adjudicators = Adjudicator.query.all()
+        all_adjudicators = Adjudicator.query.order_by(Adjudicator.name).all()
         if request.method == "POST":
             form = request.form
             if 'save_assignments' in form:
