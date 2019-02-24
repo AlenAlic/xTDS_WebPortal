@@ -21,7 +21,23 @@ input[type=checkbox]:checked + label
 {% if dancing_round.round_results|length == 0 %}
 <div class="mt-4 mb-3">
 <form style="display:inline" method="POST" enctype="multipart/form-data" novalidate>
-    <button class="btn btn-primary mr-5" name="evaluate">Close & evaluate round</button>
+    <button class="btn btn-primary mr-5" type="button" data-toggle="modal" data-target="#close-and-evaluate">Close & evaluate round</button>
+    <div align="left" class="modal fade" id="close-and-evaluate" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you wish to close and evaluate the round?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary mr-5" name="evaluate">Yes, close & evaluate</button>
+                    <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, not yet</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <button class="btn btn-outline-primary mr-5" name="refresh">Refresh</button>
 </form>
 <button id="toggle-round" class="btn btn-{% if dancing_round.is_active %}danger{% else %}success{% endif %}" onclick="toggleRoundAPI()">{% if dancing_round.is_active %}Close round & disable all dances{% else %}Open round & enable all dances{% endif %}</button>
