@@ -223,7 +223,7 @@ th.adjudicator-cell, td.adjudicator-cell
                     </tr>
                     {% endfor %}
                 {% else %}
-                    {% for couple in dancing_round.couples %}
+                    {% for couple in dancing_round.couples|sort(attribute='number') %}
                     <tr>
                         <td class="first-col">{{couple.number}}</td>
                         <td>{{couple.lead}}</td>
