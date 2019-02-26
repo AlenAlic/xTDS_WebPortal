@@ -1137,3 +1137,19 @@ def floor_manager():
                                 dance_id=dancing_round.first_dance().dance_id))
     dance = Dance.query.get(dance_id)
     return render_template('adjudication_system/floor_manager.html', dancing_round=dancing_round, dance=dance)
+
+
+@bp.route('/results', methods=['GET'])
+@login_required
+def results():
+    competitions = Competition.query.order_by(Competition.when).all()
+    competitions = [c for c in competitions if c.results_published and len(c.qualifications) == 0
+                    and c.dancing_class.name != TEST]
+    competition_id = request.args.get('competition', 0, int)
+    if competition_id in [c.competition_id for c in competitions]:
+        comp = Competition.query.get(competition_id)
+        return render_template('adjudication_system/competition_results.html', comp=comp)
+    else:
+        if competition_id > 0:
+            flash('Competition not found.')
+        return render_template('adjudication_system/results.html', competitions=competitions)

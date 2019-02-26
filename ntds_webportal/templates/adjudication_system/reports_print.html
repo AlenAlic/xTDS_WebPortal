@@ -18,51 +18,11 @@ onload="window.print()"
 </tr>
 {% endmacro %}
 
-{% block styles %}
-{{ super() }}
-<style>
-body                        {font-family:"Trebuchet MS",Helvetica,sans-serif;}
-@page                       {size:210mm 297mm; margin:20mm 10mm 10mm 10mm;}
-.report                     {page-break-after:always; page-break-before:always; width:100%; border:none; border-collapse:collapse; margin-top:1em;}
-.report tr td               {page-break-inside:avoid;}
-.title-box                  {font-size:1.75rem; font-weight:bold; border:2pt solid black; text-align:left; padding-left:0.5em !important;}
-.report tr td,              {font-size:large;}
-.separator                  {clear:both; width:100%; border-bottom:1pt solid black;}
-.top-row                    {font-weight:bold;}
-.first-col                  {padding-left:1em; padding-right:1em; text-align:left;}
-.heat-by-start-no-col, .heat-by-dance-col
-                            {padding-left:1em; padding-right:1em; text-align:left;}
-.dancer-col, .couple-col    {text-align:left; display:inline-block;}
-.dancer-col                 {width:3em;}
-.couple-col                 {width:5em;}
-.heat-number-heat-by-dance  {vertical-align:top;}
-.heat-by-dance-row td       {padding-bottom:0.75rem;}
-.result-cell, .result-cell-first
-                            {border:1px solid grey;}
-.result-cell                {text-align:center;}
-.previous-result td         {color:#A4A4A4}
-
-.adj-table-container    {display: inline-flex;}
-.adj-table              {border-collapse:separate; border-spacing:.1em;}
-.adj-cell-number, .adj-cell-mark
-                        {border: 2px solid black; width:2.5rem; height:2.5rem; text-align:center; line-height:0.8rem;}
-.adj-cell-number        {font-size:large;}
-.adj-cell-mark          {font-size:1.5rem;}
-
-th.adjudicator-cell, td.adjudicator-cell
-                    {border: 2px solid black;}
-.adjudicator-cell   {width: 48px; height: 48px;}
-
-.result-table               {table-layout:fixed; width:100%;}
-.ranking-report tr td       {text-align:center; font-size:small;}
-.ranking-report td          {border:1pt solid black;}
-.ranking-report .title-box  {border:2pt solid black;}
-.avoid-break                {page-break-inside:avoid !important;}
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="container">
+<div class="table-container">
+    {% with dancing_round = dancing_round %}
+        {% include "adjudication_system/_report_styling.html" %}
+    {% endwith %}
 
     {% if not form.something_to_print() %}
         <p>Nothing has been selected to print.</p>
@@ -255,6 +215,80 @@ th.adjudicator-cell, td.adjudicator-cell
             </thead>
             <tbody>
                 {% for couple in dancing_round.couples|sort(attribute='follow.number') %}
+                <tr>
+                    <td class="first-col">{{couple.follow.number}}</td>
+                    <td></td>
+                    <td>{{couple.follow}}</td>
+                    <td>{{couple.follow.team}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if form.no_re_dance.data %}
+        {% for i in range(form.no_re_dance_copies.data) %}
+        <table class="report" id="no-re-dance">
+            <colgroup>
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 25%;">
+                <col span="1" style="width: 25%;">
+                <col span="1" style="width: 40%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <td class="title-box first-col" colspan="4">{{dancing_round}} <br/>No re-dance</td>
+                </tr>
+                <tr class="top-row separator">
+                    <td class="first-col">#</td>
+                    <td>Lead</td>
+                    <td>Follow</td>
+                    <td>Team{% if not dancing_round.competition.is_change_per_dance() %}(s){% endif %}</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for couple in dancing_round.no_re_dance_couples()|sort(attribute='number') %}
+                    {% if dancing_round.competition.is_change_per_dance() %}
+                    <tr>
+                        <td class="first-col">{{couple.lead.number}}</td>
+                        <td>{{couple.lead}}</td>
+                        <td></td>
+                        <td>{{couple.lead.team}}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td class="first-col">{{couple.number}}</td>
+                        <td>{{couple.lead}}</td>
+                        <td>{{couple.follow}}</td>
+                        <td>{{couple.teams()}}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if dancing_round.competition.is_change_per_dance() %}
+        <table class="report" id="no-re-dance-follows">
+            <colgroup>
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 25%;">
+                <col span="1" style="width: 25%;">
+                <col span="1" style="width: 40%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <td class="title-box first-col" colspan="4">{{dancing_round}} <br/>No re-dancec</td>
+                </tr>
+                <tr class="top-row separator">
+                    <td class="first-col">#</td>
+                    <td>Lead</td>
+                    <td>Follow</td>
+                    <td>Team</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for couple in dancing_round.no_re_dance_couples()|sort(attribute='follow.number') %}
                 <tr>
                     <td class="first-col">{{couple.follow.number}}</td>
                     <td></td>
@@ -497,28 +531,9 @@ th.adjudicator-cell, td.adjudicator-cell
 
     {% if form.final_evaluation.data %}
         {% for i in range(form.final_evaluation_copies.data) %}
-            <table class="report mb-3" id="final-evaluation" style="page-break-after:avoid;">
-            <thead>
-                <tr>
-                    <td class="title-box">{{dancing_round}}{% if dancing_round.competition.is_change_per_dance() %} - Leads{% endif %}</td>
-                </tr>
-            </thead>
-            </table>
             {% with dancing_round = dancing_round %}
-                {% include "adjudication_system/_final_evaluation.html" %}
+                {% include "adjudication_system/_report_final_evaluation.html" %}
             {% endwith %}
-            {% if dancing_round.competition.is_change_per_dance() %}
-                <table class="report mb-3" id="final-evaluation-follows" style="page-break-after:avoid;">
-                <thead>
-                    <tr>
-                        <td class="title-box">{{dancing_round}} - Follows</td>
-                    </tr>
-                </thead>
-                </table>
-                {% with dancing_round = dancing_round, follows = true %}
-                    {% include "adjudication_system/_final_evaluation.html" %}
-                {% endwith %}
-            {% endif %}
         {% endfor %}
     {% endif %}
 
@@ -664,119 +679,18 @@ th.adjudicator-cell, td.adjudicator-cell
     {% endif %}
 
     {% if form.ranking_report.data %}
-        {% set ranking_report = dancing_round.ranking_report() %}
-        {% if dancing_round.competition.is_change_per_dance() %}
-        {% set ranking_report_follow = dancing_round.ranking_report(true) %}
-        {% endif %}
         {% for i in range(form.tournament_result_copies.data) %}
-            <table class="ranking-report table-bordered report" style="page-break-before:always;">
-                <tbody>
-                    <tr>
-                        <th class="title-box" colspan="{{3 + (dancing_round.competition.adjudicators|length + 1)*dancing_round.dances|length + 2}}">{{dancing_round.competition}}<br/>Ranking results{% if dancing_round.competition.is_change_per_dance() %} - Leads{% endif %}</th>
-                    </tr>
-                    <tr class="top-row">
-                        <td rowspan="2">Rank</td>
-                        <td rowspan="2">Couple<br/>Team(s)</td>
-                        <td rowspan="2">No.</td>
-                        <td rowspan="2">R</td>
-                        {% for dance in dancing_round.dances %}
-                        <td colspan="{{dancing_round.competition.adjudicators|length + 1}}">{{dance.name}}</td>
-                        {% endfor %}
-                        <td rowspan="2">Total</td>
-                    </tr>
-                    <tr class="top-row" style="font-size:xx-small;">
-                        {% for dance in dancing_round.dances %}
-                            {% for adj in dancing_round.competition.adjudicators %}
-                            <td>{{adj.tag}}</td>
-                            {% endfor %}
-                            <td>Su</td>
-                        {% endfor %}
-                    </tr>
-                    {% for k, v in ranking_report.placings.items() %}
-                    {% for r in ranking_report.results[v.couple] %}
-                    <tr>
-                        {% if loop.index == 1 %}
-                        <td rowspan="{{ranking_report.results[v.couple]|length}}">{{v.placing}}</td>
-                        {% if dancing_round.competition.is_change_per_dance() %}
-                        <td rowspan="{{ranking_report.results[v.couple]|length}}">{{ranking_report.reference_couples[v.number].lead}}<br/><i>{{ranking_report.reference_couples[v.number].lead.team}}</i></td>
-                        {% else %}
-                        <td rowspan="{{ranking_report.results[v.couple]|length}}">{{ranking_report.reference_couples[v.number].lead}} - {{ranking_report.reference_couples[v.number].follow}}<br/><i>{{ranking_report.reference_couples[v.number].teams()}}</i></td>
-                        {% endif %}
-                        <td rowspan="{{ranking_report.results[v.couple]|length}}">{{v.number}}</td>
-                        {% endif %}
-                        <td>{{ranking_report.round_count[r]}}</td>
-                        {% for dance in dancing_round.dances %}
-                            {% if dance in ranking_report.results[v.couple][r] %}
-                                {% for adj in r.competition.adjudicators %}
-                                <td>{{ranking_report.results[v.couple][r][dance][adj]}}</td>
-                                {% endfor %}
-                                <td>{{ranking_report.results[v.couple][r][dance]['Sum']}}</td>
-                            {% else %}
-                                {% for adj in r.competition.adjudicators %}
-                                <td>-</td>
-                                {% endfor %}
-                                <td>-</td>
-                            {% endif %}
-                        {% endfor %}
-                        <td>{{ranking_report.results[v.couple][r]['Total']}}</td>
-                    </tr>
-                    {% endfor %}
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% if dancing_round.competition.is_change_per_dance() %}
-            <table class="ranking-report table-bordered report" style="page-break-before:always;">
-                <tbody>
-                    <tr>
-                        <th class="title-box" colspan="{{3 + (dancing_round.competition.adjudicators|length + 1)*dancing_round.dances|length + 2}}">{{dancing_round.competition}}<br/>Ranking results - Follows</th>
-                    </tr>
-                    <tr class="top-row">
-                        <td rowspan="2">Rank</td>
-                        <td rowspan="2">Couple<br/>Team(s)</td>
-                        <td rowspan="2">No.</td>
-                        <td rowspan="2">R</td>
-                        {% for dance in dancing_round.dances %}
-                        <td colspan="{{dancing_round.competition.adjudicators|length + 1}}">{{dance.name}}</td>
-                        {% endfor %}
-                        <td rowspan="2">Total</td>
-                    </tr>
-                    <tr class="top-row" style="font-size:xx-small;">
-                        {% for dance in dancing_round.dances %}
-                            {% for adj in dancing_round.competition.adjudicators %}
-                            <td>{{adj.tag}}</td>
-                            {% endfor %}
-                            <td>Su</td>
-                        {% endfor %}
-                    </tr>
-                    {% for k, v in ranking_report_follow.placings.items() %}
-                    {% for r in ranking_report_follow.results[v.couple] %}
-                    <tr>
-                        {% if loop.index == 1 %}
-                        <td rowspan="{{ranking_report_follow.results[v.couple]|length}}">{{v.placing}}</td>
-                        <td rowspan="{{ranking_report_follow.results[v.couple]|length}}">{{ranking_report_follow.reference_couples[v.number].follow}}<br/><i>{{ranking_report_follow.reference_couples[v.number].follow.team}}</i></td>
-                        <td rowspan="{{ranking_report_follow.results[v.couple]|length}}">{{v.number}}</td>
-                        {% endif %}
-                        <td>{{ranking_report_follow.round_count[r]}}</td>
-                        {% for dance in dancing_round.dances %}
-                            {% if dance in ranking_report_follow.results[v.couple][r] %}
-                                {% for adj in r.competition.adjudicators %}
-                                <td>{{ranking_report_follow.results[v.couple][r][dance][adj]}}</td>
-                                {% endfor %}
-                                <td>{{ranking_report_follow.results[v.couple][r][dance]['Sum']}}</td>
-                            {% else %}
-                                {% for adj in r.competition.adjudicators %}
-                                <td>-</td>
-                                {% endfor %}
-                                <td>-</td>
-                            {% endif %}
-                        {% endfor %}
-                        <td>{{ranking_report_follow.results[v.couple][r]['Total']}}</td>
-                    </tr>
-                    {% endfor %}
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
+            {% with dancing_round = dancing_round %}
+                {% include "adjudication_system/_report_ranking_report.html" %}
+            {% endwith %}
+        {% endfor %}
+    {% endif %}
+
+    {% if form.adjudicators.data %}
+        {% for i in range(form.adjudicators_copies.data) %}
+            {% with dancing_round = dancing_round %}
+                {% include "adjudication_system/_report_adjudicators.html" %}
+            {% endwith %}
         {% endfor %}
     {% endif %}
 

@@ -1489,6 +1489,7 @@ class Competition(db.Model):
     when = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now())
     rounds = db.relationship("Round", back_populates="competition", cascade='all, delete, delete-orphan')
     mode = db.Column(db.Enum(CompetitionMode))
+    results_published = db.Column(db.Boolean, nullable=False, default=False)
     couples = db.relationship("Couple", secondary=competition_couple_table, back_populates="competitions")
     leads = db.relationship("Dancer", secondary=competition_lead_table, back_populates="competitions_lead")
     follows = db.relationship("Dancer", secondary=competition_follow_table, back_populates="competitions_follow")
@@ -2297,6 +2298,11 @@ class Round(db.Model):
                 if True not in marks:
                     errors_list.append(f"{adjudicator} has zero marks in {dance}. This is probably an error.")
         return errors_list
+
+    def no_re_dance_couples(self):
+        previous_round = self.previous_round()
+        if previous_round is not None:
+            return [result.couple for result in self.round_results if result.marks == -1]
 
 
 class DanceActive(db.Model):

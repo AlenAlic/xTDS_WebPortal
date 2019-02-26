@@ -330,6 +330,8 @@ class PrintReportsForm(FlaskForm):
     heats_by_dance_copies = IntegerField('', default=1, render_kw=COPIES_RENDER)
     qualified_starts = BooleanField('Qualified starts')
     qualified_starts_copies = IntegerField('', default=1, render_kw=COPIES_RENDER)
+    no_re_dance = BooleanField('No re-dance couples')
+    no_re_dance_copies = IntegerField('', default=1, render_kw=COPIES_RENDER)
     adjudication_sheets = BooleanField('Adjudication sheets')
     adjudication_sheets_copies = IntegerField('', default=1, render_kw=COPIES_RENDER)
     placings_after_round = BooleanField('Placings after round')
@@ -340,10 +342,13 @@ class PrintReportsForm(FlaskForm):
     tournament_result_copies = IntegerField('', default=1, render_kw=COPIES_RENDER)
     ranking_report = BooleanField('Ranking report')
     ranking_report_copies = IntegerField('', default=1, render_kw=COPIES_RENDER)
+    adjudicators = BooleanField('Adjudicators')
+    adjudicators_copies = IntegerField('', default=1, render_kw=COPIES_RENDER)
     print_submit = SubmitField('Print')
     show_submit = SubmitField('Show')
 
     def something_to_print(self):
         return self.heats_by_number.data or self.heats_by_dance.data or self.qualified_starts.data \
-               or self.adjudication_sheets.data or self.placings_after_round.data or self.final_evaluation.data \
-               or self.tournament_result.data or self.ranking_report.data
+               or self.no_re_dance.data or self.adjudication_sheets.data or self.placings_after_round.data \
+               or self.final_evaluation.data or self.tournament_result.data or self.ranking_report.data \
+               or self.adjudicators.data

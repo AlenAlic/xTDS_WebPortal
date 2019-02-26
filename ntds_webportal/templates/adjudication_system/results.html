@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+<nav class="navbar sticky-top navbar-expand-md navbar-light bg-light no-print navbar-default">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
+    </div>
+</nav>
+{% endblock %}
+
+{% block app_content %}
+{% if competitions|length == 0 %}
+<h2>There are no results published yet</h2>
+{% endif %}
+{% for competition in competitions %}
+<a class="btn btn-primary d-block my-2" href="{{ url_for('adjudication_system.results', competition=competition.competition_id) }}">{{competition}}</a>
+{% endfor %}
+{% endblock %}

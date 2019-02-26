@@ -1,0 +1,19 @@
+<table class="report" id="qualified-starts">
+<colgroup>
+    <col span="1" style="width: 20%;">
+    <col span="1" style="width: 80%;">
+</colgroup>
+<thead>
+    <tr>
+        <td class="title-box first-col" colspan="4">{{dancing_round}} <br/>Adjudicators</td>
+    </tr>
+</thead>
+<tbody>
+    {% for adjudicator in dancing_round.competition.adjudicators|sort(attribute='name') %}
+    <tr>
+        <td>{{adjudicator.tag}}</td>
+        <td>{{adjudicator.name}}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>

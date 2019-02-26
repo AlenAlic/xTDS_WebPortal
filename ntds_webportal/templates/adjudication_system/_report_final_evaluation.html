@@ -1,0 +1,22 @@
+<table class="report mb-3" id="final-evaluation" style="page-break-after:avoid;">
+<thead>
+    <tr>
+        <td class="title-box">{{dancing_round}}{% if dancing_round.competition.is_change_per_dance() %} - Leads{% endif %}</td>
+    </tr>
+</thead>
+</table>
+{% with dancing_round = dancing_round %}
+    {% include "adjudication_system/_final_evaluation.html" %}
+{% endwith %}
+{% if dancing_round.competition.is_change_per_dance() %}
+    <table class="report mb-3" id="final-evaluation-follows" style="page-break-after:avoid;">
+    <thead>
+        <tr>
+            <td class="title-box">{{dancing_round}} - Follows</td>
+        </tr>
+    </thead>
+    </table>
+    {% with dancing_round = dancing_round, follows = true %}
+        {% include "adjudication_system/_final_evaluation.html" %}
+    {% endwith %}
+{% endif %}

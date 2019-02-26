@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+<nav class="navbar sticky-top navbar-expand-md navbar-light bg-light no-print navbar-default">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('adjudication_system.results') }}">Results</a>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+{% include "adjudication_system/_report_styling.html" %}
+
+<div class="table-container mb-5">
+{% with dancing_round = comp.rounds[-1] %}
+    {% include "adjudication_system/_report_adjudicators.html" %}
+{% endwith %}
+
+{% for dancing_round in comp.rounds|sort(attribute='round_id', reverse=true) %}
+{% if dancing_round.is_final() %}
+{% with dancing_round = dancing_round %}
+    {% include "adjudication_system/_report_final_evaluation.html" %}
+{% endwith %}
+{% endif %}
+{% endfor %}
+
+{% with dancing_round = comp.rounds[-1] %}
+    {% include "adjudication_system/_report_ranking_report.html" %}
+{% endwith %}
+</div>
+{% endblock %}
