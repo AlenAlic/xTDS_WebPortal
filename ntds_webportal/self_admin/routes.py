@@ -534,3 +534,10 @@ def test_populate():
     if len(form) > 0:
         return redirect(url_for('self_admin.test_populate'))
     return render_template('admin/test_populate.html')
+
+
+# @bp.route('/dashboard', methods=['GET', 'POST'])
+# @login_required
+# @requires_access_level([ACCESS[ADMIN]])
+# def dashboard():
+#     return render_template('admin/dashboard.html')
