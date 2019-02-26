@@ -1140,7 +1140,6 @@ def floor_manager():
 
 
 @bp.route('/results', methods=['GET'])
-@login_required
 def results():
     competitions = Competition.query.order_by(Competition.when).all()
     competitions = [c for c in competitions if c.results_published and len(c.qualifications) == 0
