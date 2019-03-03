@@ -1142,8 +1142,7 @@ def floor_manager():
 @bp.route('/results', methods=['GET'])
 def results():
     competitions = Competition.query.order_by(Competition.when).all()
-    competitions = [c for c in competitions if c.results_published and len(c.qualifications) == 0
-                    and c.dancing_class.name != TEST]
+    competitions = [c for c in competitions if c.results_published and c.dancing_class.name != TEST]
     competition_id = request.args.get('competition', 0, int)
     if competition_id in [c.competition_id for c in competitions]:
         comp = Competition.query.get(competition_id)
