@@ -1937,44 +1937,44 @@ class Round(db.Model):
         return len(self.competition.adjudicators) > 0
 
     def first_dance(self):
-        dances = [d for d in self.dances if d.name in DANCE_ORDER[self.competition.discipline.name]]
         try:
+            dances = [d for d in self.dances if d.name in DANCE_ORDER[self.competition.discipline.name]]
             dances.sort(key=lambda x: DANCE_ORDER[self.competition.discipline.name][x.name])
             return dances[0]
         except KeyError:
-            return None
+            return self.dances[0]
         except IndexError:
-            return None
+            return self.dances[0]
 
     def previous_dance(self, dance):
-        dances = [d for d in self.dances if d.dance_id < dance.dance_id]
         try:
+            dances = [d for d in self.dances if d.dance_id < dance.dance_id]
             dances.sort(key=lambda x: DANCE_ORDER[self.competition.discipline.name][x.name])
             return dances[-1]
         except KeyError:
-            return None
+            return self.dances[0]
         except IndexError:
-            return None
+            return self.dances[0]
 
     def next_dance(self, dance):
-        dances = [d for d in self.dances if d.dance_id > dance.dance_id]
         try:
+            dances = [d for d in self.dances if d.dance_id > dance.dance_id]
             dances.sort(key=lambda x: DANCE_ORDER[self.competition.discipline.name][x.name])
             return dances[0]
         except KeyError:
-            return None
+            return self.dances[0]
         except IndexError:
-            return None
+            return self.dances[0]
 
     def last_dance(self):
-        dances = [d for d in self.dances]
         try:
+            dances = [d for d in self.dances]
             dances.sort(key=lambda x: DANCE_ORDER[self.competition.discipline.name][x.name])
             return dances[-1]
         except KeyError:
-            return None
+            return self.dances[0]
         except IndexError:
-            return None
+            return self.dances[0]
 
     def has_dance(self, dance_id):
         return dance_id in [d.dance_id for d in self.dances]
