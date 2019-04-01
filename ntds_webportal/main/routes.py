@@ -73,7 +73,7 @@ def dashboard():
     if current_user.is_organizer():
         finalize_merchandise = int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) > \
                 g.sc.merchandise_closing_date and not g.ts.merchandise_finalized
-        if finalize_merchandise:
+        if finalize_merchandise and g.ts.system_configured:
             flash("Please check the merchandise tab. The last date for ordering merchandise has passed.")
         return render_template('dashboard.html', finalize_merchandise=finalize_merchandise)
     if current_user.is_bda():

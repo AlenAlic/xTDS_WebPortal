@@ -714,7 +714,10 @@ def competition():
                 da.dance = dance
                 r.dance_active.append(da)
             r.couples = comp.generate_couples()
-            r.create_heats(round_form.heats.data)
+            if round_form.type.data == RoundType.final.name:
+                r.create_final()
+            else:
+                r.create_heats(round_form.heats.data)
             db.session.commit()
             flash(f"Created {r.type.value} for {comp}.", "alert-success")
             return redirect(url_for("adjudication_system.progress", round_id=r.round_id))
@@ -1137,6 +1140,27 @@ def floor_manager():
                                 dance_id=dancing_round.first_dance().dance_id))
     dance = Dance.query.get(dance_id)
     return render_template('adjudication_system/floor_manager.html', dancing_round=dancing_round, dance=dance)
+
+
+@bp.route('/starting_lists', methods=['GET'])
+def starting_lists():
+    competitions = Competition.query.all()
+    competitions = {c: [] for c in competitions if len(c.rounds) > 0}
+    for c in competitions:
+        if c.is_single_partner():
+            competitions[c] = [couple for couple in c.couples]
+        else:
+            competitions[c] = [lead for lead in c.leads].extend([follow for follow in c.follows])
+    competitions = {c: competitions[c] for c in competitions if c.dancing_class.name != TEST
+                    and len(competitions[c]) != 0}
+    competition_id = request.args.get('competition', 0, int)
+    if competition_id in [c.competition_id for c in competitions]:
+        comp = Competition.query.get(competition_id)
+        return render_template('adjudication_system/competition_starting_lists.html', comp=comp)
+    else:
+        if competition_id > 0:
+            flash('Competition not found.')
+        return render_template('adjudication_system/starting_lists.html', competitions=competitions)
 
 
 @bp.route('/results', methods=['GET'])

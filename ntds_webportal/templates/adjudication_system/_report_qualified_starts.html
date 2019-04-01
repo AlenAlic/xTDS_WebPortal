@@ -1,0 +1,71 @@
+<table class="report" id="qualified-starts">
+<colgroup>
+    <col span="1" style="width: 10%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 40%;">
+</colgroup>
+<thead>
+    <tr>
+        <td class="title-box first-col" colspan="4">{{dancing_round}} <br/>Qualified starts</td>
+    </tr>
+    <tr class="top-row separator">
+        <td class="first-col">#</td>
+        <td>Lead</td>
+        <td>Follow</td>
+        <td>Team{% if not dancing_round.competition.is_change_per_dance() %}(s){% endif %}</td>
+    </tr>
+</thead>
+<tbody>
+    {% if dancing_round.competition.is_change_per_dance() %}
+        {% for couple in dancing_round.couples|sort(attribute='number') %}
+        <tr>
+            <td class="first-col">{{couple.lead.number}}</td>
+            <td>{{couple.lead}}</td>
+            <td></td>
+            <td>{{couple.lead.team}}</td>
+        </tr>
+        {% endfor %}
+    {% else %}
+        {% for couple in dancing_round.couples %}
+        <tr>
+            <td class="first-col">{{couple.number}}</td>
+            <td>{{couple.lead}}</td>
+            <td>{{couple.follow}}</td>
+            <td>{{couple.teams()}}</td>
+        </tr>
+        {% endfor %}
+    {% endif %}
+</tbody>
+</table>
+{% if dancing_round.competition.is_change_per_dance() %}
+<table class="report" id="qualified-starts-follows">
+<colgroup>
+    <col span="1" style="width: 10%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 40%;">
+</colgroup>
+<thead>
+    <tr>
+        <td class="title-box first-col" colspan="4">{{dancing_round}} <br/>Qualified starts</td>
+    </tr>
+    <tr class="top-row separator">
+        <td class="first-col">#</td>
+        <td>Lead</td>
+        <td>Follow</td>
+        <td>Team</td>
+    </tr>
+</thead>
+<tbody>
+    {% for couple in dancing_round.couples|sort(attribute='follow.number') %}
+    <tr>
+        <td class="first-col">{{couple.follow.number}}</td>
+        <td></td>
+        <td>{{couple.follow}}</td>
+        <td>{{couple.follow.team}}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endif %}

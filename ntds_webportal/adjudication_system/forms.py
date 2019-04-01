@@ -243,7 +243,7 @@ class CreateFirstRoundForm(BaseRoundForm):
         super().__init__(**kwargs)
         self.competition = comp
         self.type.choices = [(e.name, e.value) for e in RoundType if e in
-                             [RoundType.qualification, RoundType.general_look, RoundType.first_round]]
+                             [RoundType.qualification, RoundType.general_look, RoundType.first_round, RoundType.final]]
         self.min_marks.render_kw.update({'max': comp.max_couples()})
         self.min_marks.validators = [NumberRange(min=1, max=comp.max_couples())]
         self.max_marks.render_kw.update({'max': comp.max_couples()})

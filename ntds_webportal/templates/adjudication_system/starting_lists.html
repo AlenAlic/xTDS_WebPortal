@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{% for competition in competitions|sort(attribute='when') %}
+<h3>{{competition}}</h3>
+{% if competition.mode == g.competition_mode.single_partner %}
+<table class="table table-sm mb-5">
+    <colgroup>
+        <col span="1" style="width: 10%"/>
+        <col span="1" style="width: 45%"/>
+        <col span="1" style="width: 45%"/>
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Number</th>
+            <th>Lead</th>
+            <th>Follow</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for couple in competitions[competition] %}
+        <tr>
+            <td>{{ couple.number }}</td>
+            <td>{{ couple.lead }}</td>
+            <td>{{ couple.follow }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<table class="table table-sm mb-5">
+    <colgroup>
+        <col span="1" style="width: 10%"/>
+        <col span="1" style="width: 45%"/>
+        <col span="1" style="width: 45%"/>
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Number</th>
+            <th>Lead</th>
+            <th>Follow</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for dancer in competitions[competition]|sort(attribute='number') %}
+        {% if dancer.role == g.data.LEAD %}
+        <tr>
+            <td>{{ dancer.number }}</td>
+            <td>{{ dancer }}</td>
+            <td></td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+    {% for dancer in competitions[competition]|sort(attribute='number') %}
+        {% if dancer.role == g.data.FOLLOW %}
+        <tr>
+            <td>{{ dancer.number }}</td>
+            <td></td>
+            <td>{{ dancer }}</td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endfor %}
+{% endblock %}

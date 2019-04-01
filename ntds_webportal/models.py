@@ -96,13 +96,14 @@ class User(UserMixin, Anonymous, db.Model):
     team = db.relationship('Team')
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     dancer = db.relationship('Contestant', backref=db.backref("user", uselist=False), single_parent=True,
-                             cascade='all, delete-orphan')
+                             cascade='all, delete, delete-orphan')
     volunteer_id = db.Column(db.Integer, db.ForeignKey('super_volunteer.volunteer_id'))
     super_volunteer = db.relationship('SuperVolunteer', backref=db.backref("user", uselist=False), single_parent=True,
                                       cascade='all, delete-orphan')
     adjudicator_id = db.Column(db.Integer, db.ForeignKey('adjudicator.adjudicator_id'))
     adjudicator = db.relationship('Adjudicator', backref=db.backref("user", uselist=False), single_parent=True,
                                   cascade='all, delete-orphan')
+    slots = db.relationship('ShiftSlot', back_populates='user', cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         if self.is_dancer():
@@ -1316,7 +1317,7 @@ class ShiftSlot(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
     team = db.relationship("Team")
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    user = db.relationship("User")
+    user = db.relationship("User", back_populates="slots")
     mandatory = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
@@ -1952,9 +1953,9 @@ class Round(db.Model):
             dances.sort(key=lambda x: DANCE_ORDER[self.competition.discipline.name][x.name])
             return dances[-1]
         except KeyError:
-            return self.dances[0]
+            return None
         except IndexError:
-            return self.dances[0]
+            return None
 
     def next_dance(self, dance):
         try:
@@ -1962,9 +1963,9 @@ class Round(db.Model):
             dances.sort(key=lambda x: DANCE_ORDER[self.competition.discipline.name][x.name])
             return dances[0]
         except KeyError:
-            return self.dances[0]
+            return None
         except IndexError:
-            return self.dances[0]
+            return None
 
     def last_dance(self):
         try:

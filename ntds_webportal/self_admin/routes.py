@@ -6,7 +6,7 @@ from ntds_webportal.self_admin.forms import SwitchUserForm, CreateOrganizerForm,
     CreateTeamCaptainAccountForm, SystemSetupForm, ResetOrganizerAccountForm
 from ntds_webportal.models import requires_access_level, User, Team, SystemConfiguration, Contestant, \
     StatusInfo, AttendedPreviousTournamentContestant, NotSelectedContestant, EXCLUDED_FROM_CLEARING, \
-    requires_testing_environment, Event, SuperVolunteer
+    requires_testing_environment, Event, SuperVolunteer, NameChangeRequest, PartnerRequest
 from ntds_webportal.functions import str2bool, reset_tournament_state, \
     make_system_configuration_accessible_to_organizer, generate_maintenance_page
 from ntds_webportal.auth.email import send_organizer_activation_email
@@ -117,6 +117,8 @@ def system_setup():
             for dancer in nsd:
                 db.session.delete(dancer)
             db.session.commit()
+            NameChangeRequest.query.delete()
+            PartnerRequest.query.delete()
             dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == REGISTERED).all()
             for dancer in dancers:
                 dancer.email = dancer.email.lower()

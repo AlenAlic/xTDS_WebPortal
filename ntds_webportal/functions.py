@@ -71,6 +71,7 @@ def reset_tournament_state():
     g.ts.main_raffle_taken_place = False
     g.ts.main_raffle_result_visible = False
     g.ts.numbers_rearranged = False
+    g.ts.raffle_completed_message_sent = False
     g.ts.merchandise_finalized = False
     g.ts.super_volunteer_registration_open = False
     g.ts.volunteering_system_open = False
