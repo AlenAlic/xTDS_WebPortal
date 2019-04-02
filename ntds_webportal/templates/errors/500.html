@@ -4,4 +4,10 @@
 <h1>An unexpected error has occurred</h1>
 <h2>The administrator has been notified. Apologies for the inconvenience!</h2>
 <p>Click <a href="{{ url_for('main.index') }}">here</a> to go to the main page</p>
+{% if message is not none %}
+<h2>Error message</h2>
+{% for m in message %}
+<p class="notification-text">{{ m }}</p>
+{% endfor %}
+{% endif %}
 {% endblock %}
