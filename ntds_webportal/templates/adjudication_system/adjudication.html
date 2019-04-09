@@ -60,8 +60,10 @@ input[type=checkbox]:checked + label
     {% if dancing_round.round_results|length == 0 %}
     <button class="btn btn-primary my-2" type="submit" name="save_marks" {% if dancing_round.is_dance_active(dance) %} disabled {% endif %}>Save crosses</button>
     {% endif %}
-    {% for list in dancing_round.adjudicator_mark_list() %}
-        <h5>{{ list['adjudicator'] }}</h5>
+    {% for list in dancing_round.adjudicator_mark_list()|sort(attribute='adjudicator') %}
+        {% set marked = list['marks'][dance.dance_id|string]|selectattr('mark')|list|length %}
+        <h5>{{ list['adjudicator'] }} {% if marked >= dancing_round.min_marks and marked <= dancing_round.max_marks %}<i class="fas fa-check-circle"></i>{% else %}<i class="far fa-times-circle"></i>{% endif %}</h5>
+        <h6>{{ marked }} / {{dancing_round.min_marks}}{% if dancing_round.max_marks != dancing_round.min_marks %}-{{dancing_round.max_marks}}{% endif %}</h6>
         {% for mark in list['marks'][dance.dance_id|string] %}
             <div class="form-check form-check-inline mb-1 mr-0">
                 <table>
@@ -72,7 +74,7 @@ input[type=checkbox]:checked + label
                     <tr>
                         <td class="adjudicator-cell" align="center" style="{% if dancing_round.is_dance_active(dance) %}opacity: 0.5;background:#AAA;{% else %}opacity: 1;background#FFF{% endif %}">
                             <input type="checkbox" id="{{mark.mark_id}}" name="{{mark.mark_id}}" style="display:none;" {% if mark.mark %}checked{% endif %} {% if dancing_round.is_dance_active(dance) %}disabled{% endif %}/>
-                            <label class="mb-0" for="{{mark.mark_id}}"></label>
+                            <label class="mb-0" for="{{mark.mark_id}}" style="background-color:inherit;"></label>
                         </td>
                     </tr>
                     </tbody>

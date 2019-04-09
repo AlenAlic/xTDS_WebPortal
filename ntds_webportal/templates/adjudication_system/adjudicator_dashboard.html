@@ -6,7 +6,7 @@
         <h5>{{current_user.adjudicator}} ({{current_user.adjudicator.tag}})</h5>
         <p>Please select a competition to adjudicate from below.</p>
         <p>If no competitions are visible, press "Reload".</p>
-        {% for competition in current_user.adjudicator.competitions %}
+        {% for competition in current_user.adjudicator.competitions|sort(attribute='when') %}
         {% if competition.rounds|length > 0 %}
             {% if competition.last_round().is_active %}
                     <a class="btn btn-primary my-2" style="display:block;" href="{{url_for('adjudication_system.adjudicate_start_page', round_id=competition.last_round().round_id)}}">{{competition}}</a>
@@ -19,7 +19,7 @@
     <div class="mt-3">
         <h5>Your adjudication assignments for this tournament are:</h5>
         <ul>
-        {% for competition in current_user.adjudicator.competitions %}
+        {% for competition in current_user.adjudicator.competitions|sort(attribute='when') %}
             <li>{{competition}}</li>
         {% endfor %}
         </ul>

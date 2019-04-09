@@ -1,0 +1,49 @@
+{% set dance_heat_list, dance_lead_follow_list = dancing_round.dance_heat_list(), dancing_round.dance_lead_follow_list() %}
+<table class="report" id="heats-by-start">
+    <thead>
+        <tr>
+            <td class="title-box" colspan="{{dancing_round.dances|length + 1}}">{{dancing_round}}<br/>Heats by start number{% if dancing_round.competition.is_change_per_dance() %} - Leads{% endif %}</td>
+        </tr>
+        <tr class="separator top-row">
+            <td class="first-col">#</td>
+            {% for dance in dancing_round.dances %}
+            <td class="heat-by-start-no-col">{{dance.tag}}</td>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for couple in dancing_round.couples|sort(attribute='number') %}
+        <tr>
+            <td class="first-col">{{couple.number}}</td>
+            {% for dance in dancing_round.dances %}
+            <td class="heat-by-start-no-col"><b>{{dance_heat_list[dance.tag][couple.number]}}</b>{% if dancing_round.competition.is_change_per_dance() %}: {{dance_lead_follow_list[dance.tag][couple.number]}}{% endif %}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if dancing_round.competition.is_change_per_dance() %}
+<table class="report" id="heats-by-start-follows">
+    <thead>
+        <tr>
+            <td class="title-box" colspan="{{dancing_round.dances|length + 1}}">{{dancing_round}}<br/>Heats by start number - Follows</td>
+        </tr>
+        <tr class="separator top-row">
+            <td class="first-col">#</td>
+            {% for dance in dancing_round.dances %}
+            <td class="heat-by-start-no-col">{{dance.tag}}</td>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for couple in dancing_round.couples|sort(attribute='follow.number') %}
+        <tr>
+            <td class="first-col">{{couple.follow.number}}</td>
+            {% for dance in dancing_round.dances %}
+            <td class="heat-by-start-no-col"><b>{{dance_heat_list[dance.tag][couple.number]}}</b>{% if dancing_round.competition.is_change_per_dance() %}: {{dance_lead_follow_list[dance.tag][couple.follow.number]}}{% endif %}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
