@@ -477,6 +477,7 @@ def available_dancers():
                     dancer.number = contestant.contestant_info.number
                     dancer.role = form.role.data
                     dancer.team = contestant.contestant_info.team_name()
+                    contestant.dancers.append(dancer)
                     db.session.add(dancer)
                     db.session.commit()
                     flash(f"Created {dancer.name} ({dancer.number}) as a {dancer.role}", "alert-success")
