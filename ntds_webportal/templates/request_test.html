@@ -23,7 +23,7 @@
 		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 		<script>
 			fetchTest = () => (
-				fetch("/adjudication_system/api/app/competition_list", {method: "GET"})
+				fetch("/adjudication_system/api/app/competition_list", {method: "GET", credentials: 'same-origin'})
 				.then(response => response.json())
 				.then(result => {
 					console.log(result)

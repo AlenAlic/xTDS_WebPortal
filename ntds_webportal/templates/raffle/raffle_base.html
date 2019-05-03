@@ -125,7 +125,7 @@ function apiFailed(elem) {
 }
 function updateCheckboxRowApiCall(row) {
     apiPending(row)
-    fetch("/api/contestants/" + row.id + "/status_info/guaranteed_entry", {method: "PATCH"})
+    fetch("/api/contestants/" + row.id + "/status_info/guaranteed_entry", {method: "PATCH", credentials: 'same-origin'})
     .then(function(response) {return response.json();})
     .then(function(result) {
         if (result.status_info.guaranteed_entry) {
@@ -142,7 +142,7 @@ function updateCheckboxRowApiCall(row) {
 function updateTeamGuaranteedDancersApiCall(source) {
     let panel = source.closest(".card");
     let total = panel.querySelector('.card-header > .card-title > .badge > .team-guaranteed-dancers');
-    fetch("/api/teams/" + total.dataset.teamId + "/guaranteed_dancers", {method: "GET"})
+    fetch("/api/teams/" + total.dataset.teamId + "/guaranteed_dancers", {method: "GET", credentials: 'same-origin'})
     .then(function(response) {return response.json();})
     .then(function(result) {
         if (result) {total.innerHTML = result.length}
@@ -154,7 +154,7 @@ function updateTeamGuaranteedDancersApiCall(source) {
 </script>
 <script>
 function sendRaffleNotificationEmail(api, method) {
-    fetch(api, {method: method})
+    fetch(api, {method: method, credentials: 'same-origin'})
     .then(function(response) {return response;})
     .then(function(result) {if (result) {clearNotifyDiv();} })
     .catch(function(error) {console.log('Error: \n', error); });
