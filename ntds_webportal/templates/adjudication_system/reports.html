@@ -73,13 +73,13 @@
 {% block scripts %}
 {{ super() }}
 <script>
-published = published => {
+const published = published => {
     text = document.getElementById('published');
     if (published) {text.innerHTML = "Published"}
     else {text.innerHTML = ""}
-}
-publishHeatList = method => {
-    fetch("/adjudication_system/api/to/publish_heat_list/" + {{dancing_round.round_id}}, {method: method, credentials: 'same-origin'})
+};
+const publishHeatList = method => {
+    fetch("/adjudication_system/api/to/publish_heat_list/" + "{{dancing_round.round_id}}", {method: method, credentials: 'same-origin'})
     .then(function(response) {return response.json();})
     .then(function(result) {
         if (result) {alert("Heat list for {{dancing_round}} PUBLISHED to the app.\n\nIt is now visible to the outside world.");}
