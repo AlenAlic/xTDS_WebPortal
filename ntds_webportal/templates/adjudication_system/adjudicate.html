@@ -111,7 +111,7 @@ onload="onStart()"
 <script>
 var wait = ms => new Promise((r, j) => setTimeout(r, ms))
 onStart = () => {
-    fetch("/adjudication_system/api/round/" + {{dancing_round.round_id}} + "/adjudicator/" + {{current_user.adjudicator.adjudicator_id}} + "/dance/" + {{dance.dance_id}}, {method: "GET"})
+    fetch("/adjudication_system/api/round/" + {{dancing_round.round_id}} + "/adjudicator/" + {{current_user.adjudicator.adjudicator_id}} + "/dance/" + {{dance.dance_id}}, {method: "GET", credentials: 'same-origin'})
     .then(function(response) {return response.json();})
     .then(function(result) {updatePage(result);} )
     .catch(function(error) {console.log('Error: \n', error); });
@@ -119,14 +119,14 @@ onStart = () => {
 updateNotesAPI = (id) => {
     let cell = document.getElementById(id)
     apiPending(cell)
-    fetch("/adjudication_system/api/mark/" + cell.id + "/notes", {method: "PATCH"})
+    fetch("/adjudication_system/api/mark/" + cell.id + "/notes", {method: "PATCH", credentials: 'same-origin'})
     .then(function(response) {return response.json();})
     .then(function(result) {updateCross(cell, result);} )
     .catch(function(error) {console.log('Error: \n', error); });
 }
 updateCrossAPI = (cell) => {
     apiPending(cell)
-    fetch("/adjudication_system/api/mark/" + cell.id + "/mark", {method: "PATCH"})
+    fetch("/adjudication_system/api/mark/" + cell.id + "/mark", {method: "PATCH", credentials: 'same-origin'})
     .then(function(response) {return response.json();})
     .then(function(result) {updateCross(cell, result);} )
     .catch(function(error) {console.log('Error: \n', error); });
@@ -210,7 +210,7 @@ apiPending = elem => {
 onStart = () => {}
 updatePlacingAPI = elem => {
     let place = document.querySelector('input[name="placings"]:checked')
-    fetch("/adjudication_system/api/final_placing/" + place.id + "/final_placing/" + elem.value, {method: "PATCH"})
+    fetch("/adjudication_system/api/final_placing/" + place.id + "/final_placing/" + elem.value, {method: "PATCH", credentials: 'same-origin'})
     .then(function(response) {return response.json();})
     .then(function(result) {location.reload(true);} )
     .catch(function(error) {console.log('Error: \n', error); });
