@@ -10,6 +10,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_debugtoolbar import DebugToolbarExtension
 from wtforms import PasswordField
 import ntds_webportal.data as data
+from datetime import datetime
 
 
 class MyAdminIndexView(AdminIndexView):
@@ -189,6 +190,10 @@ def create_app():
         g.event = Event.query.first()
         g.competitions = Competition.query.all()
         g.competition_mode = CompetitionMode
+
+    @app.context_processor
+    def inject_now():
+        return {'now': int(datetime.utcnow().timestamp())}
 
     def create_tournament_state_table():
         if len(TournamentState.query.all()) == 0:

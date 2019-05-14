@@ -97,8 +97,10 @@ def get_total_dancer_price_list(dancer):
         description += " + t-shirt"
     if dancer.merchandise_info.mug:
         description += " + mug"
+        price += prices["mug"]
     if dancer.merchandise_info.bag:
         description += " + bag"
+        price += prices["bag"]
     paid_string = {True: "Yes", False: "No"}
     return [dancer.get_full_name(), price/100, description, paid_string[dancer.payment_info.all_paid()]]
 
