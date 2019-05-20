@@ -1,0 +1,28 @@
+{
+  "name": "xtds_webportal",
+  "version": "1.0.0",
+  "description": "xTDS WebPortal",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sass": "node-sass -w scss/ -o ntds_webportal/static/css/ --recursive",
+    "watch-react": "npx babel --watch react --out-dir ntds_webportal/static/js/react --presets react-app/prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlenAlic/NTDS_webportal.git"
+  },
+  "author": "Alen Alic",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/AlenAlic/NTDS_webportal/issues"
+  },
+  "homepage": "https://github.com/AlenAlic/NTDS_webportal#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-preset-react-app": "^3.1.2",
+    "babel-cli": "^6.26.0",
+    "bootstrap": "^4.3.1",
+    "node-sass": "^4.12.0"
+  }
+}

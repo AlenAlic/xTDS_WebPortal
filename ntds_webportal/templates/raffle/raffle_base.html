@@ -69,8 +69,8 @@ function filterLevels(clicked_checkbox, scroll=true, source="") {
         rows[i].style.display = 'table-row';
     }
 
-    var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox" + source)
-    var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox" + source)
+    {#var ballroom_checkboxes = document.getElementsByClassName("{{g.data.BALLROOM}}-checkbox" + source)#}
+    {#var latin_checkboxes = document.getElementsByClassName("{{g.data.LATIN}}-checkbox" + source)#}
     var checkboxes = document.querySelectorAll(".filter-checkbox" + source + ":checked")
 
     if (checkboxes.length > 0) {

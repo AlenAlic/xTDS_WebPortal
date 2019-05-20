@@ -10,30 +10,31 @@
         <meta name="Description" content="Portal for organizing an ETDS or NTDS.">
 
 
-        <!-- Bootstrap -->
-        
-        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+        <!-- Main CSS -->
+        <link rel="stylesheet" href="/static/css/bootstrap.custom.css?201905201500">
+        <link rel="stylesheet" href="/static/css/custom.css">
         <!--Favicons-->
-        <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
-        <link rel="manifest" href="/static/favicons/site.webmanifest">
-        <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#5bbad5">
-        <link rel="shortcut icon" href="/static/favicons/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png?201905201500">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png?201905201500">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png?201905201500">
+        <link rel="stylesheet" href="/static/font_awesome/css/all.css?201905201500">
+        <link rel="manifest" href="/static/favicons/site.webmanifest?201905201500">
+        <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg?201905201500" color="#5bbad5">
+        <link rel="shortcut icon" href="/static/favicons/favicon.ico?201905201500">
 
-<link rel="stylesheet" href="/static/select2/select2.css">
-<link rel="stylesheet" href="/static/select2/select2-bootstrap3.css">
-<style>.select2-results .select2-highlighted{color:#fff;background-color:#1e90ff}</style>
+    <link rel="stylesheet" href="/static/select2/select2.css?201905201500">
+    <link rel="stylesheet" href="/static/select2/select2-bootstrap3.css?201905201500">
+    <style>.select2-results .select2-highlighted{color:#fff;background-color:#1e90ff}</style>
 
 <style>
 /* Base formatting */
-@media (min-width:1440px){.container{max-width:1410px}}
-@media (min-width:576px){.form-width-fix .form-control {width:100%}}
-@media (min-width:768px){.form-width-fix .form-control {width:140px}}
-@media (min-width:992px){.form-width-fix .form-control {width:200px}}
-@media (min-width:1200px){.form-width-fix .form-control {width:auto}}
-@media (min-width:576px){.form-width-fix .form-control-button {width:100%}}
-@media (min-width:768px){.form-width-fix .form-control-button {width:auto}}
+
+
+
+
+
+
+
 
 /* Cards formatting */
 .card-header {padding-top: 0.5rem; padding-bottom: 0.5rem;}
@@ -64,6 +65,7 @@
 /* Print tools */
 @page               {size: 210mm 297mm; margin: 15mm 15mm 15mm 15mm;}
 .pagebreak          {page-break-before: always;}
+.page-break          {page-break-before: always;}
 .print-block        {page-break-after:always;}
 .print-friendly     {page-break-inside:avoid; page-break-after:auto}
 tr                  {page-break-inside:avoid; page-break-after:auto}
@@ -145,7 +147,7 @@ body {
 
 
     
-<div id="container-hidden" class="container mt-3" style="padding-bottom:20px; ">
+<div id="container-hidden" class="container mt-3 pb-4" style="">
     
     
 
@@ -173,34 +175,33 @@ body {
     
 
 
-    
-    <script type="text/javascript" src="/static/loading/loading.js"></script>
-    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/popper.min.js"></script>
-    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/static/js/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="/static/loading/loading.js?201905201500"></script>
+    <script type="text/javascript" src="/static/js/jquery.min.js?201905201500"></script>
+    <script type="text/javascript" src="/static/js/popper.min.js?201905201500"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js?201905201500"></script>
+    <script type="text/javascript" src="/static/js/moment-with-locales.min.js?201905201500"></script>
     <script>
-    moment.locale("en");
-    function flask_moment_render(elem) {
-        $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
-        $(elem).removeClass('flask-moment').show();
-    }
-    function flask_moment_render_all() {
-        $('.flask-moment').each(function() {
-            flask_moment_render(this);
-            if ($(this).data('refresh')) {
-                (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
-            }
-        })
-    }
-    $(document).ready(function() {
-        flask_moment_render_all();
-    });
+        moment.locale("en");
+        function flask_moment_render(elem) {
+            $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+            $(elem).removeClass('flask-moment').show();
+        }
+        function flask_moment_render_all() {
+            $('.flask-moment').each(function() {
+                flask_moment_render(this);
+                if ($(this).data('refresh')) {
+                    (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
+                }
+            })
+        }
+        $(document).ready(function() {
+            flask_moment_render_all();
+        });
     </script>
 
 
-<script type="text/javascript" src="/static/select2/select2.min.js"></script>
-<script type="text/javascript" src="/static/select2/form.js"></script>
+    <script type="text/javascript" src="/static/select2/select2.min.js?201905201500"></script>
+    <script type="text/javascript" src="/static/select2/form.js?201905201500"></script>
 
 <script>
 $(document).ready(function($) {

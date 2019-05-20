@@ -26,7 +26,6 @@
         </thead>
         <tbody>
             {% for couple in couples %}
-            {% if show_break_up_button is sameas false or couple['lead'].status_info.status == g.data.REGISTERED or couple['lead'].status_info.status == g.data.NO_GDPR %}
                 <tr class="{% if show_break_up_button is sameas false and couple['lead'].status_info.received_starting_number == true %}table-success{% endif %}">
                     <td class="{% if couple['lead'].status_info.status == g.data.NO_GDPR %}table-danger{%endif%} {% if couple['lead'].contestant_info.team.name != current_user.team.name %}table-active{% endif %}">
                         {{ couple['lead'].contestant_info.number }}
@@ -44,13 +43,14 @@
                         {{ couple['lead'].competition(category).level }}
                     </td>
                     <td align="right">
-                        {% if show_break_up_button is sameas true %}
+                        {% if show_break_up_button %}
+                        {% if couple['lead'].status_info.status != g.data.SELECTED and couple['follow'].status_info.status != g.data.SELECTED and couple['lead'].status_info.status != g.data.CONFIRMED and couple['follow'].status_info.status != g.data.CONFIRMED %}
                         <input type="button" class="btn btn-warning btn-sm" {% if couple['lead'].status_info.status == g.data.SELECTED or couple['lead'].status_info.status == g.data.CONFIRMED %}disabled{% endif %}
                         onclick="location.href='{{ url_for('teamcaptains.break_up_couple', competition=category, lead_id=couple['lead'].contestant_id, follow_id=couple['follow'].contestant_id ) }}';" value="Break up couple" />
                         {% endif %}
+                        {% endif %}
                     </td>
                 </tr>
-            {% endif %}
             {% endfor %}
         </tbody>
     </table>

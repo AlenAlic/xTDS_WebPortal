@@ -1,18 +1,18 @@
 __pycache__
-.cache
+/.cache
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/misc.xml
 .idea/modules.xml
 .idea/NTDS_webportal.iml
 .idea/statistic.xml
+.idea
 .vscode
 
 ntds_webportal/__pycache__
 000_test_statistics/
 node_modules/
 venv/
-package.json
 
 logs/
 

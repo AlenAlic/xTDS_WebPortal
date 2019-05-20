@@ -16,19 +16,17 @@
     {%- endblock metas %}
 
     {%- block styles %}
-        <!-- Bootstrap -->
-        {#
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        #}
-        <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.custom.css')}}">
+        <!-- Main CSS -->
+        <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.custom.css')}}{{ aver }}">
+        <link rel="stylesheet" href="{{url_for('static', filename='css/custom.css')}}">
         <!--Favicons-->
-        <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
-        <link rel="stylesheet" href="{{url_for('static', filename='font_awesome/css/all.css')}}">
-        <link rel="manifest" href="/static/favicons/site.webmanifest">
-        <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#5bbad5">
-        <link rel="shortcut icon" href="/static/favicons/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png{{ aver }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png{{ aver }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png{{ aver }}">
+        <link rel="stylesheet" href="{{url_for('static', filename='font_awesome/css/all.css')}}{{ aver }}">
+        <link rel="manifest" href="/static/favicons/site.webmanifest{{ aver }}">
+        <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg{{ aver }}" color="#5bbad5">
+        <link rel="shortcut icon" href="/static/favicons/favicon.ico{{ aver }}">
     {%- endblock styles %}
     {%- endblock head %}
     </head>
@@ -42,34 +40,28 @@
     {%- endblock content %}
 
     {% block scripts %}
-    {#
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    {{ moment.include_moment() }}
-    #}
-    <script type="text/javascript" src="{{url_for('static', filename='loading/loading.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='js/popper.min.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='js/moment-with-locales.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='loading/loading.js')}}{{ aver }}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}{{ aver }}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/popper.min.js')}}{{ aver }}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}{{ aver }}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/moment-with-locales.min.js')}}{{ aver }}"></script>
     <script>
-    moment.locale("en");
-    function flask_moment_render(elem) {
-        $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
-        $(elem).removeClass('flask-moment').show();
-    }
-    function flask_moment_render_all() {
-        $('.flask-moment').each(function() {
-            flask_moment_render(this);
-            if ($(this).data('refresh')) {
-                (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
-            }
-        })
-    }
-    $(document).ready(function() {
-        flask_moment_render_all();
-    });
+        moment.locale("en");
+        function flask_moment_render(elem) {
+            $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+            $(elem).removeClass('flask-moment').show();
+        }
+        function flask_moment_render_all() {
+            $('.flask-moment').each(function() {
+                flask_moment_render(this);
+                if ($(this).data('refresh')) {
+                    (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
+                }
+            })
+        }
+        $(document).ready(function() {
+            flask_moment_render_all();
+        });
     </script>
     {%- endblock scripts %}
     {%- endblock body %}

@@ -170,7 +170,7 @@
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
     <td>{{ g.data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}</td>
-    <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}</td>
+    <td>{{ dancer.dancing_information(g.data.LATIN).get_partner() }}</td>
     <td>{{ g.data.YMN[dancer.volunteer_info.volunteer] }}</td>
     <td>{{ g.data.YMN[dancer.volunteer_info.first_aid] }}</td>
     <td>{{ g.data.YMN[dancer.volunteer_info.jury_ballroom] }}</td>

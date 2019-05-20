@@ -10,12 +10,12 @@ from ntds_webportal.models import requires_access_level, User, Team, SystemConfi
 from ntds_webportal.functions import str2bool, reset_tournament_state, \
     make_system_configuration_accessible_to_organizer, generate_maintenance_page
 from ntds_webportal.auth.email import send_organizer_activation_email
-from ntds_webportal.functions import random_password
+from ntds_webportal.functions import random_password, active_teams
 from ntds_webportal.data import *
 import ntds_webportal.data as data
-from instance.test_populate import populate_test_data
 from sqlalchemy import or_, case, exists
 import datetime
+from test_data.test_populate import PAST_TOURNAMENTS, populate_test_data
 
 
 @bp.route('/system_setup', methods=['GET', 'POST'])
@@ -176,11 +176,12 @@ def system_configuration():
         form.tournament.data = g.sc.tournament
         form.year.data = g.sc.year
         form.city.data = g.sc.city
-        tsd = datetime.datetime.utcfromtimestamp(g.sc.tournament_starting_date)
+        tsd = datetime.datetime.utcfromtimestamp(g.sc.tournament_starting_date).replace(tzinfo=datetime.timezone.utc)
         form.tournament_starting_date.data = datetime.date(tsd.year, tsd.month, tsd.day)
 
         form.main_page_link.data = g.sc.main_page_link
         form.terms_and_conditions_link.data = g.sc.terms_and_conditions_link
+        form.merchandise_link.data = g.sc.merchandise_link
 
         form.number_of_teamcaptains.data = g.sc.number_of_teamcaptains
 
@@ -198,7 +199,7 @@ def system_configuration():
         form.finances_full_refund.data = str(g.sc.finances_full_refund)
         form.finances_partial_refund.data = str(g.sc.finances_partial_refund)
         form.finances_partial_refund_percentage.data = g.sc.finances_partial_refund_percentage
-        frd = datetime.datetime.utcfromtimestamp(g.sc.finances_refund_date)
+        frd = datetime.datetime.utcfromtimestamp(g.sc.finances_refund_date).replace(tzinfo=datetime.timezone.utc)
         frd += datetime.timedelta(days=-1)
         form.finances_refund_date.data = datetime.date(frd.year, frd.month, frd.day)
 
@@ -209,17 +210,6 @@ def system_configuration():
         form.ask_emergency_response_officer.data = str(g.sc.ask_emergency_response_officer)
         form.ask_adjudicator_highest_achieved_level.data = str(g.sc.ask_adjudicator_highest_achieved_level)
         form.ask_adjudicator_certification.data = str(g.sc.ask_adjudicator_certification)
-
-        form.t_shirt_sold.data = str(g.sc.t_shirt_sold)
-        form.t_shirt_price.data = g.sc.t_shirt_price
-        form.mug_sold.data = str(g.sc.mug_sold)
-        form.mug_price.data = g.sc.mug_price
-        form.bag_sold.data = str(g.sc.bag_sold)
-        form.bag_price.data = g.sc.bag_price
-        form.merchandise_link.data = g.sc.merchandise_link
-        mcd = datetime.datetime.utcfromtimestamp(g.sc.merchandise_closing_date)
-        mcd += datetime.timedelta(days=-1)
-        form.merchandise_closing_date.data = datetime.date(mcd.year, mcd.month, mcd.day)
     elif request.method == 'POST':
         if current_user.is_organizer():
             form.tournament.data = g.sc.tournament
@@ -244,6 +234,7 @@ def system_configuration():
 
             g.sc.main_page_link = form.main_page_link.data
             g.sc.terms_and_conditions_link = form.terms_and_conditions_link.data
+            g.sc.merchandise_link = form.merchandise_link.data
 
             g.sc.number_of_teamcaptains = form.number_of_teamcaptains.data
 
@@ -273,24 +264,6 @@ def system_configuration():
             g.sc.ask_emergency_response_officer = str2bool(form.ask_emergency_response_officer.data)
             g.sc.ask_adjudicator_highest_achieved_level = str2bool(form.ask_adjudicator_highest_achieved_level.data)
             g.sc.ask_adjudicator_certification = str2bool(form.ask_adjudicator_certification.data)
-
-            g.sc.t_shirt_sold = str2bool(form.t_shirt_sold.data)
-            g.sc.t_shirt_price = form.t_shirt_price.data
-            g.sc.mug_sold = str2bool(form.mug_sold.data)
-            g.sc.mug_price = form.mug_price.data
-            g.sc.bag_sold = str2bool(form.bag_sold.data)
-            g.sc.bag_price = form.bag_price.data
-            g.sc.merchandise_link = form.merchandise_link.data
-            if not str2bool(form.t_shirt_sold.data) and not str2bool(form.mug_sold.data) and \
-                    not str2bool(form.bag_sold.data):
-                g.sc.merchandise_closing_date = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)\
-                    .timestamp()
-            else:
-                mcd = datetime.datetime(form.merchandise_closing_date.data.year,
-                                        form.merchandise_closing_date.data.month,
-                                        form.merchandise_closing_date.data.day, 3, 0, 0, 0)
-                mcd += datetime.timedelta(days=1)
-                g.sc.merchandise_closing_date = mcd.replace(tzinfo=datetime.timezone.utc).timestamp()
 
             db.session.commit()
             flash("Configuration saved.", "alert-success")
@@ -330,23 +303,28 @@ def switch_user():
     dancer_super_volunteer_choices.sort(key=lambda x: x[1])
     dancer_super_volunteer_choices = [(0, 'Choose an account to switch to.')] + dancer_super_volunteer_choices
     dancer_super_volunteer_form.user.choices = dancer_super_volunteer_choices
-    if form.validate_on_submit():
-        user = User.query.filter(User.user_id == form.user.data).first()
-        if user is not None:
-            logout_user()
-            login_user(user)
-        else:
-            flash('User account is not active.')
-        return redirect(url_for('main.index'))
-    if dancer_super_volunteer_form.validate_on_submit():
-        user = User.query.filter(User.user_id == form.user.data).first()
-        if user is not None:
-            logout_user()
-            login_user(user)
-        else:
-            flash('User account is not active.')
-        return redirect(url_for('main.index'))
-    return render_template('admin/switch_user.html', form=form, dancer_super_volunteer_form=dancer_super_volunteer_form)
+    if request.method == "POST":
+        if form.submit.name in request.form:
+            if form.validate_on_submit():
+                user = User.query.filter(User.user_id == form.user.data).first()
+                if user is not None:
+                    logout_user()
+                    login_user(user)
+                else:
+                    flash('User account is not active.')
+                return redirect(url_for('main.index'))
+        if dancer_super_volunteer_form.submit.name in request.form:
+            if dancer_super_volunteer_form.validate_on_submit():
+                user = User.query.filter(User.user_id == form.user.data).first()
+                if user is not None:
+                    logout_user()
+                    login_user(user)
+                else:
+                    flash('User account is not active.')
+                return redirect(url_for('main.index'))
+    teams = {team: f"{team.name}.png" if team.country == NETHERLANDS else "generic.png" for team in active_teams()}
+    return render_template('admin/switch_user.html', form=form, dancer_super_volunteer_form=dancer_super_volunteer_form,
+                           teams=teams)
 
 
 @bp.route('/switch_to_organizer', methods=['GET'])
@@ -523,19 +501,16 @@ def clear_tables():
 @requires_access_level([ACCESS[ADMIN]])
 @requires_testing_environment
 def test_populate():
-    form = request.args
-    if len(form) > 0:
-        clear_tables()
-        flash("Cleared tables.", "alert-success")
-    if "NTDS2018ENSCHEDE" in form:
-        populate_test_data("NTDS2018ENSCHEDE")
-        flash("Populated with system with test data from the 2018 NTDS in Enschede.", "alert-success")
-    if "ETDS2018BRNO" in form:
-        populate_test_data("ETDS2018BRNO")
-        flash("Populated with system with test data from the 2018 ETDS in Brno", "alert-success")
-    if len(form) > 0:
-        return redirect(url_for('self_admin.test_populate'))
-    return render_template('admin/test_populate.html')
+    if request.method == "POST":
+        if "clear_tables" in request.form:
+            clear_tables()
+            flash("Cleared tables.", "alert-success")
+        if "test_data" in request.form:
+            clear_tables()
+            populate_test_data(request.form["test_data"])
+            flash(f"Populated with system with test data from {request.form['test_data']} tournament.", "alert-success")
+        return redirect(url_for('main.dashboard'))
+    return render_template('admin/test_populate.html', past_tournaments=PAST_TOURNAMENTS)
 
 
 # @bp.route('/dashboard', methods=['GET', 'POST'])

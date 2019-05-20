@@ -1,8 +1,0 @@
-<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{dropdown_title}}</a>
-    <div class="dropdown-menu">
-        {% for team in teams %}
-            <a class="dropdown-item" id={{team['id']}}-tab data-toggle="tab" href=#{{team['id']}} role=tab aria-controls={{team['id']}} aria-selected="false">{{team['team'].name}} <span class="badge badge-pill badge-dark">{{team['finances']['total_number_of_payments_paid']}} / {{team['finances']['total_number_of_payments']}}</span></a>
-        {% endfor %}
-    </div>
-</li>

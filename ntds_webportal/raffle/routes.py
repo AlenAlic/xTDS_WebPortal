@@ -278,7 +278,7 @@ def test_completed():
         return redirect(url_for('raffle.test_confirmed'))
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
-        all_teams = Team.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
+        all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
         teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
                   'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]
         for t in teams:

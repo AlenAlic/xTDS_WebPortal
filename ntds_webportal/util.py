@@ -1,3 +1,4 @@
+from werkzeug.routing import BaseConverter
 import string
 import random
 
@@ -23,3 +24,12 @@ def hours_delta(td):
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
     return f'{"{:02d}".format(int(hours))}:{"{:02d}".format(int(minutes))}'
+
+
+class BooleanConverter(BaseConverter):
+
+    def to_python(self, value):
+        return bool(int(value))
+
+    def to_url(self, value):
+        return str(int(value))

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+
+{% block app_content %}
+    <h2>Manage merchandise</h2>
+    <div class="card">
+        <div class="card-header">
+            Merchandise closing date
+        </div>
+        <div class="card-body">
+            <p>If there will be merchandise sold for the tournament, you can set the last date at which merchandise can be ordered below.</p>
+            <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                {{ merchandise_date_form.hidden_tag() }}
+                {{ wtf.form_field(merchandise_date_form.merchandise_closing_date) }}
+                {{ wtf.form_field(merchandise_date_form.merchandise_closing_submit) }}
+            </form>
+        </div>
+    </div>
+    <div class="d-grid grid-template-columns-lg-2 grid-column-gap-3 grid-row-gap-3">
+        <div class="card">
+            <div class="card-header">
+                Add new merchandise item
+            </div>
+            <div class="card-body">
+                {% if not g.ts.merchandise_finalized %}
+                <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="form-row">
+                        <div class="col-8">
+                            {{ wtf.form_field(form.item) }}
+                        </div>
+                        <div class="col-4">
+                            {{ wtf.form_field(form.price) }}
+                        </div>
+                    </div>
+                    {{ wtf.form_field(form.shirt) }}
+                    {{ wtf.form_field(form.variants) }}
+                    {{ wtf.form_field(form.new_item_submit) }}
+                </form>
+                {% else %}
+                New mechandise cannot be added, the merchandise has been finalized.
+                {% endif %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                Available merchandise
+            </div>
+            {% if all_merchandise|length > 0 %}
+            <table class="table table-borderless{% if not g.ts.merchandise_finalized %} table-hover clickable{% endif %} mb-0">
+            <tbody>
+                {% for merch in all_merchandise %}
+                <tr data-toggle="modal" data-target="#merch-{{ merch.merchandise_item_id }}" data-keyboard="false" data-backdrop="static">
+                    <td>
+                        <b>{{ merch }}</b>
+                        {% for var in merch.variants %}
+                            <div class="pl-3"><small>{{ var.variant_name() }}</small></div>
+                        {% endfor %}
+                    </td>
+                    <td><b>{{ g.data.euros(merch.price) }}</b></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            {% else %}
+            <div class="card-body">
+            There is no merchandise in the system.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% if not g.ts.merchandise_finalized %}
+    {% for merch in all_merchandise %}
+    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+        <div class="modal fade" id="merch-{{ merch.merchandise_item_id }}" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit item</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="col-8">
+                                <div class="form-group">
+                                    <label for="item-{{ merch.merchandise_item_id }}">{{ form.item.label.text }}</label>
+                                    <input class="form-control" id="item-{{ merch.merchandise_item_id }}" name="item" placeholder="Merchandise item" type="text" value="{{ merch.description }}">
+                                    <small class="text-muted">{{ form.item.description }}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="price-{{ merch.merchandise_item_id }}">{{ form.price.label.text }}</label>
+                                    <input class="form-control" id="price-{{ merch.merchandise_item_id }}" name="price" type="text" value="{{ merch.price }}">
+                                    <small class="text-muted">{{ form.price.description }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% if not merch.shirt %}
+                            <div class="mb-2">Variants</div>
+                            {% for var in merch.variants %}
+                            <div class="form-group">
+                                <label class="d-none" for="variant-{{ var.merchandise_item_variant_id }}">Variant {{ loop.index }}</label>
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ var.merchandise_item_variant_id }}" {% if merch.variants|length == 1 %}disabled{% endif %}>Delete</button>
+                                    </div>
+                                    <input class="form-control form-control-sm" id="variant-{{ var.merchandise_item_variant_id }}" name="{{ var.merchandise_item_variant_id }}" type="text" value="{{ var.variant }}">
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="form-group">
+                                <label for="add-{{ merch.merchandise_item_id }}">Add new variant</label>
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-success btn-sm" type="submit" name="add" value="{{ merch.merchandise_item_id }}">Add</button>
+                                    </div>
+                                    <input class="form-control" id="add-{{ merch.merchandise_item_id }}" name="new_variant" type="text" placeholder="New variant" value="" required>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" name="merchandise_item" value="{{ merch.merchandise_item_id }}">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% endfor %}
+    {% endif %}
+{% endblock %}

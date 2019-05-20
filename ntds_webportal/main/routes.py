@@ -7,7 +7,6 @@ from ntds_webportal.auth.forms import LoginForm, ChangePasswordForm, SendEmailFo
 from ntds_webportal.auth.email import send_treasurer_activation_email
 from ntds_webportal.data import *
 from ntds_webportal.functions import random_password
-import datetime
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -68,14 +67,9 @@ def dashboard():
             return redirect(url_for('teamcaptains.edit_finances'))
         else:
             return redirect(url_for('teamcaptains.treasurer_inaccessible'))
-    if current_user.is_dancer():
-        return render_template('dashboard.html', dancer=current_user.dancer)
     if current_user.is_organizer():
-        finalize_merchandise = int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) > \
-                g.sc.merchandise_closing_date and not g.ts.merchandise_finalized
-        if finalize_merchandise and g.ts.system_configured:
+        if g.sc.finalize_merchandise() and g.ts.system_configured:
             flash("Please check the merchandise tab. The last date for ordering merchandise has passed.")
-        return render_template('dashboard.html', finalize_merchandise=finalize_merchandise)
     if current_user.is_bda():
         return redirect(url_for('adjudication_system.available_couples'))
     if current_user.is_floor_manager():
@@ -138,8 +132,3 @@ def profile():
                                treasurer_active=treasurer.is_active, send_email_form=send_email_form)
     else:
         return render_template('profile.html', form=form, send_email_form=send_email_form)
-
-
-@bp.route('/request_test', methods=['GET'])
-def request_test():
-    return render_template('request_test.html')

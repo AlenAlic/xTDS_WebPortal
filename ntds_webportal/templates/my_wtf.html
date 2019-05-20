@@ -7,6 +7,20 @@
 
 {% if field.widget.input_type == 'checkbox' %}
     <div class="checkbox"><label>{{field(**kwargs)|safe}} {{field.label.text|safe}}</label></div>
+{%- elif field.type == 'RadioField' -%}
+    <div class="form-group{%- if field.flags.required %} required{% endif -%}">
+        <legend class="col-form-label">{{field.label.text|safe}}</legend>
+        <div class="form-check form-check-inline">
+        {% for item in field -%}
+            <div class="radio mr-3"><label class="{%- if field.description -%}mb-0{% endif %}">{{item(**kwargs)|safe}} {{item.label.text|safe}}</label></div>
+        {% endfor %}
+        </div>
+        {%- if field.description -%}
+            <div>
+                <small class="text-muted">{{field.description|safe}}</small>
+            </div>
+        {%- endif %}
+    </div>
 {%- elif field.type == 'SubmitField' -%}
     {# deal with jinja scoping issues? #}
     {% set field_kwargs = kwargs %}

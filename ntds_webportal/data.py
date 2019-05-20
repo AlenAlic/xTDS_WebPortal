@@ -102,12 +102,6 @@ JURY_POLKA = {NONE: 'Would you like to volunteer as a Polka adjudicator?'}
 JURY_POLKA.update(YMN)
 SLEEPING = {'': 'Would you like to stay in the sleeping halls?'}
 SLEEPING.update(YN)
-SHIRTS = {'': 'Would you like to buy a t-shirt from this tournament?', NO: 'No'}
-SHIRTS.update({k: 'Yes, '+v for k, v in SHIRT_SIZES.items()})
-MUG_CHOICES = {'': 'Would you like to buy a mug from this tournament?'}
-MUG_CHOICES.update(YN)
-BAG_CHOICES = {'': 'Would you like to buy a bag from this tournament?'}
-BAG_CHOICES.update(YN)
 
 
 # Format number to display as price

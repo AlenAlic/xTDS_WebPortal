@@ -3,24 +3,25 @@ const cacheName = 'v1';
 const OFFLINE_URL = '/offline';
 
 const cacheAssets = [
-  OFFLINE_URL,
-  '/static/favicons/browserconfig.xml',
-  '/static/favicons/safari-pinned-tab.svg',
-  '/static/favicons/apple-touch-icon.png',
-  '/static/favicons/favicon.ico',
-  '/static/favicons/favicon-32x32.png',
-  '/static/favicons/favicon-16x16.png',
-  '/static/css/bootstrap.min.css',
-  '/static/js/jquery.min.js',
-  '/static/js/popper.min.js',
-  '/static/js/bootstrap.min.js',
-  '/static/js/moment-with-locales.min.js',
-  '/static/loading/loading.js',
-  '/static/select2/select2-bootstrap3.css',
-  '/static/select2/select2.css',
-  '/static/select2/select2.min.js',
-  '/static/select2/form.js',
-  '/static/js/xtds_main.js'
+    OFFLINE_URL,
+    '/static/favicons/browserconfig.xml',
+    '/static/favicons/safari-pinned-tab.svg',
+    '/static/favicons/apple-touch-icon.png',
+    '/static/favicons/favicon.ico',
+    '/static/favicons/favicon-32x32.png',
+    '/static/favicons/favicon-16x16.png',
+    '/static/css/bootstrap.custom.css',
+    '/static/css/custom.css',
+    '/static/js/jquery.min.js',
+    '/static/js/popper.min.js',
+    '/static/js/bootstrap.min.js',
+    '/static/js/moment-with-locales.min.js',
+    '/static/loading/loading.js',
+    '/static/select2/select2-bootstrap3.css',
+    '/static/select2/select2.css',
+    '/static/select2/select2.min.js',
+    '/static/select2/form.js',
+    '/static/js/xtds_main.js'
 ];
 
 // Call Install Event

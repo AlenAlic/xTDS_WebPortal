@@ -51,7 +51,10 @@
     {% endif %}
     {{ reg_wtf.form_field(form.remark, placeholder='What kind of volunteering shifts would you like, and any addition relevant information.') }}
     {% if mode == 'register' %}
-        {% include 'privacy/checkbox.html' %}
+        <div class="row">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10">{% include 'privacy/checkbox.html' %}</div>
+        </div>
     {% endif %}
     {% if current_user.is_organizer() and mode == 'view' %}</fieldset>{% endif %}
     <div class="form-group row">

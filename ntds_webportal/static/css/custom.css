@@ -1,0 +1,31 @@
+.dancer-information-card div div:first-child {
+  font-weight: bold; }
+
+.dancer-information-card div div:last-child {
+  padding-left: 2rem; }
+
+.dancer-information-card .sub-item {
+  font-size: 0.875rem;
+  padding-left: 1rem; }
+  .dancer-information-card .sub-item div:last-child {
+    padding-left: 1rem; }
+
+.merchandise-orders-table tbody tr td:first-child {
+  width: 80%; }
+
+.merchandise-orders-table tbody tr td:last-child {
+  width: 20%;
+  text-align: right; }
+
+.merchandise-orders-table tbody tr:not(:last-child) {
+  border-bottom: #dee2e6 solid 1px; }
+
+.opaque {
+  opacity: .5; }
+
+.grid-place-self-stretch {
+  place-self: stretch; }
+
+.counting-badge {
+  margin-bottom: -4rem;
+  height: 4rem; }

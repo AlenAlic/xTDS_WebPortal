@@ -1,99 +1,106 @@
 {% extends "base.html" %}
 
-
 {% block app_content %}
-{% if g.ts.main_raffle_result_visible is sameas true %}
-{% if current_timestamp > g.sc.merchandise_closing_date and not g.ts.merchandise_finalized %}
-<div id="finalize-merchandise" style="width:100%">
-    <div style="display: table; margin: 0 auto; text-align: center;">
-        <h2>Finalize merchandise</h2>
-        <p>This will cancel the orders of all dancers that are currently not selected.</p>
-        <p>No new orders will be accepted, and all currently active orders will remain.</p>
-        <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-            {{ form.hidden_tag() }}
-            {{ wtf.form_field(form.submit) }}
-        </form>
-    </div>
-</div>
-{% endif %}
-<h2>Merchandise</h2>
-{% if g.sc.t_shirt_sold is sameas true %}
-<table class="table table-sm">
-    <thead>
-    <tr><th colspan="2"><b>T-shirts</b></th></tr>
-    <tr><th><b>Size</b></th><th style="text-align:right"><b>Quantity</b></th></tr>
-    </thead>
-    <tbody>
-        {% for shirt, quantity in shirts.items() %}
-        <tr>
-            <td>{{ shirt }}</td>
-            <td align="right">{{ quantity }}</td>
-        </tr>
+    {% if g.ts.main_raffle_result_visible %}
+        {% if current_timestamp > g.sc.merchandise_closing_date and not g.ts.merchandise_finalized %}
+            <div id="finalize-merchandise" class="w-100">
+                <div style="display: table; margin: 0 auto; text-align: center;">
+                    <h2>Finalize merchandise</h2>
+                    <p>This will cancel the orders of all dancers that are currently not selected.</p>
+                    <p>No new orders will be accepted, and all currently active orders will remain.</p>
+                    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                        {{ form.hidden_tag() }}
+                        {{ wtf.form_field(form.submit) }}
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+        <h2 class="no-print">Merchandise {% if g.ts.merchandise_finalized %}(finalized){% endif %}</h2>
+        <div class="my-2 no-print">
+            <button class="btn btn-primary" type="button" onclick="printOrders()">Print orders</button>
+            <button class="btn btn-primary" type="button" onclick="printDancers()">Print dancers list</button>
+        </div>
+        <div id="merchandise-orders" class="d-grid grid-template-columns-md-{{ [all_merchandise|length, 2]|min }} grid-template-columns-xl-{{ [all_merchandise|length, 3]|min }} grid-template-columns-xxl-{{ [all_merchandise|length, 4]|min }} grid-row-gap-3 grid-column-gap-3">
+        {% for m in all_merchandise %}
+            <div class="card">
+                <div class="card-header">
+                    {{ m }} orders <span class="badge badge-pill badge-dark">{{ total_merchandise[m] }}</span>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless table-sm mb-0 merchandise-orders-table">
+                    <tbody>
+                        {% for v in all_merchandise[m] %}
+                        <tr>
+                            <td>{{ v.variant_name() }}</td>
+                            <td>{{ all_merchandise[m][v]|length }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+            </div>
         {% endfor %}
-        <tr>
-            <td style="font-weight:bold">Total</td>
-            <td  align="right">{{ total_shirts }}</td>
-        </tr>
-    </tbody>
-</table>
-{% endif %}
-{% if g.sc.number_of_merchandise(exclude_t_shirt=True) > 0 %}
-<div class="row">
-    {% if g.sc.mug_sold is sameas true %}
-    <div class="col-sm-{{(12/g.sc.number_of_merchandise(exclude_t_shirt=True))|round|int}}">
-        <b>Mugs:</b> {{mugs}}
-    </div>
-    {% endif %}
-    {% if g.sc.mug_sold is sameas true %}
-    <div class="col-sm-{{(12/g.sc.number_of_merchandise(exclude_t_shirt=True))|round|int}}">
-        <b>Bags:</b> {{bags}}
-    </div>
-    {% endif %}
-</div>
-{% endif %}
-<h2>Overview</h2>
-<form method="GET" enctype="multipart/form-data" novalidate>
-    <input class="btn btn-outline-primary" id="submit-download_file" name="download_file" type="submit" value="Download list of dancers">
-</form>
-<div style="height:10px"></div>
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-    <div class="card">
-        <div class="card-header" role="button" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            <b class="card-title">Dancers that have ordered merchandise <span class="badge badge-pill badge-dark">{% if dancers|length > 0 %}{{ dancers|length }}{% else %}0{% endif %}</span></b>
         </div>
-        <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
-            {% if dancers|length > 0 %}
-            <table class="table table-sm mb-0">
-                <colgroup>
-                    <col span="1" style="width: 20%;">
-                    <col span="1" style="width: 30%;">
-                    <col span="1" style="width: 30%;">
-                    <col span="1" style="width: 20%;">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>Dancer</th>
-                    <th>Email</th>
-                    <th>Team</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for dancer in dancers %}
-                <tr>
-                    <td>{{ dancer.get_full_name() }}</td>
-                    <td>{{ dancer.email }}</td>
-                    <td>{{ dancer.contestant_info.team.city }}</td>
-                    <td>{{ g.data.STATUS[dancer.status_info.status] }}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
+        <div class="panel-group page-break" id="merchandise-dancers">
+            <div class="card">
+                <div class="card-header" role="button" id="headingOne" data-toggle="collapse" data-parent="#merchandise-dancers" href="#collapseOne">
+                    Dancers that have ordered merchandise <span class="badge badge-pill badge-dark">{% if dancers|length > 0 %}{{ dancers|length }}{% else %}0{% endif %}</span>
+                </div>
+                <div id="collapseOne" class="collapse show card-body">
+                    {% if dancers|length > 0 %}
+                    <table class="table table-sm mb-0">
+                        <colgroup>
+                            <col span="1" style="width: 20%;">
+                            <col span="1" style="width: 30%;">
+                            <col span="1" style="width: 20%;">
+                            <col span="1" style="width: 30%;">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th style="width: 20%;">Dancer</th>
+                            <th style="width: 30%;">Email</th>
+                            <th style="width: 20%;">Team</th>
+                            <th style="width: 30%;">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for dancer in dancers %}
+                        <tr>
+                            <td>{{ dancer.get_full_name() }}</td>
+                            <td>{{ dancer.email }}</td>
+                            <td>{{ dancer.contestant_info.team.city }}</td>
+                            <td>
+                                {% for p in dancer.merchandise_info.purchases|sort(attribute='merchandise_item_variant.merchandise_item.description') %}
+                                    <div>{{ p }}</div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-{% else %}
-<h2>The raffle has not taken place yet.</h2>
-{% endif %}
+    {% else %}
+        <h2>The raffle has not taken place yet.</h2>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+    const printOrders = () => {
+        let dancers = document.getElementById("merchandise-dancers");
+        dancers.classList.add("no-print");
+        window.print();
+        dancers.classList.remove("no-print");
+    };
+    const printDancers = () => {
+        let orders = document.getElementById("merchandise-orders");
+        orders.classList.add("no-print");
+        window.print();
+        orders.classList.remove("no-print");
+    };
+    </script>
 {% endblock %}

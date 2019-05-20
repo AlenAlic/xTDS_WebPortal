@@ -3,6 +3,10 @@
 {% import 'registration_wtf.html' as reg_wtf %}
 
 
+{% set aver = "?201905201500" %}
+{% set dashboard_grid = "mb-4 d-grid grid-column-gap-2 grid-row-gap-2 grid-template-columns-md-2 grid-template-columns-lg-3 grid-template-columns-xl-4 grid-template-columns-xxl-4" %}
+
+
 {% block title %}xTDS WebPortal{% endblock %}
 
 
@@ -10,15 +14,6 @@
 {{ super() }}
 {{ select2_form_css() }}
 <style>
-/* Base formatting */
-{#@media (min-width:1440px){.container{max-width:1410px}}#}
-@media (min-width:576px){.form-width-fix .form-control {width:100%}}
-@media (min-width:768px){.form-width-fix .form-control {width:140px}}
-@media (min-width:992px){.form-width-fix .form-control {width:200px}}
-@media (min-width:1200px){.form-width-fix .form-control {width:auto}}
-@media (min-width:576px){.form-width-fix .form-control-button {width:100%}}
-@media (min-width:768px){.form-width-fix .form-control-button {width:auto}}
-
 /* Cards formatting */
 .card-header {padding-top: 0.5rem; padding-bottom: 0.5rem;}
 .card-title {margin-bottom: 0.25rem;}
@@ -51,6 +46,7 @@ body { background-color:#ffdcdc;}
 /* Print tools */
 @page               {size: 210mm 297mm; margin: 15mm 15mm 15mm 15mm;}
 .pagebreak          {page-break-before: always;}
+.page-break         {page-break-before: always;}
 .print-block        {page-break-after:always;}
 .print-friendly     {page-break-inside:avoid; page-break-after:auto}
 tr                  {page-break-inside:avoid; page-break-after:auto}
@@ -84,7 +80,7 @@ checkbox                        {cursor:pointer}
 
 
 {% block navbar %}
-<nav class="navbar sticky-top navbar-expand-md navbar-light bg-light no-print navbar-default">
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light no-print navbar-default">
     <div class="container">
         <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,16 +101,16 @@ checkbox                        {cursor:pointer}
                 {% if login_form %}
                     <form class="form-inline ml-auto form-width-fix" method="POST" enctype="multipart/form-data">
                         {{ login_form.hidden_tag() }}
-                        {{ login_form.username(class_='form-control mx-0 mx-md-1 my-1 my-md-0', placeholder='Username') }}
-                        {{ login_form.password(class_='form-control mx-0 mx-md-1 my-1 my-md-0', placeholder='Password') }}
-                        {{ login_form.submit(class_='btn btn-outline-primary form-control mx-0 mx-md-1 my-1 my-md-0') }}
-                        <small><a class="nav-link px-0 px-md-3" href="{{url_for('auth.reset_password_request')}}">Forgot password?</a></small>
+                        {{ login_form.username(class_='form-control d-block w-100 d-lg-inline-block w-lg-auto mx-0 mx-lg-1 my-1 my-lg-0', placeholder='Username') }}
+                        {{ login_form.password(class_='form-control d-block w-100 d-lg-inline-block w-lg-auto mx-0 mx-lg-1 my-1 my-lg-0', placeholder='Password') }}
+                        {{ login_form.submit(class_='btn btn-outline-primary form-control d-block w-100 d-lg-inline-block w-lg-auto mx-0 mx-lg-1 my-1 my-lg-0') }}
+                        <small><a class="nav-link d-block d-lg-inline-block px-0 px-lg-3" href="{{url_for('auth.reset_password_request')}}">Forgot password?</a></small>
                     </form>
                 {% endif %}
             {% else %}
-                <form class="form-inline ">
-                    <span class="navbar-text mx-0 mx-md-2 my-1 my-md-0">Welcome, {% if current_user.is_dancer() or current_user.is_super_volunteer() %}{{ current_user.get_full_name() }}{% else %}{{ current_user.username }}{% endif %}</span>
-                    <a href="{{ url_for('main.logout') }}" class="form-control btn btn-outline-primary mx-0 mx-md-2 my-1 my-md-0">Logout</a>
+                <form class="form-inline">
+                    <span class="navbar-text d-none d-lg-inline-block mx-0 mx-md-2 my-1 my-md-0">Welcome, {% if current_user.is_dancer() or current_user.is_super_volunteer() %}{{ current_user.get_full_name() }}{% else %}{{ current_user.username }}{% endif %}</span>
+                    <a href="{{ url_for('main.logout') }}" class="form-control btn btn-outline-primary mx-0 mx-lg-1 my-1 my-lg-0">Logout</a>
                 </form>
             {% endif %}
         </div>
@@ -124,7 +120,7 @@ checkbox                        {cursor:pointer}
 
 
 {% block content %}
-<div id="container-hidden" class="container mt-3" style="padding-bottom:20px; {% block container_style %}{% endblock %}">
+<div id="container-hidden" class="container mt-3 pb-4" style="{% block container_style %}{% endblock %}">
     {% if g.sc.website_accessible is sameas false and current_user.is_authenticated is sameas true %}
     <h1 style="color:#000000; text-align:center;">MAINTENANCE MODE</h1>
     {% endif %}
@@ -138,9 +134,7 @@ checkbox                        {cursor:pointer}
 
 {% block scripts %}
 {{ super() }}
-{#
-<!--<script type="text/javascript" src="{{url_for('static', filename='js/xtds_main.js')}}"></script>-->
-#}
+{#<script type="text/javascript" src="{{url_for('static', filename='js/xtds_main.js')}}{{ aver }}"></script>#}
 {{ select2_form_js() }}
 <script>
 $(document).ready(function($) {
@@ -166,30 +160,50 @@ $(document).ready(function($) {
 {% endmacro %}
 
 
+{% macro dashboard_page(url="#", image="", title="Title", text="", accessible=true, loading_screen=false, wants_attention=false, count=0, show_zero=false) %}
+<a {% if accessible %}href="{{url_for( url )}}"{% endif %} class="grid-place-self-stretch card my-0 {% if not accessible %}inaccessible opaque{% endif %} {% if wants_attention %}text-white bg-info{%endif%} {% if loading_screen and accessible%}loading-btn{% endif %}" style="text-decoration:none;color:black;">
+    {% if count > 0 or show_zero %}
+        <div class="counting-badge">
+            <span class="badge badge-pill badge-primary font-size-4 mt-2 ml-2" >{{count}}</span>
+        </div>
+    {% endif %}
+    <img src="{{url_for('static', filename='dashboard_images/'+image)}}" class="card-img mx-auto" style="max-width: 128px; max-height: 128px; margin-top: 16px;" alt="Dashboard image">
+    <div class="card-body pb-4" style="text-align:center;">
+        <h4 class="card-title">{{ title }}</h4>
+        {% if text != "" %}<p class="card-text">{{ text }}</p>{% endif %}
+    </div>
+</a>
+{% endmacro %}
+
+
 {% macro select2_form_css() %}
-<link rel="stylesheet" href="{{url_for('static', filename='select2/select2.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='select2/select2-bootstrap3.css')}}">
-<style>.select2-results .select2-highlighted{color:#fff;background-color:#1e90ff}</style>
+    <link rel="stylesheet" href="{{url_for('static', filename='select2/select2.css')}}{{ aver }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='select2/select2-bootstrap3.css')}}{{ aver }}">
+    <style>.select2-results .select2-highlighted{color:#fff;background-color:#1e90ff}</style>
 {% endmacro %}
 
 {% macro select2_form_js() %}
-<script type="text/javascript" src="{{url_for('static', filename='select2/select2.min.js')}}"></script>
-<script type="text/javascript" src="{{url_for('static', filename='select2/form.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='select2/select2.min.js')}}{{ aver }}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='select2/form.js')}}{{ aver }}"></script>
 {% endmacro %}
 
 
+{% macro react() %}
+    {% if config.get('ENV') == g.data.DEBUG_ENV %}
+    <script src="{{url_for('static', filename='react/react.development.js')}}{{ aver }}"></script>
+    <script src="{{url_for('static', filename='react/react-dom.development.js')}}{{ aver }}"></script>
+    {% else %}
+    <script src="{{url_for('static', filename='react/react.production.min.js')}}{{ aver }}"></script>
+    <script src="{{url_for('static', filename='react/react-dom.production.min.js')}}{{ aver }}"></script>
+    {% endif %}
+    <script src="{{url_for('static', filename='js/react/util.js')}}{{ aver }}" ></script>
+{% endmacro %}
+
+
+{% macro check_icon(flag) %}
+{% if flag %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-times"></i>{% endif %}
+{% endmacro %}
+
 {% macro icon(type) -%}
 <img style="width:20px;height:20px" src="{{url_for('static', filename='octicons/'+type+'.svg')}}">
-{%- endmacro %}
-{% macro t_shirt_icon() -%}
-&#x1F455;
-{%- endmacro %}
-{% macro mug_icon() -%}
-&#x2615;
-{%- endmacro %}
-{% macro bag_icon() -%}
-&#x1f45c;
-{%- endmacro %}
-{% macro check_mark_icon() -%}
-&#x2713;
 {%- endmacro %}

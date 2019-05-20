@@ -1,12 +1,134 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h2>Clear tables</h2>
-<a class="btn btn-warning" href="{{url_for('self_admin.test_populate')}}?clear_tables" style="text-decoration:none">Clear tables</a>
-<h2>Populate with test data</h2>
-<h3>2018</h3>
-<!--<div class="btn-group btn-group-lg">-->
-    <a class="btn btn-outline-primary btn-lg" href="{{url_for('self_admin.test_populate')}}?NTDS2018ENSCHEDE" style="text-decoration:none">NTDS 2018 Enschede</a>
-    <a class="btn btn-outline-primary btn-lg" href="{{url_for('self_admin.test_populate')}}?ETDS2018BRNO" style="text-decoration:none">ETDS 2018 Brno</a>
-<!--</div>-->
+    <h2>Test data</h2>
+    <p>The system can be prepopulated with test data. Choose one of the previous tournaments below. You can also just reset the system, without adding any preset data.</p>
+    <form class="form my-3" method="POST" enctype="multipart/form-data" novalidate>
+        <button type="submit" class="btn btn-warning" name="clear_tables">Reset system</button>
+    </form>
+    <div class="d-grid grid-template-columns-lg-2 grid-row-gap-3 grid-column-gap-3">
+    {% for tournament in past_tournaments %}
+        <div class="card">
+            <div class="card-header">
+            {{ tournament }}
+            </div>
+            <div class="card-body py-1">
+                <table>
+                    <tbody>
+                    <tr>
+                        <th colspan="2">Competition settings</th>
+                    </tr>
+                    <tr>
+                        <td style="width: 75%">Number of teamcaptains</td><td class="text-right">{{ past_tournaments[tournament]["number_of_teamcaptains"] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Is there a Beginners level?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["beginners_level"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Is there a CloseD level?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["closed_level"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Is there a cutoff where Breitensport dancers must blind date?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["breitensport_obliged_blind_date"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Is there a Salsa competition?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["salsa_competition"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Is there a Polka competition?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["polka_competition"]] }}</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Entry prices</th>
+                    </tr>
+                    <tr>
+                        <td>Students</td><td class="text-right">{{ g.data.euros(past_tournaments[tournament]["student_price"]) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Non-students</td><td class="text-right">{{ g.data.euros(past_tournaments[tournament]["non_student_price"]) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Is there a special category for PhD-students?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["phd_student_category"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>PhD-students</td>
+                        <td class="text-right">
+                            {% if past_tournaments[tournament]["phd_student_category"] %}
+                            {{ g.data.euros(past_tournaments[tournament]["phd_student_price"]) }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Refunds (before certain date)</th>
+                    </tr>
+                    <tr>
+                        <td>Is there a full refund?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["finances_full_refund"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Is there a partial refund?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["finances_partial_refund"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>How much is the partial refund?</td>
+                        <td class="text-right">
+                            {% if past_tournaments[tournament]["finances_partial_refund"] %}
+                            {{ past_tournaments[tournament]["finances_partial_refund_percentage"] }}%
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Questions asked during registration</th>
+                    </tr>
+                    <tr>
+                        <td>Is this your first time attending an {{ past_tournaments[tournament]["tournament"] }}?</td>
+                        <td class="text-right">{{ g.data.TF[past_tournaments[tournament]["first_time_ask"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Do you have any dietary restrictions and/or allergies?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["ask_diet_allergies"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Do you wish to volunteer?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["ask_volunteer"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Are you a qualified First Aid officer and do you with to volunteer as one?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["ask_first_aid"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Are you a qualified Emergency Response Officer and do you with to volunteer as one?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["ask_emergency_response_officer"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>What is your highest achieved level (per discipline)?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["ask_adjudicator_highest_achieved_level"]] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Do you have a certification for adjudicating (per discipline)?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["ask_adjudicator_certification"]] }}</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Merchandise</th>
+                    </tr>
+                    {% if past_tournaments[tournament]["merchandise"]|length == 0 %}
+                    <tr>
+                        <td colspan="2">There was no merchandise for this tournament.</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        {% for merchandise in past_tournaments[tournament]["merchandise"] %}
+                        <td>
+                            <div>{{ merchandise["description"] }}</div>
+                            {% for variant in merchandise["variants"] %}
+                                <div class="pl-3"><small>{{ variant }}</small></div>
+                            {% endfor %}
+                        </td>
+                        <td class="text-right align-text-top">{{ g.data.euros(merchandise["price"]) }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+                <form class="form my-3" method="POST" enctype="multipart/form-data" novalidate>
+                    <button type="submit" class="btn btn-primary" name="test_data" value="{{ tournament }}">Populate system</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
 {% endblock %}

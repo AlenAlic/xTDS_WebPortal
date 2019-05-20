@@ -1,17 +1,25 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h2>Check in dancers</h2>
-<button id="collapse-all" type="button" class="btn btn-outline-primary mb-3" onclick="collapseAll()">Collapse all</button>
-<div id="accordion" style=""></div>
+    <h2>Check in dancers</h2>
+    <button id="collapse-all" type="button" class="btn btn-outline-primary mb-3" onclick="collapseAll()">Collapse all</button>
+    {{ react() }}
+    <script src="{{url_for('static', filename='js/react/CheckinCard.js')}}{{ aver }}" ></script>
+    <div id="accordion" style="">
+        {% for team in teams %}
+            <div id="team-{{ team["team_id"] }}"></div>
+            <script>
+                ReactDOM.render(React.createElement(CheckinCard, {{team | tojson}}), document.getElementById('team-{{ team["team_id"] }}'));
+            </script>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block scripts %}
-{{ super() }}
-<script src="{{url_for('static', filename='js/react/checkin.card.js')}}?2"></script>
-<script>
-function collapseAll() {
-    $('#accordion .collapse').collapse('hide');
-}
-</script>
+    {{ super() }}
+    <script>
+        function collapseAll() {
+            $('#accordion .collapse').collapse('hide');
+        }
+    </script>
 {% endblock %}

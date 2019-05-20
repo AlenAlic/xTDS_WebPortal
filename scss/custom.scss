@@ -1,0 +1,50 @@
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+
+// Cards on dancer signup information page
+.dancer-information-card {
+
+  div div:first-child {
+    font-weight: bold;
+  }
+  div div:last-child {
+    padding-left: 2rem;
+  }
+
+  .sub-item {
+    font-size: 0.875rem;
+    padding-left: 1rem;
+    div:last-child {
+      padding-left: 1rem;
+    }
+  }
+
+}
+
+// Ordered merchandise cards
+.merchandise-orders-table {
+  tbody tr td:first-child {
+    width: 80%;
+  }
+  tbody tr td:last-child {
+    width: 20%;
+    text-align: right;
+  }
+  tbody tr:not(:last-child) {
+    border-bottom: $gray-300 solid 1px;
+  }
+}
+
+// Misc
+.opaque {
+  opacity: .5;
+}
+.grid-place-self-stretch {
+  place-self: stretch;
+}
+
+.counting-badge {
+  margin-bottom: -4rem;
+  height: 4rem;
+}

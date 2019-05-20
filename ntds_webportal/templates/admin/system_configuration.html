@@ -28,6 +28,7 @@ visibility:hidden
     <h3>Website links</h3>
     {{ wtf.form_field(form.main_page_link) }}
     {{ wtf.form_field(form.terms_and_conditions_link) }}
+    {{ wtf.form_field(form.merchandise_link) }}
     <h3>Team captains</h3>
     {{ wtf.form_field(form.number_of_teamcaptains) }}
     <h3>Tournament levels</h3>
@@ -54,15 +55,6 @@ visibility:hidden
     {{ wtf.form_field(form.ask_emergency_response_officer) }}
     {{ wtf.form_field(form.ask_adjudicator_highest_achieved_level) }}
     {{ wtf.form_field(form.ask_adjudicator_certification) }}
-    <h3>Merchandise</h3>
-    {{ wtf.form_field(form.t_shirt_sold, **{'onchange': "Price(this)", 'onkeyup': "Price(this)"}) }}
-    {{ wtf.form_field(form.t_shirt_price) }}
-    {{ wtf.form_field(form.mug_sold, **{'onchange': "Price(this)", 'onkeyup': "Price(this)"}) }}
-    {{ wtf.form_field(form.mug_price) }}
-    {{ wtf.form_field(form.bag_sold, **{'onchange': "Price(this)", 'onkeyup': "Price(this)"}) }}
-    {{ wtf.form_field(form.bag_price) }}
-    {{ wtf.form_field(form.merchandise_link) }}
-    {{ wtf.form_field(form.merchandise_closing_date) }}
     <div class="form-group required">
         <div class="input-group">
             <input class="btn btn-primary mr-2" id="submit" name="submit" type="submit" value="Configure System">&nbsp;
@@ -78,49 +70,21 @@ visibility:hidden
 function onStart() {
     document.getElementById('phd_student_category').onchange();
     document.getElementById('finances_full_refund').onchange();
-    document.getElementById('t_shirt_sold').onchange();
-    document.getElementById('mug_sold').onchange();
-    document.getElementById('bag_sold').onchange();
-    var container = document.getElementById('container-hidden').style.visibility = "visible";
+    let container = document.getElementById('container-hidden').style.visibility = "visible";
 }
 function Price(question) {
-    var name = ""
-    switch (question.name) {
-        case "phd_student_category":
-            name = "phd_student_price";
-            break;
-        case "t_shirt_sold":
-            name = "t_shirt_price";
-            break;
-        case "mug_sold":
-            name = "mug_price";
-            break;
-        case "bag_sold":
-            name = "bag_price";
-            break;
-    }
-    var price = document.getElementById(name)
-    if (question.value == "True") {
+    let price = document.getElementById('phd_student_price');
+    if (question.value === "True") {
         price.removeAttribute('disabled');
     } else {
         price.setAttribute('disabled', true);
     }
-    merchandiseDate()
 }
-function merchandiseDate() {
-    let merchandise_date = document.getElementById("merchandise_closing_date")
-    if ((document.getElementById('t_shirt_sold').value == "False") && (document.getElementById('mug_sold').value == "False") && (document.getElementById('bag_sold').value == "False")) {
-        merchandise_date.setAttribute('disabled', true);
-    } else {
-        merchandise_date.removeAttribute('disabled');
-    }
-}
-
 function fullRefund() {
-    let refund = document.getElementById('finances_full_refund')
-    let partial = document.getElementById('finances_partial_refund')
+    let refund = document.getElementById('finances_full_refund');
+    let partial = document.getElementById('finances_partial_refund');
 
-    if (refund.value == "False") {
+    if (refund.value === "False") {
         partial.removeAttribute('disabled');
     } else {
         partial.setAttribute('disabled', true);
@@ -129,21 +93,21 @@ function fullRefund() {
     partialRefund()
 }
 function partialRefund() {
-    refundPercentage()
-    refundDate()
+    refundPercentage();
+    refundDate();
 }
 function refundPercentage() {
-    let partial = document.getElementById('finances_partial_refund')
-    let refund_percentage = document.getElementById("finances_partial_refund_percentage")
-    if (partial.value == "True") {
+    let partial = document.getElementById('finances_partial_refund');
+    let refund_percentage = document.getElementById("finances_partial_refund_percentage");
+    if (partial.value === "True") {
         refund_percentage.removeAttribute('disabled');
     } else {
         refund_percentage.setAttribute('disabled', true);
     }
 }
 function refundDate() {
-    let refund_date = document.getElementById("finances_refund_date")
-    if (document.getElementById('finances_full_refund').value == "True" || document.getElementById('finances_partial_refund').value == "True") {
+    let refund_date = document.getElementById("finances_refund_date");
+    if (document.getElementById('finances_full_refund').value === "True" || document.getElementById('finances_partial_refund').value === "True") {
         refund_date.removeAttribute('disabled');
     } else {
         refund_date.setAttribute('disabled', true);

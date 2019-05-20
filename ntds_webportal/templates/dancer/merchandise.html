@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block body_attribs %}
+onload="onStart()"
+{% endblock %}
+
+{% block app_content %}
+    <h2>Merchandise</h2>
+    <p>Here you can see the merchandise that you have ordered, and it's status.</p>
+    {% if g.sc.merchandise_link is not none %}
+        <p>Click <a href="{{ g.sc.merchandise_link }}" target="_blank">here</a> to visit the {{ g.sc.tournament }} website and see the merchandise yourself.</p>
+    {% endif %}
+    <div class="card">
+        <div class="card-header">
+            Ordered merchandise
+        </div>
+        <div class="card-body">
+            {% if current_user.dancer.merchandise_info.purchases|length %}
+                <table class="table table-sm mb-0">
+                <tbody>
+                    <tr>
+                        <th>Item</th>
+                        <th>Variant</th>
+                        <th>Price</th>
+                        <th>Paid</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                    {% for purchase in current_user.dancer.merchandise_info.purchases|sort(attribute='cancelled')|sort(attribute='paid') %}
+                    <tr>
+                        <td>{{ purchase.merchandise_item_variant.merchandise_item }}</td>
+                        <td>{{ purchase.merchandise_item_variant.variant_name() }}</td>
+                        <td>{{ g.data.euros(purchase.merchandise_item_variant.merchandise_item.price) }}</td>
+                        <td>{% if purchase.paid %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-times"></i>{% endif %}</td>
+                        <td>{{ purchase.status() }}</td>
+                        <td class="text-right">
+                            {% if purchase.cancellable() %}
+                            <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                                <button type="submit" class="btn btn-danger btn-sm" name="cancel" value="{{ purchase.merchandise_purchased_id }}">Cancel order</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+
+            {% else %}
+                You have not ordered any merchandise.
+            {% endif %}
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            New merchandise
+        </div>
+        <div class="card-body">
+            {% if not g.ts.merchandise_finalized %}
+            <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                {{ form.hidden_tag() }}
+                {{ wtf.form_field(form.merchandise, **{'onchange': "setOptions()", 'onkeyup': "setOptions()"}) }}
+                {{ wtf.form_field(form.variant, disabled=form.merchandise.data==0) }}
+                {{ wtf.form_field(form.submit) }}
+            </form>
+            {% else %}
+            New merchandise cannot be ordered anymore.
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+    let variants = {{ variants | tojson }};
+
+    function onStart() {
+        setOptions()
+    }
+
+    const setOptions = () => {
+        let merchandise = document.getElementById("{{ form.merchandise.name }}");
+        let variant = document.getElementById("{{ form.variant.name }}");
+
+        variant.disabled = merchandise.childNodes[merchandise.selectedIndex].value === "0";
+
+        variant.childNodes.forEach(c => {
+            if (variants[String(merchandise.childNodes[merchandise.selectedIndex].value)].includes(Number(c.value))) {
+                c.style.display = "";
+            } else {
+                c.style.display = "none";
+            }
+        });
+    }
+    </script>
+{% endblock %}

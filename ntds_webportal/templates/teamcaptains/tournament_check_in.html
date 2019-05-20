@@ -1,82 +1,12 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h2>Dancers that have checked in at the tournament desk <span style="font-size:x-large" class="badge badge-pill badge-dark">{{ checked_in_dancers|length }}/{{ confirmed_dancers|length }}</span></h2>
-<table class="table table-sm mb-5">
-    <colgroup>
-        <col span="1" style="width: 25%"/>
-        <col span="1" style="width: 15%"/>
-        <col span="1" style="width: 15%"/>
-        <col span="1" style="width: 15%"/>
-        <col span="1" style="width: 15%"/>
-        <col span="1" style="width: 15%"/>
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Dancer</th>
-            <th>Paid entry fee</th>
-            <th>Paid merchandise</th>
-            <th>Received merchandise</th>
-            <th>Received starting number</th>
-            <th>Checked in</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for dancer in confirmed_dancers %}
-        <tr class="{% if dancer.status_info.checked_in %}table-success{% endif %}">
-            <td>{{ dancer['full_name'] }}</td>
-            <td>
-                {% with flag=dancer['payment_info']['entry_paid'] %}
-                    {% include 'components/true_false_icon.html' %}
-                {% endwith %}
-            </td>
-            <td>
-                {% if dancer['merchandise_info']['ordered_merchandise'] %}
-                    {% with flag=dancer['payment_info']['merchandise_paid'] %}
-                        {% include 'components/true_false_icon.html' %}
-                    {% endwith %}
-                {% endif %}
-            </td>
-            <td>
-                {% if dancer['merchandise_info']['ordered_merchandise'] %}
-                    {% with flag=dancer['merchandise_info']['merchandise_received'] %}
-                        {% include 'components/true_false_icon.html' %}
-                    {% endwith %}
-                {% endif %}
-            </td>
-            <td>
-                {% if dancer['status_info']['dancing_lead'] %}
-                    {% with flag=dancer['status_info']['received_starting_number'] %}
-                        {% include 'components/true_false_icon.html' %}
-                    {% endwith %}
-                {% endif %}
-            </td>
-            <td>
-                {% with flag=dancer['status_info']['checked_in'] %}
-                    {% include 'components/true_false_icon.html' %}
-                {% endwith %}
-            </td>
-        </tr>
-    {% endfor %}
-    {% if cancelled_dancers|length > 0 %}
-    <tr>
-        <th colspan="4" class="pt-5">Cancelled dancers with ordered merchandise</th>
-    </tr>
-    <tr>
-        <th>Dancer</th>
-        <th colspan="4">Ordered merchandise</th>
-    </tr>
-    {% for dancer in cancelled_dancers %}
-    <tr>
-        <td>{{ dancer.get_full_name() }}</td>
-        <td colspan="4">
-            {% if dancer.merchandise_info.t_shirt != g.data.NO %}{{ t_shirt_icon() }}{% endif %}
-            {% if dancer.merchandise_info.bag %}{{ bag_icon() }}{% endif %}
-            {% if dancer.merchandise_info.mug %}{{ mug_icon() }}{% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-    {% endif %}
-    </tbody>
-</table>
+    <h2>Track status of dancers</h2>
+    <p>Here, you can track where your dancers are (logistically speaking).</p>
+    {{ react() }}
+    <script src="{{url_for('static', filename='js/react/TournamentCheckin.js')}}{{ aver }}" ></script>
+    <div id="dancers"></div>
+    <script>
+        ReactDOM.render(React.createElement(TournamentCheckin, {dancers:{{dancers | tojson}}, team_id:{{current_user.team.team_id}}}), document.getElementById('dancers'));
+    </script>
 {% endblock %}

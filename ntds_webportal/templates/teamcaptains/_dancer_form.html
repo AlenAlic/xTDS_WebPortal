@@ -103,24 +103,6 @@
     {% if g.sc.polka_competition is sameas true %}
         {{ reg_wtf.form_field(form.jury_polka) }}
     {% endif %}
-    {% if g.sc.t_shirt_sold is sameas true or g.sc.mug_sold is sameas true or g.sc.bag_sold is sameas true %}
-    <h3>Merchandise</h3>
-        {% if g.sc.merchandise_link is not none %}
-            <div class="form-group row">
-                <label class="control-label col-lg-2" ></label>
-                <div class="col-lg-10"><b>Click <a href="{{ g.sc.merchandise_link }}" target="_blank">here</a> to visit the {{ g.sc.tournament }} website and see the merchandise</b></div>
-            </div>
-        {% endif %}
-        {% if g.sc.t_shirt_sold is sameas true %}
-            {{ reg_wtf.form_field(form.t_shirt, disabled=(timestamp > g.sc.merchandise_closing_date)) }}
-        {% endif %}
-        {% if g.sc.mug_sold is sameas true %}
-            {{ reg_wtf.form_field(form.mug, disabled=(timestamp > g.sc.merchandise_closing_date)) }}
-        {% endif %}
-        {% if g.sc.bag_sold is sameas true %}
-            {{ reg_wtf.form_field(form.bag, disabled=(timestamp > g.sc.merchandise_closing_date)) }}
-        {% endif %}
-    {% endif %}
     {% if current_user.is_dancer() is sameas true or current_user.is_organizer() is sameas true %}</fieldset>{% endif %}
     {% if mode == 'view' and dancer.status_info.status == g.data.NO_GDPR and current_user.is_dancer() %}
     <div class="form-group row required">

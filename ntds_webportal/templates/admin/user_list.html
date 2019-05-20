@@ -1,26 +1,29 @@
 {% extends "base.html" %}
 
-{% block body_attribs %}
-onload="onStart()"
-{% endblock %}
 
 {% block app_content %}
 <h2>Manage accounts</h2>
-<div class="row" style="visibility:hidden">
+<div class="{{ dashboard_grid }}">
     {% if organizer is not none %}
         {% set organizer_image = 'edit_contestant.png' %}
     {% else %}
         {% set organizer_image = 'register_contestant.png' %}
     {% endif %}
-    {% with url='self_admin.organizer_account', title='Organizer', image=organizer_image %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% with url='self_admin.create_team_account', title='Create new Team', image='team.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
-    {% with url='self_admin.create_team_captain', title='Create new Team accounts', image='register_contestant.png' %}
-        {% include '_dashboard_page.html' %}
-    {% endwith %}
+    {{ dashboard_page(
+            url='self_admin.organizer_account',
+            image=organizer_image,
+            title='Organizer'
+            ) }}
+    {{ dashboard_page(
+            url='self_admin.create_team_account',
+            image='team.png',
+            title='Create new Team'
+            ) }}
+    {{ dashboard_page(
+            url='self_admin.create_team_captain',
+            image='register_contestant.png',
+            title='Create new Team accounts'
+            ) }}
 </div>
 <h2>Available Teamcaptains and Treasurers</h2>
 <table class="table table-sm">
@@ -80,18 +83,4 @@ onload="onStart()"
         {% endfor %}
     </tbody>
 </table>
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-function onStart() {
-    var maxHeight = 0;
-    $(".thumbnail-same-height").each(function(){
-       if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
-    });
-    $(".thumbnail-same-height").height(maxHeight);
-    $(".row").css('visibility', 'visible');
-}
-</script>
 {% endblock %}

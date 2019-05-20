@@ -10,13 +10,14 @@ from time import time
 from datetime import datetime as dt, timedelta
 import datetime
 import jwt
-from ntds_webportal.base_functions import str2bool, hours_delta
+from ntds_webportal.util import str2bool, hours_delta
 from sqlalchemy import or_
 import enum
 import random
 from random import shuffle
 import itertools
 from adjudication_system.skating import SkatingDance, SkatingSummary, CompetitionResult, RankingReport
+from ntds_webportal.data import euros
 
 
 USERS = 'users'
@@ -275,6 +276,9 @@ class Team(db.Model):
     contestants = db.relationship('ContestantInfo', back_populates="team")
 
     def __repr__(self):
+        return self.display_name()
+
+    def display_name(self):
         if g.sc.tournament == NTDS:
             return '{}'.format(self.name)
         else:
@@ -290,19 +294,40 @@ class Team(db.Model):
             return False
 
     def confirmed_dancers(self):
-        return Contestant.query.join(ContestantInfo, StatusInfo)\
+        return Contestant.query.join(ContestantInfo, StatusInfo) \
             .filter(ContestantInfo.team == self, StatusInfo.status == CONFIRMED).order_by(Contestant.first_name).all()
+
+    def cancelled_dancers(self):
+        return Contestant.query.join(ContestantInfo, StatusInfo)\
+            .filter(ContestantInfo.team == self, StatusInfo.status == CANCELLED).order_by(Contestant.first_name).all()
 
     def cancelled_dancers_with_merchandise(self):
         dancers = Contestant.query.join(ContestantInfo, StatusInfo)\
             .filter(ContestantInfo.team == self, StatusInfo.status == CANCELLED).order_by(Contestant.first_name).all()
         return [d for d in dancers if d.merchandise_info.ordered_merchandise()]
 
+    def dancers_with_refund(self):
+        dancers = Contestant.query.join(ContestantInfo, StatusInfo)\
+            .filter(ContestantInfo.team == self, StatusInfo.status == CANCELLED).order_by(Contestant.first_name).all()
+        return [d for d in dancers if d.payment_info.has_refund()]
+
+    def check_in_dancers(self):
+        return [d for d in self.confirmed_dancers() + self.cancelled_dancers()
+                if d.status_info.payment_required or d.payment_info.has_refund()]
+
     def guaranteed_dancers(self):
         return Contestant.query.join(ContestantInfo, StatusInfo)\
             .filter(ContestantInfo.team == self, StatusInfo.status == REGISTERED,
                     or_(ContestantInfo.team_captain.is_(True), StatusInfo.guaranteed_entry.is_(True)))\
             .order_by(Contestant.first_name).all()
+
+    def finances_data(self, view_only=False):
+        return {
+            "settings": g.sc.json_settings(view_only=view_only),
+            "prices": g.sc.entry_fee_prices(team=self.amount_paid),
+            "dancers": {d.contestant_id: d.json() for d in self.check_in_dancers()},
+            "merchandise_items": g.sc.merchandise_settings()
+        }
 
 
 class Contestant(db.Model):
@@ -392,26 +417,28 @@ class Contestant(db.Model):
         else:
             return BOTH
 
-    def to_dict(self):
-        data = {
-            'contestant_id': self.contestant_id,
-            # 'first_name':  self.first_name,
-            # 'last_name': self.get_last_name(),
-            'full_name': self.get_full_name(),
-            # 'email': self.email,
-            'contestant_info': self.contestant_info.to_dict(),
-            # 'dancing_info': {},
-            # 'volunteer_info': self.volunteer_info.to_dict(),
-            # 'additional_info': self.additional_info.to_dict(),
-            'status_info': self.status_info.to_dict(),
-            'merchandise_info': self.merchandise_info.to_dict(),
-            'payment_info': self.payment_info.to_dict(),
+    def payment_csv_string(self):
+        description = f"{g.sc.tournament} {g.sc.city} {g.sc.year} - " \
+            f"{STUDENT_STRING[self.contestant_info.student]} entry fee"
+        price = g.sc.entry_fee(self.contestant_info.student) + self.merchandise_info.merchandise_price()
+        if self.merchandise_info.ordered_merchandise():
+            description += " + merchandise"
+        paid_string = {True: "Yes", False: "No"}
+        return [self.get_full_name(), price / 100, description, paid_string[self.payment_info.is_all_paid()]]
+
+    def json(self):
+        return {
+            "contestant_id": self.contestant_id,
+            "full_name": self.get_full_name(),
+            'contestant_info': self.contestant_info.json(),
+            # 'dancing_info': [d.json() for d in self.dancing_info],
+            # 'volunteer_info': self.volunteer_info.json(),
+            # 'additional_info': self.additional_info.json(),
+            'status_info': self.status_info.json(),
+            'merchandise_info': self.merchandise_info.json(),
+            'payment_info': self.payment_info.json(),
+            "pending": False
         }
-        # dis = [di.to_dict() for di in self.dancing_info]
-        # for di in dis:
-        #     for key, val in di.items():
-        #         data['dancing_info'][key] = val
-        return data
 
 
 class ContestantInfo(db.Model):
@@ -431,19 +458,18 @@ class ContestantInfo(db.Model):
         return '{name}'.format(name=self.contestant)
 
     def team_name(self):
-        if g.sc.tournament == g.data.NTDS:
-            return f"{self.team.name} ({self.team.city})"
+        return self.team.display_name()
 
-    def to_dict(self):
-        data = {
+    def json(self):
+        return {
             'number': self.number,
             'team_captain':  self.team_captain,
             'student': self.student,
             'first_time': self.first_time,
             'diet_allergies': self.diet_allergies,
-            'team': self.team.name,
+            'team': self.team_name(),
+            'team_id': self.team.team_id,
         }
-        return data
 
 
 class DancingInfo(db.Model):
@@ -501,7 +527,14 @@ class DancingInfo(db.Model):
         self.blind_date = False
         self.partner = None
 
-    def to_dict(self):
+    def get_partner(self):
+        if self.partner is None:
+            return "No partner"
+        partner = DancingInfo.query.filter(DancingInfo.competition == self.competition,
+                                           DancingInfo.contestant_id == self.partner).first()
+        return partner.contestant.get_full_name()
+
+    def json(self):
         data = {
             self.competition: {
                 'level':  self.level,
@@ -550,14 +583,11 @@ class VolunteerInfo(db.Model):
         self.jury_salsa = NO
         self.jury_polka = NO
 
-    def volunteering(self):
-        return self.volunteer != NO or self.first_aid != NO or self.emergency_response_officer != NO
-
     def wants_to_adjudicate(self):
         return self.jury_ballroom != NO or self.jury_latin != NO or self.jury_salsa != NO or self.jury_polka != NO
 
-    def to_dict(self):
-        data = {
+    def json(self):
+        return {
             'volunteer': self.volunteer,
             'first_aid':  self.first_aid,
             'emergency_response_officer': self.emergency_response_officer,
@@ -570,7 +600,6 @@ class VolunteerInfo(db.Model):
             'jury_salsa': self.jury_salsa,
             'jury_polka': self.jury_polka,
         }
-        return data
 
 
 class AdditionalInfo(db.Model):
@@ -583,12 +612,11 @@ class AdditionalInfo(db.Model):
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
-    def to_dict(self):
-        data = {
+    def json(self):
+        return {
             'sleeping_arrangements': self.sleeping_arrangements,
-            'bus_to_tournament':  self.bus_to_brno,
+            'bus_to_tournament': self.bus_to_brno,
         }
-        return data
 
 
 class StatusInfo(db.Model):
@@ -624,10 +652,10 @@ class StatusInfo(db.Model):
         self.contestant.payment_info.remove_refund()
         db.session.commit()
 
-    def to_dict(self):
-        data = {
-            # 'status': self.status,
-            # 'payment_required':  self.payment_required,
+    def json(self):
+        return {
+            'status': self.status,
+            'payment_required':  self.payment_required,
             # 'raffle_status': self.raffle_status,
             'dancing_lead': self.dancing_lead(),
             'guaranteed_entry': self.guaranteed_entry,
@@ -635,7 +663,6 @@ class StatusInfo(db.Model):
             'received_starting_number': self.received_starting_number,
             # 'feedback_about_information': self.feedback_about_information,
         }
-        return data
 
 
 class PaymentInfo(db.Model):
@@ -650,53 +677,7 @@ class PaymentInfo(db.Model):
         return '{name}'.format(name=self.contestant)
 
     def has_refund(self):
-        return self.full_refund is True or self.partial_refund is True
-
-    def all_paid(self, set_paid=None):
-        if set_paid is not None:
-            if set_paid:
-                return self.set_all_paid()
-            elif not set_paid:
-                return self.set_all_unpaid()
-        else:
-            m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
-            if m_info.ordered_merchandise():
-                return m_info.merchandise_paid() and self.entry_paid
-            else:
-                return self.entry_paid
-
-    def merchandise_paid(self, set_paid=None):
-        m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
-        if set_paid is not None:
-            if set_paid:
-                return m_info.set_merchandise_paid()
-            elif not set_paid:
-                return m_info.set_merchandise_unpaid()
-        else:
-            return m_info.merchandise_paid()
-
-    def set_all_paid(self):
-        m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
-        if m_info.ordered_merchandise():
-            m_info.set_merchandise_paid()
-        self.entry_paid = True
-        db.session.commit()
-        return True
-
-    def partially_paid(self):
-        m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
-        if m_info.ordered_merchandise():
-            return m_info.merchandise_paid() or self.entry_paid
-        else:
-            return self.entry_paid
-
-    def set_all_unpaid(self):
-        m_info = MerchandiseInfo.query.filter(MerchandiseInfo.contestant_id == self.contestant_id).first()
-        if m_info.ordered_merchandise():
-            m_info.set_merchandise_unpaid()
-        self.entry_paid = False
-        db.session.commit()
-        return False
+        return self.full_refund or self.partial_refund or self.contestant.merchandise_info.has_refund()
 
     def remove_refund(self):
         self.partial_refund = False
@@ -710,15 +691,58 @@ class PaymentInfo(db.Model):
             self.partial_refund = True
         db.session.commit()
 
-    def to_dict(self):
-        data = {
-            'entry_paid': self.entry_paid,
-            # 'full_refund': self.full_refund,
-            # 'partial_refund': self.partial_refund,
-            'all_paid': self.all_paid(),
-            'merchandise_paid': self.merchandise_paid(),
+    def json(self):
+        return {
+            "entry_paid": self.entry_paid,
+            "all_paid": self.is_all_paid(),
+            "partial_paid": self.is_partial_paid(),
+            "entry_price": self.entry_price(),
+            "payment_price": self.payment_price(),
+            "refund": self.has_refund(),
+            "refund_reasons": self.refund_reasons(),
+            "refund_price": self.refund_price(),
+            "refund_entry_price": self.refund_entry_price(),
         }
-        return data
+
+    def is_all_paid(self):
+        return self.entry_paid and self.contestant.merchandise_info.is_merchandise_paid()
+
+    def is_partial_paid(self):
+        return self.entry_paid or any([p.paid for p in self.contestant.merchandise_info.purchases])
+
+    def all_is_paid(self, paid):
+        self.entry_paid = paid
+        self.contestant.merchandise_info.merchandise_is_paid(paid)
+        db.session.commit()
+
+    def refund_reasons(self):
+        reasons = []
+        if self.full_refund is True or self.partial_refund:
+            reasons.append("Entry fee return")
+        if self.contestant.merchandise_info.has_refund():
+            reasons.append("Merchandise payment return")
+        return reasons
+
+    def refund_entry_price(self):
+        entry_price = g.sc.entry_fee(self.contestant.contestant_info.student)
+        if self.partial_refund:
+            entry_price = entry_price * g.sc.finances_partial_refund_percentage / 100
+        return entry_price
+
+    def refund_price(self):
+        if self.full_refund or self.partial_refund:
+            entry_price = g.sc.entry_fee(self.contestant.contestant_info.student)
+        else:
+            entry_price = 0
+        if self.partial_refund:
+            entry_price = entry_price * g.sc.finances_partial_refund_percentage / 100
+        return entry_price + self.contestant.merchandise_info.refund_price()
+
+    def entry_price(self):
+        return g.sc.entry_fee(self.contestant.contestant_info.student)
+
+    def payment_price(self):
+        return self.entry_price() + self.contestant.merchandise_info.merchandise_price()
 
 
 class MerchandiseInfo(db.Model):
@@ -726,81 +750,164 @@ class MerchandiseInfo(db.Model):
     order_id = db.Column(db.Integer, primary_key=True)
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
     contestant = db.relationship('Contestant', back_populates='merchandise_info')
-    t_shirt = db.Column(db.String(128), nullable=False, default=NO)
-    mug = db.Column(db.Boolean, nullable=False, default=False)
-    bag = db.Column(db.Boolean, nullable=False, default=False)
-    t_shirt_paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
-    mug_paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
-    bag_paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
-    merchandise_received = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    purchases = db.relationship('MerchandisePurchase', back_populates='merchandise_info')
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
     def ordered_merchandise(self):
-        return self.t_shirt != NO or self.mug or self.bag
-
-    def merchandise_paid(self):
-        t_shirt_paid = self.t_shirt_paid
-        mug_paid = self.mug_paid
-        bag_paid = self.bag_paid
-        if self.t_shirt == NO:
-            t_shirt_paid = True
-        if not self.mug:
-            mug_paid = True
-        if not self.bag:
-            bag_paid = True
-        return t_shirt_paid and mug_paid and bag_paid
-
-    def set_merchandise_paid(self):
-        if self.ordered_merchandise():
-            if g.sc.t_shirt_sold and self.t_shirt != NO:
-                self.t_shirt_paid = True
-            if g.sc.mug_sold and self.mug:
-                self.mug_paid = True
-            if g.sc.bag_sold and self.bag:
-                self.bag_paid = True
-            db.session.commit()
-
-    def set_merchandise_unpaid(self):
-        if self.ordered_merchandise():
-            if g.sc.t_shirt_sold and self.t_shirt:
-                self.t_shirt_paid = False
-            if g.sc.mug_sold and self.mug:
-                self.mug_paid = False
-            if g.sc.bag_sold and self.bag:
-                self.bag_paid = False
-            db.session.commit()
-
-    def merchandise_price(self):
-        total_price = 0
-        if self.ordered_merchandise():
-            if self.t_shirt != NO:
-                total_price += g.sc.t_shirt_price
-            if self.mug:
-                total_price += g.sc.mug_price
-            if self.bag:
-                total_price += g.sc.bag_price
-        return total_price
+        return len(self.purchases) > 0
 
     def cancel_merchandise(self):
-        self.t_shirt = NO
-        self.mug = False
-        self.bag = False
+        for purchase in self.purchases:
+            if purchase.paid or purchase.ordered:
+                purchase.cancelled = True
+            else:
+                db.session.delete(purchase)
         db.session.commit()
 
-    def to_dict(self):
-        data = {
-            't_shirt': self.t_shirt,
-            'mug':  self.mug,
-            'bag': self.bag,
-            't_shirt_paid': self.t_shirt_paid,
-            'mug_paid': self.mug_paid,
-            'bag_paid': self.bag_paid,
-            'merchandise_received': self.merchandise_received,
-            'ordered_merchandise': self.ordered_merchandise(),
+    def json(self):
+        return {
+            "purchases": self.purchases_json(),
+            "ordered_merchandise": self.ordered_merchandise(),
+            "merchandise_price": self.merchandise_price(),
+            "merchandise_refund_price": self.refund_price(),
+            "merchandise_paid": self.is_merchandise_paid(),
+            "merchandise_received": self.is_merchandise_received(),
         }
-        return data
+
+    def is_merchandise_paid(self):
+        return all([p.paid for p in self.purchases])
+
+    def merchandise_is_paid(self, paid):
+        for p in self.purchases:
+            if not p.cancelled:
+                p.paid = paid
+        db.session.commit()
+
+    def is_merchandise_received(self):
+        return all([p.received for p in self.purchases])
+
+    def merchandise_price(self):
+        return sum([p.merchandise_item_variant.merchandise_item.price for p in self.purchases])
+
+    def purchases_json(self):
+        return {p.merchandise_purchased_id: p.json() for p in
+                sorted(self.purchases, key=lambda x: x.merchandise_item_variant.merchandise_item.description)}
+
+    def has_refund(self):
+        return any([p.refund() for p in self.purchases])
+
+    def refund_price(self):
+        return sum([p.refund_price() for p in self.purchases])
+
+
+class MerchandisePurchase(db.Model):
+    __tablename__ = 'merchandise_purchase'
+    merchandise_purchased_id = db.Column(db.Integer, primary_key=True)
+    merchandise_info_id = db.Column(db.Integer, db.ForeignKey('merchandise_info.contestant_id'))
+    merchandise_info = db.relationship('MerchandiseInfo', back_populates='purchases')
+    merchandise_item_variant_id = db.Column(db.Integer,
+                                            db.ForeignKey('merchandise_item_variant.merchandise_item_variant_id'))
+    merchandise_item_variant = db.relationship('MerchandiseItemVariant', back_populates='purchases')
+    paid = db.Column(db.Boolean, nullable=False, default=False)
+    received = db.Column(db.Boolean, nullable=False, default=False)
+    ordered = db.Column(db.Boolean, nullable=False, default=False)
+    cancelled = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f"{self.merchandise_item_variant.payment_name()}"
+
+    def status(self):
+        if self.received:
+            return "You have received the item"
+        if self.ordered:
+            return "Your item has been ordered"
+        if self.cancelled:
+            return "Your order has been cancelled"
+        return "Your order has been received"
+
+    def cancellable(self):
+        return not self.ordered and not self.cancelled
+
+    def cancel(self, show_flash_messages=False):
+        if self.cancelled:
+            if show_flash_messages:
+                flash(f"Cannot cancel {self}, item is already cancelled.", "alert-warning")
+                return self.cancelled
+        else:
+            if self.ordered:
+                if show_flash_messages:
+                    flash(f"Cannot cancel {self}, the item has already been ordered.", "alert-warning")
+                return self.cancelled
+            if self.paid:
+                self.cancelled = True
+                if show_flash_messages:
+                    flash(f"Order for {self} has been cancelled. Because it has already been paid, the order will "
+                          f"remain in your overview.")
+                db.session.commit()
+                return self.cancelled
+            if show_flash_messages:
+                flash(f"Order for {self} has been cancelled, and has been removed from the system.")
+            db.session.delete(self)
+            db.session.commit()
+            return True
+
+    def refund(self):
+        return self.cancelled and self.paid
+
+    def refund_price(self):
+        if self.refund():
+            return self.merchandise_item_variant.merchandise_item.price
+        return 0
+
+    def json(self):
+        return {
+            "merchandise_purchased_id": self.merchandise_purchased_id,
+            "merchandise_item_id": self.merchandise_item_variant.merchandise_item.merchandise_item_id,
+            "item": self.merchandise_item_variant.payment_name(),
+            "price": self.merchandise_item_variant.merchandise_item.price,
+            "paid": self.paid,
+            "received": self.received,
+            "description": self.merchandise_item_variant.merchandise_item.description,
+            "cancelled": self.cancelled
+        }
+
+
+class MerchandiseItem(db.Model):
+    __tablename__ = 'merchandise_item'
+    merchandise_item_id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(128), nullable=False)
+    shirt = db.Column(db.Boolean, nullable=False, default=False)
+    price = db.Column(db.Integer, nullable=False, default=0)
+    variants = db.relationship('MerchandiseItemVariant', back_populates='merchandise_item',
+                               cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f"{self.description}"
+
+    def display_name(self):
+        return f"{self.description} ({euros(self.price)})"
+
+
+class MerchandiseItemVariant(db.Model):
+    __tablename__ = 'merchandise_item_variant'
+    merchandise_item_variant_id = db.Column(db.Integer, primary_key=True)
+    merchandise_item_id = db.Column(db.Integer, db.ForeignKey('merchandise_item.merchandise_item_id'))
+    merchandise_item = db.relationship('MerchandiseItem', back_populates='variants', uselist=False)
+    variant = db.Column(db.String(128), nullable=False)
+    purchases = db.relationship("MerchandisePurchase", back_populates='merchandise_item_variant')
+
+    def __repr__(self):
+        return f"{self.merchandise_item}: {self.variant}"
+
+    def variant_name(self):
+        if self.variant in SHIRT_SIZES:
+            return SHIRT_SIZES[self.variant]
+        return self.variant
+
+    def payment_name(self):
+        return f"{self.merchandise_item} - {self.variant_name()}"
 
 
 class AttendedPreviousTournamentContestant(db.Model):
@@ -949,9 +1056,9 @@ class NameChangeRequest(db.Model):
     def accept(self):
         self.state = self.STATE['Accepted']
         self.notify()
-        self.contestant.first_name = self.first_name
-        self.contestant.last_name = self.last_name
-        self.contestant.prefixes = self.prefixes
+        self.contestant.first_name, self.first_name = self.first_name, self.contestant.first_name
+        self.contestant.last_name, self.last_name = self.last_name, self.contestant.last_name
+        self.contestant.prefixes, self.prefixes = self.prefixes, self.contestant.prefixes
 
     def reject(self):
         self.state = self.STATE['Rejected']
@@ -1065,12 +1172,6 @@ class SystemConfiguration(db.Model):
     ask_adjudicator_highest_achieved_level = db.Column(db.Boolean, nullable=False, default=True)
     ask_adjudicator_certification = db.Column(db.Boolean, nullable=False, default=True)
 
-    t_shirt_sold = db.Column(db.Boolean, nullable=False, default=True)
-    t_shirt_price = db.Column(db.Integer, nullable=False, default=0)
-    mug_sold = db.Column(db.Boolean, nullable=False, default=True)
-    mug_price = db.Column(db.Integer, nullable=False, default=0)
-    bag_sold = db.Column(db.Boolean, nullable=False, default=True)
-    bag_price = db.Column(db.Integer, nullable=False, default=0)
     merchandise_link = db.Column(db.String(1028), nullable=True)
     merchandise_closing_date = db.Column(db.Integer, nullable=False, default=1538449200)
 
@@ -1099,32 +1200,60 @@ class SystemConfiguration(db.Model):
 
     def check_in_accessible(self):
         return int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) > \
-                              self.tournament_starting_date
+               self.tournament_starting_date
 
-    def merchandise(self):
-        return self.t_shirt_sold or self.mug_sold or self.bag_sold
+    def past_merchandise_finalization_date(self):
+        return int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) > \
+               self.merchandise_closing_date
+
+    def finalize_merchandise(self):
+        return self.past_merchandise_finalization_date() and not g.ts.merchandise_finalized
 
     @staticmethod
-    def merchandise_name(number):
-        order = {0: 'T-shirt', 1: 'Mug', 2: 'Bag'}
-        return order[number]
+    def merchandise():
+        return len(MerchandiseItemVariant.query.all()) > 0
 
-    def merchandise_sold(self, number):
-        order = {0: self.t_shirt_sold, 1: self.mug_sold, 2: self.bag_sold}
-        return order[number]
+    @staticmethod
+    def merchandise_order():
+        return {m: i for i, m in enumerate(MerchandiseItem.query.order_by(MerchandiseItem.description).all())}
 
-    def number_of_merchandise(self, exclude_t_shirt=False):
-        counter = 0
-        if self.t_shirt_sold and not exclude_t_shirt:
-            counter += 1
-        if self.mug_sold:
-            counter += 1
-        if self.bag_sold:
-            counter += 1
-        return counter
+    def entry_fee(self, student):
+        if student == STUDENT:
+            return self.student_price
+        if student == NON_STUDENT:
+            return self.non_student_price
+        if student == PHD_STUDENT:
+            return self.phd_student_price
 
-    def refund(self):
+    def entry_fee_prices(self, team=0):
+        return {
+            STUDENT: self.student_price,
+            NON_STUDENT: self.non_student_price,
+            PHD_STUDENT: self.phd_student_price,
+            "team": team
+        }
+
+    def does_tournament_have_refund(self):
         return self.finances_full_refund or self.finances_partial_refund
+
+    def json_settings(self, view_only=False):
+        return {
+            "phd_student_category": self.phd_student_category,
+            "merchandise": len(MerchandiseItem.query.all()) > 0,
+            "merchandise_finalized": g.ts.merchandise_finalized,
+            "refund": self.does_tournament_have_refund(),
+            "refund_percentage": self.finances_partial_refund_percentage / 100,
+            "view_only": view_only
+        }
+
+    @staticmethod
+    def merchandise_settings():
+        return {
+            m.merchandise_item_id: {
+                "merchandise_item_id": m.merchandise_item_id,
+                "description": m.description,
+                "price": m.price
+            } for m in MerchandiseItem.query.order_by(MerchandiseItem.description).all()}
 
 
 class RaffleConfiguration(db.Model):

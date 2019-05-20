@@ -8,12 +8,11 @@ from ntds_webportal.teamcaptains.email import send_dancer_user_account_email
 from ntds_webportal.models import User, requires_access_level, Contestant, ContestantInfo, DancingInfo, \
     StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification, AdditionalInfo, Team, \
     requires_tournament_state, Competition
-from ntds_webportal.functions import get_dancing_categories, submit_contestant, \
-    get_total_dancer_price_list, random_password
+from ntds_webportal.functions import get_dancing_categories, submit_contestant, random_password
 import ntds_webportal.functions as func
 import ntds_webportal.data as data
 from ntds_webportal.data import *
-from ntds_webportal.helper_classes import TeamFinancialOverview, TeamPossiblePartners
+from ntds_webportal.helper_classes import TeamPossiblePartners
 from sqlalchemy import and_, or_
 import itertools
 import datetime
@@ -91,8 +90,7 @@ def edit_dancer(number):
     dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number) \
         .order_by(Contestant.contestant_id).first_or_404()
-    possible_partners = TeamPossiblePartners(current_user, dancer=dancer, include_gdpr=True,
-                                             status=dancer.status_info.status).possible_partners()
+    possible_partners = TeamPossiblePartners(current_user, dancer=dancer, include_gdpr=True).possible_partners()
     form = EditContestantForm(dancer)
     if request.method == GET:
         form.populate(dancer)
@@ -659,71 +657,24 @@ def raffle_result():
 @requires_access_level([ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def edit_finances():
-    ts = TournamentState.query.first()
-    finances, confirmed_dancers, cancelled_dancers, refund_dancers = None, None, None, None
-    if ts.main_raffle_result_visible:
-        price = TeamFinancialOverview(current_user)
-        all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
+    if g.ts.main_raffle_result_visible:
+        all_dancers = Contestant.query.join(ContestantInfo).join(StatusInfo) \
             .filter(ContestantInfo.team == current_user.team, StatusInfo.payment_required.is_(True)) \
             .order_by(Contestant.first_name).all()
-        confirmed_dancers = [d for d in all_dancers if d.status_info.status == CONFIRMED]
-        cancelled_dancers = [d for d in all_dancers if d.status_info.status == CANCELLED]
-        if g.sc.finances_full_refund:
-            refund_dancers = [d for d in cancelled_dancers if d.payment_info.full_refund]
-        if g.sc.finances_partial_refund:
-            refund_dancers = [d for d in cancelled_dancers if d.payment_info.partial_refund]
-        finances = price.finances_overview()
-        form = request.args
-        if 'download_file' in form:
-            download_list = [get_total_dancer_price_list(d) for d in all_dancers]
-            output = StringIO()
-            w = csv.writer(output)
-            w.writerow(['Name', 'Amount', 'Description', 'Has paid?'])
-            for d in download_list:
-                w.writerow(d)
-            output.seek(0)
-            output = BytesIO(output.read().encode('utf-8-sig'))
-            return send_file(output, as_attachment=True,
-                             attachment_filename=f"payment_list_{g.sc.tournament}_{g.sc.city}_{g.sc.year}_"
-                                                 f"{current_user.team.city}.csv")
-        if request.method == 'POST':
-            form = request.form
-            changes = False
-            for dancer in all_dancers:
-                if str(dancer.contestant_id)+"-all" in form:
-                    if not dancer.payment_info.all_paid():
-                        changes = True
-                    dancer.payment_info.set_all_paid()
-                else:
-                    # if dancer.payment_info.all_paid():
-                    #     changes = True
-                    # dancer.payment_info.set_all_unpaid()
-                    if str(dancer.contestant_id) + "-entry" in form:
-                        if not dancer.payment_info.entry_paid:
-                            changes = True
-                        dancer.payment_info.entry_paid = True
-                    else:
-                        if dancer.payment_info.entry_paid:
-                            changes = True
-                        dancer.payment_info.entry_paid = False
-                    if dancer.merchandise_info.ordered_merchandise():
-                        if str(dancer.contestant_id) + "-merchandise" in form:
-                            if not dancer.merchandise_info.merchandise_paid():
-                                changes = True
-                            dancer.merchandise_info.set_merchandise_paid()
-                        else:
-                            if dancer.merchandise_info.merchandise_paid():
-                                changes = True
-                            dancer.merchandise_info.set_merchandise_unpaid()
-            if changes:
-                db.session.commit()
-                flash('Changes saved successfully.', 'alert-success')
-            else:
-                flash('No changes were made to submit.', 'alert-info')
-            return redirect(url_for('teamcaptains.edit_finances'))
-    return render_template('teamcaptains/edit_finances.html', ts=ts, finances=finances,
-                           confirmed_dancers=confirmed_dancers, cancelled_dancers=cancelled_dancers,
-                           refund_dancers=refund_dancers)
+        if request.method == "POST":
+            if "download_file" in request.form:
+                download_list = [d.payment_csv_string() for d in all_dancers]
+                output = StringIO()
+                w = csv.writer(output)
+                w.writerow(['Name', 'Amount', 'Description', 'Has paid?'])
+                for d in download_list:
+                    w.writerow(d)
+                output.seek(0)
+                output = BytesIO(output.read().encode('utf-8-sig'))
+                return send_file(output, as_attachment=True,
+                                 attachment_filename=f"payment_list_{g.sc.tournament}_{g.sc.city}_{g.sc.year}_"
+                                 f"{current_user.team.city}.csv")
+    return render_template('teamcaptains/edit_finances.html')
 
 
 @bp.route('/treasurer_inaccessible', methods=['GET'])
@@ -800,18 +751,8 @@ def bus_to_brno():
 @requires_access_level([ACCESS[TEAM_CAPTAIN]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def tournament_check_in():
-    ts = TournamentState.query.first()
-    confirmed_dancers = Contestant.query.join(ContestantInfo, StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED)\
-        .order_by(Contestant.first_name).all()
-    checked_in_dancers = [d for d in confirmed_dancers if d.status_info.checked_in]
-    cancelled_dancers = Contestant.query.join(ContestantInfo, StatusInfo) \
-        .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CANCELLED)\
-        .order_by(Contestant.first_name).all()
-    cancelled_dancers = [d for d in cancelled_dancers if d.merchandise_info.ordered_merchandise()]
-    return render_template('teamcaptains/tournament_check_in.html', ts=ts, data=data,
-                           confirmed_dancers=[d.to_dict() for d in confirmed_dancers],
-                           checked_in_dancers=checked_in_dancers, cancelled_dancers=cancelled_dancers)
+    dancers = {d.contestant_id: d.json() for d in current_user.team.check_in_dancers()}
+    return render_template('teamcaptains/tournament_check_in.html', dancers=dancers)
 
 
 @bp.route('/starting_lists', methods=['GET'])

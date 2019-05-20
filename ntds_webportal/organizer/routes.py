@@ -4,14 +4,15 @@ from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, VolunteerInfo, \
-    requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo
+    requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo, MerchandiseItem, MerchandiseItemVariant
 from ntds_webportal.functions import submit_updated_dancing_info, random_password
-from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm
-from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm
+from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm, \
+    CreateNewMerchandiseForm
+from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm, \
+    MerchandiseDateForm
 from ntds_webportal.organizer.email import send_registration_open_email, send_gdpr_reminder_email
 from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
 from ntds_webportal.auth.email import send_team_captain_activation_email
-from ntds_webportal.helper_classes import TeamFinancialOverview
 from ntds_webportal.teamcaptains.forms import EditContestantForm
 from ntds_webportal.volunteering.forms import SuperVolunteerForm
 import ntds_webportal.data as data
@@ -180,6 +181,88 @@ def change_email(number):
     return render_template('admin/change_email.html', form=form, user=user)
 
 
+@bp.route('/manage_merchandise', methods=['GET', "POST"])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(SYSTEM_CONFIGURED)
+def manage_merchandise():
+    all_merchandise = MerchandiseItem.query.all()
+    form = CreateNewMerchandiseForm()
+    merchandise_date_form = MerchandiseDateForm()
+    if request.method == "GET":
+        mcd = datetime.datetime.utcfromtimestamp(g.sc.merchandise_closing_date).replace(tzinfo=datetime.timezone.utc)
+        mcd += datetime.timedelta(days=-1)
+        merchandise_date_form.merchandise_closing_date.data = datetime.date(mcd.year, mcd.month, mcd.day)
+    if request.method == "POST":
+        if merchandise_date_form.merchandise_closing_submit.name in request.form:
+            if merchandise_date_form.validate_on_submit():
+                mcd = datetime.datetime(merchandise_date_form.merchandise_closing_date.data.year,
+                                        merchandise_date_form.merchandise_closing_date.data.month,
+                                        merchandise_date_form.merchandise_closing_date.data.day, 3, 0, 0, 0)\
+                    .replace(tzinfo=datetime.timezone.utc)
+                mcd += datetime.timedelta(days=1)
+                g.sc.merchandise_closing_date = mcd.timestamp()
+                db.session.commit()
+                flash(f"Merchandise closing date set.", 'alert-success')
+                return redirect(url_for('organizer.manage_merchandise'))
+        if not g.ts.merchandise_finalized:
+            if form.new_item_submit.name in request.form:
+                if form.validate_on_submit():
+                    variants = form.variants.data.split(",")
+                    if form.shirt.data == "shirt":
+                        for var in variants:
+                            item = MerchandiseItem(description=f"{var.strip()} {form.item.data}", price=form.price.data)
+                            item.shirt = True
+                            for size in SHIRT_SIZES:
+                                item.variants.append(MerchandiseItemVariant(variant=size, merchandise_item=item))
+                            db.session.add(item)
+                            db.session.commit()
+                            flash(f"{item.description} added.", 'alert-success')
+                    else:
+                        item = MerchandiseItem(description=form.item.data, price=form.price.data)
+                        for var in variants:
+                            item.variants.append(MerchandiseItemVariant(variant=var.strip(), merchandise_item=item))
+                        db.session.add(item)
+                        db.session.commit()
+                        flash(f"{item.description} added.", 'alert-success')
+                    return redirect(url_for('organizer.manage_merchandise'))
+            if "delete" in request.form:
+                var = MerchandiseItemVariant.query\
+                    .filter(MerchandiseItemVariant.merchandise_item_variant_id == request.form["delete"]).first()
+                if len(var.merchandise_item.variants) > 1:
+                    flash(f"Deleted {var.variant_name()} variant of {var.merchandise_item}.", 'alert-success')
+                    db.session.delete(var)
+                    db.session.commit()
+                    return redirect(url_for('organizer.manage_merchandise'))
+                else:
+                    flash(f"Cannot delete the last variant of {var.merchandise_item}.", 'alert-warning')
+            if "add" in request.form:
+                merchandise_item = MerchandiseItem.query \
+                    .filter(MerchandiseItem.merchandise_item_id == request.form["add"]).first()
+                if len(request.form["new_variant"].strip()) > 0:
+                    var = MerchandiseItemVariant(variant=request.form["new_variant"].strip(),
+                                                 merchandise_item=merchandise_item)
+                    merchandise_item.variants.append(var)
+                    flash(f"Added {var.variant_name()} variant to {var.merchandise_item}.", 'alert-success')
+                    db.session.commit()
+                    return redirect(url_for('organizer.manage_merchandise'))
+                else:
+                    flash(f"Cannot add a variant without a name.", 'alert-warning')
+            if "merchandise_item" in request.form:
+                merchandise_item = MerchandiseItem.query\
+                    .filter(MerchandiseItem.merchandise_item_id == request.form["merchandise_item"]).first()
+                merchandise_item.description = request.form[form.item.name]
+                merchandise_item.price = int(request.form[form.price.name])
+                if not merchandise_item.shirt:
+                    for var in merchandise_item.variants:
+                        var.variant = request.form[str(var.merchandise_item_variant_id)]
+                db.session.commit()
+                flash(f"{merchandise_item} updated,", 'alert-success')
+                return redirect(url_for('organizer.manage_merchandise'))
+    return render_template('organizer/manage_merchandise.html', form=form, all_merchandise=all_merchandise,
+                           merchandise_date_form=merchandise_date_form)
+
+
 @bp.route('/registration_management', methods=['GET'])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER]])
@@ -308,7 +391,6 @@ def edit_dancing_info(number):
     return render_template('organizer/edit_dancing_info.html', data=data, form=form, dancer=dancer)
 
 
-# noinspection PyTypeChecker
 @bp.route('/finances_overview', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
@@ -319,100 +401,60 @@ def finances_overview():
         all_teams = all_teams.filter(Team.country == NETHERLANDS).all()
     else:
         all_teams = all_teams.all()
-    if request.method == 'POST':
-        if 'submit' in request.form:
-            changes = False
-            for team in all_teams:
-                amount_paid = request.form.get(str(team.team_id))
-                if amount_paid != ''.strip() and amount_paid is not None:
-                    amount_paid = int(round(float(amount_paid)*100))
-                    if team.amount_paid != amount_paid:
-                        team.amount_paid = amount_paid
-                        changes = True
-            if changes:
-                db.session.commit()
-                flash('Changes saved successfully.', 'alert-success')
-            else:
-                flash('No changes were made to submit.', 'alert-warning')
-            return redirect(url_for('organizer.finances_overview'))
-    all_confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-        .filter(StatusInfo.payment_required.is_(True), StatusInfo.status == CONFIRMED)\
-        .order_by(ContestantInfo.team_id, Contestant.first_name).all()
-    all_cancelled_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-        .filter(StatusInfo.payment_required.is_(True), StatusInfo.status == CANCELLED) \
-        .order_by(ContestantInfo.team_id, Contestant.first_name).all()
-    teams = [{'team': team, 'id': team.city,
-              'confirmed_dancers': [dancer for dancer in all_confirmed_dancers if
-                                    dancer.contestant_info.team.name == team.name],
-              'cancelled_dancers': [dancer for dancer in all_cancelled_dancers if
-                                    dancer.contestant_info.team.name == team.name],
-              'finances': TeamFinancialOverview(
-                  User.query.filter(User.team == team, User.access == ACCESS[TEAM_CAPTAIN]).first())
-              .finances_overview()}
-             for team in all_teams]
-    teams = [team for team in teams if (len(team['confirmed_dancers']) + len(team['cancelled_dancers'])) > 0]
-    for t in teams:
-        if g.sc.finances_full_refund:
-            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info.full_refund]
-        if g.sc.finances_partial_refund:
-            t['refund_dancers'] = [d for d in t['cancelled_dancers'] if d.payment_info.partial_refund]
-    dutch_teams = [team for team in teams if team['team'].country == NETHERLANDS]
-    german_teams = [team for team in teams if team['team'].country == GERMANY]
-    other_teams = [team for team in teams if
-                   team['team'].country != NETHERLANDS and team['team'].country != GERMANY]
-    totals = {
-        'number_of_students': sum([team['finances']['number_of_students'] for team in teams]),
-        'number_of_phd_students': sum([team['finances']['number_of_phd_students'] for team in teams]),
-        'number_of_non_students': sum([team['finances']['number_of_non_students'] for team in teams]),
-        'number_of_dancers': 0,
-        'number_of_merchandise': sum([team['finances']['number_of_merchandise'] for team in teams]),
-        'owed': sum([team['finances']['price_total'] for team in teams]),
-        'received': sum([team['team'].amount_paid for team in teams]),
-        'difference': 0,
-        'refund': sum([team['finances']['total_refund'] for team in teams])
-    }
-    totals['difference'] = totals['received'] - totals['owed']
-    totals['number_of_dancers'] = sum([totals['number_of_students'], totals['number_of_phd_students'],
-                                       totals['number_of_non_students']])
-    download = request.args
-    if 'download_file' in download:
-        header = {'Team': 0, '# Dancers': 1, 'Owed': 2, 'Received': 3, 'Difference': 4, 'Refund': 5}
-        fn = f'finances_overview_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
-        output = BytesIO()
-        wb = xlsxwriter.Workbook(output, {'in_memory': True})
-        f = wb.add_format({'text_wrap': True, 'bold': True})
-        acc = wb.add_format({'num_format': 44})
-        total_acc = wb.add_format({'num_format': 44, 'bold': True})
-        ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
-        for name, index in header.items():
-            ws.write(0, index, name, f)
-        ws.set_column(0, 0, 30)
-        ws.set_column(1, 1, 10)
-        ws.set_column(2, 5, 15)
-        totals = {'dancers': 0, 'owed': 0, 'received': 0, 'difference': 0, 'refund': 0}
-        for i, team in enumerate(teams, 1):
-            ws.write(i, 0, team['team'].name)
-            ws.write(i, 1, team['finances']['number_of_dancers'])
-            ws.write(i, 2, round(team['finances']['price_total']/100, 2), acc)
-            ws.write(i, 3, round(team['team'].amount_paid/100, 2), acc)
-            ws.write(i, 4, round((team['team'].amount_paid-team['finances']['price_total'])/100, 2), acc)
-            ws.write(i, 5, round(team['finances']['total_refund']/100, 2), acc)
-            totals['dancers'] += team['finances']['number_of_dancers']
-            totals['owed'] += team['finances']['price_total']
-            totals['received'] += team['team'].amount_paid
-            totals['refund'] += team['finances']['total_refund']
-        totals['difference'] = totals['received'] - totals['owed']
-        ws.write(len(teams) + 1, 1, totals['dancers'], wb.add_format({'bold': True}))
-        ws.write(len(teams) + 1, 2, round(totals['owed']/100, 2), total_acc)
-        ws.write(len(teams) + 1, 3, round(totals['received'] / 100, 2), total_acc)
-        ws.write(len(teams) + 1, 4, round(totals['difference'] / 100, 2), total_acc)
-        ws.write(len(teams) + 1, 5, round(totals['refund'] / 100, 2), total_acc)
-        ws.freeze_panes(1, 0)
-        wb.close()
-        output.seek(0)
-        return send_file(output, as_attachment=True, attachment_filename=fn)
-    return render_template('organizer/finances_overview.html', teams=teams, totals=totals,
-                           dutch_teams=dutch_teams, german_teams=german_teams, other_teams=other_teams)
+    if request.method == "POST":
+        if 'download_file' in request.form:
+            download_teams = [{
+                'team': team,
+                'name': team.display_name(),
+                'dancers': team.check_in_dancers(),
+            } for team in all_teams]
+            download_teams = [team for team in download_teams if len(team['dancers']) > 0]
+            header = {'Team': 0, '# Dancers': 1, 'Owed': 2, 'Received': 3, 'Difference': 4, 'Refund': 5}
+            fn = f'finances_overview_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
+            output = BytesIO()
+            wb = xlsxwriter.Workbook(output, {'in_memory': True})
+            f = wb.add_format({'text_wrap': True, 'bold': True})
+            acc = wb.add_format({'num_format': 44})
+            total_acc = wb.add_format({'num_format': 44, 'bold': True})
+            ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
+            for name, index in header.items():
+                ws.write(0, index, name, f)
+            ws.set_column(0, 0, 30)
+            ws.set_column(1, 1, 10)
+            ws.set_column(2, 5, 15)
+            totals = {'dancers': 0, 'owed': 0, 'received': 0, 'difference': 0, 'refund': 0}
+            for i, team in enumerate(download_teams, 1):
+                owed = sum([d.payment_info.payment_price() for d in team['dancers']])
+                received = team['team'].amount_paid
+                difference = received - owed
+                refund = sum([d.payment_info.refund_price() for d in team['dancers']])
+                ws.write(i, 0, team['team'].name)
+                ws.write(i, 1, len(team['dancers']))
+                ws.write(i, 2, round(owed / 100, 2), acc)
+                ws.write(i, 3, round(received / 100, 2), acc)
+                ws.write(i, 4, round(difference / 100, 2), acc)
+                ws.write(i, 5, round(refund / 100, 2), acc)
+                totals['dancers'] += len(team['dancers'])
+                totals['owed'] += owed
+                totals['received'] += received
+                totals['refund'] += refund
+            totals['difference'] = totals['received'] - totals['owed']
+            ws.write(len(download_teams) + 1, 1, totals['dancers'], wb.add_format({'bold': True}))
+            ws.write(len(download_teams) + 1, 2, round(totals['owed'] / 100, 2), total_acc)
+            ws.write(len(download_teams) + 1, 3, round(totals['received'] / 100, 2), total_acc)
+            ws.write(len(download_teams) + 1, 4, round(totals['difference'] / 100, 2), total_acc)
+            ws.write(len(download_teams) + 1, 5, round(totals['refund'] / 100, 2), total_acc)
+            ws.freeze_panes(1, 0)
+            wb.close()
+            output.seek(0)
+            return send_file(output, as_attachment=True, attachment_filename=fn)
+    teams = {team.team_id: {
+        "team_id": team.team_id,
+        "country": team.country,
+        "name": team.display_name(),
+        "finances_data": team.finances_data(view_only=True)
+    } for team in all_teams}
+    return render_template('organizer/finances_overview.html', teams=teams)
 
 
 @bp.route('/remove_payment_requirement/<int:number>', methods=['GET', 'POST'])
@@ -442,73 +484,30 @@ def add_refund(number):
 def merchandise():
     current_timestamp = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
     form = FinalizeMerchandiseForm()
-    if form.is_submitted() and form.validate_on_submit():
-        if not g.ts.merchandise_finalized:
-            registered_dancers = Contestant.query.join(StatusInfo)\
-                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR,
-                            StatusInfo.status == CANCELLED)).all()
-            registered_dancers = [d for d in registered_dancers if d.merchandise_info.ordered_merchandise()]
-            for dancer in registered_dancers:
-                dancer.merchandise_info.cancel_merchandise()
-            g.ts.merchandise_finalized = True
-            flash("Merchandise finalized.", "alert-success")
-            db.session.commit()
-    dancers = Contestant.query.join(StatusInfo).join(ContestantInfo).join(AdditionalInfo).join(MerchandiseInfo)\
-        .join(Team).filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == CANCELLED))\
+    dancers = Contestant.query.join(StatusInfo, ContestantInfo, AdditionalInfo, MerchandiseInfo, Team) \
+        .filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == CANCELLED)) \
         .order_by(Team.city, Contestant.first_name).all()
     dancers = [dancer for dancer in dancers if dancer.merchandise_info.ordered_merchandise()]
-    shirts = {shirt_size: 0 for shirt_size in SHIRT_SIZES}
-    mugs, bags = 0, 0
-    for dancer in dancers:
-        try:
-            shirts[dancer.merchandise_info.t_shirt] += 1
-        except KeyError:
-            pass
-        mugs += 1 if dancer.merchandise_info.mug else 0
-        bags += 1 if dancer.merchandise_info.bag else 0
-    shirts = {SHIRT_SIZES[shirt]: quantity for shirt, quantity in shirts.items()}
-    total_shirts = sum([quantity for size, quantity in shirts.items()])
-    download = request.args
-    if 'download_file' in download:
-        header = {'Name': 0, 'E-mail': 1, 'Team': 2}
-        base_len = len(header)
-        for i in range(0, 3):
-            if g.sc.merchandise_sold(i):
-                header.update({g.sc.merchandise_name(i): len(header)})
-        fn = f'merchandise_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
-        output = BytesIO()
-        wb = xlsxwriter.Workbook(output, {'in_memory': True})
-        f = wb.add_format({'text_wrap': True, 'bold': True})
-        ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
-        for name, index in header.items():
-            ws.write(0, index, name, f)
-        ws.set_column(0, 0, 30)
-        ws.set_column(1, 1, 40)
-        ws.set_column(2, 3, 20)
-        for d in range(0, len(dancers)):
-            ws.write(d + 1, 0, dancers[d].get_full_name())
-            ws.write(d + 1, 1, dancers[d].email)
-            ws.write(d + 1, 2, dancers[d].contestant_info.team.city)
-            for i in range(base_len, len(header)):
-                counter = base_len
-                if g.sc.t_shirt_sold:
-                    try:
-                        ws.write(d + 1, counter, SHIRT_SIZES[dancers[d].merchandise_info.t_shirt])
-                    except KeyError:
-                        ws.write(d + 1, counter, NONE)
-                    counter += 1
-                if g.sc.mug_sold:
-                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info.mug])
-                    counter += 1
-                if g.sc.bag_sold:
-                    ws.write(d + 1, counter, TF[dancers[d].merchandise_info.bag])
-                    counter += 1
-        ws.freeze_panes(1, 0)
-        wb.close()
-        output.seek(0)
-        return send_file(output, as_attachment=True, attachment_filename=fn)
+    if request.method == "POST":
+        if form.submit.name in request.form:
+            if form.validate_on_submit():
+                if not g.ts.merchandise_finalized:
+                    registered_dancers = Contestant.query.join(StatusInfo)\
+                        .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR,
+                                    StatusInfo.status == CANCELLED)).all()
+                    registered_dancers = [d for d in registered_dancers if d.merchandise_info.ordered_merchandise()]
+                    for dancer in registered_dancers:
+                        dancer.merchandise_info.cancel_merchandise()
+                    g.ts.merchandise_finalized = True
+                    flash("Merchandise finalized.", "alert-success")
+                    db.session.commit()
+    all_merchandise = {m: {v: [] for v in m.variants} for m in MerchandiseItem.query.all()}
+    for d in dancers:
+        for m in d.merchandise_info.purchases:
+            all_merchandise[m.merchandise_item_variant.merchandise_item][m.merchandise_item_variant].append(m)
+    total_merchandise = {m: sum([len(all_merchandise[m][v]) for v in m.variants]) for m in MerchandiseItem.query.all()}
     return render_template('organizer/merchandise.html', dancers=dancers, current_timestamp=current_timestamp,
-                           form=form, shirts=shirts, total_shirts=total_shirts, mugs=mugs, bags=bags)
+                           form=form, all_merchandise=all_merchandise, total_merchandise=total_merchandise)
 
 
 @bp.route('/sleeping_hall', methods=['GET'])

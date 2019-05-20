@@ -11,6 +11,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from wtforms import PasswordField
 import ntds_webportal.data as data
 from datetime import datetime
+from ntds_webportal.util import BooleanConverter
 
 
 class MyAdminIndexView(AdminIndexView):
@@ -117,7 +118,8 @@ def create_app():
     from ntds_webportal.models import User, Team, Contestant, ContestantInfo, DancingInfo, StatusInfo, PaymentInfo, \
         VolunteerInfo, AdditionalInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, \
         TournamentState, SystemConfiguration, RaffleConfiguration, AttendedPreviousTournamentContestant, \
-        NotSelectedContestant, SuperVolunteer, ShiftInfo, Shift, ShiftSlot
+        NotSelectedContestant, SuperVolunteer, ShiftInfo, Shift, ShiftSlot, MerchandiseItem, MerchandiseItemVariant, \
+        MerchandisePurchase
     from ntds_webportal.models import Event, Competition, DancingClass, Discipline, Dance, Round, \
         Heat, Couple, Adjudicator, Mark, CouplePresent, RoundResult, FinalPlacing, DanceActive, CompetitionMode, Dancer
 
@@ -125,6 +127,8 @@ def create_app():
     app.config.from_object('config')
     app.config.from_pyfile('config.py')
     app.url_map.strict_slashes = False
+
+    app.url_map.converters['bool'] = BooleanConverter
 
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:'))
@@ -145,6 +149,9 @@ def create_app():
     admin.add_view(BaseView(VolunteerInfo, db.session))
     admin.add_view(BaseView(AdditionalInfo, db.session))
     admin.add_view(BaseView(MerchandiseInfo, db.session))
+    admin.add_view(BaseView(MerchandiseItem, db.session))
+    admin.add_view(BaseView(MerchandiseItemVariant, db.session))
+    admin.add_view(BaseView(MerchandisePurchase, db.session))
     admin.add_view(BaseView(Notification, db.session))
     admin.add_view(BaseView(PartnerRequest, db.session))
     admin.add_view(BaseView(NameChangeRequest, db.session))
@@ -193,32 +200,58 @@ def create_app():
 
     @app.context_processor
     def inject_now():
-        return {'now': int(datetime.utcnow().timestamp())}
+        return {'now': f"?{int(datetime.utcnow().timestamp())}"}
 
-    def create_tournament_state_table():
+    @app.shell_context_processor
+    def make_shell_context():
+        return {'create_admin': create_admin, 'create_configuration': create_configuration}
+
+    def create_admin(email, password):
+        if len(User.query.filter(User.access == data.ACCESS[data.ADMIN]).all()) == 0:
+            a = User()
+            a.username = 'admin'
+            a.email = email
+            a.set_password(password)
+            a.access = data.ACCESS[data.ADMIN]
+            a.is_active = True
+            db.session.add(admin)
+            db.session.commit()
+
+    def create_configuration():
+        if len(User.query.filter(User.access == data.ACCESS[data.ORGANIZER]).all()) == 0:
+            organisation = User()
+            organisation.username = 'NTDSEnschede2018'
+            organisation.email = 'email@example.com'
+            organisation.set_password('password')
+            organisation.access = data.ACCESS[data.ORGANIZER]
+            organisation.is_active = False
+            db.session.add(organisation)
+            db.session.commit()
+        if Team.query.filter(Team.name == data.TEAM_ORGANIZATION).first() is not None:
+            db.session.add(Team(name=data.TEAM_ORGANIZATION, country=data.TEAM_ORGANIZATION,
+                                city=data.TEAM_ORGANIZATION))
+            db.session.commit()
+        if Team.query.filter(Team.name == data.TEAM_SUPER_VOLUNTEER).first() is not None:
+            db.session.add(Team(name=data.TEAM_SUPER_VOLUNTEER, country=data.TEAM_SUPER_VOLUNTEER,
+                                city=data.TEAM_SUPER_VOLUNTEER))
+            db.session.commit()
         if len(TournamentState.query.all()) == 0:
-            ts = TournamentState()
-            db.session.add(ts)
-            db.session.commit()
-
-    def create_system_configuration_table():
+            db.session.add(TournamentState())
         if len(SystemConfiguration.query.all()) == 0:
-            sc = SystemConfiguration()
-            db.session.add(sc)
-            db.session.commit()
-
-    def create_raffle_configuration_table():
+            db.session.add(SystemConfiguration(website_accessible=True))
         if len(RaffleConfiguration.query.all()) == 0:
-            rc = RaffleConfiguration()
-            db.session.add(rc)
-            db.session.commit()
+            db.session.add(RaffleConfiguration())
 
     with app.app_context():
         from sqlalchemy.exc import InternalError, ProgrammingError
         try:
-            create_tournament_state_table()
-            create_system_configuration_table()
-            create_raffle_configuration_table()
+            if len(TournamentState.query.all()) == 0:
+                db.session.add(TournamentState())
+            if len(SystemConfiguration.query.all()) == 0:
+                db.session.add(SystemConfiguration())
+            if len(RaffleConfiguration.query.all()) == 0:
+                db.session.add(RaffleConfiguration())
+            db.session.commit()
         except (InternalError, ProgrammingError):
             pass
 

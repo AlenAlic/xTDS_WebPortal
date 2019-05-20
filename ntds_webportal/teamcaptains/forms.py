@@ -10,7 +10,6 @@ from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, Dancin
 from wtforms_sqlalchemy.fields import QuerySelectField
 import wtforms_sqlalchemy.fields as f
 from sqlalchemy import and_, or_
-import datetime
 
 
 def get_pk_from_identity(obj):
@@ -143,9 +142,6 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.t_shirt.label.text = 'T-shirt - {}'.format(euros(g.sc.t_shirt_price))
-        self.mug.label.text = 'Mug - {}'.format(euros(g.sc.mug_price))
-        self.bag.label.text = 'Bag - {}'.format(euros(g.sc.bag_price))
         first_time = {'': 'Is this your first time participating in {prefix} {tournament}?'.format(
             tournament=g.sc.tournament, prefix='a' if g.sc.tournament == NTDS else 'an')}
         first_time.update(YN)
@@ -167,20 +163,10 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
             new_id += 1
         self.number.data = new_id
 
-        if datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp() > g.sc.merchandise_closing_date:
-            self.t_shirt.data = NO
-            self.mug.data = str(False)
-            self.bag.data = str(False)
         if not g.sc.ask_volunteer:
             self.volunteer.data = NO
         if not g.sc.first_time_ask:
             self.first_time.data = str(False)
-        if not g.sc.t_shirt_sold:
-            self.t_shirt.data = NO
-        if not g.sc.mug_sold:
-            self.mug.data = str(False)
-        if not g.sc.bag_sold:
-            self.bag.data = str(False)
 
     number = IntegerField('Contestant number', validators=[DataRequired()], render_kw={'disabled': True})
     team = QuerySelectField('Team', validators=[DataRequired()], render_kw={'disabled': True})
@@ -191,9 +177,6 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
     diet_allergies = StringField('Diet/Allergies')
     sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
                                         choices=[(k, v) for k, v in SLEEPING.items()])
-    t_shirt = SelectField('T-shirt', validators=[DataRequired()], choices=[(k, v) for k, v in SHIRTS.items()])
-    mug = SelectField('T-shirt', validators=[IsBoolean()], choices=[(k, v) for k, v in MUG_CHOICES.items()])
-    bag = SelectField('T-shirt', validators=[IsBoolean()], choices=[(k, v) for k, v in BAG_CHOICES.items()])
 
     def custom_validate(self):
         # noinspection PyCallByClass
@@ -237,9 +220,6 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
         self.first_time.data = str(dancer.contestant_info.first_time)
         self.diet_allergies.data = dancer.contestant_info.diet_allergies
         self.sleeping_arrangements.data = str(dancer.additional_info.sleeping_arrangements)
-        self.t_shirt.data = dancer.merchandise_info.t_shirt
-        self.mug.data = str(dancer.merchandise_info.mug)
-        self.bag.data = str(dancer.merchandise_info.bag)
 
         self.first_aid.data = dancer.volunteer_info.first_aid
         self.emergency_response_officer.data = dancer.volunteer_info.emergency_response_officer
@@ -307,7 +287,7 @@ class EditContestantForm(BaseContestantForm):
         super().__init__(**kwargs)
         if dancer is not None:
             ballroom_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-                .filter(or_(StatusInfo.status == dancer.status_info.status, StatusInfo.status == NO_GDPR),
+                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
                         DancingInfo.competition == BALLROOM,
                         or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                             DancingInfo.level == BEGINNERS))
@@ -320,19 +300,18 @@ class EditContestantForm(BaseContestantForm):
             self.ballroom_partner.query = ballroom_query
 
             latin_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
-                .filter(or_(StatusInfo.status == dancer.status_info.status, StatusInfo.status == NO_GDPR),
+                .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
                         DancingInfo.competition == LATIN,
                         or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
                             DancingInfo.level == BEGINNERS))
-            if dancer.competition(BALLROOM).partner is not None:
+            if dancer.competition(LATIN).partner is not None:
                 latin_query.filter(or_(and_(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)),
                                        DancingInfo.partner == dancer.contestant_id)).order_by(Contestant.first_name)
             else:
                 latin_query.filter(ContestantInfo.team == current_user.team, DancingInfo.partner.is_(None)) \
                     .order_by(Contestant.first_name)
             self.latin_partner.query = latin_query
-            if dancer.payment_info.all_paid():
-                self.student.render_kw = {'disabled': ''}
+            self.student.render_kw = {'disabled': ''}
 
     def custom_validate(self, dancer):
         if dancer.status_info.status == SELECTED or dancer.status_info.status == CONFIRMED:
@@ -349,10 +328,6 @@ class EditContestantForm(BaseContestantForm):
             self.student.data = dancer.contestant_info.student
         super().custom_validate()
         self.full_name.data = dancer.get_full_name()
-        if datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp() > g.sc.merchandise_closing_date:
-            self.t_shirt.data = dancer.merchandise_info.t_shirt
-            self.mug.data = str(dancer.merchandise_info.mug)
-            self.bag.data = str(dancer.merchandise_info.bag)
     
     def populate(self, dancer):
         super().populate(dancer)

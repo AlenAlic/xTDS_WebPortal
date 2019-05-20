@@ -1,0 +1,66 @@
+// Your variable overrides
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1440px
+);
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1400px
+);
+
+$displays: none, inline, inline-block, block, table, table-row, table-cell, flex, inline-flex, grid;
+
+// Bootstrap and its default variables
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+// Grid template columns
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    @for $i from 1 through 6 {
+      .grid-template-columns#{$infix}-#{$i} {
+        grid-template-columns: repeat($i, 1fr);
+      }
+    }
+
+    @each $prop in (row, column) {
+      @each $size, $length in $spacers {
+        .grid-#{$prop}-gap-#{$size} {
+          grid-#{$prop}-gap: $length !important
+        }
+      }
+    }
+
+  }
+
+  @each $size, $length in $spacers {
+    .font-size-#{$size} {
+      font-size: $length !important
+    }
+  }
+
+}
+
+// Width and height
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    @each $prop, $abbrev in (width: w, height: h) {
+      @each $size, $length in $sizes {
+        .#{$abbrev}#{$infix}-#{$size} { #{$prop}: $length !important; }
+      }
+    }
+
+  }
+
+}

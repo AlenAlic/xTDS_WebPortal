@@ -116,20 +116,6 @@ class SystemSetupForm(SystemSetupTournamentForm):
     ask_adjudicator_certification = SelectField("Will you ask volunteers that wish to be an adjudicator "
                                                 "if they have a certification to adjudicate?",
                                                 choices=[(k, v) for k, v in YN.items()])
-
-    t_shirt_sold = SelectField("Will t-shirts be sold before the tournament?",
-                               choices=[(k, v) for k, v in YN.items()])
-    t_shirt_price = IntegerField(f"What is the price of a t-shirt? (in Euro cents)",
-                                 validators=[NumberRange(0)], default=0)
-    mug_sold = SelectField("Will mugs be sold before the tournament?", choices=[(k, v) for k, v in YN.items()])
-    mug_price = IntegerField(f"What is the price of a mug? (in Euro cents)", validators=[NumberRange(0)], default=0)
-    bag_sold = SelectField("Will bags be sold before the tournament?", choices=[(k, v) for k, v in YN.items()])
-    bag_price = IntegerField(f"What is the price of a bag? (in Euro cents)", validators=[NumberRange(0)], default=0)
-    merchandise_link = StringField(f"What is the web page that shows the merchandise?", render_kw=WEB_PAGE_PLACEHOLDER)
-    merchandise_closing_date = DateField("What is the last date at which merchandise can be ordered?",
-                                         validators=[DataRequired()],
-                                         render_kw={"type": "date", "max": "2099-12-30", "min": "2018-01-30"})
-
     finances_full_refund = SelectField("Will you be giving full refunds to dancers that cancel their registration?",
                                        choices=[(k, v) for k, v in YN.items()])
     finances_partial_refund = SelectField("Will you be giving partial refunds to dancers that cancel their "
@@ -143,3 +129,12 @@ class SystemSetupForm(SystemSetupTournamentForm):
     main_page_link = StringField(f"What is the main domain of your website?", render_kw=WEB_PAGE_PLACEHOLDER)
     terms_and_conditions_link = StringField(f"What is the web page that the terms and conditions for the tournament?",
                                             render_kw=WEB_PAGE_PLACEHOLDER)
+    merchandise_link = StringField(f"What is the web page that shows the merchandise (if any)?",
+                                   render_kw=WEB_PAGE_PLACEHOLDER)
+
+
+class MerchandiseDateForm(FlaskForm):
+    merchandise_closing_date = DateField("What is the last date at which merchandise can be ordered?",
+                                         validators=[],
+                                         render_kw={"type": "date", "max": "2099-12-30", "min": "2018-01-30"})
+    merchandise_closing_submit = SubmitField("Set date")

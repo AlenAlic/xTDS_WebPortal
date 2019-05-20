@@ -5,7 +5,7 @@ from ntds_webportal.volunteering import bp
 from ntds_webportal.volunteering.forms import SuperVolunteerForm, ShiftTypeForm, ShiftForm, ShiftSlotForm
 from ntds_webportal.models import requires_access_level, requires_tournament_state, User, SuperVolunteer, Contestant, \
     ContestantInfo, StatusInfo, Shift, ShiftInfo, ShiftSlot, Team
-from ntds_webportal.base_functions import random_password
+from ntds_webportal.util import random_password
 from ntds_webportal.organizer.email import send_super_volunteer_user_account_email
 from ntds_webportal.data import *
 from sqlalchemy import or_, and_
@@ -90,7 +90,7 @@ def super_volunteer_data():
 def volunteers():
     dancers = Contestant.query.join(StatusInfo, ContestantInfo).filter(StatusInfo.status == CONFIRMED)\
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
-    dancers = [d for d in dancers if d.volunteer_info.volunteering()]
+    dancers = [d for d in dancers if d.volunteer_info.wants_to_volunteer()]
     super_volunteers = SuperVolunteer.query.all()
     return render_template('volunteering/volunteers.html', dancers=dancers, super_volunteers=super_volunteers)
 

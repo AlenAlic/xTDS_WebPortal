@@ -1,18 +1,16 @@
-from ntds_webportal.base_functions import *
+from ntds_webportal.util import *
 from flask import g, flash, render_template, current_app
-from flask_login import current_user
 from ntds_webportal import db
 from ntds_webportal.models import Contestant, ContestantInfo, DancingInfo, VolunteerInfo, AdditionalInfo, \
     StatusInfo, PaymentInfo, MerchandiseInfo, User, Notification, SystemConfiguration, Team
 from ntds_webportal.data import *
-from ntds_webportal.helper_classes import TeamFinancialOverview
 import sqlalchemy as alchemy
 import os
 
 
 def active_teams():
     teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
-    return [t for t in teams if t.is_active()]
+    return list(sorted([t for t in teams if t.is_active()], key=lambda x: x.display_name()))
 
 
 def database_is_empty():
@@ -87,24 +85,6 @@ def make_system_configuration_accessible_to_organizer():
     flash("System configuration has been made accessible to the organizer.", "alert-success")
 
 
-def get_total_dancer_price_list(dancer):
-    price = TeamFinancialOverview(current_user)
-    prices = price.prices()
-    price = prices[dancer.contestant_info.student] + prices[dancer.merchandise_info.t_shirt]
-    description = f"{g.sc.tournament} {g.sc.city} {g.sc.year} - " \
-                  f"{STUDENT_STRING[dancer.contestant_info.student]} entry fee"
-    if dancer.merchandise_info.t_shirt != NO:
-        description += " + t-shirt"
-    if dancer.merchandise_info.mug:
-        description += " + mug"
-        price += prices["mug"]
-    if dancer.merchandise_info.bag:
-        description += " + bag"
-        price += prices["bag"]
-    paid_string = {True: "Yes", False: "No"}
-    return [dancer.get_full_name(), price/100, description, paid_string[dancer.payment_info.all_paid()]]
-
-
 def submit_contestant(form, contestant=None):
     new_dancer = True
     if contestant is None:
@@ -164,9 +144,6 @@ def submit_contestant(form, contestant=None):
     pi.contestant = contestant
 
     mi.contestant = contestant
-    mi.t_shirt = form.t_shirt.data
-    mi.mug = str2bool(form.mug.data)
-    mi.bag = str2bool(form.bag.data)
 
     if new_dancer:
         db.session.add(contestant)
