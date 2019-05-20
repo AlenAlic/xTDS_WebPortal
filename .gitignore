@@ -1,11 +1,5 @@
 __pycache__
-/.cache
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/NTDS_webportal.iml
-.idea/statistic.xml
+.cache
 .idea
 .vscode
 
@@ -19,7 +13,4 @@ logs/
 instance/__pycache__
 instance/config.py
 instance/etds2016utrecht.py
-instance/etds2018brno.py
-instance/ntds2018enschede.py
 instance/populate.py
-instance/test_populate.py
