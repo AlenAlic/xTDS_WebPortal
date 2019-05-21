@@ -112,7 +112,6 @@ var CheckinCard = function (_React$Component) {
                 this.checkIn(dancer);
             } else {
                 var complete = dancer.payment_info.all_paid && dancer.merchandise_info.merchandise_received;
-                console.log(complete);
                 if (complete) {
                     if (dancer.contestant_info.team_captain) {
                         this.checkCancelledDancersMerchandise();
@@ -168,7 +167,7 @@ var CheckinCard = function (_React$Component) {
 
             return React.createElement(
                 "div",
-                { className: dancers.length > 0 ? dancers.filter(countCheckedIn).length === dancers.length ? "card success" : "card" : "card" },
+                { className: dancers.length > 0 ? dancers.filter(filterCheckedIn).length === dancers.length ? "card success" : "card" : "card" },
                 React.createElement(
                     "div",
                     { className: "card-header", role: "button", id: 'heading-' + ("" + this.props.team_id), "data-toggle": "collapse", href: '#collapse-' + ("" + this.props.team_id), "aria-expanded": "false", "aria-controls": 'collapse-' + ("" + this.props.team_id) },
@@ -181,7 +180,7 @@ var CheckinCard = function (_React$Component) {
                             "span",
                             { className: "badge badge-pill badge-dark" },
                             " ",
-                            dancers.filter(countSpecialCheckedIn).length,
+                            dancers.filter(filterSpecialCheckedIn).length,
                             " / ",
                             dancers.length
                         )

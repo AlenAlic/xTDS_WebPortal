@@ -76,7 +76,6 @@ class CheckinCard extends React.Component {
             this.checkIn(dancer)
         } else {
             let complete = dancer.payment_info.all_paid && dancer.merchandise_info.merchandise_received;
-            console.log(complete);
             if (complete) {
                 if (dancer.contestant_info.team_captain) {
                     this.checkCancelledDancersMerchandise()
@@ -123,9 +122,9 @@ class CheckinCard extends React.Component {
         const dancers = Object.values(this.state.dancers);
 
         return (
-            <div className={dancers.length > 0 ? dancers.filter(countCheckedIn).length === dancers.length ? "card success" : "card" : "card"}>
+            <div className={dancers.length > 0 ? dancers.filter(filterCheckedIn).length === dancers.length ? "card success" : "card" : "card"}>
                 <div className="card-header" role="button" id={'heading-'+`${this.props.team_id}`} data-toggle="collapse" href={'#collapse-'+`${this.props.team_id}`}  aria-expanded="false" aria-controls={'collapse-'+`${this.props.team_id}`} >
-                    <b className="card-title">{this.props.team_name} {dancers.length === 0 ? <div className="spinner-border spinner-border-sm" role="status"/> : <span className="badge badge-pill badge-dark"> {dancers.filter(countSpecialCheckedIn).length} / {dancers.length}</span>}</b>
+                    <b className="card-title">{this.props.team_name} {dancers.length === 0 ? <div className="spinner-border spinner-border-sm" role="status"/> : <span className="badge badge-pill badge-dark"> {dancers.filter(filterSpecialCheckedIn).length} / {dancers.length}</span>}</b>
                 </div>
                 <div id={'collapse-'+`${this.props.team_id}`} className="collapse">
                     {dancers.length === 0 ? null : (

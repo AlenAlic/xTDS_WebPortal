@@ -1243,7 +1243,16 @@ class SystemConfiguration(db.Model):
             "merchandise_finalized": g.ts.merchandise_finalized,
             "refund": self.does_tournament_have_refund(),
             "refund_percentage": self.finances_partial_refund_percentage / 100,
-            "view_only": view_only
+            "view_only": view_only,
+            "first_time_ask": self.first_time_ask,
+            "ask_diet_allergies": self.ask_diet_allergies,
+            "ask_volunteer": self.ask_volunteer,
+            "ask_first_aid": self.ask_first_aid,
+            "ask_emergency_response_officer": self.ask_emergency_response_officer,
+            "ask_adjudicator_highest_achieved_level": self.ask_adjudicator_highest_achieved_level,
+            "ask_adjudicator_certification": self.ask_adjudicator_certification,
+            "salsa_competition": self.salsa_competition,
+            "polka_competition": self.polka_competition,
         }
 
     @staticmethod

@@ -22,12 +22,12 @@ var TournamentCheckin = function (_React$Component) {
         key: "render",
         value: function render() {
             var dancers = Object.values(this.state.dancers);
-            var confirmedDancers = dancers.filter(confirmed);
-            var checkedInDancers = confirmedDancers.filter(countCheckedIn);
-            var confirmedLeads = confirmedDancers.filter(countLeads);
-            var receivedStartingNumber = confirmedLeads.filter(countStartingNumbers);
-            var cancelledDancers = dancers.filter(cancelled);
-            var cancelledDancersReceivedMerchandise = cancelledDancers.filter(countReceivedMerchandise);
+            var confirmedDancers = dancers.filter(filterConfirmed);
+            var checkedInDancers = confirmedDancers.filter(filterCheckedIn);
+            var confirmedLeads = confirmedDancers.filter(filterLeads);
+            var receivedStartingNumber = confirmedLeads.filter(filterStartingNumbers);
+            var cancelledDancers = dancers.filter(filterCancelled);
+            var cancelledDancersReceivedMerchandise = cancelledDancers.filter(filterReceivedMerchandise);
 
             return React.createElement(
                 React.Fragment,

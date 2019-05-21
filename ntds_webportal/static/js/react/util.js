@@ -1,4 +1,6 @@
-// Dancer filters
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+// Filters
 var filterStudents = function filterStudents(dancer) {
     return dancer.contestant_info.student === "student";
 };
@@ -35,8 +37,38 @@ var filterAllPaid = function filterAllPaid(dancer) {
 var filterPaymentRequired = function filterPaymentRequired(dancer) {
     return dancer.status_info.payment_required;
 };
+var filterCheckedIn = function filterCheckedIn(dancer) {
+    return dancer.status_info.checked_in;
+};
+var filterSpecialCheckedIn = function filterSpecialCheckedIn(dancer) {
+    return dancer.payment_info.all_paid && dancer.merchandise_info.merchandise_received && dancer.status_info.status === "cancelled" || dancer.status_info.checked_in;
+};
+var filterLeads = function filterLeads(dancer) {
+    return dancer.status_info.dancing_lead;
+};
+var filterStartingNumbers = function filterStartingNumbers(dancer) {
+    return dancer.status_info.received_starting_number;
+};
+var filterReceivedMerchandise = function filterReceivedMerchandise(dancer) {
+    return dancer.merchandise_info.merchandise_received;
+};
+var filterHasMerchandisePaid = function filterHasMerchandisePaid(merchandise) {
+    return merchandise.paid;
+};
+var filterDutchTeams = function filterDutchTeams(team) {
+    return team.country === "The Netherlands";
+};
+var filterGermanTeams = function filterGermanTeams(team) {
+    return team.country === "Germany";
+};
+var filterOtherTeams = function filterOtherTeams(team) {
+    return team.country !== "The Netherlands" && team.country !== "Germany";
+};
+var filterTeamsWithDancers = function filterTeamsWithDancers(team) {
+    return Object.values(team.finances_data.dancers).length > 0;
+};
 
-// Dancer mappings
+// Mappings
 var mapEntryPrice = function mapEntryPrice(dancer) {
     return dancer.payment_info.entry_price;
 };
@@ -50,46 +82,19 @@ var mapRefundPrice = function mapRefundPrice(dancer) {
     return dancer.payment_info.refund_price;
 };
 
-// Sum array
+// Reducers
 var reduceArraySum = function reduceArraySum(prev, next) {
     return prev + next;
 };
 
-var countStudents = function countStudents(dancer) {
-    return dancer.contestant_info.student === "student";
-};
-var countNonStudents = function countNonStudents(dancer) {
-    return dancer.contestant_info.student === "non-student";
-};
-var countPhDStudents = function countPhDStudents(dancer) {
-    return dancer.contestant_info.student === "phd-student";
-};
-var countEntryPaid = function countEntryPaid(dancer) {
-    return dancer.payment_info.entry_paid;
-};
-var countEntryNotPaid = function countEntryNotPaid(dancer) {
-    return !dancer.payment_info.entry_paid;
-};
-var confirmed = function confirmed(dancer) {
-    return dancer.status_info.status === "confirmed";
-};
-var cancelled = function cancelled(dancer) {
-    return dancer.status_info.status === "cancelled";
-};
-var hasRefund = function hasRefund(dancer) {
-    return dancer.payment_info.refund;
-};
-var hasMerchandise = function hasMerchandise(dancer) {
-    return Object.keys(dancer.merchandise_info.purchases).length > 0;
-};
-var hasMerchandisePaid = function hasMerchandisePaid(merchandise) {
-    return merchandise.paid;
-};
+// Sum Array function
 var arrSum = function arrSum(arr) {
     return arr.reduce(function (a, b) {
         return a + b;
     }, 0);
 };
+
+// Sorts
 var sortDancersAlphabetically = function sortDancersAlphabetically(a, b) {
     var nameA = a.full_name.toUpperCase();
     var nameB = b.full_name.toUpperCase();
@@ -112,52 +117,6 @@ var sortMerchandiseAlphabetically = function sortMerchandiseAlphabetically(a, b)
     }
     return 0;
 };
-var currencyFormat = function currencyFormat(num) {
-    var sign = num >= 0 ? '€' : '-€';
-    num = Math.abs(num);
-    if (num !== 0) {
-        num = num / 100;
-        return sign + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-    } else {
-        return '-';
-    }
-};
-
-var countCheckedIn = function countCheckedIn(dancer) {
-    return dancer.status_info.checked_in;
-};
-var countSpecialCheckedIn = function countSpecialCheckedIn(dancer) {
-    return dancer.payment_info.all_paid && dancer.merchandise_info.merchandise_received && dancer.status_info.status === "cancelled" || dancer.status_info.checked_in;
-};
-
-var countLeads = function countLeads(dancer) {
-    return dancer.status_info.dancing_lead;
-};
-var countStartingNumbers = function countStartingNumbers(dancer) {
-    return dancer.status_info.received_starting_number;
-};
-var countReceivedMerchandise = function countReceivedMerchandise(dancer) {
-    return dancer.merchandise_info.merchandise_received;
-};
-
-var CheckMark = function CheckMark(_ref) {
-    var flag = _ref.flag;
-
-    return flag ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" });
-};
-
-var countDutchTeams = function countDutchTeams(team) {
-    return team.country === "The Netherlands";
-};
-var countGermanTeams = function countGermanTeams(team) {
-    return team.country === "Germany";
-};
-var countOtherTeams = function countOtherTeams(team) {
-    return team.country !== "The Netherlands" && team.country !== "Germany";
-};
-var countTeamsWithDancers = function countTeamsWithDancers(team) {
-    return Object.values(team.finances_data.dancers).length > 0;
-};
 var sortTeamsAlphabetically = function sortTeamsAlphabetically(a, b) {
     var nameA = a.name.toUpperCase();
     var nameB = b.name.toUpperCase();
@@ -169,9 +128,48 @@ var sortTeamsAlphabetically = function sortTeamsAlphabetically(a, b) {
     }
     return 0;
 };
-var countAllPaid = function countAllPaid(dancer) {
-    return dancer.payment_info.all_paid;
+
+// Formatting
+var currencyFormat = function currencyFormat(num) {
+    var sign = num >= 0 ? '€' : '-€';
+    num = Math.abs(num);
+    if (num !== 0) {
+        num = num / 100;
+        return sign + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    } else {
+        return '-';
+    }
 };
-var countAllNotPaid = function countAllNotPaid(dancer) {
-    return !dancer.payment_info.all_paid;
+
+// General functions
+var CheckMark = function CheckMark(_ref) {
+    var flag = _ref.flag;
+
+    return flag ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" });
+};
+
+var classNamesFilterString = function classNamesFilterString(item) {
+    return typeof item === "string";
+};
+var classNamesFilterObject = function classNamesFilterObject(item) {
+    return (typeof item === "undefined" ? "undefined" : _typeof(item)) === "object";
+};
+var classNamesFilterValidObject = function classNamesFilterValidObject(item) {
+    return Object.values(item).length === 1 && Object.keys(item).length === 1 && typeof Object.values(item)[0] === 'boolean';
+};
+var classNamesFilterTrueObjects = function classNamesFilterTrueObjects(item) {
+    return Object.values(item)[0] === true;
+};
+var classNamesMapObjects = function classNamesMapObjects(item) {
+    return Object.keys(item);
+};
+
+var classNames = function classNames() {
+    for (var _len = arguments.length, names = Array(_len), _key = 0; _key < _len; _key++) {
+        names[_key] = arguments[_key];
+    }
+
+    var strings = names.filter(classNamesFilterString);
+    var objectStrings = names.filter(classNamesFilterObject).filter(classNamesFilterValidObject).filter(classNamesFilterTrueObjects).map(classNamesMapObjects);
+    return strings.concat(objectStrings).join(" ");
 };

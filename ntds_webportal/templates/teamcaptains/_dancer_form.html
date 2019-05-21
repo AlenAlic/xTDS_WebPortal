@@ -18,7 +18,11 @@
             <label class="col-form-label col-lg-2" for="full_name">Full name</label>
             <div class="col-lg-10">
                 <div class="input-group">
-                    <div class="input-group-prepend"><a class="input-group-text" href="{{url_for('teamcaptains.name_change_request', contestant=dancer.contestant_id, wide=wide)}}"><img src="{{url_for('static', filename='octicons/pencil.svg')}}"></a></div>
+                    <div class="input-group-prepend">
+                        <a class="input-group-text" href="{{url_for('teamcaptains.name_change_request', contestant=dancer.contestant_id, wide=wide)}}">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                    </div>
                     <input class="form-control" disabled="" id="full_name" name="full_name" placeholder="Full name" required="" type="text" value="{{form.full_name.data}}">
                 </div>
             </div>

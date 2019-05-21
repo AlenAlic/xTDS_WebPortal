@@ -129,8 +129,7 @@ var TeamCaptainFinances = function (_React$Component) {
             var dancersPaidPrice = studentsPaidPrice + phdStudentsPaidPrice + nonStudentsPaidPrice;
             var dancersRemainingPrice = dancersOwedPrice - dancersPaidPrice;
 
-            var dancersWithMerchandise = dancers.filter(hasMerchandise);
-            var dancersWithMerchandiseOwedPrice = dancers.map(mapMerchandisePrice).reduce(reduceArraySum, 0);
+            var dancersWithMerchandise = dancers.filter(filterHasMerchandise);
 
             var merchandiseContainer = {};
             var merchandisePaidContainer = {};
@@ -144,7 +143,7 @@ var TeamCaptainFinances = function (_React$Component) {
                 });
             });
             dancersWithMerchandise.forEach(function (d) {
-                return Object.values(d.merchandise_info.purchases).filter(hasMerchandisePaid).forEach(function (p) {
+                return Object.values(d.merchandise_info.purchases).filter(filterHasMerchandisePaid).forEach(function (p) {
                     return merchandisePaidContainer[p.merchandise_item_id] += 1;
                 });
             });
@@ -682,7 +681,7 @@ var TeamCaptainFinances = function (_React$Component) {
                     React.createElement(
                         "tbody",
                         null,
-                        dancers.filter(confirmed).length > 0 ? dancers.filter(confirmed).sort(sortDancersAlphabetically).map(function (d) {
+                        dancers.filter(filterConfirmed).length > 0 ? dancers.filter(filterConfirmed).sort(sortDancersAlphabetically).map(function (d) {
                             return React.createElement(
                                 "tr",
                                 { className: d.pending ? "table-warning" : d.payment_info.all_paid ? "table-success" : d.payment_info.partial_paid ? "table-info" : "", key: 'row' + ("" + d.contestant_id) },
@@ -844,7 +843,7 @@ var TeamCaptainFinances = function (_React$Component) {
                     React.createElement(
                         "tbody",
                         null,
-                        dancers.filter(cancelled).length > 0 ? dancers.filter(cancelled).sort(sortDancersAlphabetically).map(function (d) {
+                        dancers.filter(filterCancelled).length > 0 ? dancers.filter(filterCancelled).sort(sortDancersAlphabetically).map(function (d) {
                             return React.createElement(
                                 "tr",
                                 { className: d.pending ? "table-warning" : d.payment_info.all_paid ? "table-success" : d.payment_info.partial_paid ? "table-info" : "", key: 'row' + ("" + d.contestant_id) },

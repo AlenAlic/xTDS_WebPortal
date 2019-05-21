@@ -10,6 +10,7 @@ from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, Dancin
 from wtforms_sqlalchemy.fields import QuerySelectField
 import wtforms_sqlalchemy.fields as f
 from sqlalchemy import and_, or_
+from ntds_webportal.helper_classes import ReactForm
 
 
 def get_pk_from_identity(obj):
@@ -137,7 +138,7 @@ class VolunteerForm(FlaskForm):
             self.level_jury_latin.data = BELOW_D
 
 
-class BaseContestantForm(DancingInfoForm, VolunteerForm):
+class BaseContestantForm(ReactForm, DancingInfoForm, VolunteerForm):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -151,11 +152,11 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
         self.ballroom_level.choices = participating_levels_choices(base_choices=True)
         self.latin_level.choices = participating_levels_choices(base_choices=True)
         self.student.choices = payment_categories_choices()
-        if current_user.is_organizer():
-            self.team.query = Team.query
-        else:
-            self.team.query = Team.query.filter(Team.team_id == current_user.team.team_id)
-            self.team.data = self.team.query.first()
+        # if current_user.is_organizer():
+        #     self.team.query = Team.query
+        # else:
+        #     self.team.query = Team.query.filter(Team.team_id == current_user.team.team_id)
+        #     self.team.data = self.team.query.first()
         new_id = db.session.query().with_entities(db.func.max(Contestant.contestant_id)).scalar()
         if new_id is None:
             new_id = 1
@@ -168,13 +169,15 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
         if not g.sc.first_time_ask:
             self.first_time.data = str(False)
 
-    number = IntegerField('Contestant number', validators=[DataRequired()], render_kw={'disabled': True})
-    team = QuerySelectField('Team', validators=[DataRequired()], render_kw={'disabled': True})
+    number = IntegerField('Number', validators=[DataRequired()], render_kw={'disabled': True})
+    # team = QuerySelectField('Team', validators=[DataRequired()], render_kw={'disabled': True})
 
     volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in VOLUNTEER_FORM.items()])
-    student = SelectField('Student', validators=[DataRequired()])
+    student = SelectField('Student', validators=[DataRequired()], default='')
     first_time = SelectField('First time', validators=[IsBoolean()])
-    diet_allergies = StringField('Diet/Allergies')
+    diet_allergies = StringField('Diet/Allergies',
+                                 render_kw={"placeholder": "Please fill in any special dietary requirements and/or "
+                                                           "allergies, if any, otherwise leave it blank."})
     sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
                                         choices=[(k, v) for k, v in SLEEPING.items()])
 
@@ -246,10 +249,11 @@ class BaseContestantForm(DancingInfoForm, VolunteerForm):
 
 
 class RegisterContestantForm(BaseContestantForm):
-    first_name = StringField('First name', validators=[DataRequired()])
-    prefixes = StringField('Prefix')
-    last_name = StringField('Last name', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email(), UniqueEmail()])
+    first_name = StringField('First name', validators=[DataRequired()], render_kw={"placeholder": "First name..."})
+    prefixes = StringField('prefix', description="de, van het, etc.")
+    last_name = StringField('Last name', validators=[DataRequired()], render_kw={"placeholder": "Last name..."})
+    email = StringField('Email', validators=[DataRequired(), Email(), UniqueEmail()],
+                        render_kw={"placeholder": "Email address..."})
     submit = SubmitField('Register')
 
     def __init__(self, **kwargs):
@@ -337,7 +341,7 @@ class EditContestantForm(BaseContestantForm):
     def organizer_populate(self, dancer):
         self.ballroom_partner.query = Contestant.query
         self.latin_partner.query = Contestant.query
-        self.team.data = dancer.contestant_info.team
+        # self.team.data = dancer.contestant_info.team
         self.populate(dancer)
         self.full_name.data = dancer.get_full_name()
         self.email.data = dancer.email

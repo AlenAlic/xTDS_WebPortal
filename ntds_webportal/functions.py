@@ -1,5 +1,6 @@
 from ntds_webportal.util import *
 from flask import g, flash, render_template, current_app
+from flask_login import current_user
 from ntds_webportal import db
 from ntds_webportal.models import Contestant, ContestantInfo, DancingInfo, VolunteerInfo, AdditionalInfo, \
     StatusInfo, PaymentInfo, MerchandiseInfo, User, Notification, SystemConfiguration, Team
@@ -104,7 +105,7 @@ def submit_contestant(form, contestant=None):
         contestant.last_name = form.last_name.data.strip()
         contestant.capitalize_name()
         ci.number = form.number.data
-        ci.team = form.team.data
+        ci.team = current_user.team
     else:
         ci = contestant.contestant_info
         vi = contestant.volunteer_info

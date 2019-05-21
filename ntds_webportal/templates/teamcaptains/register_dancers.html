@@ -1,6 +1,14 @@
 {% extends "teamcaptains/register_edit_dancers_base.html" %}
 
 {% block app_content %}
+{#    {{ react() }}#}
+{#    <script src="{{url_for('static', filename='js/react/DancerRegistration.js')}}{{ now }}" ></script>#}
+{#    <h2>Register dancer</h2>#}
+{#    <div id="root"></div>#}
+{#    <script>#}
+{#        ReactDOM.render(React.createElement(DancerRegistration, {form: {{ form.react() | tojson }}, country:"{{current_user.team.country}}", settings: {{g.sc.json_settings() | tojson}}}), document.getElementById('root'));#}
+{#    </script>#}
+
 {% with title='Register dancer', mode='register' %}
     {% include 'teamcaptains/_dancer_form.html' %}
 {% endwith %}

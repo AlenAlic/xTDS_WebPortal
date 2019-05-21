@@ -1,6 +1,46 @@
 from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, DancingInfo
 from ntds_webportal.data import *
 from sqlalchemy import or_
+from flask_wtf import FlaskForm
+
+
+TYPE_TRANSLATION = {
+    "StringField": "text",
+    "SelectField": "select",
+    "QuerySelectField": "select",
+    "SubmitField": "submit",
+    "IntegerField": "text",
+    "CSRFTokenField": "hidden",
+}
+
+
+class ReactForm(FlaskForm):
+
+    def field_json(self, field):
+        field = getattr(self, field)
+        data = {
+            "name": field.name,
+            "id": field.id,
+            "labelFor": field.label.field_id,
+            "label": field.label.text,
+            "fieldValue": field.data if field.data is not None else field.default,
+            "description": field.description if len(field.errors) == 0 else ", ".join(field.errors),
+            "error": len(field.errors) > 0,
+            "type": TYPE_TRANSLATION[field.type],
+            "required": field.flags.required,
+            "choices": field.choices if field.type == "SelectField" else [],
+        }
+        if field.render_kw is not None:
+            data.update({
+                "placeholder": field.render_kw["placeholder"] if "placeholder" in field.render_kw else "",
+                "disabled": field.render_kw["disabled"] if "disabled" in field.render_kw else False,
+            })
+        return data
+
+    def react(self, field_name=""):
+        if field_name == "":
+            return {field: self.field_json(field) for field in self.data}
+        return self.field_json(field_name)
 
 
 class TeamPossiblePartners:

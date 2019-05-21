@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, flash, request, send_file, g, Markup
+from flask import render_template, url_for, redirect, flash, request, send_file, g, Markup, jsonify, json
 from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
@@ -48,18 +48,31 @@ def register_dancers():
     form = RegisterContestantForm()
     if request.method == POST:
         form.custom_validate()
-    if form.validate_on_submit():
-        contestant = submit_contestant(form)
-        flash(f'{contestant.get_full_name()} has been registered successfully.', 'alert-success')
-        create_dancer_user_account(contestant)
-        return redirect(url_for('teamcaptains.register_dancers'))
-    else:
-        if form.is_submitted():
-            flash('Not all fields of the form have been filled in (correctly).', 'alert-danger')
+        if form.validate_on_submit():
+            contestant = submit_contestant(form)
+            flash(f'{contestant.get_full_name()} has been registered successfully.', 'alert-success')
+            create_dancer_user_account(contestant)
+            return redirect(url_for('teamcaptains.register_dancers'))
+        else:
+            if form.is_submitted():
+                flash('Not all fields of the form have been filled in (correctly).', 'alert-danger')
     possible_partners = TeamPossiblePartners(current_user, include_gdpr=True).possible_partners()
     return render_template('teamcaptains/register_dancers.html', form=form, data=data,
                            timestamp=datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp(),
                            possible_partners=possible_partners)
+
+
+@bp.route('/validate_registration_field', methods=['POST'])
+@login_required
+@requires_access_level([ACCESS[TEAM_CAPTAIN]])
+@requires_tournament_state(REGISTRATION_OPEN)
+def validate_registration_field():
+    form = RegisterContestantForm()
+    field = json.loads(request.data)
+    getattr(form, field["name"]).data = field["fieldValue"]
+    form.validate()
+    field = form.react(field["name"])
+    return jsonify(field)
 
 
 @bp.route('/edit_dancers', methods=['GET', 'POST'])

@@ -68,16 +68,16 @@ class OrganizerFinances extends React.Component {
 
     render() {
         const teams = Object.values(this.state.teams);
-        const activeTeams = teams.filter(countTeamsWithDancers);
-        const DutchTeams = activeTeams.filter(countDutchTeams);
-        const GermanTeams = activeTeams.filter(countGermanTeams);
-        const OtherTeams = activeTeams.filter(countOtherTeams);
+        const activeTeams = teams.filter(filterTeamsWithDancers);
+        const DutchTeams = activeTeams.filter(filterDutchTeams);
+        const GermanTeams = activeTeams.filter(filterGermanTeams);
+        const OtherTeams = activeTeams.filter(filterOtherTeams);
 
         const dancers = [].concat.apply([], teams.map(team => Object.values(team.finances_data.dancers)));
         const students = dancers.filter(filterStudents);
         const phdStudents = dancers.filter(filterPhDStudents);
         const nonStudents = dancers.filter(filterNonStudents);
-        const dancersWithMerchandise = dancers.filter(hasMerchandise);
+        const dancersWithMerchandise = dancers.filter(filterHasMerchandise);
         const merchandise = dancersWithMerchandise.map(dancer => Object.values(dancer.merchandise_info.purchases).length).reduce(reduceArraySum, 0);
 
         const dancersOwedPrice = dancers.map(mapPaymentPrice).reduce(reduceArraySum, 0);
@@ -141,7 +141,7 @@ class OrganizerFinances extends React.Component {
                                 const students = dancers.filter(filterStudents);
                                 const phdStudents = dancers.filter(filterPhDStudents);
                                 const nonStudents = dancers.filter(filterNonStudents);
-                                const dancersWithMerchandise = dancers.filter(hasMerchandise);
+                                const dancersWithMerchandise = dancers.filter(filterHasMerchandise);
                                 const merchandise = dancersWithMerchandise.map(dancer => Object.values(dancer.merchandise_info.purchases).length).reduce(reduceArraySum, 0);
 
                                 const dancersOwedPrice = dancers.map(mapPaymentPrice).reduce(reduceArraySum, 0);

@@ -120,10 +120,10 @@ var OrganizerFinances = function (_React$Component) {
             var _this5 = this;
 
             var teams = Object.values(this.state.teams);
-            var activeTeams = teams.filter(countTeamsWithDancers);
-            var DutchTeams = activeTeams.filter(countDutchTeams);
-            var GermanTeams = activeTeams.filter(countGermanTeams);
-            var OtherTeams = activeTeams.filter(countOtherTeams);
+            var activeTeams = teams.filter(filterTeamsWithDancers);
+            var DutchTeams = activeTeams.filter(filterDutchTeams);
+            var GermanTeams = activeTeams.filter(filterGermanTeams);
+            var OtherTeams = activeTeams.filter(filterOtherTeams);
 
             var dancers = [].concat.apply([], teams.map(function (team) {
                 return Object.values(team.finances_data.dancers);
@@ -131,7 +131,7 @@ var OrganizerFinances = function (_React$Component) {
             var students = dancers.filter(filterStudents);
             var phdStudents = dancers.filter(filterPhDStudents);
             var nonStudents = dancers.filter(filterNonStudents);
-            var dancersWithMerchandise = dancers.filter(hasMerchandise);
+            var dancersWithMerchandise = dancers.filter(filterHasMerchandise);
             var merchandise = dancersWithMerchandise.map(function (dancer) {
                 return Object.values(dancer.merchandise_info.purchases).length;
             }).reduce(reduceArraySum, 0);
@@ -285,7 +285,7 @@ var OrganizerFinances = function (_React$Component) {
                                     var students = dancers.filter(filterStudents);
                                     var phdStudents = dancers.filter(filterPhDStudents);
                                     var nonStudents = dancers.filter(filterNonStudents);
-                                    var dancersWithMerchandise = dancers.filter(hasMerchandise);
+                                    var dancersWithMerchandise = dancers.filter(filterHasMerchandise);
                                     var merchandise = dancersWithMerchandise.map(function (dancer) {
                                         return Object.values(dancer.merchandise_info.purchases).length;
                                     }).reduce(reduceArraySum, 0);

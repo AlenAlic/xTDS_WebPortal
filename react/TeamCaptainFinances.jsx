@@ -99,8 +99,7 @@ class TeamCaptainFinances extends React.Component {
         const dancersPaidPrice = studentsPaidPrice + phdStudentsPaidPrice + nonStudentsPaidPrice;
         const dancersRemainingPrice = dancersOwedPrice - dancersPaidPrice;
 
-        const dancersWithMerchandise = dancers.filter(hasMerchandise);
-        const dancersWithMerchandiseOwedPrice = dancers.map(mapMerchandisePrice).reduce(reduceArraySum, 0);
+        const dancersWithMerchandise = dancers.filter(filterHasMerchandise);
 
         const merchandiseContainer = {};
         const merchandisePaidContainer = {};
@@ -109,7 +108,7 @@ class TeamCaptainFinances extends React.Component {
             merchandisePaidContainer[m.merchandise_item_id] = 0;
         });
         dancersWithMerchandise.forEach(d => Object.values(d.merchandise_info.purchases).forEach(p => merchandiseContainer[p.merchandise_item_id] += 1));
-        dancersWithMerchandise.forEach(d => Object.values(d.merchandise_info.purchases).filter(hasMerchandisePaid).forEach(p => merchandisePaidContainer[p.merchandise_item_id] += 1));
+        dancersWithMerchandise.forEach(d => Object.values(d.merchandise_info.purchases).filter(filterHasMerchandisePaid).forEach(p => merchandisePaidContainer[p.merchandise_item_id] += 1));
         const merchandisePriceContainer = {};
         const merchandisePaidPriceContainer = {};
         Object.values(this.props.merchandise_items).forEach(m => {
@@ -252,8 +251,8 @@ class TeamCaptainFinances extends React.Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {dancers.filter(confirmed).length > 0 ?
-                        dancers.filter(confirmed).sort(sortDancersAlphabetically).map( d => (
+                    {dancers.filter(filterConfirmed).length > 0 ?
+                        dancers.filter(filterConfirmed).sort(sortDancersAlphabetically).map( d => (
                             <tr className={d.pending ? "table-warning" : d.payment_info.all_paid ? "table-success": d.payment_info.partial_paid ? "table-info": ""} key={'row'+`${d.contestant_id}`}>
                                 <td>{d.full_name}</td>
                                 <td className="text-right">{currencyFormat(this.props.prices[d.contestant_info.student])}</td>
@@ -318,8 +317,8 @@ class TeamCaptainFinances extends React.Component {
                     </tr>
                     </thead>
                     <tbody>
-                    { dancers.filter(cancelled).length > 0 ?
-                        dancers.filter(cancelled).sort(sortDancersAlphabetically).map( d => (
+                    { dancers.filter(filterCancelled).length > 0 ?
+                        dancers.filter(filterCancelled).sort(sortDancersAlphabetically).map( d => (
                             <tr className={d.pending ? "table-warning" : d.payment_info.all_paid ? "table-success": d.payment_info.partial_paid ? "table-info": ""} key={'row'+`${d.contestant_id}`}>
                                 <td>{d.full_name}</td>
                                 <td className="text-right">{currencyFormat(this.props.prices[d.contestant_info.student])}</td>

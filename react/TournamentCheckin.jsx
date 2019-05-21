@@ -5,12 +5,12 @@ class TournamentCheckin extends React.Component {
     }
     render() {
         const dancers = Object.values(this.state.dancers);
-        const confirmedDancers = dancers.filter(confirmed);
-        const checkedInDancers = confirmedDancers.filter(countCheckedIn);
-        const confirmedLeads = confirmedDancers.filter(countLeads);
-        const receivedStartingNumber = confirmedLeads.filter(countStartingNumbers);
-        const cancelledDancers = dancers.filter(cancelled);
-        const cancelledDancersReceivedMerchandise = cancelledDancers.filter(countReceivedMerchandise);
+        const confirmedDancers = dancers.filter(filterConfirmed);
+        const checkedInDancers = confirmedDancers.filter(filterCheckedIn);
+        const confirmedLeads = confirmedDancers.filter(filterLeads);
+        const receivedStartingNumber = confirmedLeads.filter(filterStartingNumbers);
+        const cancelledDancers = dancers.filter(filterCancelled);
+        const cancelledDancersReceivedMerchandise = cancelledDancers.filter(filterReceivedMerchandise);
 
         return (
             <React.Fragment>
