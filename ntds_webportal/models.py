@@ -1152,17 +1152,17 @@ class TournamentState(db.Model):
             return ORGANIZERS_NOTIFIED
         return 0
 
-    # def state_flash_message(self):
-    #     if not self.system_configured:
-    #         return WEBSITE_NOT_CONFIGURED_TEXT
-    #     if not self.website_accessible_to_teamcaptains:
-    #         return TEAM_CAPTAINS_DO_NOT_HAVE_ACCESS_TEXT
-    #     if not self.registration_period_started:
-    #         return REGISTRATION_NOT_STARTED_TEXT
-    #     if self.registration_period_started and not self.registration_open:
-    #         return REGISTRATION_NOT_OPEN_TEXT
-    #     if not self.main_raffle_result_visible:
-    #         return RAFFLE_NOT_CONFIRMED_TEXT
+    def state_flash_message(self):
+        if not self.system_configured:
+            return WEBSITE_NOT_CONFIGURED_TEXT
+        if not self.website_accessible_to_teamcaptains:
+            return TEAM_CAPTAINS_DO_NOT_HAVE_ACCESS_TEXT
+        if not self.registration_period_started:
+            return REGISTRATION_NOT_STARTED_TEXT
+        if self.registration_period_started and not self.registration_open:
+            return REGISTRATION_NOT_OPEN_TEXT
+        if not self.main_raffle_result_visible:
+            return RAFFLE_NOT_CONFIRMED_TEXT
 
     def json_settings(self):
         return {

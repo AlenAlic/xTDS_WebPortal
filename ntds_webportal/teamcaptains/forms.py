@@ -143,8 +143,7 @@ class BaseContestantForm(ReactForm, DancingInfoForm, VolunteerForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        first_time = {'': 'Is this your first time participating in {prefix} {tournament}?'.format(
-            tournament=g.sc.tournament, prefix='a' if g.sc.tournament == NTDS else 'an')}
+        first_time = {'': f'Is this your first {g.sc.tournament}?'}
         first_time.update(YN)
         self.first_time.choices = [(k, v) for k, v in first_time.items()]
         self.ballroom_partner.label.text = f"Ballroom partner for {g.sc.tournament}"
@@ -170,8 +169,8 @@ class BaseContestantForm(ReactForm, DancingInfoForm, VolunteerForm):
     student = SelectField('Student', validators=[DataRequired()], default='')
     first_time = SelectField('First time', validators=[IsBoolean()])
     diet_allergies = StringField('Diet/Allergies',
-                                 render_kw={"placeholder": "Please fill in any special dietary requirements and/or "
-                                                           "allergies, if any, otherwise leave it blank."})
+                                 render_kw={"placeholder": "Special diets and/or allergies (if any), "
+                                                           "otherwise leave blank"})
     sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
                                         choices=[(k, v) for k, v in SLEEPING.items()])
 
@@ -287,8 +286,6 @@ class EditContestantForm(BaseContestantForm):
 
     def __init__(self, dancer=None, **kwargs):
         super().__init__(**kwargs)
-        # self.level_jury_ballroom.choices = [(k, v) for k, v in LEVEL_JURY_BALLROOM_EDIT.items()]
-        # self.level_jury_latin.choices = [(k, v) for k, v in LEVEL_JURY_LATIN_EDIT.items()]
         if dancer is not None:
             ballroom_query = Contestant.query.join(ContestantInfo, DancingInfo, StatusInfo) \
                 .filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
@@ -347,7 +344,6 @@ class EditContestantForm(BaseContestantForm):
     def organizer_populate(self, dancer):
         self.ballroom_partner.query = Contestant.query
         self.latin_partner.query = Contestant.query
-        # self.team.data = dancer.contestant_info.team
         self.populate(dancer)
         self.full_name.data = dancer.get_full_name()
         self.email.data = dancer.email
@@ -477,3 +473,7 @@ class ResendCredentialsForm(FlaskForm):
 
     def populate(self, dancer):
         self.email.data = dancer.email
+
+
+class CheckEmailForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email(), UniqueEmail()])

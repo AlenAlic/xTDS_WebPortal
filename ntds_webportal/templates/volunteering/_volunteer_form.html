@@ -15,7 +15,7 @@
     {{ reg_wtf.form_field(form.email, placeholder='E-mail address') }}
     {{ reg_wtf.form_field(form.sleeping_arrangements) }}
     {% if g.sc.ask_diet_allergies is sameas true %}
-        {{ reg_wtf.form_field(form.diet_allergies, placeholder='Please fill in any special dietary requirements and/or allergies, if applicable.') }}
+        {{ reg_wtf.form_field(form.diet_allergies, placeholder='Special diets and/or allergies, if any, otherwise leave blank') }}
     {% endif %}
 
     {% if g.sc.ask_first_aid is sameas true or g.sc.ask_emergency_response_officer is sameas true %}

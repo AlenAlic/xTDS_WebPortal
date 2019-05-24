@@ -177,13 +177,18 @@ $(document).ready(function($) {
 {% endmacro %}
 
 
-{% macro dashboard_page(url="#", image="", title="Title", text="", accessible=true, loading_screen=false, wants_attention=false, count=0, show_zero=false) %}
+{% macro dashboard_page(url="#", image="", title="Title", text="", accessible=true, loading_screen=false, wants_attention=false, count=0, show_zero=false, info="") %}
 <a {% if accessible %}href="{{url_for( url )}}"{% endif %} class="grid-place-self-stretch card my-0 text-decoration-none text-black {% if not accessible %}inaccessible opaque{% endif %} {% if wants_attention %}text-white bg-info{%endif%} {% if loading_screen and accessible%}loading-btn{% endif %}">
-    {% if count > 0 or show_zero %}
-        <div class="counting-badge">
+
+    <div class="counting-badge">
+        {% if count > 0 or show_zero %}
             <span class="badge badge-pill badge-primary font-size-4 mt-2 ml-2" >{{count}}</span>
-        </div>
-    {% endif %}
+        {% endif %}
+        {% if info != "" %}
+            <span class="badge badge-pill badge-dark float-right font-size-4 mt-2 mr-2" onclick="alert('{{ info }}'); event.preventDefault()"><i class="fas fa-info"></i></span>
+        {% endif %}
+    </div>
+
     <img src="{{url_for('static', filename='dashboard_images/'+image)}}" class="card-img mx-auto mt-3" style="max-width: 128px; max-height: 128px;" alt="Dashboard image">
     <div class="card-body pb-4" style="text-align:center;">
         <h4 class="card-title">{{ title }}</h4>

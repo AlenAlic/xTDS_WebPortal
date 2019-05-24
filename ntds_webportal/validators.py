@@ -82,7 +82,7 @@ class UniqueEmail(object):
     def __call__(self, form, field):
         email_list = [i[0] for i in db.session.query(Contestant.email).all()]
         email_list = [mail.lower() for mail in email_list]
-        if field.data in email_list:
+        if field.data.lower() in email_list:
             raise ValidationError(field.gettext('This e-mail address is already in use.'))
 
 

@@ -81,11 +81,6 @@ def dashboard():
 @login_required
 def todo():
     # GENERAL
-    # TODO - Clean up profile page, make cards
-    # TODO - Make profile page accessible to dancers to change password
-    # TODO - Add "Remember me" option
-    # TODO - Add extra identifier to login info, to clear invalidate cookies
-    # TODO - Clean up "Create couple" page for teamcaptain, add more info about different colors make single page
     # TODO - Clean up partner requests.
     # TODO - Merchandise testen
     # TODO - Maak csv downloadable for Badges

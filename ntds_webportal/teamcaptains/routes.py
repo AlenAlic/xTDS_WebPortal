@@ -3,7 +3,8 @@ from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
 from ntds_webportal.teamcaptains.forms import RegisterContestantForm, EditContestantForm, TeamCaptainForm, \
-    PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm, CreateCoupleForm, ResendCredentialsForm
+    PartnerRequestForm, PartnerRespondForm, NameChangeRequestForm, CreateCoupleForm, ResendCredentialsForm, \
+    CheckEmailForm
 from ntds_webportal.teamcaptains.email import send_dancer_user_account_email
 from ntds_webportal.models import User, requires_access_level, Contestant, ContestantInfo, DancingInfo, \
     StatusInfo, PartnerRequest, NameChangeRequest, TournamentState, Notification, AdditionalInfo, Team, \
@@ -64,7 +65,7 @@ def register_dancers():
 @requires_access_level([ACCESS[TEAM_CAPTAIN]])
 @requires_tournament_state(REGISTRATION_OPEN)
 def check_email():
-    form = RegisterContestantForm()
+    form = CheckEmailForm()
     email = json.loads(request.data)
     form.email.data = email
     form.validate()
