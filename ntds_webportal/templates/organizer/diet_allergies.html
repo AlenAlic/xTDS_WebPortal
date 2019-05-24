@@ -5,94 +5,95 @@ onload="onStart()"
 {% endblock %}
 
 {% block container_style -%}
-visibility:hidden
+{#visibility:hidden#}
 {%- endblock %}
 
 {% block app_content %}
-<h2>Summary</h2>
-<table class="table table-sm mb-0">
-    <colgroup>
-        <col span="1" style="width: 75%;">
-        <col span="1" style="width: 25%;">
-    </colgroup>
-    <thead>
-    <tr>
-        <th>Dietary requirements</th>
-        <th style="text-align:right;">#</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>No special requirements</td>
-        <td style="text-align:right;">{{ no_special_diet }}</td>
-    </tr>
-    <tr>
-        <td>Special dietary requirements and/or allergies</td>
-        <td style="text-align:right;">{{ people|length }}</td>
-    </tr>
-    <tr>
-        <td style="text-align:right;">Total</td>
-        <td style="text-align:right;">{{ total }}</td>
-    </tr>
-    </tbody>
-</table>
-{% if people|length == 0 %}
-<h2>There are no people with dietary requirements and/or allergies</h2>
-{% else %}
-<div id="special-table-container" style="display:none;">
-    <table class="table table-sm mt-2" id="diet-summary-table">
+    <h2>Summary</h2>
+    <table class="table table-sm mb-0">
         <colgroup>
             <col span="1" style="width: 75%;">
             <col span="1" style="width: 25%;">
         </colgroup>
         <thead>
         <tr>
-            <th colspan="2">Special dietary categories breakdown</th>
+            <th>Dietary requirements</th>
+            <th style="text-align:right;">#</th>
         </tr>
         </thead>
         <tbody>
+        <tr>
+            <td>No special requirements</td>
+            <td style="text-align:right;">{{ no_special_diet }}</td>
+        </tr>
+        <tr>
+            <td>Special dietary requirements and/or allergies</td>
+            <td style="text-align:right;">{{ people|length }}</td>
+        </tr>
+        <tr>
+            <td style="text-align:right;">Total</td>
+            <td style="text-align:right;">{{ total }}</td>
+        </tr>
         </tbody>
     </table>
-</div>
-<div id="changes-warning" style="text-align:center;display:none;"><h3 class="float-center no-print">Remember to save your changes</h3></div>
-<form id="breakdown-form" method="POST" enctype="multipart/form-data" novalidate>
-    <button class="btn btn-outline-secondary no-print" type="button" onclick="printSummary()">Print summary</button>
-    <button class="btn btn-outline-secondary no-print ml-2" type="button" onclick="printPage()">Print list</button>
-    <input class="btn btn-primary no-print float-right" id="submit" name="submit" type="submit" value="Save changes">
-    <table class="table table-sm mt-2" id="diet-table">
-    <colgroup>
-        <col span="1" style="width: 25%;">
-        <col span="1" style="width: 45%;">
-        <col span="1" style="width: 30%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Who?</th>
-            <th>Diet/Allergies</th>
-            <th>Notes</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for p in people %}
-        <tr>
-            <td>{{ p['name'] }}</td>
-            <td>{{ p['diet'] }}</td>
-            <td>
-                <input class="form-control" type="text" onkeyup="getNotes()" id="{{ p['id'] }}" name="{{ p['id'] }}" value="{{ p['notes'] }}">
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-    </table>
-</form>
-{% endif %}
+    {% if people|length == 0 %}
+        <h2>There are no people with dietary requirements and/or allergies</h2>
+    {% endif %}
+    <div class="{% if people|length == 0 %}d-none{% endif %}">
+        <div id="special-table-container" style="display:none;">
+            <table class="table table-sm mt-2" id="diet-summary-table">
+                <colgroup>
+                    <col span="1" style="width: 75%;">
+                    <col span="1" style="width: 25%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="2">Special dietary categories breakdown</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="changes-warning" style="text-align:center;display:none;"><h3 class="float-center no-print">Remember to save your changes</h3></div>
+        <form id="breakdown-form" method="POST" enctype="multipart/form-data" novalidate>
+            <button class="btn btn-outline-secondary no-print" type="button" onclick="printSummary()">Print summary</button>
+            <button class="btn btn-outline-secondary no-print ml-2" type="button" onclick="printPage()">Print list</button>
+            <input class="btn btn-primary no-print float-right" id="submit" name="submit" type="submit" value="Save changes">
+            <table class="table table-sm mt-2" id="diet-table">
+            <colgroup>
+                <col span="1" style="width: 25%;">
+                <col span="1" style="width: 45%;">
+                <col span="1" style="width: 30%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Who?</th>
+                    <th>Diet/Allergies</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in people %}
+                <tr>
+                    <td>{{ p['name'] }}</td>
+                    <td>{{ p['diet'] }}</td>
+                    <td>
+                        <input class="form-control" type="text" onkeyup="getNotes()" id="{{ p['id'] }}" name="{{ p['id'] }}" value="{{ p['notes'] }}">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </form>
+    </div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script>
 function onStart() {
-    getNotes()
+    getNotes();
     var container = document.getElementById('container-hidden').style.visibility = "visible";
 }
 const oldNotes = {{old_notes|safe}}
@@ -101,7 +102,7 @@ function printSummary() {
     form.classList.add("no-print");
     window.print();
     form.classList.remove("no-print");
-}
+};
 function printPage() {
     let form = document.getElementById("special-table-container");
     form.classList.add("no-print");
@@ -114,7 +115,7 @@ function getNotes() {
     let tdInput, td;
     let notesList = [];
     for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[2]
+        td = tr[i].getElementsByTagName("td")[2];
         if (td) {
             notesList.push(td.querySelector('.form-control').value);
         }
@@ -130,23 +131,23 @@ function count(arr) {
 }
 function populateTable(dict) {
 
-    let tr, categoryCell, countCell
+    let tr, categoryCell, countCell;
     let table = document.querySelector('#diet-summary-table tbody');
     while (table.childNodes.length) {
         table.removeChild(table.childNodes[0]);
     }
 
-    ordered_keys = Object.keys(dict)
-    ordered_keys.sort()
+    ordered_keys = Object.keys(dict);
+    ordered_keys.sort();
 
     let count = 0;
     for (d in ordered_keys) {
-        if (ordered_keys[d] != "") {
+        if (ordered_keys[d] !== "") {
             tr = table.insertRow();
             categoryCell = tr.insertCell();
             categoryCell.innerHTML = ordered_keys[d];
             countCell = tr.insertCell();
-            countCell.style.textAlign="right"
+            countCell.style.textAlign="right";
             countCell.innerHTML = dict[ordered_keys[d]];
             count += dict[ordered_keys[d]]
         }
@@ -155,9 +156,9 @@ function populateTable(dict) {
     tr = table.insertRow();
     categoryCell = tr.insertCell();
     categoryCell.innerHTML = "Total";
-    categoryCell.style.textAlign="right"
+    categoryCell.style.textAlign="right";
     countCell = tr.insertCell();
-    countCell.style.textAlign="right"
+    countCell.style.textAlign="right";
     countCell.innerHTML = count;
 
     let container = document.getElementById("special-table-container");

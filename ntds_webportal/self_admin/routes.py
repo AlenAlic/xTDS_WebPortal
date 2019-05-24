@@ -6,13 +6,12 @@ from ntds_webportal.self_admin.forms import SwitchUserForm, CreateOrganizerForm,
     CreateTeamCaptainAccountForm, SystemSetupForm, ResetOrganizerAccountForm
 from ntds_webportal.models import requires_access_level, User, Team, SystemConfiguration, Contestant, \
     StatusInfo, AttendedPreviousTournamentContestant, NotSelectedContestant, EXCLUDED_FROM_CLEARING, \
-    requires_testing_environment, Event, SuperVolunteer, NameChangeRequest, PartnerRequest
+    requires_testing_environment, Event, NameChangeRequest, PartnerRequest, ShiftSlot
 from ntds_webportal.functions import str2bool, reset_tournament_state, \
     make_system_configuration_accessible_to_organizer, generate_maintenance_page
 from ntds_webportal.auth.email import send_organizer_activation_email
 from ntds_webportal.functions import random_password, active_teams
 from ntds_webportal.data import *
-import ntds_webportal.data as data
 from sqlalchemy import or_, case, exists
 import datetime
 from test_data.test_populate import PAST_TOURNAMENTS, populate_test_data
@@ -25,83 +24,58 @@ def system_setup():
     organizer = User.query.filter(User.access == ACCESS[ORGANIZER]).first()
     sc = SystemConfiguration.query.first()
     reset_organizer_account_form = ResetOrganizerAccountForm()
-    if request.method == 'POST':
-        reset_organizer_account_form.username.data = reset_organizer_account_form.tournament.data + \
-                                                     reset_organizer_account_form.city.data + \
-                                                     str(reset_organizer_account_form.year.data)
-    elif request.method == 'GET':
+    if request.method == 'GET':
         reset_organizer_account_form.tournament.data = sc.tournament
         reset_organizer_account_form.year.data = sc.year
         reset_organizer_account_form.city.data = sc.city
-        reset_organizer_account_form.username.data = sc.tournament + sc.city + str(sc.year)
-        tsd = datetime.datetime.utcfromtimestamp(sc.tournament_starting_date)
-        reset_organizer_account_form.tournament_starting_date.data = datetime.date(tsd.year, tsd.month, tsd.day)
-    if reset_organizer_account_form.validate_on_submit():
-        sc.tournament = reset_organizer_account_form.tournament.data
-        sc.year = reset_organizer_account_form.year.data
-        sc.city = reset_organizer_account_form.city.data
-        tsd = datetime.datetime(reset_organizer_account_form.tournament_starting_date.data.year,
-                                reset_organizer_account_form.tournament_starting_date.data.month,
-                                reset_organizer_account_form.tournament_starting_date.data.day, 0, 0, 0, 0)
-        sc.tournament_starting_date = tsd.replace(tzinfo=datetime.timezone.utc).timestamp()
+        reset_organizer_account_form.username.data = f"{sc.tournament }{sc.city}{sc.year}"
+    if request.method == 'POST':
+        if "reset_organizer_account" in request.form:
+            if reset_organizer_account_form.validate_on_submit():
+                sc.tournament = reset_organizer_account_form.tournament.data
+                sc.year = reset_organizer_account_form.year.data
+                sc.city = reset_organizer_account_form.city.data
+                tsd = datetime.datetime(reset_organizer_account_form.tournament_starting_date.data.year,
+                                        reset_organizer_account_form.tournament_starting_date.data.month,
+                                        reset_organizer_account_form.tournament_starting_date.data.day, 0, 0, 0, 0)
+                sc.tournament_starting_date = tsd.replace(tzinfo=datetime.timezone.utc).timestamp()
 
-        organizer.username = reset_organizer_account_form.username.data
-        organizer.email = reset_organizer_account_form.email.data
-        organizer_pass = random_password()
-        organizer.set_password(organizer_pass)
-        organizer.send_new_messages_email = True
-        organizer.is_active = True
-        assistants = User.query.filter(or_(User.access == ACCESS[BLIND_DATE_ASSISTANT],
-                                           User.access == ACCESS[CHECK_IN_ASSISTANT],
-                                           User.access == ACCESS[ADJUDICATOR_ASSISTANT],
-                                           User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER],
-                                           User.access == ACCESS[FLOOR_MANAGER])).all()
-        for assistant in assistants:
-            assistant.is_active = True
-        db.session.commit()
-        g.ts.organizer_account_set = True
-        db.session.commit()
-        event = Event()
-        event.name = f"{sc.tournament} {sc.year} {sc.city}"
-        db.session.add(event)
-        db.session.commit()
-        send_organizer_activation_email(organizer.email, organizer.username, organizer_pass,
-                                        tournament=reset_organizer_account_form.tournament.data,
-                                        year=reset_organizer_account_form.year.data,
-                                        city=reset_organizer_account_form.city.data)
-        flash(f"Organizer account has been reset. Login credentials have been sent to {organizer.email}.",
-              "alert-success")
-        make_system_configuration_accessible_to_organizer()
-        return redirect(url_for('main.dashboard'))
-    else:
-        form = request.args
-        if 'reset_website' in form:
-            non_admins = User.query.filter(User.access > ACCESS[ADMIN]).all()
-            for na in non_admins:
-                na.is_active = False
-            treasurers = User.query.filter(User.access == ACCESS[TREASURER]).all()
-            for treasurer in treasurers:
-                treasurer.password_hash = None
-                treasurer.email = None
-            assistants = User.query.filter(or_(User.access == ACCESS[BLIND_DATE_ASSISTANT],
-                                               User.access == ACCESS[CHECK_IN_ASSISTANT],
-                                               User.access == ACCESS[ADJUDICATOR_ASSISTANT],
-                                               User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER],
-                                               User.access == ACCESS[FLOOR_MANAGER])).all()
-            for assistant in assistants:
-                assistant.set_password(random_password())
-            db.session.commit()
-            teams = Team.query.all()
-            for team in teams:
-                team.amount_paid = 0
-            db.session.commit()
+                organizer.username = f"{reset_organizer_account_form.tournament.data}{reset_organizer_account_form.city.data}" \
+                    f"{reset_organizer_account_form.year.data}"
+                organizer.email = reset_organizer_account_form.email.data
+                organizer_pass = random_password()
+                organizer.set_password(organizer_pass)
+                organizer.send_new_messages_email = True
+                organizer.is_active = True
+                User.query.filter(User.access > ACCESS[ORGANIZER], User.access < ACCESS[TEAM_CAPTAIN])\
+                    .update({User.is_active: False})
+                db.session.commit()
+                g.ts.organizer_account_set = True
+                db.session.commit()
+                event = Event()
+                event.name = f"{sc.tournament} {sc.year} {sc.city}"
+                db.session.add(event)
+                db.session.commit()
+                send_organizer_activation_email(organizer.email, organizer.username, organizer_pass,
+                                                tournament=reset_organizer_account_form.tournament.data,
+                                                year=reset_organizer_account_form.year.data,
+                                                city=reset_organizer_account_form.city.data)
+                flash(f"Organizer account has been reset. Login credentials have been sent to {organizer.email}.",
+                      "alert-success")
+                make_system_configuration_accessible_to_organizer()
+        if 'reset_website' in request.form:
+            NameChangeRequest.query.delete()
+            PartnerRequest.query.delete()
+            ShiftSlot.query.delete()
+            User.query.filter(User.access > ACCESS[ADMIN], User.access < ACCESS[DANCER]).update({User.is_active: False})
+            User.query.filter(User.access == ACCESS[TEAM_CAPTAIN]).update({User.activate: False})
+            User.query.filter(User.access == ACCESS[TREASURER]).update({User.password_hash: None, User.email: None})
+            Team.query.update({Team.amount_paid: 0})
             dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == CONFIRMED,
                                                                StatusInfo.checked_in.is_(True)).all()
             for dancer in dancers:
-                dancer.email = dancer.email.lower()
-            for dancer in dancers:
                 check_attendee = AttendedPreviousTournamentContestant.query\
-                    .filter(AttendedPreviousTournamentContestant.email == dancer.email).first()
+                    .filter(AttendedPreviousTournamentContestant.email == dancer.email.lower()).first()
                 if check_attendee is None:
                     attendee = AttendedPreviousTournamentContestant()
                     attendee.first_name = dancer.first_name
@@ -113,17 +87,11 @@ def system_setup():
                 else:
                     check_attendee.set_tournaments(organizer.username)
             db.session.commit()
-            nsd = NotSelectedContestant.query.filter(NotSelectedContestant.tournament == g.sc.tournament).all()
-            for dancer in nsd:
-                db.session.delete(dancer)
-            db.session.commit()
-            NameChangeRequest.query.delete()
-            PartnerRequest.query.delete()
+            NotSelectedContestant.query.filter(NotSelectedContestant.tournament == g.sc.tournament).delete()
             dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == REGISTERED).all()
             for dancer in dancers:
-                dancer.email = dancer.email.lower()
-            for dancer in dancers:
-                check_attendee = NotSelectedContestant.query.filter(NotSelectedContestant.email == dancer.email).first()
+                check_attendee = NotSelectedContestant.query\
+                    .filter(NotSelectedContestant.email == dancer.email.lower()).first()
                 if check_attendee is None:
                     attendee = NotSelectedContestant()
                     attendee.first_name = dancer.first_name
@@ -133,20 +101,8 @@ def system_setup():
                     attendee.tournament = g.sc.tournament
                     db.session.add(attendee)
             db.session.commit()
-            super_volunteers = SuperVolunteer.query.all()
-            for super_volunteer in super_volunteers:
-                db.session.delete(super_volunteer)
-            db.session.commit()
-            dancer_accounts = User.query.filter(User.access == ACCESS[DANCER]).all()
-            for dancer in dancer_accounts:
-                db.session.delete(dancer)
-            db.session.commit()
-            super_volunteer_accounts = User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER]).all()
-            for super_volunteer in super_volunteer_accounts:
-                db.session.delete(super_volunteer)
-            db.session.commit()
+            User.query.filter(User.access >= ACCESS[DANCER]).delete()
             reset_tournament_state()
-            db.session.commit()
             with current_app.app_context():
                 meta = db.metadata
                 for table in reversed(meta.sorted_tables):
@@ -157,10 +113,9 @@ def system_setup():
                             db.session.execute(f"ALTER TABLE {table.name} AUTO_INCREMENT = 1;")
                 db.session.commit()
             flash("xTDS WebPortal has been reset.", "alert-success")
-        if 'access_system_configuration' in form:
+        if 'access_system_configuration' in request.form:
             make_system_configuration_accessible_to_organizer()
-        if len(form) > 0:
-            return redirect(url_for('main.dashboard'))
+        return redirect(url_for('main.dashboard'))
     return render_template('admin/system_setup.html', roa_form=reset_organizer_account_form)
 
 
@@ -221,7 +176,6 @@ def system_configuration():
             form.finances_partial_refund.data = str(False)
             form.finances_partial_refund_percentage.data = 100
         if not str2bool(form.finances_full_refund.data) and not str2bool(form.finances_partial_refund.data):
-            # form.finances_refund_date.data = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
             form.finances_refund_date.data = datetime.date.today()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -282,15 +236,6 @@ def system_configuration():
 @login_required
 @requires_access_level([ACCESS[ADMIN]])
 def switch_user():
-    form = SwitchUserForm()
-    form.user.label.text = 'Switch to a non-Dutch team captain'
-    form.submit.label.text = 'Switch to team captain'
-    users = User.query.join(Team).filter(User.is_active.is_(True), User.user_id != current_user.user_id,
-                                         or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]),
-                                         Team.country != NETHERLANDS,
-                                         Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION)\
-        .order_by(Team.city).all()
-    form.user.choices = map(lambda user_map: (user_map.user_id, user_map.username), users)
     dancer_super_volunteer_form = SwitchUserForm()
     dancer_super_volunteer_form.user.label.text = 'Switch to a dancer or Super Volunteer User account'
     dancer_super_volunteer_users = User.query\
@@ -304,18 +249,9 @@ def switch_user():
     dancer_super_volunteer_choices = [(0, 'Choose an account to switch to.')] + dancer_super_volunteer_choices
     dancer_super_volunteer_form.user.choices = dancer_super_volunteer_choices
     if request.method == "POST":
-        if form.submit.name in request.form:
-            if form.validate_on_submit():
-                user = User.query.filter(User.user_id == form.user.data).first()
-                if user is not None:
-                    logout_user()
-                    login_user(user)
-                else:
-                    flash('User account is not active.')
-                return redirect(url_for('main.index'))
         if dancer_super_volunteer_form.submit.name in request.form:
             if dancer_super_volunteer_form.validate_on_submit():
-                user = User.query.filter(User.user_id == form.user.data).first()
+                user = User.query.filter(User.user_id == dancer_super_volunteer_form.user.data).first()
                 if user is not None:
                     logout_user()
                     login_user(user)
@@ -323,7 +259,7 @@ def switch_user():
                     flash('User account is not active.')
                 return redirect(url_for('main.index'))
     teams = {team: f"{team.name}.png" if team.country == NETHERLANDS else "generic.png" for team in active_teams()}
-    return render_template('admin/switch_user.html', form=form, dancer_super_volunteer_form=dancer_super_volunteer_form,
+    return render_template('admin/switch_user.html', dancer_super_volunteer_form=dancer_super_volunteer_form,
                            teams=teams)
 
 
@@ -340,12 +276,12 @@ def switch_to_organizer():
     return redirect(url_for('main.index'))
 
 
-@bp.route('/switch_to_team_captain/<name>', methods=['GET'])
+@bp.route('/switch_to_team_captain/<int:team_id>', methods=['GET'])
 @login_required
 @requires_access_level([ACCESS[ADMIN]])
-def switch_to_team_captain(name):
+def switch_to_team_captain(team_id):
     user = User.query.join(Team).filter(User.is_active.is_(True), User.access == ACCESS[TEAM_CAPTAIN],
-                                        Team.name == name).first()
+                                        Team.team_id == team_id).first()
     if user is not None:
         logout_user()
         login_user(user)
@@ -358,11 +294,11 @@ def switch_to_team_captain(name):
 @login_required
 @requires_access_level([ACCESS[ADMIN]])
 def user_list():
-    users = User.query.filter(or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]))\
+    users = User.query.filter(or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER])) \
         .order_by(case({True: 0, False: 1}, value=User.is_active), User.team_id).all()
     teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
     organizer = db.session.query(User).filter(User.access == ACCESS[ORGANIZER]).first()
-    return render_template('admin/user_list.html', data=data, users=users, teams=teams, organizer=organizer)
+    return render_template('admin/user_list.html', users=users, teams=teams, organizer=organizer)
 
 
 @bp.route('/organizer_account', methods=['GET', 'POST'])
@@ -481,8 +417,12 @@ def maintenance():
 
 
 def clear_tables():
+    NameChangeRequest.query.delete()
+    PartnerRequest.query.delete()
+    ShiftSlot.query.delete()
     User.query.filter(User.access == ACCESS[DANCER]).delete()
     User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER]).delete()
+    User.query.filter(User.access >= ACCESS[ORGANIZER]).update({User.activate: False, User.is_active: False})
     meta = db.metadata
     for table in reversed(meta.sorted_tables):
         if table.name not in EXCLUDED_FROM_CLEARING:

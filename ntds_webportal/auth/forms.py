@@ -43,7 +43,7 @@ class SendEmailForNotificationsForm(FlaskForm):
         super().__init__(**kwargs)
 
         self.send_email.label.text = f'Send me an e-mail when I get a new message on this site. ' \
-                                     f'(This will be disabled the day of the {g.sc.tournament} starts)'
+                                     f'(This will be disabled the day when the {g.sc.tournament} starts)'
 
     send_email = BooleanField()
     email_submit = SubmitField('Save e-mail preference')

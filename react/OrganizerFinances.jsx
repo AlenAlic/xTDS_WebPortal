@@ -18,9 +18,6 @@ class OrganizerFinances extends React.Component {
     constructor(props) {
         super(props);
         this.state = {teams: this.props.teams};
-        this.updateReceivedAmount = this.updateReceivedAmount.bind(this);
-        this.giveRefund = this.giveRefund.bind(this);
-        this.removePaymentRequirement = this.removePaymentRequirement.bind(this);
     }
     updateReceivedAmount() {
         const receivedAmounts = document.querySelectorAll('.team-received');
@@ -30,7 +27,7 @@ class OrganizerFinances extends React.Component {
         .then(response => response.json())
         .then(result => {
                 let newState = this.state.teams;
-                newState.forEach(t => t.finances_data.prices.team = Number(result[t.team_id]));
+                Object.values(newState).forEach(t => t.finances_data.prices.team = Number(result[t.team_id]));
                 this.setState({teams: newState});
                 receivedAmounts.forEach(i => i.value = "");
                 $(function () {
@@ -161,8 +158,9 @@ class OrganizerFinances extends React.Component {
                                     <td>
                                         <input className="form-control text-right px-0 py-0 team-received"
                                                style={{height: "auto"}} type="number" min="0" step="0.01"
-                                               id="id" name="name" placeholder={currencyFormat(t.finances_data.prices.team)}
-                                               data-toggle="tooltip" data-placement="top" data-team-id={t.team_id} data-placeholder={t.finances_data.prices.team}
+                                               placeholder={currencyFormat(t.finances_data.prices.team)}
+                                               data-toggle="tooltip" data-placement="top"
+                                               data-team-id={t.team_id} data-placeholder={t.finances_data.prices.team}
                                                title={currencyFormat(t.finances_data.prices.team)}/>
                                     </td>
                                     <td>{currencyFormat(differencePrice)}</td>

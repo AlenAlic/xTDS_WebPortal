@@ -32,7 +32,7 @@ def index():
                   'All accounts are temporarily disabled.')
             return render_template('inactive.html', title='Inactive', login_form=form)
         if user.is_active:
-            login_user(user)
+            login_user(user, remember=form.remember_me.data)
             return redirect(url_for('main.dashboard'))
         else:
             flash("Your account is currently inactive. It will become active again when the next tournament starts.")
@@ -80,6 +80,16 @@ def dashboard():
 @bp.route('/todo', methods=['GET'])
 @login_required
 def todo():
+    # GENERAL
+    # TODO - Clean up profile page, make cards
+    # TODO - Make profile page accessible to dancers to change password
+    # TODO - Add "Remember me" option
+    # TODO - Add extra identifier to login info, to clear invalidate cookies
+    # TODO - Clean up "Create couple" page for teamcaptain, add more info about different colors make single page
+    # TODO - Clean up partner requests.
+    # TODO - Merchandise testen
+    # TODO - Maak csv downloadable for Badges
+
     # ADMIN
     # WISH - Make "Tournament" section in system setup throw warnings when doing something stupid
     # NEXT TOURNAMENT - number of allowed team captains based on size of teams? Ask @ team captain meeting

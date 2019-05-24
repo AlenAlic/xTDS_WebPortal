@@ -1,3 +1,4 @@
+from flask import g
 from ntds_webportal.models import Contestant, ContestantInfo, StatusInfo, DancingInfo
 from ntds_webportal.data import *
 from sqlalchemy import or_
@@ -69,7 +70,9 @@ class TeamPossiblePartners:
         else:
             external_partners = []
         dancers = dancers.filter(DancingInfo.competition == competition, DancingInfo.role == role,
-                                 DancingInfo.level == level, DancingInfo.blind_date.is_(False))
+                                 DancingInfo.level == level,
+                                 or_(DancingInfo.blind_date.is_(False),
+                                     DancingInfo.blind_date.is_(not g.sc.breitensport_obliged_blind_date)))
         if self.dancer is not None:
             dancers = dancers.filter(or_(DancingInfo.partner.is_(None),
                                          DancingInfo.partner == self.dancer.contestant_id))

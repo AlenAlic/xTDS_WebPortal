@@ -1,26 +1,21 @@
 {% extends "base.html" %}
 
-{% block body_attribs %}
-{% endblock %}
 
 {% block app_content %}
-<h2>New couples</h2>
-<a href="{{ url_for('teamcaptains.create_couple') }}" class="btn btn-primary mb-2">Create new couple</a>
-<p>Dancers that have not accepted the GDPR are marked red.</p>
-{% with category=g.data.BALLROOM, couples=ballroom_couples, show_break_up_button=true %}
-    {% include 'teamcaptains/_couples_list.html' %}
-{% endwith %}
-{% with category=g.data.LATIN, couples=latin_couples, show_break_up_button=true %}
-    {% include 'teamcaptains/_couples_list.html' %}
-{% endwith %}
-{% endblock %}
-
-
-{% block scripts %}
-{{ super() }}
-<script>
-    function printPage() {
-        window.print();
-    }
-</script>
+    <h2>Couples</h2>
+    Dancers can have a color here.
+    <ul>
+        <li><b>Red:</b> Dancer has not accepted the GDPR yet. If one dancer of a couple has not accepted the GDPR yet at the time of the raffle, the couple will be broken up, and the dancer(s) that have not accepted the GDPR will be ignored for the raffeling process.</li>
+        <li><b>White:</b> This is a dancer accepted the GDPR and will be a participant in the raffle.</li>
+        <li><b>Blue:</b> This is a dancer from a different team. The couple this dancer belongs to has been created through the Dancing Partner Request tab.</li>
+        <li><b>Yellow:</b> This is a dancer has been selected by the raffle, but not yet confirmed for the tournament.</li>
+        <li><b>Green:</b> This is a dancer has confirmed as a participant for the tournament.</li>
+    </ul>
+    <a href="{{ url_for('teamcaptains.create_couple') }}" class="btn btn-primary mb-2">Create new couple</a>
+    {% with category=g.data.BALLROOM, couples=ballroom_couples, show_break_up_button=true %}
+        {% include 'teamcaptains/_couples_list.html' %}
+    {% endwith %}
+    {% with category=g.data.LATIN, couples=latin_couples, show_break_up_button=true %}
+        {% include 'teamcaptains/_couples_list.html' %}
+    {% endwith %}
 {% endblock %}

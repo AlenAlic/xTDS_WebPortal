@@ -61,6 +61,16 @@ def upgrade():
     op.drop_column('system_configuration', 'mug_price')
     op.drop_column('system_configuration', 't_shirt_sold')
     op.drop_column('system_configuration', 'mug_sold')
+    op.drop_constraint('shift_ibfk_1', 'shift', type_='foreignkey')
+    op.create_foreign_key('shift_ibfk_1', 'shift', 'shift_info', ['info_id'], ['shift_info_id'], onupdate='CASCADE',
+                          ondelete='CASCADE')
+    op.drop_constraint('shift_slots_ibfk_3', 'shift_slots', type_='foreignkey')
+    op.drop_constraint('shift_slots_ibfk_1', 'shift_slots', type_='foreignkey')
+    op.create_foreign_key('shift_slots_ibfk_3', 'shift_slots', 'users', ['user_id'], ['user_id'], onupdate='CASCADE',
+                          ondelete='CASCADE')
+    op.create_foreign_key('shift_slots_ibfk_1', 'shift_slots', 'shift', ['shift_id'], ['shift_id'], onupdate='CASCADE',
+                          ondelete='CASCADE')
+    op.add_column('users', sa.Column('reset_index', sa.Integer(), nullable=False))
     # ### end Alembic commands ###
 
 
@@ -86,4 +96,11 @@ def downgrade():
     op.drop_table('merchandise_purchase')
     op.drop_table('merchandise_item_variant')
     op.drop_table('merchandise_item')
+    op.drop_column('users', 'reset_index')
+    op.drop_constraint('shift_slots_ibfk_3', 'shift_slots', type_='foreignkey')
+    op.drop_constraint('shift_slots_ibfk_1', 'shift_slots', type_='foreignkey')
+    op.create_foreign_key('shift_slots_ibfk_1', 'shift_slots', 'shift', ['shift_id'], ['shift_id'])
+    op.create_foreign_key('shift_slots_ibfk_3', 'shift_slots', 'users', ['user_id'], ['user_id'])
+    op.drop_constraint('shift_ibfk_1', 'shift', type_='foreignkey')
+    op.create_foreign_key('shift_ibfk_1', 'shift', 'shift_info', ['info_id'], ['shift_info_id'])
     # ### end Alembic commands ###

@@ -1,3 +1,4 @@
+from flask import current_app, request
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, SelectField, StringField, PasswordField, IntegerField, DateField
 from wtforms.validators import DataRequired, Email, EqualTo, NumberRange
@@ -64,17 +65,22 @@ class CreateTeamForm(FlaskForm):
 
 class SystemSetupTournamentForm(FlaskForm):
     tournament = SelectField('What kind of tournament are you hosting?', choices=[(NTDS, NTDS), (ETDS, ETDS)])
-    year = SelectField('What year will the tournament be held?', coerce=int,
-                       choices=[(year, year) for year in range(datetime.datetime.now().year,
-                                                               datetime.datetime.now().year + 5)])
-    city = SelectField('In what city will the tournament be held?', choices=[(c, c) for c in CITIES])
-    tournament_starting_date = DateField("What date will the tournament start? (the Friday)",
-                                         validators=[DataRequired()],
+    year = SelectField('Year', coerce=int, choices=[(year, year) for year in range(datetime.datetime.now().year,
+                                                                                   datetime.datetime.now().year + 5)])
+    city = SelectField('City', choices=[(c, c) for c in CITIES])
+    tournament_starting_date = DateField("Start date (the Friday)", validators=[DataRequired()],
+                                         default=(datetime.datetime.now() + datetime.timedelta(days=120)).date(),
                                          render_kw={"type": "date", "max": "2099-12-30", "min": "2018-01-30"})
 
 
 class ResetOrganizerAccountForm(SystemSetupTournamentForm):
-    username = StringField('Username', validators=[DataRequired()])
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.email.default = "testorganizer@xtds.nl" if current_app.config.get('DEBUG') else ""
+        if request.method == "GET":
+            self.email.data = self.email.default
+
+    username = StringField('Username')
     email = StringField('E-mail', validators=[DataRequired(), Email()])
 
 
@@ -123,7 +129,7 @@ class SystemSetupForm(SystemSetupTournamentForm):
     finances_partial_refund_percentage = IntegerField(f"What is the refund percentage?",
                                                       validators=[NumberRange(0, 100)], default=50)
     finances_refund_date = DateField("What is the date past which there will not be any more refunds?",
-                                     validators=[DataRequired()],
+                                     validators=[DataRequired()], default=datetime.datetime.now().date(),
                                      render_kw={"type": "date", "max": "2099-12-30", "min": "2018-01-30"})
 
     main_page_link = StringField(f"What is the main domain of your website?", render_kw=WEB_PAGE_PLACEHOLDER)
@@ -135,6 +141,6 @@ class SystemSetupForm(SystemSetupTournamentForm):
 
 class MerchandiseDateForm(FlaskForm):
     merchandise_closing_date = DateField("What is the last date at which merchandise can be ordered?",
-                                         validators=[],
+                                         validators=[], default=datetime.datetime.now().date(),
                                          render_kw={"type": "date", "max": "2099-12-30", "min": "2018-01-30"})
     merchandise_closing_submit = SubmitField("Set date")

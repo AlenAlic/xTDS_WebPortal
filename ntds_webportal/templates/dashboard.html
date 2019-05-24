@@ -182,7 +182,7 @@
             title='Finances',
             text='Overview of payment data of the dancers that have been confirmed for the tournament.',
             accessible=g.ts.main_raffle_result_visible,
-            loading_screen=false
+            loading_screen=true
             ) }}
     {{ dashboard_page(
             url='organizer.merchandise',
@@ -256,7 +256,7 @@
             image='volunteering.png',
             title='Volunteering System',
             text='Create and manage volunteering shifts',
-            accessible=g.ts.registration_period_started
+            accessible=g.ts.main_raffle_result_visible
             ) }}
 </div>
 {#<h2>BAD exports</h2>#}
@@ -423,7 +423,7 @@
             image='raffle_results.png',
             title='Raffle results',
             text='Manage dancers that have been selected or confirmed for the tournament.',
-            accessible=g.ts.registration_period_started and current_user.has_dancers_registered()
+            accessible=g.ts.main_raffle_result_visible
             ) }}
 {% endif %}
 {% if current_user.is_tc() or current_user.is_treasurer() %}
@@ -432,7 +432,7 @@
             image='euro.png',
             title='Finances',
             text='Manage payment information dancers that have been confirmed for the tournament.',
-            accessible=g.ts.registration_period_started and current_user.has_dancers_registered()
+            accessible=g.ts.main_raffle_result_visible
             ) }}
 {% endif %}
 {% if current_user.is_tc() %}
@@ -488,14 +488,16 @@
             text='View the signup information your teamcaptain submitted.',
             wants_attention=current_user.dancer.status_info.feedback_about_information
             ) }}
-    {{ dashboard_page(
-            url='url_dancer.merchandise',
-            image='manage_merchandise.png',
-            title='Merchandise',
-            text='Choose merchandise that you wish to purchase.',
-            accessible=(current_user.dancer.status_info.status != g.data.NO_GDPR and (not g.ts.merchandise_finalized or (g.ts.merchandise_finalized and current_user.dancer.merchandise_info.ordered_merchandise()))),
-            count=current_user.dancer.merchandise_info.purchases|length
-            ) }}
+    {% if g.sc.merchandise() %}
+        {{ dashboard_page(
+                url='url_dancer.merchandise',
+                image='manage_merchandise.png',
+                title='Merchandise',
+                text='Choose merchandise that you wish to purchase.',
+                accessible=(current_user.dancer.status_info.status != g.data.NO_GDPR and (not g.ts.merchandise_finalized or (g.ts.merchandise_finalized and current_user.dancer.merchandise_info.ordered_merchandise()))),
+                count=current_user.dancer.merchandise_info.purchases|length
+                ) }}
+    {% endif %}
     {{ dashboard_page(
             url='volunteering.user_volunteering_shifts',
             image='volunteering.png',

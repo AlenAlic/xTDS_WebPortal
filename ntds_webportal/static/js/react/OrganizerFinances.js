@@ -50,9 +50,6 @@ var OrganizerFinances = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (OrganizerFinances.__proto__ || Object.getPrototypeOf(OrganizerFinances)).call(this, props));
 
         _this.state = { teams: _this.props.teams };
-        _this.updateReceivedAmount = _this.updateReceivedAmount.bind(_this);
-        _this.giveRefund = _this.giveRefund.bind(_this);
-        _this.removePaymentRequirement = _this.removePaymentRequirement.bind(_this);
         return _this;
     }
 
@@ -70,7 +67,7 @@ var OrganizerFinances = function (_React$Component) {
                 return response.json();
             }).then(function (result) {
                 var newState = _this2.state.teams;
-                newState.forEach(function (t) {
+                Object.values(newState).forEach(function (t) {
                     return t.finances_data.prices.team = Number(result[t.team_id]);
                 });
                 _this2.setState({ teams: newState });
@@ -332,8 +329,9 @@ var OrganizerFinances = function (_React$Component) {
                                             null,
                                             React.createElement("input", { className: "form-control text-right px-0 py-0 team-received",
                                                 style: { height: "auto" }, type: "number", min: "0", step: "0.01",
-                                                id: "id", name: "name", placeholder: currencyFormat(t.finances_data.prices.team),
-                                                "data-toggle": "tooltip", "data-placement": "top", "data-team-id": t.team_id, "data-placeholder": t.finances_data.prices.team,
+                                                placeholder: currencyFormat(t.finances_data.prices.team),
+                                                "data-toggle": "tooltip", "data-placement": "top",
+                                                "data-team-id": t.team_id, "data-placeholder": t.finances_data.prices.team,
                                                 title: currencyFormat(t.finances_data.prices.team) })
                                         ),
                                         React.createElement(

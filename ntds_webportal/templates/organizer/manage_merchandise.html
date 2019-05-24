@@ -50,7 +50,7 @@
             <table class="table table-borderless{% if not g.ts.merchandise_finalized %} table-hover clickable{% endif %} mb-0">
             <tbody>
                 {% for merch in all_merchandise %}
-                <tr data-toggle="modal" data-target="#merch-{{ merch.merchandise_item_id }}" data-keyboard="false" data-backdrop="static">
+                <tr data-toggle="modal" data-target="#merch-{{ merch.merchandise_item_id }}">
                     <td>
                         <b>{{ merch }}</b>
                         {% for var in merch.variants %}

@@ -11,7 +11,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from wtforms import PasswordField
 import ntds_webportal.data as data
 from datetime import datetime
-from ntds_webportal.util import BooleanConverter
+from ntds_webportal.util import BooleanConverter, random_password
 
 
 class MyAdminIndexView(AdminIndexView):
@@ -218,15 +218,24 @@ def create_app():
             db.session.commit()
 
     def create_configuration():
-        if len(User.query.filter(User.access == data.ACCESS[data.ORGANIZER]).all()) == 0:
+        if User.query.filter(User.access == data.ACCESS[data.ORGANIZER]).first() is None:
             organisation = User()
             organisation.username = 'NTDSEnschede2018'
             organisation.email = 'email@example.com'
-            organisation.set_password('password')
+            organisation.set_password(random_password())
             organisation.access = data.ACCESS[data.ORGANIZER]
             organisation.is_active = False
             db.session.add(organisation)
             db.session.commit()
+        for a in data.ASSISTANTS:
+            if User.query.filter(User.username == a).first() is None:
+                assistant = User()
+                assistant.username = a
+                assistant.set_password(random_password())
+                assistant.access = data.ACCESS[data.ASSISTANTS[a]]
+                assistant.is_active = False
+                db.session.add(assistant)
+        db.session.commit()
         if Team.query.filter(Team.name == data.TEAM_ORGANIZATION).first() is not None:
             db.session.add(Team(name=data.TEAM_ORGANIZATION, country=data.TEAM_ORGANIZATION,
                                 city=data.TEAM_ORGANIZATION))

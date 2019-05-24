@@ -135,6 +135,7 @@ DEFAULT_PHD_STUDENT_PRICE = 5500
 STUDENT_TEXT = {STUDENT: 'Student', NON_STUDENT: NO, PHD_STUDENT: 'PhD-student'}
 FIRST_TIME = 'first_time'
 STUDENT_STRING = {STUDENT: 'Student', NON_STUDENT: 'Non-student', PHD_STUDENT: 'PhD-student'}
+EMPTY = "-"
 
 # Categories
 COMPETITION = 'competition'

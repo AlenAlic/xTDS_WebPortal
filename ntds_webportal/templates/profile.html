@@ -2,42 +2,65 @@
 
 
 {% block app_content %}
-
-<h2>Change Password</h2>
-<p>You can change your own password below.</p>
-<form class="form" method="POST" enctype="multipart/form-data" novalidate>
-    {{ form.hidden_tag() }}
-    {{ wtf.form_field(form.current_password) }}
-    {{ wtf.form_field(form.password) }}
-    {{ wtf.form_field(form.password2) }}
-    {{ wtf.form_field(form.submit) }}
-</form>
-
-<h2 class="mt-2">E-mail notifications</h2>
-<form class="form" method="POST" enctype="multipart/form-data" novalidate>
-    {{ send_email_form.hidden_tag() }}
-    {{ wtf.form_field(send_email_form.send_email) }}
-    {{ wtf.form_field(send_email_form.email_submit) }}
-</form>
-
-{% if current_user.is_tc() %}
-<h2 class="mt-2">Add treasurer</h2>
-{% if treasurer_active == false %}
-<p>You can add the treasurer of your organization as a separate user to the xTDS WebPortal,
-    so that he/she can handle the payments required for the tournament.
-    <br/>
-    If you want to do this, please fill out the the form below, and the treasurer will receive his/her credentials
-    through the e-mail address provided.</p>
-<form class="form" method="POST" enctype="multipart/form-data" novalidate>
-    {{ treasurer_form.hidden_tag() }}
-    {{ wtf.form_field(treasurer_form.email) }}
-    {{ wtf.form_field(treasurer_form.message) }}
-    {{ wtf.form_field(treasurer_form.tr_submit) }}
-</form>
-{% else %}
-<p>An e-mail has already been sent out to your treasurer.</p>
-{% endif %}
-{% endif %}
-
+    <h2>Profile</h2>
+    <div class="d-grid grid-column-gap-3 grid-row-gap-3 grid-template-columns-1 grid-template-columns-lg-2 grid-template-columns-xl-3 ">
+        <div class="card mb-0">
+            <div class="card-header">
+                Change password
+            </div>
+            <div class="card-body py-2">
+                <p>Change your password below.</p>
+                <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+                    {{ wtf.form_field(form.current_password) }}
+                    {{ wtf.form_field(form.password) }}
+                    {{ wtf.form_field(form.password2) }}
+                    {{ wtf.form_field(form.submit) }}
+                </form>
+            </div>
+        </div>
+        {% if current_user.is_admin() or current_user.is_organizer() or current_user.is_tc() %}
+        <div class="card mb-0">
+            <div class="card-header">
+                E-mail notifications
+            </div>
+            <div class="card-body py-2">
+                <p>When someting important happens (for example a dancer of yours cancelling) an automated message will be sent by the system. The organization, other teamcaptains and the site admins can also send messages. Do you wish to be notified of receiving a message by email?</p>
+                <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                    {{ send_email_form.hidden_tag() }}
+                    {{ wtf.form_field(send_email_form.send_email) }}
+                    {{ wtf.form_field(send_email_form.email_submit) }}
+                </form>
+            </div>
+        </div>
+        {% endif %}
+        {% if current_user.is_tc() %}
+        <div class="card mb-0">
+            <div class="card-header">
+                Add treasurer
+            </div>
+            <div class="card-body py-2">
+                {% if treasurer_active == false %}
+                    <p>
+                        You can add the treasurer of your organization as a separate user to the xTDS WebPortal,
+                        so that he/she can handle the payments required for the tournament.
+                    </p>
+                    <p>
+                        If you want to do this, please fill out the the form below, and the treasurer will receive his/her credentials
+                        through the e-mail address provided.
+                    </p>
+                    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                        {{ treasurer_form.hidden_tag() }}
+                        {{ wtf.form_field(treasurer_form.email) }}
+                        {{ wtf.form_field(treasurer_form.message) }}
+                        {{ wtf.form_field(treasurer_form.tr_submit) }}
+                    </form>
+                {% else %}
+                    <p>An e-mail with credentials has already been sent out to your treasurer.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
 {% endblock %}
 

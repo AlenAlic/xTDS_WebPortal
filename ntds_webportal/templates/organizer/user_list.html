@@ -1,131 +1,85 @@
 {% extends "base.html" %}
 
-{% block body_attribs %}
-onload="onStart()"
-{% endblock %}
+{% macro assistant(url="", account_made=false, title="", text="") %}
+<a href="{{url_for(url)}}" class="grid-place-self-stretch text-decoration-none card my-0 text-black">
+    <img src="{% if account_made %}{{url_for('static', filename='dashboard_images/edit_contestant.png')}}{% else %}{{url_for('static', filename='dashboard_images/edit_contestant.png')}}{% endif %}" class="card-img mx-auto mt-3" style="max-width: 112px; max-height: 112px;" alt="Switch image">
+    <div class="card-body pb-3 text-center">
+        <h5 class="card-title">{{ title }}</h5>
+        {% if text != "" %}<p class="card-text">{{ text }}</p>{% endif %}
+    </div>
+</a>
+{% endmacro %}
+
 
 {% block app_content %}
-<h2>Manage organizational accounts</h2>
-<div class="row" style="visibility:hidden">
-    {% if bda is not none %}
-        {% set bda_image = 'edit_contestant.png' %}
-    {% else %}
-        {% set bda_image = 'register_contestant.png' %}
-    {% endif %}
-    {% with url='organizer.blind_date_assistant_account', title='Blind Date Assistant', image=bda_image %}
-        {% include 'organizer/_assistant_account_page.html' %}
-    {% endwith %}
-    {% if chi is not none %}
-        {% set chi_image = 'edit_contestant.png' %}
-    {% else %}
-        {% set chi_image = 'register_contestant.png' %}
-    {% endif %}
-    {% with url='organizer.check_in_assistant_account', title='Check-In Assistant', image=chi_image %}
-        {% include 'organizer/_assistant_account_page.html' %}
-    {% endwith %}
-    {% if ada is not none %}
-        {% set ada_image = 'edit_contestant.png' %}
-    {% else %}
-        {% set ada_image = 'register_contestant.png' %}
-    {% endif %}
-    {% with url='organizer.adjudicator_assistant_account', title='Adjudicator Assistant', image=ada_image %}
-        {% include 'organizer/_assistant_account_page.html' %}
-    {% endwith %}
-    {% if tom is not none %}
-        {% set tom_image = 'edit_contestant.png' %}
-    {% else %}
-        {% set tom_image = 'register_contestant.png' %}
-    {% endif %}
-    {% with url='organizer.tournament_office_manager_account', title='Tournament Office Manager', image=tom_image %}
-        {% include 'organizer/_assistant_account_page.html' %}
-    {% endwith %}
-    {% if fm is not none %}
-        {% set fm_image = 'edit_contestant.png' %}
-    {% else %}
-        {% set fm_image = 'register_contestant.png' %}
-    {% endif %}
-    {% with url='organizer.floor_manager_account', title='Floor Manager', image=fm_image %}
-        {% include 'organizer/_assistant_account_page.html' %}
-    {% endwith %}
-</div>
-<h2>Activate team captain accounts</h2>
-{% if not g.ts.website_accessible_to_teamcaptains %}
-<p>Click the button below to activate the team captains accounts for the xTDS WebPortal.
-    Activating the accounts will also automatically send out an e-mail (with login credentials) to the team captains, alerting them that the website is accessible to them.</p>
-<p></p>
-<p>This wil <b>NOT</b> open the registration yet.</p>
-<p>Before activating the accounts, please make sure that the e-mails of the team captain accounts are correct.</p>
-<button class="btn btn-primary" data-toggle="modal" data-target="#activateTeamCaptains"><b>Activate team captain accounts</b></button>
-<div class="modal fade" id="activateTeamCaptains" tabindex="-1" role="dialog" aria-labelledby="activateTeamCaptains" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Activate team captain accounts</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to activate the team captain accounts?</p>
-            </div>
-            <div class="modal-footer">
-                <a href="{{url_for('organizer.user_list')}}?activate_teamcaptains" class="btn btn-primary">Yes, activate team captain accounts</a>
-                <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, do not activate team captain accounts</button>
-            </div>
-        </div>
+    <h2>Manage assistant accounts</h2>
+    <p>There are a few accounts for special tasks. You can change the password for each of these accounts by clicking on the account tab.</p>
+    <div class="mb-4 d-grid grid-column-gap-2 grid-row-gap-2 grid-template-columns-2 grid-template-columns-sm-2 grid-template-columns-md-3 grid-template-columns-lg-4 grid-template-columns-xl-5 grid-template-columns-xxl-5">
+    {{ assistant(
+        url='organizer.check_in_assistant_account',
+        account_made=(chi is not none),
+        title='Check In Assistant',
+        text='Account to check in dancers at the check in desk.'
+        ) }}
+    {{ assistant(
+        url='organizer.blind_date_assistant_account',
+        account_made=(bda is not none),
+        title='Blind Date Assistant',
+        text='Account to manage (blind date) couples in the DANCE system.'
+        ) }}
+    {{ assistant(
+        url='organizer.adjudicator_assistant_account',
+        account_made=(ada is not none),
+        title='Adjudicator Assistant',
+        text='Account to help with the assignment of adjudicators.'
+        ) }}
+    {{ assistant(
+        url='organizer.tournament_office_manager_account',
+        account_made=(tom is not none),
+        title='Tournament Office'
+        ) }}
+    {{ assistant(
+        url='organizer.floor_manager_account',
+        account_made=(fm is not none),
+        title='Floor Manager'
+        ) }}
     </div>
-</div>
-{% else %}
-<p>Team captains have access to the xTDS WebPortal.</p>
-{% endif %}
-<h2>Available Teamcaptains{% if g.ts.website_accessible_to_teamcaptains is sameas true %} and Treasurers accounts{% endif %}</h2>
-<table class="table table-sm">
-    <colgroup>
-        <col span="1" style="width: 15%;">
-        <col span="1" style="width: 20%;">
-        <col span="1" style="width: 25%;">
-        <col span="1" style="width: 20%;">
-        <col span="1" style="width: 10%;">
-        <col span="1" style="width: 10%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th><b>Username</b></th>
-            <th><b>Team</b></th>
-            <th><b>E-mail</b></th>
-            <th><b></b></th>
-            <th><b>Country</b></th>
-            <th style="text-align:right;"><b>Active</b></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{% if user.team is not none %}{{ user.team }}{% endif %}</td>
-                <td>{% if user.email is not none %}{{ user.email }}{% endif %}</td>
-                <td>
-                    {% if (user.is_active and user.is_treasurer()) or user.is_tc() %}
-                    <a role="button" class="btn btn-outline-primary btn-sm" href="{{ url_for('organizer.change_email', number=user.user_id) }}">Change e-mail</a>
-                    {% endif %}
-                </td>
-                <td>{{ user.team.country }}</td>
-                <td align="right">{{ g.data.TF[user.is_active] }}</td>
-
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-function onStart() {
-    var maxHeight = 0;
-    $(".thumbnail-same-height").each(function(){
-       if ($(this).height() > maxHeight) { maxHeight = $(this).height(); }
-    });
-    $(".thumbnail-same-height").height(maxHeight);
-    $(".row").css('visibility', 'visible');
-}
-</script>
+    <h2>Activate team captain accounts</h2>
+    <div class="mb-4">
+        {% if not g.ts.website_accessible_to_teamcaptains %}
+            <p>Click the button below to activate the team captains accounts for the xTDS WebPortal.
+                Activating the accounts will also automatically send out an e-mail (with login credentials) to the team captains, alerting them that the website is accessible to them.</p>
+            <p></p>
+            <p>This wil <b>NOT</b> open the registration yet.</p>
+            <p>Before activating the accounts, please make sure that the e-mails of the team captain accounts are correct.</p>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#activateTeamCaptains"><b>Activate team captain accounts</b></button>
+            <div class="modal fade" id="activateTeamCaptains" tabindex="-1" role="dialog" aria-labelledby="activateTeamCaptains" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Activate team captain accounts</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to activate the team captain accounts?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                                <button class="btn btn-primary" type="submit" name="activate_teamcaptains">Yes, activate team captain accounts</button>
+                            </form>
+                            <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, do not activate team captain accounts</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Team captains have access to the xTDS WebPortal.</p>
+        {% endif %}
+    </div>
+    {{ react() }}
+    <script src="{{url_for('static', filename='js/react/ActivateTeamcaptains.js')}}{{ aver }}" ></script>
+    <div id="root"></div>
+    <script>
+        ReactDOM.render(React.createElement(ActivateTeamcaptains, {users: {{users | tojson}}, settings: {{g.ts.json_settings() | tojson}}}), document.getElementById('root'));
+    </script>
 {% endblock %}

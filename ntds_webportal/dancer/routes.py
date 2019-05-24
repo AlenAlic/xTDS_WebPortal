@@ -24,7 +24,8 @@ def dancer_data():
             dancer.status_info.set_status(REGISTERED)
             db.session.commit()
             flash('Privacy policy accepted.', 'alert-success')
-            flash('You can now order merchandise from the Merchandise tab.', 'alert-primary')
+            if g.sc.merchandise():
+                flash('You can now order merchandise from the Merchandise tab on the dashboard.', 'alert-primary')
             return redirect(url_for('url_dancer.dancer_data'))
         if 'submit_dancer_feedback' in request.form and feedback_form.validate_on_submit():
             flash('Feedback sent to team captain.', 'alert-success')

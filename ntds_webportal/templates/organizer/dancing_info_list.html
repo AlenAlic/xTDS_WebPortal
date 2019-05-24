@@ -32,30 +32,30 @@
     </thead>
     <tbody>
         {% for dancer in dancers %}
-            <tr>
-                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
+            <tr class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
+                <td>
                     {{ dancer.get_full_name() }}
                 </td>
-                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
+                <td>
                     {{ dancer.email }}
                 </td>
-                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
+                <td>
                     {{ dancer.contestant_info.team }}
                 </td>
-                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
+                <td>
                     {{ data.STATUS[dancer.status_info.status] }}
                 </td>
-                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
-                    {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
+                <td>
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}
                 </td>
-                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
-                    {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}
+                <td>
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}
                 </td>
-                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
-                    {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
+                <td>
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
                 </td>
-                <td class="clickable-row" data-href="{{url_for('organizer.edit_dancing_info', number=dancer.contestant_id)}}">
-                    {{  g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}
+                <td>
+                    {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}
                 </td>
             </tr>
         {% endfor %}

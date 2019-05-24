@@ -19,6 +19,7 @@
         <!-- Main CSS -->
         <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.custom.css')}}{{ aver }}">
         <link rel="stylesheet" href="{{url_for('static', filename='css/custom.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='css/animate.css')}}">
         <!--Favicons-->
         <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png{{ aver }}">
         <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png{{ aver }}">
@@ -27,6 +28,9 @@
         <link rel="manifest" href="/static/favicons/site.webmanifest{{ aver }}">
         <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg{{ aver }}" color="#5bbad5">
         <link rel="shortcut icon" href="/static/favicons/favicon.ico{{ aver }}">
+        <!--Jquery-->
+        <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}{{ aver }}"></script>
+        <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap-notify.js')}}{{ aver }}"></script>
     {%- endblock styles %}
     {%- endblock head %}
     </head>
@@ -41,9 +45,10 @@
 
     {% block scripts %}
     <script type="text/javascript" src="{{url_for('static', filename='loading/loading.js')}}{{ aver }}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}{{ aver }}"></script>
+{#    <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}{{ aver }}"></script>#}
     <script type="text/javascript" src="{{url_for('static', filename='js/popper.min.js')}}{{ aver }}"></script>
     <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}{{ aver }}"></script>
+{#    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap-notify.js')}}{{ aver }}"></script>#}
     <script type="text/javascript" src="{{url_for('static', filename='js/moment-with-locales.min.js')}}{{ aver }}"></script>
     <script>
         moment.locale("en");

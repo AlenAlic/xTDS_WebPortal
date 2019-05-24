@@ -80,7 +80,7 @@ checkbox                        {cursor:pointer}
 
 
 {% block navbar %}
-<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light no-print navbar-default">
+<nav class="navbar sticky-top navbar-expand-xl navbar-light bg-light no-print navbar-default">
     <div class="container">
         <a class="navbar-brand" href="{{ url_for('main.index') }}">xTDS WebPortal</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,16 +101,20 @@ checkbox                        {cursor:pointer}
                 {% if login_form %}
                     <form class="form-inline ml-auto form-width-fix" method="POST" enctype="multipart/form-data">
                         {{ login_form.hidden_tag() }}
-                        {{ login_form.username(class_='form-control d-block w-100 d-lg-inline-block w-lg-auto mx-0 mx-lg-1 my-1 my-lg-0', placeholder='Username') }}
-                        {{ login_form.password(class_='form-control d-block w-100 d-lg-inline-block w-lg-auto mx-0 mx-lg-1 my-1 my-lg-0', placeholder='Password') }}
-                        {{ login_form.submit(class_='btn btn-outline-primary form-control d-block w-100 d-lg-inline-block w-lg-auto mx-0 mx-lg-1 my-1 my-lg-0') }}
-                        <small><a class="nav-link d-block d-lg-inline-block px-0 px-lg-3" href="{{url_for('auth.reset_password_request')}}">Forgot password?</a></small>
+                        {{ login_form.username(class_='form-control d-block w-100 d-xl-inline-block w-xl-auto mx-0 mx-xl-1 my-1 my-xl-0', placeholder='Username') }}
+                        {{ login_form.password(class_='form-control d-block w-100 d-xl-inline-block w-xl-auto mx-0 mx-xl-1 my-1 my-xl-0', placeholder='Password') }}
+                        <div class="form-check form-check-inline mx-0 mx-xl-1 my-1 my-xl-0">
+                            {{ login_form.remember_me(class_='form-check-input') }}
+                            <label for="{{login_form.remember_me.name|safe}}" class="form-check-label" >{{login_form.remember_me.label.text|safe}}</label>
+                        </div>
+                        {{ login_form.submit(class_='btn btn-outline-primary form-control d-block w-100 d-xl-inline-block w-xl-auto mx-0 mx-xl-1 my-1 my-xl-0') }}
+                        <small><a class="nav-link d-block d-xl-inline-block px-0 px-xl-3" href="{{url_for('auth.reset_password_request')}}">Forgot password?</a></small>
                     </form>
                 {% endif %}
             {% else %}
                 <form class="form-inline">
-                    <span class="navbar-text d-none d-lg-inline-block mx-0 mx-md-2 my-1 my-md-0">Welcome, {% if current_user.is_dancer() or current_user.is_super_volunteer() %}{{ current_user.get_full_name() }}{% else %}{{ current_user.username }}{% endif %}</span>
-                    <a href="{{ url_for('main.logout') }}" class="form-control btn btn-outline-primary mx-0 mx-lg-1 my-1 my-lg-0">Logout</a>
+                    <span class="navbar-text d-none d-xl-inline-block mx-0 mx-md-2 my-1 my-md-0">Welcome, {% if current_user.is_dancer() or current_user.is_super_volunteer() %}{{ current_user.get_full_name() }}{% else %}{{ current_user.username }}{% endif %}</span>
+                    <a href="{{ url_for('main.logout') }}" class="form-control btn btn-outline-primary mx-0 mx-xl-1 my-1 my-xl-0">Logout</a>
                 </form>
             {% endif %}
         </div>
@@ -146,7 +150,7 @@ $(document).ready(function($) {
 {% endblock %}
 
 
-{% macro flash_messages() %}
+{% macro flash_messages_old() %}
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}
@@ -160,14 +164,27 @@ $(document).ready(function($) {
 {% endmacro %}
 
 
+{% macro flash_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <script>
+        {% for category, message in messages %}
+            $.notify({message: '{{ message }}'},{type: {% if category=='message' %}'alert-info'{% else %}'{{ category }}'{% endif %}});
+        {% endfor %}
+        </script>
+    {% endif %}
+{% endwith %}
+{% endmacro %}
+
+
 {% macro dashboard_page(url="#", image="", title="Title", text="", accessible=true, loading_screen=false, wants_attention=false, count=0, show_zero=false) %}
-<a {% if accessible %}href="{{url_for( url )}}"{% endif %} class="grid-place-self-stretch card my-0 {% if not accessible %}inaccessible opaque{% endif %} {% if wants_attention %}text-white bg-info{%endif%} {% if loading_screen and accessible%}loading-btn{% endif %}" style="text-decoration:none;color:black;">
+<a {% if accessible %}href="{{url_for( url )}}"{% endif %} class="grid-place-self-stretch card my-0 text-decoration-none text-black {% if not accessible %}inaccessible opaque{% endif %} {% if wants_attention %}text-white bg-info{%endif%} {% if loading_screen and accessible%}loading-btn{% endif %}">
     {% if count > 0 or show_zero %}
         <div class="counting-badge">
             <span class="badge badge-pill badge-primary font-size-4 mt-2 ml-2" >{{count}}</span>
         </div>
     {% endif %}
-    <img src="{{url_for('static', filename='dashboard_images/'+image)}}" class="card-img mx-auto" style="max-width: 128px; max-height: 128px; margin-top: 16px;" alt="Dashboard image">
+    <img src="{{url_for('static', filename='dashboard_images/'+image)}}" class="card-img mx-auto mt-3" style="max-width: 128px; max-height: 128px;" alt="Dashboard image">
     <div class="card-body pb-4" style="text-align:center;">
         <h4 class="card-title">{{ title }}</h4>
         {% if text != "" %}<p class="card-text">{{ text }}</p>{% endif %}

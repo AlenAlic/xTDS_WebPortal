@@ -21,6 +21,11 @@ const filterDutchTeams = team => {return team.country === "The Netherlands"};
 const filterGermanTeams = team => {return team.country === "Germany"};
 const filterOtherTeams = team => {return team.country !== "The Netherlands" && team.country !== "Germany"};
 const filterTeamsWithDancers = team => {return Object.values(team.finances_data.dancers).length > 0};
+const filterUserIsTeamcaptain = user => {return user.is_teamcaptain};
+const filterUserActivate = user => {return user.activate};
+const filterUserIsActive = user => {return user.is_active};
+const filterUserIsNotActive = user => {return !user.is_active};
+const filterUserIsTreasurer = user => {return user.is_treasurer};
 
 // Mappings
 const mapEntryPrice = dancer => dancer.payment_info.entry_price;
@@ -56,6 +61,30 @@ const sortTeamsAlphabetically = (a, b) => {
     if (nameA > nameB) {return 1;}
     return 0;
 };
+const sortUsersByIsActive = (a, b) => {
+    let activeA = a.is_active;
+    let activeB = b.is_active;
+    if (activeA && !activeB) {return -1;}
+    if (!activeA && activeB) {return 1;}
+    return 0;
+};
+const sortUsersByIsActiveTeamTeamcaptain = (a, b) => {
+    let activeA = a.is_active;
+    let activeB = b.is_active;
+    if (activeA && !activeB) {return -1;}
+    if (!activeA && activeB) {return 1;}
+
+    let nameA = a.team.toUpperCase();
+    let nameB = b.team.toUpperCase();
+    if (nameA < nameB) {return -1;}
+    if (nameA > nameB) {return 1;}
+
+    let teamcaptainA = a.is_teamcaptain;
+    let teamcaptainB = b.is_teamcaptain;
+    if (teamcaptainA && !teamcaptainB) {return -1;}
+    if (!teamcaptainA && teamcaptainB) {return 1;}
+    return 0;
+};
 
 // Formatting
 const currencyFormat = num => {
@@ -70,19 +99,25 @@ const currencyFormat = num => {
 };
 
 
-// General functions
+// General DOM elements
 const CheckMark = ({flag}) => {
     return flag ? <i className="fas fa-check"/>: <i className="fas fa-times"/>;
 };
 
+
+// General functionz
 const classNamesFilterString = item => {return typeof item === "string"};
 const classNamesFilterObject = item => {return typeof item === "object"};
 const classNamesFilterValidObject = item => {return Object.values(item).length === 1 && Object.keys(item).length === 1 && typeof Object.values(item)[0] === 'boolean'};
 const classNamesFilterTrueObjects = item => {return Object.values(item)[0] === true};
 const classNamesMapObjects = item => Object.keys(item);
-
 const classNames = (...names) => {
     let strings = names.filter(classNamesFilterString);
     let objectStrings = names.filter(classNamesFilterObject).filter(classNamesFilterValidObject).filter(classNamesFilterTrueObjects).map(classNamesMapObjects);
     return strings.concat(objectStrings).join(" ");
+};
+
+const validateEmail = email => {
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
 };

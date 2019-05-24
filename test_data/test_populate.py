@@ -2,7 +2,7 @@ from flask import g
 from ntds_webportal import db
 from ntds_webportal.models import Team, Contestant, ContestantInfo, DancingInfo, VolunteerInfo, AdditionalInfo, \
     StatusInfo, MerchandiseInfo, PaymentInfo, User, MerchandiseItem, MerchandiseItemVariant, MerchandisePurchase
-from ntds_webportal.data import ACCESS, DANCER, SHIRT_SIZES, NO
+from ntds_webportal.data import ACCESS, DANCER, SHIRT_SIZES, NO, ORGANIZER, TEAM_CAPTAIN
 from ntds_webportal.functions import reset_tournament_state
 from test_data.etds2018brno import etds2018brno, etds2018brno_configuration
 from test_data.ntds2018enschede import ntds2018enschede, ntds2018enschede_configuration
@@ -34,6 +34,9 @@ def populate_test_data(tournament=None):
     if tournament == "ETDS 2018 Brno":
         test_contestants = etds2018brno
         test_configuration = etds2018brno_configuration
+
+    User.query.filter(User.access >= ACCESS[ORGANIZER], User.access < ACCESS[TEAM_CAPTAIN])\
+        .update({User.is_active: True})
 
     g.sc.tournament = test_configuration["tournament"]
     g.sc.number_of_teamcaptains = test_configuration["number_of_teamcaptains"]

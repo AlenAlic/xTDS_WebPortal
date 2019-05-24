@@ -35,7 +35,11 @@ EXCLUDED_FROM_CLEARING = [USERS, TEAMS, TEAM_FINANCES, TOURNAMENT_STATE, SYSTEM_
 
 @login.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    try:
+        user_id = user_id.split("-")
+        return User.query.filter(User.user_id == user_id[0], User.reset_index == user_id[1]).first()
+    except AttributeError:
+        return None
 
 
 def requires_access_level(access_levels):
@@ -86,6 +90,7 @@ def requires_testing_environment(f):
 class User(UserMixin, Anonymous, db.Model):
     __tablename__ = USERS
     user_id = db.Column(db.Integer, primary_key=True)
+    reset_index = db.Column(db.Integer, nullable=False, default=0)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
@@ -121,7 +126,7 @@ class User(UserMixin, Anonymous, db.Model):
         return f'{self.username}'
 
     def get_id(self):
-        return self.user_id
+        return f"{self.user_id}-{self.reset_index}"
 
     def is_admin(self):
         return self.access == ACCESS[ADMIN]
@@ -167,6 +172,9 @@ class User(UserMixin, Anonymous, db.Model):
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
+        if self.reset_index is not None:
+            self.reset_index += 1
+        db.session.commit()
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -264,6 +272,21 @@ class User(UserMixin, Anonymous, db.Model):
 
     def assigned_hours(self, include_unpublished=False):
         return hours_delta(sum([s.duration() for s in self.assigned_slots(include_unpublished)], timedelta(0, 0)))
+
+    def json(self):
+        return {
+            "username": self.username,
+            "user_id": self.user_id,
+            'email': self.email if self.email is not None else "",
+            'is_active': self.is_active,
+            'activate': self.activate,
+            "team": self.team.display_name() if self.team is not None else None,
+            'country': self.team.country if self.team is not None else None,
+            "is_teamcaptain": self.is_tc(),
+            "is_treasurer": self.is_treasurer(),
+            "pending": False,
+            "old_email": self.email if self.email is not None else "",
+        }
 
 
 class Team(db.Model):
@@ -375,7 +398,7 @@ class Contestant(db.Model):
         return [di for di in self.dancing_info if di.competition == competition][0]
 
     def cancel_registration(self):
-        self.status_info.set_status(CANCELLED)
+        self.status_info.set_status(CANCELLED, set_raffle_status=False)
         for di in self.dancing_info:
             di.set_partner(None)
         self.contestant_info.team_captain = False
@@ -431,7 +454,7 @@ class Contestant(db.Model):
             "contestant_id": self.contestant_id,
             "full_name": self.get_full_name(),
             'contestant_info': self.contestant_info.json(),
-            # 'dancing_info': [d.json() for d in self.dancing_info],
+            'dancing_info': {d.competition: d.json() for d in self.dancing_info},
             # 'volunteer_info': self.volunteer_info.json(),
             # 'additional_info': self.additional_info.json(),
             'status_info': self.status_info.json(),
@@ -489,7 +512,7 @@ class DancingInfo(db.Model):
 
     def valid_match(self, other, breitensport=True):
         errors = []
-        if breitensport and (self.blind_date or other.blind_date):
+        if breitensport and (self.blind_date or other.blind_date) and g.sc.breitensport_obliged_blind_date:
             errors.append("At least one of the dancers must blind date.")
         else:
             if self.competition != other.competition:
@@ -555,10 +578,10 @@ class VolunteerInfo(db.Model):
     emergency_response_officer = db.Column(db.String(16), nullable=False, default=NO)
     jury_ballroom = db.Column(db.String(16), nullable=False, default=NO)
     jury_latin = db.Column(db.String(16), nullable=False, default=NO)
-    level_ballroom = db.Column(db.String(16), nullable=False, default=BELOW_D)
-    level_latin = db.Column(db.String(16), nullable=False, default=BELOW_D)
-    license_jury_ballroom = db.Column(db.String(16), nullable=False, default=NO)
-    license_jury_latin = db.Column(db.String(16), nullable=False, default=NO)
+    level_ballroom = db.Column(db.String(16), nullable=False, default=EMPTY)
+    level_latin = db.Column(db.String(16), nullable=False, default=EMPTY)
+    license_jury_ballroom = db.Column(db.String(16), nullable=False, default=EMPTY)
+    license_jury_latin = db.Column(db.String(16), nullable=False, default=EMPTY)
     jury_salsa = db.Column(db.String(16), nullable=False, default=NO)
     jury_polka = db.Column(db.String(16), nullable=False, default=NO)
     selected_adjudicator = db.Column(db.Boolean, nullable=False, default=False)
@@ -574,14 +597,16 @@ class VolunteerInfo(db.Model):
         self.volunteer = NO
         self.first_aid = NO
         self.emergency_response_officer = NO
-        self.jury_ballroom = NO
-        self.jury_latin = NO
-        self.license_jury_ballroom = NO
-        self.license_jury_latin = NO
-        self.level_ballroom = BELOW_D
-        self.level_latin = BELOW_D
-        self.jury_salsa = NO
-        self.jury_polka = NO
+
+    def not_adjudicating(self, competition=None):
+        if competition == BALLROOM:
+            self.jury_ballroom = NO
+            self.license_jury_ballroom = EMPTY
+            self.level_ballroom = EMPTY
+        if competition == LATIN:
+            self.jury_latin = NO
+            self.license_jury_latin = EMPTY
+            self.level_latin = EMPTY
 
     def wants_to_adjudicate(self):
         return self.jury_ballroom != NO or self.jury_latin != NO or self.jury_salsa != NO or self.jury_polka != NO
@@ -634,10 +659,11 @@ class StatusInfo(db.Model):
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
-    def set_status(self, status):
+    def set_status(self, status, set_raffle_status=True):
         if status is not None:
             self.status = status
-            self.raffle_status = status
+            if set_raffle_status:
+                self.raffle_status = status
         if self.status == CONFIRMED:
             self.payment_required = True
         elif self.status == REGISTERED:
@@ -1138,6 +1164,11 @@ class TournamentState(db.Model):
     #     if not self.main_raffle_result_visible:
     #         return RAFFLE_NOT_CONFIRMED_TEXT
 
+    def json_settings(self):
+        return {
+            "website_accessible_to_teamcaptains": self.website_accessible_to_teamcaptains,
+        }
+
 
 class SystemConfiguration(db.Model):
     __tablename__ = SYSTEM_CONFIGURATION
@@ -1238,12 +1269,6 @@ class SystemConfiguration(db.Model):
 
     def json_settings(self, view_only=False):
         return {
-            "phd_student_category": self.phd_student_category,
-            "merchandise": len(MerchandiseItem.query.all()) > 0,
-            "merchandise_finalized": g.ts.merchandise_finalized,
-            "refund": self.does_tournament_have_refund(),
-            "refund_percentage": self.finances_partial_refund_percentage / 100,
-            "view_only": view_only,
             "first_time_ask": self.first_time_ask,
             "ask_diet_allergies": self.ask_diet_allergies,
             "ask_volunteer": self.ask_volunteer,
@@ -1253,6 +1278,12 @@ class SystemConfiguration(db.Model):
             "ask_adjudicator_certification": self.ask_adjudicator_certification,
             "salsa_competition": self.salsa_competition,
             "polka_competition": self.polka_competition,
+            "phd_student_category": self.phd_student_category,
+            "merchandise": len(MerchandiseItem.query.all()) > 0,
+            "merchandise_finalized": g.ts.merchandise_finalized,
+            "refund": self.does_tournament_have_refund(),
+            "refund_percentage": self.finances_partial_refund_percentage / 100,
+            "view_only": view_only,
         }
 
     @staticmethod
@@ -1313,10 +1344,10 @@ class SuperVolunteer(db.Model):
     emergency_response_officer = db.Column(db.String(16), nullable=False, default=NO)
     jury_ballroom = db.Column(db.String(16), nullable=False, default=NO)
     jury_latin = db.Column(db.String(16), nullable=False, default=NO)
-    level_ballroom = db.Column(db.String(16), nullable=False, default=BELOW_D)
-    level_latin = db.Column(db.String(16), nullable=False, default=BELOW_D)
-    license_jury_ballroom = db.Column(db.String(16), nullable=False, default=NO)
-    license_jury_latin = db.Column(db.String(16), nullable=False, default=NO)
+    level_ballroom = db.Column(db.String(16), nullable=False, default=EMPTY)
+    level_latin = db.Column(db.String(16), nullable=False, default=EMPTY)
+    license_jury_ballroom = db.Column(db.String(16), nullable=False, default=EMPTY)
+    license_jury_latin = db.Column(db.String(16), nullable=False, default=EMPTY)
     jury_salsa = db.Column(db.String(16), nullable=False, default=NO)
     jury_polka = db.Column(db.String(16), nullable=False, default=NO)
     selected_adjudicator = db.Column(db.Boolean, nullable=False, default=False)
@@ -1346,6 +1377,16 @@ class SuperVolunteer(db.Model):
 
     def wants_to_adjudicate(self):
         return self.jury_ballroom != NO or self.jury_latin != NO or self.jury_salsa != NO or self.jury_polka != NO
+
+    def not_adjudicating(self, competition=None):
+        if competition == BALLROOM:
+            self.jury_ballroom = NO
+            self.license_jury_ballroom = EMPTY
+            self.level_ballroom = EMPTY
+        if competition == LATIN:
+            self.jury_latin = NO
+            self.license_jury_latin = EMPTY
+            self.level_latin = EMPTY
     
     def update_data(self, form):
         self.first_name = form.first_name.data
@@ -1357,12 +1398,18 @@ class SuperVolunteer(db.Model):
         self.diet_allergies = form.diet_allergies.data
         self.first_aid = form.first_aid.data
         self.emergency_response_officer = form.emergency_response_officer.data
-        self.jury_ballroom = form.jury_ballroom.data
-        self.jury_latin = form.jury_latin.data
-        self.license_jury_ballroom = form.license_jury_ballroom.data
-        self.license_jury_latin = form.license_jury_latin.data
-        self.level_ballroom = form.level_jury_ballroom.data
-        self.level_latin = form.level_jury_latin.data
+        if form.jury_ballroom.data == NO:
+            self.not_adjudicating(BALLROOM)
+        else:
+            self.jury_ballroom = form.jury_ballroom.data
+            self.license_jury_ballroom = form.license_jury_ballroom.data
+            self.level_ballroom = form.level_jury_ballroom.data
+        if form.jury_latin.data == NO:
+            self.not_adjudicating(LATIN)
+        else:
+            self.jury_latin = form.jury_latin.data
+            self.license_jury_latin = form.license_jury_latin.data
+            self.level_latin = form.level_jury_latin.data
         self.jury_salsa = form.jury_salsa.data
         self.jury_polka = form.jury_polka.data
         self.remark = form.remark.data
@@ -1384,8 +1431,9 @@ class ShiftInfo(db.Model):
 class Shift(db.Model):
     __tablename__ = 'shift'
     shift_id = db.Column(db.Integer, primary_key=True)
-    info_id = db.Column(db.Integer, db.ForeignKey('shift_info.shift_info_id'))
-    info = db.relationship("ShiftInfo", back_populates="shifts", uselist=False)
+    info_id = db.Column(db.Integer, db.ForeignKey('shift_info.shift_info_id', onupdate="CASCADE", ondelete="CASCADE"))
+    info = db.relationship("ShiftInfo", back_populates="shifts", uselist=False, single_parent=True,
+                           cascade='all, delete-orphan')
     slots = db.relationship("ShiftSlot", cascade='all, delete-orphan')
     start_time = db.Column(db.DateTime)
     stop_time = db.Column(db.DateTime)
@@ -1450,12 +1498,12 @@ class Shift(db.Model):
 class ShiftSlot(db.Model):
     __tablename__ = 'shift_slots'
     slot_id = db.Column(db.Integer, primary_key=True)
-    shift_id = db.Column(db.Integer, db.ForeignKey('shift.shift_id'))
+    shift_id = db.Column(db.Integer, db.ForeignKey('shift.shift_id', onupdate="CASCADE", ondelete="CASCADE"))
     shift = db.relationship("Shift", back_populates="slots")
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
     team = db.relationship("Team")
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    user = db.relationship("User", back_populates="slots")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', onupdate="CASCADE", ondelete="CASCADE"))
+    user = db.relationship("User", back_populates="slots", cascade='all, delete-orphan', single_parent=True)
     mandatory = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):

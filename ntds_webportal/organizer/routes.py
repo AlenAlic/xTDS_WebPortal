@@ -5,7 +5,7 @@ from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, VolunteerInfo, \
     requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo, MerchandiseItem, MerchandiseItemVariant
-from ntds_webportal.functions import submit_updated_dancing_info, random_password
+from ntds_webportal.functions import submit_updated_dancing_info, random_password, active_teams
 from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm, \
     CreateNewMerchandiseForm
 from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm, \
@@ -13,7 +13,6 @@ from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, Edit
 from ntds_webportal.organizer.email import send_registration_open_email, send_gdpr_reminder_email
 from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
 from ntds_webportal.auth.email import send_team_captain_activation_email
-from ntds_webportal.teamcaptains.forms import EditContestantForm
 from ntds_webportal.volunteering.forms import SuperVolunteerForm
 import ntds_webportal.data as data
 from ntds_webportal.data import *
@@ -23,43 +22,123 @@ from io import BytesIO, StringIO
 import datetime
 
 
+@bp.route('/manage_merchandise', methods=['GET', "POST"])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(SYSTEM_CONFIGURED)
+def manage_merchandise():
+    all_merchandise = MerchandiseItem.query.all()
+    form = CreateNewMerchandiseForm()
+    merchandise_date_form = MerchandiseDateForm()
+    if request.method == "GET":
+        mcd = datetime.datetime.utcfromtimestamp(g.sc.merchandise_closing_date).replace(tzinfo=datetime.timezone.utc)
+        mcd += datetime.timedelta(days=-1)
+        merchandise_date_form.merchandise_closing_date.data = datetime.date(mcd.year, mcd.month, mcd.day)
+    if request.method == "POST":
+        if merchandise_date_form.merchandise_closing_submit.name in request.form:
+            if merchandise_date_form.validate_on_submit():
+                mcd = datetime.datetime(merchandise_date_form.merchandise_closing_date.data.year,
+                                        merchandise_date_form.merchandise_closing_date.data.month,
+                                        merchandise_date_form.merchandise_closing_date.data.day, 3, 0, 0, 0)\
+                    .replace(tzinfo=datetime.timezone.utc)
+                mcd += datetime.timedelta(days=1)
+                g.sc.merchandise_closing_date = mcd.timestamp()
+                db.session.commit()
+                flash(f"Merchandise closing date set.", 'alert-success')
+                return redirect(url_for('organizer.manage_merchandise'))
+        if not g.ts.merchandise_finalized:
+            if form.new_item_submit.name in request.form:
+                if form.validate_on_submit():
+                    variants = form.variants.data.split(",")
+                    if form.shirt.data == "shirt":
+                        for var in variants:
+                            item = MerchandiseItem(description=f"{var.strip()} {form.item.data}", price=form.price.data)
+                            item.shirt = True
+                            for size in SHIRT_SIZES:
+                                item.variants.append(MerchandiseItemVariant(variant=size, merchandise_item=item))
+                            db.session.add(item)
+                            db.session.commit()
+                            flash(f"{item.description} added.", 'alert-success')
+                    else:
+                        item = MerchandiseItem(description=form.item.data, price=form.price.data)
+                        for var in variants:
+                            item.variants.append(MerchandiseItemVariant(variant=var.strip(), merchandise_item=item))
+                        db.session.add(item)
+                        db.session.commit()
+                        flash(f"{item.description} added.", 'alert-success')
+                    return redirect(url_for('organizer.manage_merchandise'))
+            if "delete" in request.form:
+                var = MerchandiseItemVariant.query\
+                    .filter(MerchandiseItemVariant.merchandise_item_variant_id == request.form["delete"]).first()
+                if len(var.merchandise_item.variants) > 1:
+                    flash(f"Deleted {var.variant_name()} variant of {var.merchandise_item}.", 'alert-success')
+                    db.session.delete(var)
+                    db.session.commit()
+                    return redirect(url_for('organizer.manage_merchandise'))
+                else:
+                    flash(f"Cannot delete the last variant of {var.merchandise_item}.", 'alert-warning')
+            if "add" in request.form:
+                merchandise_item = MerchandiseItem.query \
+                    .filter(MerchandiseItem.merchandise_item_id == request.form["add"]).first()
+                if len(request.form["new_variant"].strip()) > 0:
+                    var = MerchandiseItemVariant(variant=request.form["new_variant"].strip(),
+                                                 merchandise_item=merchandise_item)
+                    merchandise_item.variants.append(var)
+                    flash(f"Added {var.variant_name()} variant to {var.merchandise_item}.", 'alert-success')
+                    db.session.commit()
+                    return redirect(url_for('organizer.manage_merchandise'))
+                else:
+                    flash(f"Cannot add a variant without a name.", 'alert-warning')
+            if "merchandise_item" in request.form:
+                merchandise_item = MerchandiseItem.query\
+                    .filter(MerchandiseItem.merchandise_item_id == request.form["merchandise_item"]).first()
+                merchandise_item.description = request.form[form.item.name]
+                merchandise_item.price = int(request.form[form.price.name])
+                if not merchandise_item.shirt:
+                    for var in merchandise_item.variants:
+                        var.variant = request.form[str(var.merchandise_item_variant_id)]
+                db.session.commit()
+                flash(f"{merchandise_item} updated,", 'alert-success')
+                return redirect(url_for('organizer.manage_merchandise'))
+    return render_template('organizer/manage_merchandise.html', form=form, all_merchandise=all_merchandise,
+                           merchandise_date_form=merchandise_date_form)
+
+
 @bp.route('/user_list', methods=['GET', 'POST'])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(SYSTEM_CONFIGURED)
 def user_list():
-    form = request.args
-    if 'activate_teamcaptains' in form:
-        team_captains = User.query.join(Team).filter(User.access == ACCESS[TEAM_CAPTAIN])\
-            .order_by(case({True: 0, False: 1}, value=User.is_active), User.team_id)
-        if g.sc.tournament == NTDS:
-            team_captains = team_captains.filter(Team.country == NETHERLANDS).all()
-        else:
-            team_captains = team_captains.all()
-        for tc in team_captains:
-            if tc.email is not None:
-                tc.is_active = True
-                tc_pass = random_password()
-                tc.set_password(tc_pass)
-                send_team_captain_activation_email(tc.email, tc, tc_pass,
-                                                   tournament=g.sc.tournament, year=g.sc.year, city=g.sc.city)
-        g.ts.website_accessible_to_teamcaptains = True
-        db.session.commit()
-        message = f"The accounts for all team captains{f' from {NETHERLANDS}' if g.sc.tournament == NTDS else ''} " \
-            f"have been activated.<br/><br/>An e-mail has been sent to all team captains with the login credentials."
-        flash(Markup(message), "alert-success")
-    if len(form) > 0:
-        return redirect(url_for('main.dashboard'))
+    if request.method == "POST":
+        if 'activate_teamcaptains' in request.form:
+            team_captains = User.query.join(Team).filter(User.access == ACCESS[TEAM_CAPTAIN], User.activate.is_(True))
+            if g.sc.tournament == NTDS:
+                team_captains = team_captains.filter(Team.country == NETHERLANDS).all()
+            else:
+                team_captains = team_captains.all()
+            for tc in team_captains:
+                if tc.email is not None:
+                    tc.is_active = True
+                    tc_pass = random_password()
+                    tc.set_password(tc_pass)
+                    send_team_captain_activation_email(tc.email, tc, tc_pass,
+                                                       tournament=g.sc.tournament, year=g.sc.year, city=g.sc.city)
+            g.ts.website_accessible_to_teamcaptains = True
+            db.session.commit()
+            message = f"The accounts for all team captains{f' from {NETHERLANDS}' if g.sc.tournament == NTDS else ''} "\
+                f"have been activated.<br/><br/>An e-mail with the login credentials has been sent to all teamcaptains."
+            flash(Markup(message), "alert-success")
+            return redirect(url_for('main.dashboard'))
     if not g.ts.website_accessible_to_teamcaptains:
-        users = User.query.join(Team).filter(User.access == ACCESS[TEAM_CAPTAIN]).order_by(User.team_id, User.user_id)
+        users = User.query.join(Team).filter(User.access == ACCESS[TEAM_CAPTAIN])
     else:
         users = User.query.join(Team)\
-            .filter(or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER])) \
-            .order_by(case({True: 0, False: 1}, value=User.is_active), User.team_id, User.user_id)
+            .filter(or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER]))
     if g.sc.tournament == NTDS:
         users = users.filter(Team.country == NETHERLANDS).all()
     else:
         users = users.all()
+    users = {u.user_id: u.json() for u in users}
     bda = db.session.query(User).filter(User.access == ACCESS[BLIND_DATE_ASSISTANT]).first()
     chi = db.session.query(User).filter(User.access == ACCESS[CHECK_IN_ASSISTANT]).first()
     ada = db.session.query(User).filter(User.access == ACCESS[ADJUDICATOR_ASSISTANT]).first()
@@ -181,88 +260,6 @@ def change_email(number):
     return render_template('admin/change_email.html', form=form, user=user)
 
 
-@bp.route('/manage_merchandise', methods=['GET', "POST"])
-@login_required
-@requires_access_level([ACCESS[ORGANIZER]])
-@requires_tournament_state(SYSTEM_CONFIGURED)
-def manage_merchandise():
-    all_merchandise = MerchandiseItem.query.all()
-    form = CreateNewMerchandiseForm()
-    merchandise_date_form = MerchandiseDateForm()
-    if request.method == "GET":
-        mcd = datetime.datetime.utcfromtimestamp(g.sc.merchandise_closing_date).replace(tzinfo=datetime.timezone.utc)
-        mcd += datetime.timedelta(days=-1)
-        merchandise_date_form.merchandise_closing_date.data = datetime.date(mcd.year, mcd.month, mcd.day)
-    if request.method == "POST":
-        if merchandise_date_form.merchandise_closing_submit.name in request.form:
-            if merchandise_date_form.validate_on_submit():
-                mcd = datetime.datetime(merchandise_date_form.merchandise_closing_date.data.year,
-                                        merchandise_date_form.merchandise_closing_date.data.month,
-                                        merchandise_date_form.merchandise_closing_date.data.day, 3, 0, 0, 0)\
-                    .replace(tzinfo=datetime.timezone.utc)
-                mcd += datetime.timedelta(days=1)
-                g.sc.merchandise_closing_date = mcd.timestamp()
-                db.session.commit()
-                flash(f"Merchandise closing date set.", 'alert-success')
-                return redirect(url_for('organizer.manage_merchandise'))
-        if not g.ts.merchandise_finalized:
-            if form.new_item_submit.name in request.form:
-                if form.validate_on_submit():
-                    variants = form.variants.data.split(",")
-                    if form.shirt.data == "shirt":
-                        for var in variants:
-                            item = MerchandiseItem(description=f"{var.strip()} {form.item.data}", price=form.price.data)
-                            item.shirt = True
-                            for size in SHIRT_SIZES:
-                                item.variants.append(MerchandiseItemVariant(variant=size, merchandise_item=item))
-                            db.session.add(item)
-                            db.session.commit()
-                            flash(f"{item.description} added.", 'alert-success')
-                    else:
-                        item = MerchandiseItem(description=form.item.data, price=form.price.data)
-                        for var in variants:
-                            item.variants.append(MerchandiseItemVariant(variant=var.strip(), merchandise_item=item))
-                        db.session.add(item)
-                        db.session.commit()
-                        flash(f"{item.description} added.", 'alert-success')
-                    return redirect(url_for('organizer.manage_merchandise'))
-            if "delete" in request.form:
-                var = MerchandiseItemVariant.query\
-                    .filter(MerchandiseItemVariant.merchandise_item_variant_id == request.form["delete"]).first()
-                if len(var.merchandise_item.variants) > 1:
-                    flash(f"Deleted {var.variant_name()} variant of {var.merchandise_item}.", 'alert-success')
-                    db.session.delete(var)
-                    db.session.commit()
-                    return redirect(url_for('organizer.manage_merchandise'))
-                else:
-                    flash(f"Cannot delete the last variant of {var.merchandise_item}.", 'alert-warning')
-            if "add" in request.form:
-                merchandise_item = MerchandiseItem.query \
-                    .filter(MerchandiseItem.merchandise_item_id == request.form["add"]).first()
-                if len(request.form["new_variant"].strip()) > 0:
-                    var = MerchandiseItemVariant(variant=request.form["new_variant"].strip(),
-                                                 merchandise_item=merchandise_item)
-                    merchandise_item.variants.append(var)
-                    flash(f"Added {var.variant_name()} variant to {var.merchandise_item}.", 'alert-success')
-                    db.session.commit()
-                    return redirect(url_for('organizer.manage_merchandise'))
-                else:
-                    flash(f"Cannot add a variant without a name.", 'alert-warning')
-            if "merchandise_item" in request.form:
-                merchandise_item = MerchandiseItem.query\
-                    .filter(MerchandiseItem.merchandise_item_id == request.form["merchandise_item"]).first()
-                merchandise_item.description = request.form[form.item.name]
-                merchandise_item.price = int(request.form[form.price.name])
-                if not merchandise_item.shirt:
-                    for var in merchandise_item.variants:
-                        var.variant = request.form[str(var.merchandise_item_variant_id)]
-                db.session.commit()
-                flash(f"{merchandise_item} updated,", 'alert-success')
-                return redirect(url_for('organizer.manage_merchandise'))
-    return render_template('organizer/manage_merchandise.html', form=form, all_merchandise=all_merchandise,
-                           merchandise_date_form=merchandise_date_form)
-
-
 @bp.route('/registration_management', methods=['GET'])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER]])
@@ -306,15 +303,14 @@ def registration_overview():
         .order_by(ContestantInfo.team_id,
                   case({CONFIRMED: 0, SELECTED: 1, REGISTERED: 2, CANCELLED: 3}, value=StatusInfo.status),
                   Contestant.first_name).all()
-    all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
-    dancers = [{'country': team.country, 'name': team.name, 'id': team.city,
+    all_teams = active_teams()
+    dancers = [{'country': team.country, 'name': team.display_name(), 'id': team.city,
                 'dancers': len(Contestant.query.join(ContestantInfo).filter(ContestantInfo.team == team)
                                .order_by(Contestant.first_name).all())} for team in all_teams]
-    # dancers = [d for d in dancers if len(d['dancers']) > 0]
     dutch_dancers = [team for team in dancers if team['country'] == NETHERLANDS]
     german_dancers = [team for team in dancers if team['country'] == GERMANY]
     other_dancers = [team for team in dancers if team['country'] != NETHERLANDS and team['country'] != GERMANY]
-    return render_template('organizer/registration_overview.html', data=data, all_dancers=all_dancers,
+    return render_template('organizer/registration_overview.html', all_dancers=all_dancers,
                            dutch_dancers=dutch_dancers, german_dancers=german_dancers, other_dancers=other_dancers)
 
 
@@ -323,10 +319,7 @@ def registration_overview():
 @requires_access_level([ACCESS[ORGANIZER]])
 def view_dancer(number):
     dancer = Contestant.query.filter(Contestant.contestant_id == number).first()
-    form = EditContestantForm()
-    form.organizer_populate(dancer)
-    return render_template('organizer/view_dancer.html', dancer=dancer, form=form,
-                           timestamp=datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp())
+    return render_template('organizer/view_dancer.html', dancer=dancer)
 
 
 @bp.route('/name_change_list', methods=['GET'])
@@ -838,7 +831,6 @@ def update_adjudicator(form, adjudicator, selected=False):
 @requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(SYSTEM_CONFIGURED)
 def bad():
-    # NEXT TOURNAMENT - Update inclusion of adjudicators accounts
     form = request.args
     if 'download_createUniverse' in form:
         output = StringIO(render_template('organizer/_BAD_createUniverse.sql'))

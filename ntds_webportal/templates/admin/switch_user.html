@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 
-{% macro switch_to_teamcaptain(url="self_admin.switch_to_team_captain", name="", image="", title="", text="", accessible=g.ts.website_accessible_to_teamcaptains) %}
-<a {% if accessible %}href="{% if name != "" %}{{url_for(url, name=name)}}{% else %}{{url_for(url)}}{% endif %}"{% endif %} class="grid-place-self-stretch text-decoration-none card my-0 {% if not accessible %}inaccessible opaque{% endif %}" style="color:black;">
+{% macro switch_to_teamcaptain(url="self_admin.switch_to_team_captain", team_id="", image="", title="", text="", accessible=g.ts.website_accessible_to_teamcaptains) %}
+<a {% if accessible %}href="{% if team_id != "" %}{{url_for(url, team_id=team_id)}}{% else %}{{url_for(url)}}{% endif %}"{% endif %} class="grid-place-self-stretch text-decoration-none card my-0 {% if not accessible %}inaccessible opaque{% endif %}" style="color:black;">
     <img src="{{url_for('static', filename='association_logo/'+image)}}" class="card-img mx-auto mt-3" style="max-width: 112px; max-height: 112px;" alt="Switch image">
     <div class="card-body pb-3 text-center">
         <h5 class="card-title">{% if title == "" %}{{ name }}{% else %}{{ title }}{% endif %}</h5>
-        {% if text != "" %}<p class="card-text">{{ text }}</p>{% endif %}
+        {% if text != "" and g.sc.tournament != g.data.ETDS %}<p class="card-text">{{ text }}</p>{% endif %}
     </div>
 </a>
 {% endmacro %}
@@ -19,24 +19,18 @@
             url='self_admin.switch_to_organizer',
             title='Organization',
             text=g.sc.tournament + ' ' + g.sc.city + ' ' + g.sc.year|string,
-            image='Organization.png'
+            image='Organization.png',
+            accessible = g.ts.organizer_account_set
             ) }}
     {% for team in teams %}
         {{ switch_to_teamcaptain(
-                name=team.name,
+                team_id=team.team_id,
+                title=team.display_name(),
                 text=team.city,
                 image=teams[team]
                 ) }}
     {% endfor %}
 </div>
-{% if g.sc.tournament == g.data.ETDS and g.ts.website_accessible_to_teamcaptains %}
-<form class="form mt-2" method="POST" enctype="multipart/form-data" novalidate>
-    {{ form.hidden_tag() }}
-    {{ wtf.form_field(form.user) }}
-    {{ wtf.form_field(form.submit) }}
-</form>
-<div class="mt-3"></div>
-{% endif %}
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ dancer_super_volunteer_form.hidden_tag() }}
     {{ wtf.form_field(dancer_super_volunteer_form.user) }}

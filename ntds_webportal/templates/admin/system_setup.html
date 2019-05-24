@@ -1,72 +1,84 @@
 {% extends "base.html" %}
 
-{% block body_attribs %}
-    {% if g.ts.organizer_account_set is sameas false %}
-    onload="onStart()"
-    {% endif %}
-{% endblock %}
+{% block body_attribs %}onload="onStart()"{% endblock %}
 
 {% block app_content %}
     <div class="row">
         <div class="col-md-6">
-        <div class="mb-4">
-            <h2>Reset Website</h2>
-            <p>Reset the data on the website and close off the website for all users except for the admin.</p>
-            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#reset-modal">Reset xTDS WebPortal</button>
-            {% with dancer=dancer, modal_id="reset-modal", title="ATTENTION!!!", text="Doing this will CLEAR all data of the current tournament.<br/><br/>Are you sure you want to proceed?"|safe,
-                url=url_for('self_admin.system_setup')+"?reset_website", confirm="Yes, reset website", cancel="No, leave data" %}
-                {% include 'components/modal.html' %}
-            {% endwith %}
-        </div>
-        <div class="mb-4">
-            <h2>Organizer system configuration access</h2>
-            {% if g.sc.system_configuration_accessible is sameas true %}
-            The system configuration is accessible to the organizer.
-            {% else %}
-            <p>Make the system configuration form accessible to the organizer. This is for <b>emergencies</b> only.</p>
-            <a class="btn btn-outline-primary" href="{{url_for('self_admin.system_setup')}}?access_system_configuration" style="text-decoration:none">System Configuration Accessible</a>
+            <div class="mb-4">
+                <h2>Reset Website</h2>
+                <p>Reset the data on the website and close off the website for all users except for the admin.</p>
+                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#reset-modal">Reset xTDS WebPortal</button>
+                <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                    <div class="modal fade" id="reset-modal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">ATTENTION!!!</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Doing this will CLEAR all data of the current tournament.<br><br>Are you sure you want to proceed?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" name="reset_website" class="btn btn-primary">Yes, reset website</button>
+                                    <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, leave data</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% if g.ts.organizer_account_set %}
+            <div class="mb-4">
+                <h2>Organizer system configuration access</h2>
+                {% if g.sc.system_configuration_accessible %}
+                    The system configuration is accessible to the organizer.
+                {% else %}
+                    <p>Make the system configuration form accessible to the organizer. This is for <b>emergencies</b> only.</p>
+                    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                        <button class="btn btn-outline-primary" name="access_system_configuration">System Configuration Accessible</button>
+                    </form>
+                {% endif %}
+            </div>
             {% endif %}
-        </div>
         </div>
         <div class="col-md-6">
             <h2>Reset Organizer account</h2>
-            {% if g.ts.organizer_account_set is sameas false %}
-            Resets the Organizer account for the new tournament and sends an email to the organizer with login credentials.
-            <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-                {{ roa_form.hidden_tag() }}
-                {{ wtf.form_field(roa_form.tournament, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
-                {{ wtf.form_field(roa_form.year, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
-                {{ wtf.form_field(roa_form.city, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
-                {{ wtf.form_field(roa_form.username, disabled=true) }}
-                {{ wtf.form_field(roa_form.tournament_starting_date) }}
-                {{ wtf.form_field(roa_form.email) }}
-                <div class="form-group required">
-                    <div class="input-group">
-                        <input class="btn btn-primary" id="submit" name="submit" type="submit"  value="Reset Organizer account">&nbsp;
-                        <a role="button" class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Cancel</a>
+            {% if not g.ts.organizer_account_set %}
+                Resets the Organizer account for the new tournament and sends an email to the organizer with login credentials.
+                <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                    {{ roa_form.hidden_tag() }}
+                    {{ wtf.form_field(roa_form.username, disabled=true) }}
+                    {{ wtf.form_field(roa_form.tournament, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
+                    {{ wtf.form_field(roa_form.year, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
+                    {{ wtf.form_field(roa_form.city, **{'onchange': "updateUsername()", 'onkeyup': "updateUsername()"}) }}
+                    {{ wtf.form_field(roa_form.tournament_starting_date) }}
+                    {{ wtf.form_field(roa_form.email) }}
+                    <div class="form-group required">
+                        <div class="input-group">
+                            <input class="btn btn-primary" name="reset_organizer_account" type="submit"  value="Reset Organizer account">&nbsp;
+                            <a role="button" class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Cancel</a>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+                <script>
+                    const onStart = () => {updateUsername();};
+                    const updateUsername = () => {
+                        let tournament = document.getElementById("{{roa_form.tournament.id}}");
+                        let year = document.getElementById("{{roa_form.year.id}}");
+                        let city = document.getElementById("{{roa_form.city.id}}");
+                        let username = document.getElementById("{{roa_form.username.id}}");
+
+                        username.value = tournament.value + city.value + year.value
+                    }
+                </script>
             {% else %}
-            Reset the xTDS WebPortal before you can reset the Organizer account.
+                Reset the xTDS WebPortal before you can reset the Organizer account.
+                <script>
+                    const onStart =() => {}
+                </script>
             {% endif %}
         </div>
     </div>
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-function onStart() {
-    updateUsername();
-}
-function updateUsername() {
-    var tournament = document.getElementById("{{roa_form.tournament.id}}");
-    var year = document.getElementById("{{roa_form.year.id}}");
-    var city = document.getElementById("{{roa_form.city.id}}");
-    var username = document.getElementById("{{roa_form.username.id}}");
-
-    username.value = tournament.value + city.value + year.value
-}
-</script>
 {% endblock %}

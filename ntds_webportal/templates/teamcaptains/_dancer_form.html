@@ -5,14 +5,15 @@
 {% endif %}
 <h2>{{title}}</h2>
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
-    {% if current_user.is_dancer() is sameas true or current_user.is_organizer() is sameas true %}<fieldset disabled>{% endif %}
     {{ form.hidden_tag() }}
     <h3>Personal information</h3>
+    {{ reg_wtf.form_field(form.number) }}
     {% if mode == 'register' %}
-        {{ reg_wtf.form_field(form.number) }}
-        {{ reg_wtf.form_field(form.first_name, placeholder='First name') }}
-        {{ reg_wtf.form_field(form.prefixes, placeholder='Prefix') }}
-        {{ reg_wtf.form_field(form.last_name, placeholder='Last name') }}
+        {{ reg_wtf.form_field(form.first_name) }}
+        {% if current_user.team.country == g.data.NETHERLANDS %}
+            {{ reg_wtf.form_field(form.prefixes) }}
+        {% endif %}
+        {{ reg_wtf.form_field(form.last_name) }}
     {% elif mode == 'edit' %}
         <div class="form-group row required">
             <label class="col-form-label col-lg-2" for="full_name">Full name</label>
@@ -23,143 +24,82 @@
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
-                    <input class="form-control" disabled="" id="full_name" name="full_name" placeholder="Full name" required="" type="text" value="{{form.full_name.data}}">
+                    <input class="form-control" disabled="" id="full_name" name="full_name" required="" type="text" value="{{form.full_name.data}}">
                 </div>
             </div>
         </div>
-    {% elif mode == 'view' %}
-        {{ reg_wtf.form_field(form.full_name) }}
     {% endif %}
-    {{ reg_wtf.form_field(form.email, placeholder='E-mail address') }}
-    {% if current_user.is_organizer() %}
-    {{ reg_wtf.form_field(form.team) }}
-    {% endif %}
+
+    {{ reg_wtf.form_field(form.email, **{'onfocusout': "checkEmail(this)"}) }}
     {{ reg_wtf.form_field(form.student) }}
-    {% if g.sc.first_time_ask is sameas true %}
+    {% if g.sc.first_time_ask %}
         {{ reg_wtf.form_field(form.first_time) }}
     {% endif %}
     {{ reg_wtf.form_field(form.sleeping_arrangements) }}
-    {% if g.sc.ask_diet_allergies is sameas true %}
-        {{ reg_wtf.form_field(form.diet_allergies, placeholder='Please fill in any special dietary requirements and/or allergies, if applicable.') }}
+    {% if g.sc.ask_diet_allergies %}
+        {{ reg_wtf.form_field(form.diet_allergies) }}
     {% endif %}
 
     <h3>Ballroom</h3>
     {{ reg_wtf.form_field(form.ballroom_level, disabled=not editable, **{'onchange': "dancingLevel(id, 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date', 'jury_ballroom')", 'onkeyup': "dancingLevel(id, 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date', 'jury_ballroom')"}) }}
-    {% if (mode == 'view' and form.ballroom_level.data != g.data.NO) or mode == 'edit' or mode == 'register' %}
-    {{ reg_wtf.form_field(form.ballroom_role, disabled=true, **{'onchange': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date', 'ballroom_partner')", 'onkeyup': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_blind_date', 'ballroom_partner')"}) }}
-    {% if (mode == 'view' and form.ballroom_level.data == g.data.BREITENSPORT) or mode == 'edit' or mode == 'register' %}
-    {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+    {{ reg_wtf.form_field(form.ballroom_role, disabled=true, **{'onchange': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')", 'onkeyup': "dancingRole('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')"}) }}
+    {% if g.sc.breitensport_obliged_blind_date %}
         {{ reg_wtf.form_field(form.ballroom_blind_date, disabled=true, **{'onchange': "dancingBD('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')", 'onkeyup': "dancingBD('ballroom_level', 'ballroom_role', 'ballroom_partner', 'ballroom_blind_date')"}) }}
     {% endif %}
-    {% endif %}
     {{ reg_wtf.form_field(form.ballroom_partner, disabled=true) }}
-    {% endif %}
 
     <h3>Latin</h3>
     {{ reg_wtf.form_field(form.latin_level, disabled=not editable, **{'onchange': "dancingLevel(id, 'latin_role', 'latin_partner', 'latin_blind_date', 'jury_latin')", 'onkeyup': "dancingLevel(id, 'latin_role', 'latin_partner', 'latin_blind_date', 'jury_latin')"}) }}
-    {% if (mode == 'view' and form.latin_level.data != g.data.NO) or mode == 'edit' or mode == 'register' %}
-    {{ reg_wtf.form_field(form.latin_role, disabled=true, **{'onchange': "dancingRole('latin_level', 'latin_role', 'latin_blind_date', 'latin_partner')", 'onkeyup': "dancingRole('latin_level', 'latin_role', 'latin_blind_date', 'latin_partner')"}) }}
-    {% if (mode == 'view' and form.latin_level.data == g.data.BREITENSPORT) or mode == 'edit' or mode == 'register' %}
-    {% if g.sc.breitensport_obliged_blind_date is sameas true %}
+    {{ reg_wtf.form_field(form.latin_role, disabled=true, **{'onchange': "dancingRole('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')", 'onkeyup': "dancingRole('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')"}) }}
+    {% if g.sc.breitensport_obliged_blind_date %}
         {{ reg_wtf.form_field(form.latin_blind_date, disabled=true, **{'onchange': "dancingBD('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')", 'onkeyup': "dancingBD('latin_level', 'latin_role', 'latin_partner', 'latin_blind_date')"}) }}
     {% endif %}
-    {% endif %}
     {{ reg_wtf.form_field(form.latin_partner, disabled=true) }}
-    {% endif %}
 
-    {% if g.sc.ask_volunteer is sameas true or g.sc.ask_first_aid is sameas true or g.sc.ask_emergency_response_officer is sameas true %}
+    {% if g.sc.ask_volunteer or g.sc.ask_first_aid or g.sc.ask_emergency_response_officer %}
         <h3>Volunteering</h3>
-        {% if g.sc.ask_volunteer is sameas true %}
+        {% if g.sc.ask_volunteer %}
             {{ reg_wtf.form_field(form.volunteer, **{'onchange': "volunteerGreyOut()", 'onkeyup': "volunteerGreyOut()"}) }}
         {% endif %}
-        {% if g.sc.ask_first_aid is sameas true %}
+        {% if g.sc.ask_first_aid %}
             {{ reg_wtf.form_field(form.first_aid) }}
         {% endif %}
-        {% if g.sc.ask_emergency_response_officer is sameas true %}
+        {% if g.sc.ask_emergency_response_officer %}
             {{ reg_wtf.form_field(form.emergency_response_officer) }}
         {% endif %}
     {% endif %}
 
-    {% if g.sc.ask_volunteer is sameas false and g.sc.ask_first_aid is sameas false and g.sc.ask_emergency_response_officer is sameas false %}
-        <h3>Adjudication</h3>
-    {% endif %}
+    <h3>Adjudication</h3>
     {{ reg_wtf.form_field(form.jury_ballroom, **{'onchange': "adjudicatorGreyOut('jury_ballroom', 'license_jury_ballroom', 'level_jury_ballroom')", 'onkeyup': "adjudicatorGreyOut('jury_ballroom', 'license_jury_ballroom', 'level_jury_ballroom')"}) }}
-    {% if mode == 'view' and form.jury_ballroom.data != g.data.NO or mode == 'edit' or mode == 'register' %}
     {% if g.sc.ask_adjudicator_certification %}
         {{ reg_wtf.form_field(form.license_jury_ballroom) }}
     {% endif %}
-    {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true %}
+    {% if g.sc.ask_adjudicator_highest_achieved_level %}
         {{ reg_wtf.form_field(form.level_jury_ballroom) }}
     {% endif %}
-    {% endif %}
+
     {{ reg_wtf.form_field(form.jury_latin, **{'onchange': "adjudicatorGreyOut('jury_latin', 'license_jury_latin', 'level_jury_latin')", 'onkeyup': "adjudicatorGreyOut('jury_latin', 'license_jury_latin', 'level_jury_latin')"}) }}
-    {% if mode == 'view' and form.jury_ballroom.data != g.data.NO or mode == 'edit' or mode == 'register' %}
     {% if g.sc.ask_adjudicator_certification %}
         {{ reg_wtf.form_field(form.license_jury_latin) }}
     {% endif %}
-    {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true %}
+    {% if g.sc.ask_adjudicator_highest_achieved_level %}
         {{ reg_wtf.form_field(form.level_jury_latin) }}
     {% endif %}
-    {% endif %}
-    {% if g.sc.salsa_competition is sameas true %}
+
+    {% if g.sc.salsa_competition %}
         {{ reg_wtf.form_field(form.jury_salsa) }}
     {% endif %}
-    {% if g.sc.polka_competition is sameas true %}
+    {% if g.sc.polka_competition %}
         {{ reg_wtf.form_field(form.jury_polka) }}
     {% endif %}
-    {% if current_user.is_dancer() is sameas true or current_user.is_organizer() is sameas true %}</fieldset>{% endif %}
-    {% if mode == 'view' and dancer.status_info.status == g.data.NO_GDPR and current_user.is_dancer() %}
-    <div class="form-group row required">
-        <label class="control-label col-lg-2" ></label>
-        <div class="col-lg-10">
-            <h3>You can give feedback to your team captain after accepting the terms.</h3>
-        </div>
-    </div>
-    {% endif %}
-    {% if mode == 'view' and dancer.status_info.status == g.data.NO_GDPR and current_user.is_dancer() %}
-        {% include 'privacy/checkbox.html' %}
-    {% endif %}
-    {% if (mode == 'view' and current_user.is_dancer() is sameas true and dancer.status_info.status == g.data.NO_GDPR) or mode != 'view' and current_user.is_organizer() is sameas false %}
+
     <div class="form-group row">
         <label class="control-label col-lg-2" ></label>
         <div class="col-lg-10">
             <div class="input-group">
-                <input class="btn btn-primary mr-2 my-1" id="submit" name="submit" type="submit" {% if mode == 'view' %}disabled{% endif %} value="{% if mode == 'edit' %}Save changes{% elif mode == 'view' %}Accept privacy conditions{% else %}Register dancer{% endif %}">&nbsp;
+                <input class="btn btn-primary mr-2 my-1" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% elif mode == 'register' %}Register dancer{% endif %}">&nbsp;
                 <a role="button" class="btn btn-outline-secondary my-1" href="{% if mode == 'edit' %}{{ url_for('teamcaptains.edit_dancers', wide=wide) }}{% else %}{{ url_for('main.index') }}{% endif %}">Cancel</a>
             </div>
         </div>
     </div>
-    {% endif %}
-    {% if current_user.is_organizer() %}
-    <div class="form-group row required">
-        <label class="control-label col-lg-2" ></label>
-        <div class="col-lg-10">
-            <div class="input-group">
-                <a role="button" class="btn btn-outline-secondary" href="{{ url_for('organizer.registration_overview') }}">Return to overview</a>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 </form>
-{% if not current_user.is_organizer() %}
-{% if (mode == 'view' and dancer.status_info.status != g.data.NO_GDPR and dancer.status_info.status != g.data.CANCELLED) %}
-<form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
-    {{ feedback_form.hidden_tag() }}
-    <div class="form-group row">
-        <label class="control-label col-lg-2" ></label>
-        <div class="col-lg-10"><b style="font-size:large;">Feedback for team captain (only if there is anything wrong with your submitted data)</b></div>
-    </div>
-    {{ reg_wtf.form_field(feedback_form.feedback) }}
-    <div class="form-group row required">
-        <label class="control-label col-lg-2" ></label>
-        <div class="col-lg-10">
-            <div class="input-group">
-                <input class="btn btn-primary mr-2 my-1" id="submit_dancer_feedback" name="submit_dancer_feedback" type="submit" value="Send feedback to team captain">&nbsp;
-                <a role="button" class="btn btn-outline-secondary my-1" href="{{ url_for('main.index') }}">Cancel</a>
-            </div>
-        </div>
-    </div>
-</form>
-{% endif %}
-{% endif %}
-{% include 'privacy/modal.html' %}

@@ -67,6 +67,21 @@ var filterOtherTeams = function filterOtherTeams(team) {
 var filterTeamsWithDancers = function filterTeamsWithDancers(team) {
     return Object.values(team.finances_data.dancers).length > 0;
 };
+var filterUserIsTeamcaptain = function filterUserIsTeamcaptain(user) {
+    return user.is_teamcaptain;
+};
+var filterUserActivate = function filterUserActivate(user) {
+    return user.activate;
+};
+var filterUserIsActive = function filterUserIsActive(user) {
+    return user.is_active;
+};
+var filterUserIsNotActive = function filterUserIsNotActive(user) {
+    return !user.is_active;
+};
+var filterUserIsTreasurer = function filterUserIsTreasurer(user) {
+    return user.is_treasurer;
+};
 
 // Mappings
 var mapEntryPrice = function mapEntryPrice(dancer) {
@@ -128,6 +143,46 @@ var sortTeamsAlphabetically = function sortTeamsAlphabetically(a, b) {
     }
     return 0;
 };
+var sortUsersByIsActive = function sortUsersByIsActive(a, b) {
+    var activeA = a.is_active;
+    var activeB = b.is_active;
+    if (activeA && !activeB) {
+        return -1;
+    }
+    if (!activeA && activeB) {
+        return 1;
+    }
+    return 0;
+};
+var sortUsersByIsActiveTeamTeamcaptain = function sortUsersByIsActiveTeamTeamcaptain(a, b) {
+    var activeA = a.is_active;
+    var activeB = b.is_active;
+    if (activeA && !activeB) {
+        return -1;
+    }
+    if (!activeA && activeB) {
+        return 1;
+    }
+
+    var nameA = a.team.toUpperCase();
+    var nameB = b.team.toUpperCase();
+    if (nameA < nameB) {
+        return -1;
+    }
+    if (nameA > nameB) {
+        return 1;
+    }
+
+    var teamcaptainA = a.is_teamcaptain;
+    var teamcaptainB = b.is_teamcaptain;
+    if (teamcaptainA && !teamcaptainB) {
+        return -1;
+    }
+    if (!teamcaptainA && teamcaptainB) {
+        return 1;
+    }
+    return 0;
+};
 
 // Formatting
 var currencyFormat = function currencyFormat(num) {
@@ -141,13 +196,14 @@ var currencyFormat = function currencyFormat(num) {
     }
 };
 
-// General functions
+// General DOM elements
 var CheckMark = function CheckMark(_ref) {
     var flag = _ref.flag;
 
     return flag ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" });
 };
 
+// General functionz
 var classNamesFilterString = function classNamesFilterString(item) {
     return typeof item === "string";
 };
@@ -163,7 +219,6 @@ var classNamesFilterTrueObjects = function classNamesFilterTrueObjects(item) {
 var classNamesMapObjects = function classNamesMapObjects(item) {
     return Object.keys(item);
 };
-
 var classNames = function classNames() {
     for (var _len = arguments.length, names = Array(_len), _key = 0; _key < _len; _key++) {
         names[_key] = arguments[_key];
@@ -172,4 +227,9 @@ var classNames = function classNames() {
     var strings = names.filter(classNamesFilterString);
     var objectStrings = names.filter(classNamesFilterObject).filter(classNamesFilterValidObject).filter(classNamesFilterTrueObjects).map(classNamesMapObjects);
     return strings.concat(objectStrings).join(" ");
+};
+
+var validateEmail = function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
 };

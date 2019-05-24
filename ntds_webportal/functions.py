@@ -130,12 +130,18 @@ def submit_contestant(form, contestant=None):
     vi.volunteer = form.volunteer.data
     vi.first_aid = form.first_aid.data
     vi.emergency_response_officer = form.emergency_response_officer.data
-    vi.jury_ballroom = form.jury_ballroom.data
-    vi.jury_latin = form.jury_latin.data
-    vi.license_jury_ballroom = form.license_jury_ballroom.data
-    vi.license_jury_latin = form.license_jury_latin.data
-    vi.level_ballroom = form.level_jury_ballroom.data
-    vi.level_latin = form.level_jury_latin.data
+    if form.jury_ballroom.data == NO:
+        vi.not_adjudicating(BALLROOM)
+    else:
+        vi.jury_ballroom = form.jury_ballroom.data
+        vi.license_jury_ballroom = form.license_jury_ballroom.data
+        vi.level_ballroom = form.level_jury_ballroom.data
+    if form.jury_latin.data == NO:
+        vi.not_adjudicating(LATIN)
+    else:
+        vi.jury_latin = form.jury_latin.data
+        vi.license_jury_latin = form.license_jury_latin.data
+        vi.level_latin = form.level_jury_latin.data
     vi.jury_salsa = form.jury_salsa.data
     vi.jury_polka = form.jury_polka.data
 
@@ -154,15 +160,18 @@ def submit_contestant(form, contestant=None):
 
 
 def update_dancing_info(form, di_ballroom, di_latin):
-    di_ballroom.level = form.ballroom_level.data
-    di_ballroom.role = form.ballroom_role.data
-    di_ballroom.blind_date = str2bool(form.ballroom_blind_date.data)
-    db.session.add(di_ballroom)
-    db.session.flush()
-    if not str2bool(form.ballroom_blind_date.data) and form.ballroom_partner.data is not None:
-        di_ballroom.set_partner(form.ballroom_partner.data.contestant_id)
+    if di_ballroom.level == NO:
+        di_ballroom.not_dancing(BALLROOM)
     else:
-        di_ballroom.set_partner(None)
+        di_ballroom.level = form.ballroom_level.data
+        di_ballroom.role = form.ballroom_role.data
+        di_ballroom.blind_date = str2bool(form.ballroom_blind_date.data)
+        db.session.add(di_ballroom)
+        db.session.flush()
+        if not str2bool(form.ballroom_blind_date.data) and form.ballroom_partner.data is not None:
+            di_ballroom.set_partner(form.ballroom_partner.data.contestant_id)
+        else:
+            di_ballroom.set_partner(None)
     di_latin.level = form.latin_level.data
     di_latin.role = form.latin_role.data
     di_latin.blind_date = str2bool(form.latin_blind_date.data)

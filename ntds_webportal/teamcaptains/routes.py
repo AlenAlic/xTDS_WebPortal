@@ -10,7 +10,6 @@ from ntds_webportal.models import User, requires_access_level, Contestant, Conte
     requires_tournament_state, Competition
 from ntds_webportal.functions import get_dancing_categories, submit_contestant, random_password
 import ntds_webportal.functions as func
-import ntds_webportal.data as data
 from ntds_webportal.data import *
 from ntds_webportal.helper_classes import TeamPossiblePartners
 from sqlalchemy import and_, or_
@@ -57,9 +56,22 @@ def register_dancers():
             if form.is_submitted():
                 flash('Not all fields of the form have been filled in (correctly).', 'alert-danger')
     possible_partners = TeamPossiblePartners(current_user, include_gdpr=True).possible_partners()
-    return render_template('teamcaptains/register_dancers.html', form=form, data=data,
-                           timestamp=datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp(),
-                           possible_partners=possible_partners)
+    return render_template('teamcaptains/register_dancers.html', form=form, possible_partners=possible_partners)
+
+
+@bp.route('/check_email', methods=['POST'])
+@login_required
+@requires_access_level([ACCESS[TEAM_CAPTAIN]])
+@requires_tournament_state(REGISTRATION_OPEN)
+def check_email():
+    form = RegisterContestantForm()
+    email = json.loads(request.data)
+    form.email.data = email
+    form.validate()
+    data = {"error": ""}
+    if len(form.email.errors) > 0:
+        data["error"] = form.email.errors[0]
+    return jsonify(data)
 
 
 @bp.route('/validate_registration_field', methods=['POST'])
@@ -88,7 +100,7 @@ def edit_dancers():
         .filter(ContestantInfo.team == current_user.team).order_by(Contestant.first_name).all()
     order = [NO_GDPR, CONFIRMED, SELECTED, REGISTERED, CANCELLED]
     dancers = sorted(dancers, key=lambda o: order.index(o.status_info.status))
-    return render_template('teamcaptains/edit_dancers.html', dancers=dancers, data=data, wide=wide)
+    return render_template('teamcaptains/edit_dancers.html', dancers=dancers, wide=wide)
 
 
 @bp.route('/edit_dancer/<number>', methods=['GET', 'POST'])
@@ -119,8 +131,8 @@ def edit_dancer(number):
         flash(Markup(f'{dancer.get_full_name()} sent feedback about his/her submitted information:<br/>'
                      f'{dancer.status_info.feedback_about_information}<br/><br/> You can remove this notification '
                      f'by saving the form on this page.'), 'alert-info')
-    return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, data=data, wide=wide,
-                           timestamp=datetime.datetime.now().timestamp(), sc=g.sc, possible_partners=possible_partners)
+    return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, wide=wide,
+                           possible_partners=possible_partners)
 
 
 @bp.route('/register_dancer/<number>', methods=['GET', 'POST'])
@@ -188,7 +200,7 @@ def delete_dancer(number):
 def resend_login_dancer(number):
     changed_dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number).first()
-    if changed_dancer.status_info.status != data.NO_GDPR:
+    if changed_dancer.status_info.status != NO_GDPR:
         flash('Cannot reset the login credentials of a dancer that has accepted the GDPR.', 'alert-warning')
         return redirect(url_for('teamcaptains.edit_dancers'))
     form = ResendCredentialsForm()
@@ -291,7 +303,7 @@ def couples_list():
                      couple[0].contestant_id == get_dancing_categories(couple[1].dancing_info)[LATIN].partner]
     latin_couples = [couple for couple in latin_couples if couple['lead'].contestant_info.team == current_user.team
                      or couple['follow'].contestant_info.team == current_user.team]
-    return render_template('teamcaptains/couples_lists.html', data=data, func=func,
+    return render_template('teamcaptains/couples_lists.html', func=func,
                            ballroom_couples=ballroom_couples, latin_couples=latin_couples)
 
 
@@ -308,13 +320,17 @@ def create_couple():
         .filter(ContestantInfo.team == current_user.team,
                 or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
                 DancingInfo.role == LEAD, DancingInfo.partner.is_(None),
-                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                or_(and_(DancingInfo.level == BREITENSPORT,
+                         or_(DancingInfo.blind_date.is_(False),
+                             DancingInfo.blind_date.is_(not g.sc.breitensport_obliged_blind_date))),
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     follows = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team == current_user.team,
                 or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR),
                 DancingInfo.role == FOLLOW, DancingInfo.partner.is_(None),
-                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                or_(and_(DancingInfo.level == BREITENSPORT,
+                         or_(DancingInfo.blind_date.is_(False),
+                             DancingInfo.blind_date.is_(not g.sc.breitensport_obliged_blind_date))),
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     if len(leads.all()) == 0 or len(follows.all()) == 0:
         flash(f"There are currently {len(leads.all())} available Leads and {len(follows.all())} available Follows "
@@ -405,7 +421,9 @@ def partner_request():
     dancer_choices = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo)\
         .filter(ContestantInfo.team == current_user.team, StatusInfo.status == REGISTERED,
                 DancingInfo.partner.is_(None),
-                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                or_(and_(DancingInfo.level == BREITENSPORT,
+                         or_(DancingInfo.blind_date.is_(False),
+                             DancingInfo.blind_date.is_(not g.sc.breitensport_obliged_blind_date))),
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     if len(dancer_choices.all()) == 0:
         flash(f"There are currently no dancers registered in your team that require a partner.", 'alert-warning')
@@ -413,7 +431,9 @@ def partner_request():
     other_choices = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team != current_user.team, StatusInfo.status == REGISTERED,
                 DancingInfo.partner.is_(None),
-                or_(and_(DancingInfo.level == BREITENSPORT, DancingInfo.blind_date.is_(False)),
+                or_(and_(DancingInfo.level == BREITENSPORT,
+                         or_(DancingInfo.blind_date.is_(False),
+                             DancingInfo.blind_date.is_(not g.sc.breitensport_obliged_blind_date))),
                     DancingInfo.level == BEGINNERS)) \
         .order_by(ContestantInfo.team_id, Contestant.first_name).all()
     if len(other_choices) == 0:
@@ -654,7 +674,7 @@ def raffle_result():
                 db.session.commit()
                 flash('Confirmed selected dancer(s).', 'alert-success')
                 return redirect(url_for('teamcaptains.raffle_result'))
-        return render_template('teamcaptains/raffle_results.html', data=data, tournament_settings=ts, func=func,
+        return render_template('teamcaptains/raffle_results.html', func=func,
                                selected_dancers=selected_dancers, confirmed_dancers=confirmed_dancers,
                                confirmed_ballroom_couples=confirmed_ballroom_couples,
                                confirmed_latin_couples=confirmed_latin_couples,
@@ -702,7 +722,6 @@ def treasurer_inaccessible():
 @requires_access_level([ACCESS[TEAM_CAPTAIN]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def bus_to_brno():
-    ts = TournamentState.query.first()
     tc_bus = User.query.join(Team) \
         .filter(User.access == ACCESS[TEAM_CAPTAIN], Team.city == "Bielefeld").first()
     add_overview = True if tc_bus.team.name == current_user.team.name else False
@@ -754,7 +773,7 @@ def bus_to_brno():
             return redirect(url_for('teamcaptains.bus_to_brno'))
     else:
         confirmed_dancers = None
-    return render_template('teamcaptains/bus_to_brno.html', ts=ts, data=data, tc_bus=tc_bus,
+    return render_template('teamcaptains/bus_to_brno.html', ts=g.ts, data=g.data, tc_bus=tc_bus,
                            confirmed_dancers=confirmed_dancers, add_overview=add_overview,
                            included_dancers=included_dancers)
 
