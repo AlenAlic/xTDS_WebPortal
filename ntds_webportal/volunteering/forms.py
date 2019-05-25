@@ -2,22 +2,15 @@ from flask import g, request
 from flask_wtf import FlaskForm
 from flask_login import current_user
 from wtforms import StringField, SelectField, TextAreaField, SubmitField, DateTimeField, IntegerField, TimeField
-from wtforms.validators import DataRequired, Email, NumberRange
+from wtforms.validators import DataRequired, NumberRange
 from ntds_webportal.data import *
 from ntds_webportal.validators import IsBoolean
-from ntds_webportal.teamcaptains.forms import VolunteerForm
+from ntds_webportal.teamcaptains.forms import BaseRegistrationForm ,VolunteerForm
 from datetime import datetime
 from ntds_webportal.models import Team, User, Contestant, StatusInfo, ContestantInfo, ShiftInfo
 
 
-class SuperVolunteerForm(VolunteerForm):
-    first_name = StringField('First name', validators=[DataRequired()])
-    prefixes = StringField('Prefix')
-    last_name = StringField('Last name', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    diet_allergies = StringField('Diet/Allergies')
-    sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
-                                        choices=[(k, v) for k, v in SLEEPING.items()])
+class SuperVolunteerForm(BaseRegistrationForm, VolunteerForm):
     remark = TextAreaField('Remarks', render_kw={"style": "resize:none", "rows": "4", "maxlength": "512"})
 
     def custom_validate(self):

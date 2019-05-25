@@ -32,3 +32,12 @@
 
 .text-black {
   color: black; }
+
+input[type="button"],
+input[type="submit"],
+input[type="checkbox"] {
+  cursor: pointer; }
+  input[type="button"]:disabled,
+  input[type="submit"]:disabled,
+  input[type="checkbox"]:disabled {
+    cursor: not-allowed; }

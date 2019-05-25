@@ -13,7 +13,6 @@ from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, Edit
 from ntds_webportal.organizer.email import send_registration_open_email, send_gdpr_reminder_email
 from ntds_webportal.teamcaptains.forms import EditDancingInfoForm
 from ntds_webportal.auth.email import send_team_captain_activation_email
-from ntds_webportal.volunteering.forms import SuperVolunteerForm
 import ntds_webportal.data as data
 from ntds_webportal.data import *
 from sqlalchemy import or_, case
@@ -651,9 +650,7 @@ def numbers():
 @requires_access_level([ACCESS[ORGANIZER]])
 def view_super_volunteer(number):
     super_volunteer = SuperVolunteer.query.filter(SuperVolunteer.volunteer_id == number).first()
-    form = SuperVolunteerForm()
-    form.populate(super_volunteer)
-    return render_template('organizer/view_super_volunteer.html', form=form)
+    return render_template('organizer/view_super_volunteer.html', super_volunteer=super_volunteer)
 
 
 @bp.route('/adjudicators_overview', methods=['GET', 'POST'])

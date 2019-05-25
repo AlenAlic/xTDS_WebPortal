@@ -45,6 +45,18 @@ def payment_categories_choices():
         return [('', 'Are you a student?'), (STUDENT, YMN[YES]), (NON_STUDENT, YMN[NO])]
 
 
+class BaseRegistrationForm(FlaskForm):
+    first_name = StringField('First name', validators=[DataRequired()], render_kw={"placeholder": "First name..."})
+    prefixes = StringField('prefix', description="de, van het, etc.")
+    last_name = StringField('Last name', validators=[DataRequired()], render_kw={"placeholder": "Last name..."})
+    email = StringField('Email', validators=[DataRequired(), Email(), UniqueEmail()],
+                        render_kw={"placeholder": "Email address..."})
+    sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
+                                        choices=[(k, v) for k, v in SLEEPING.items()])
+    diet_allergies = StringField('Diet/Allergies', render_kw={"placeholder": "Special diets and/or allergies (if any), "
+                                                                             "otherwise leave blank"})
+
+
 class DancingInfoForm(FlaskForm):
 
     def __init__(self, **kwargs):
@@ -138,7 +150,7 @@ class VolunteerForm(FlaskForm):
             self.level_jury_latin.data = BELOW_D
 
 
-class BaseContestantForm(ReactForm, DancingInfoForm, VolunteerForm):
+class BaseContestantForm(ReactForm, BaseRegistrationForm, DancingInfoForm, VolunteerForm):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -168,11 +180,6 @@ class BaseContestantForm(ReactForm, DancingInfoForm, VolunteerForm):
     volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in VOLUNTEER_FORM.items()])
     student = SelectField('Student', validators=[DataRequired()], default='')
     first_time = SelectField('First time', validators=[IsBoolean()])
-    diet_allergies = StringField('Diet/Allergies',
-                                 render_kw={"placeholder": "Special diets and/or allergies (if any), "
-                                                           "otherwise leave blank"})
-    sleeping_arrangements = SelectField('Sleeping spot', validators=[IsBoolean()],
-                                        choices=[(k, v) for k, v in SLEEPING.items()])
 
     def custom_validate(self):
         # noinspection PyCallByClass
@@ -242,11 +249,6 @@ class BaseContestantForm(ReactForm, DancingInfoForm, VolunteerForm):
 
 
 class RegisterContestantForm(BaseContestantForm):
-    first_name = StringField('First name', validators=[DataRequired()], render_kw={"placeholder": "First name..."})
-    prefixes = StringField('prefix', description="de, van het, etc.")
-    last_name = StringField('Last name', validators=[DataRequired()], render_kw={"placeholder": "Last name..."})
-    email = StringField('Email', validators=[DataRequired(), Email(), UniqueEmail()],
-                        render_kw={"placeholder": "Email address..."})
     submit = SubmitField('Register')
 
     def __init__(self, **kwargs):

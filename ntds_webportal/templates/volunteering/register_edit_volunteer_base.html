@@ -4,52 +4,37 @@
 onload="onStart()"
 {% endblock %}
 
-{% block container_style -%}
-visibility:hidden
-{%- endblock %}
-
 {% block scripts %}
 {{ super() }}
 <script>
 function onStart() {
-    document.getElementById('jury_ballroom').onchange();
-    document.getElementById('jury_latin').onchange();
-    {% if mode == 'register' -%}
-        document.getElementById('privacy_checkbox').onclick();
-    {%- endif %}
-    var container = document.getElementById('container-hidden').style.visibility = "visible";
+    document.getElementById('jury_ballroom').onchange(this);
+    document.getElementById('jury_latin').onchange(this);
+    let privacy = document.getElementById('privacy_checkbox');
+    if (privacy !== null) {privacyPolicy(privacy)}
 }
 function dummy() {}
-<!--function privacyPolicy(checkbox) {-->
-    <!--var div_submit = document.getElementById('submit');-->
-
-    <!--if (checkbox.checked) {-->
-        <!--div_submit.removeAttribute('disabled');-->
-    <!--} else {-->
-        <!--div_submit.setAttribute('disabled', true);-->
-    <!--}-->
-<!--}-->
 function adjudicatorGreyOut(jury, license, level) {
-    var div_jury = document.getElementById(jury);
-    {% if g.sc.ask_adjudicator_certification is sameas true -%}
-        var div_license = document.getElementById(license);
+    let div_jury = document.getElementById(jury);
+    {% if g.sc.ask_adjudicator_certification -%}
+        let div_license = document.getElementById(license);
     {%- endif %}
-    {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true -%}
-        var div_level = document.getElementById(level);
+    {% if g.sc.ask_adjudicator_highest_achieved_level -%}
+        let div_level = document.getElementById(level);
     {%- endif %}
 
-    if (div_jury.value == "{{ g.data.NO }}") {
-        {% if g.sc.ask_adjudicator_certification is sameas true -%}
-            div_license.setAttribute('disabled', true);
+    if (div_jury.value === "{{ g.data.NO }}") {
+        {% if g.sc.ask_adjudicator_certification -%}
+            div_license.setAttribute('disabled', '');
         {%- endif %}
-        {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true -%}
-            div_level.setAttribute('disabled', true);
+        {% if g.sc.ask_adjudicator_highest_achieved_level -%}
+            div_level.setAttribute('disabled', '');
         {%- endif %}
     } else {
-        {% if g.sc.ask_adjudicator_certification is sameas true -%}
+        {% if g.sc.ask_adjudicator_certification -%}
             div_license.removeAttribute('disabled');
         {%- endif %}
-        {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true -%}
+        {% if g.sc.ask_adjudicator_highest_achieved_level -%}
             div_level.removeAttribute('disabled');
         {%- endif %}
     }

@@ -58,6 +58,7 @@ def register():
                         db.session.commit()
                         flash(Markup(f'<b>Registration complete:</b> {super_volunteer.get_full_name()}, '
                                      f'you have been successfully registered as a Super Volunteer.'), 'alert-success')
+                        # noinspection PyTypeChecker
                         create_super_volunteer_user_account(form, super_volunteer)
                         return redirect(url_for('main.index'))
                     else:

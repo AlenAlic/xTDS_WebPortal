@@ -1,7 +1,6 @@
-{% extends "volunteering/register_edit_volunteer_base.html" %}
+{% extends "base.html" %}
 
 {% block app_content %}
-{% with mode='view' %}
-    {% include 'volunteering/_volunteer_form.html' %}
-{% endwith %}
+    {% include 'volunteering/_super_volunteer_data_cards.html' %}
+    <a role="button" class="btn btn-outline-secondary mt-2" href="{{ url_for('volunteering.volunteers') }}">Return to overview</a>
 {% endblock %}

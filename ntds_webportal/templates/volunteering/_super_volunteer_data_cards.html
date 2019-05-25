@@ -1,0 +1,102 @@
+<div class="d-grid grid-column-gap-3 grid-row-gap-3 grid-template-columns-1 grid-template-columns-md-2">
+    <div class="card mb-0">
+        <div class="card-header">
+            Personal information
+        </div>
+        <div class="card-body py-2">
+            <div class="dancer-information-card">
+                <div>
+                    <div>Full name</div>
+                    <div>{{ super_volunteer.get_full_name() }}</div>
+                </div>
+                <div>
+                    <div>Email address</div>
+                    <div>{{ super_volunteer.email }}</div>
+                </div>
+                <div>
+                    <div>Team</div>
+                    <div>{{ super_volunteer.user.team.display_name() }}</div>
+                </div>
+                <div>
+                    <div>Sleeping spot</div>
+                    <div>{{ g.data.TF[super_volunteer.sleeping_arrangements] }}</div>
+                </div>
+                {% if g.sc.ask_diet_allergies %}
+                <div>
+                    <div>Diet/Allergies</div>
+                    <div>{% if super_volunteer.diet_allergies|length > 0 %}{{ super_volunteer.diet_allergies }}{% else %}-{% endif %}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card mb-0">
+        <div class="card-header">
+            {% if g.sc.ask_first_aid or g.sc.ask_emergency_response_officer %}Volunteering{% else %}Adjudication{% endif %} information
+        </div>
+        <div class="card-body py-2">
+            <div class="dancer-information-card">
+                {% if g.sc.ask_first_aid %}
+                <div>
+                    <div>Volunteer as First Aid officer</div>
+                    <div>{{ super_volunteer.first_aid }}</div>
+                </div>
+                {% endif %}
+                {% if g.sc.ask_emergency_response_officer %}
+                <div>
+                    <div>Volunteer as Emergency Response Officer</div>
+                    <div>{{ super_volunteer.emergency_response_officer }}</div>
+                </div>
+                {% endif %}
+                <div>
+                    <div>Standard Adjudicator</div>
+                    <div>{{ super_volunteer.jury_ballroom }}</div>
+                </div>
+                {% if super_volunteer.jury_ballroom != g.data.NO %}
+                    {% if g.sc.ask_adjudicator_highest_achieved_level %}
+                        <div class="sub-item">
+                            <div>Highest achieved level</div>
+                            <div>{{ super_volunteer.level_ballroom }}</div>
+                        </div>
+                    {% endif %}
+                    {% if g.sc.ask_adjudicator_certification %}
+                        <div class="sub-item">
+                            <div>Certification</div>
+                            <div>{{ super_volunteer.license_jury_ballroom }}</div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                <div>
+                    <div>Latin Adjudicator</div>
+                    <div>{{ super_volunteer.jury_latin }}</div>
+                </div>
+                {% if super_volunteer.jury_latin != g.data.NO %}
+                    {% if g.sc.ask_adjudicator_highest_achieved_level %}
+                        <div class="sub-item">
+                            <div>Highest achieved level</div>
+                            <div>{{ super_volunteer.level_latin }}</div>
+                        </div>
+                    {% endif %}
+                    {% if g.sc.ask_adjudicator_certification %}
+                        <div class="sub-item">
+                            <div>Certification</div>
+                            <div>{{ super_volunteer.license_jury_latin }}</div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                {% if g.sc.salsa_competition %}
+                    <div>
+                        <div>Salsa Adjudicator</div>
+                        <div>{{ super_volunteer.jury_salsa }}</div>
+                    </div>
+                {% endif %}
+                {% if g.sc.polka_competition %}
+                    <div>
+                        <div>Polka Adjudicator</div>
+                        <div>{{ super_volunteer.jury_polka }}</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

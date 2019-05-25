@@ -7,68 +7,96 @@
 {% endif %}
 <form class="form-horizontal" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {% if current_user.is_organizer() and mode == 'view' %}<fieldset disabled>{% endif %}
-    <h3>Personal information</h3>
-    {{ reg_wtf.form_field(form.first_name, placeholder='First name') }}
-    {{ reg_wtf.form_field(form.prefixes, placeholder='Prefix') }}
-    {{ reg_wtf.form_field(form.last_name, placeholder='Last name') }}
-    {{ reg_wtf.form_field(form.email, placeholder='E-mail address') }}
-    {{ reg_wtf.form_field(form.sleeping_arrangements) }}
-    {% if g.sc.ask_diet_allergies is sameas true %}
-        {{ reg_wtf.form_field(form.diet_allergies, placeholder='Special diets and/or allergies, if any, otherwise leave blank') }}
-    {% endif %}
 
-    {% if g.sc.ask_first_aid is sameas true or g.sc.ask_emergency_response_officer is sameas true %}
+    <h3>Personal information</h3>
+    <div class="form-row mb-4">
+        <div class="col-12 col-md-12 col-lg-5">
+            {{ wtf.form_field(form.first_name) }}
+        </div>
+        <div class="col-12 col-md-3 col-lg-2">
+            {{ wtf.form_field(form.prefixes) }}
+        </div>
+        <div class="col-12 col-md-9 col-lg-5">
+            {{ wtf.form_field(form.last_name) }}
+        </div>
+        <div class="col-12 col-md-5 col-lg-6">
+            {{ wtf.form_field(form.email) }}
+        </div>
+        <div class="col-12 col-md-7 col-lg-6">
+            {{ wtf.form_field(form.sleeping_arrangements) }}
+        </div>
+        {% if g.sc.ask_diet_allergies %}
+            <div class="col-12">
+                {{ wtf.form_field(form.diet_allergies) }}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if g.sc.ask_first_aid or g.sc.ask_emergency_response_officer %}
         <h3>Volunteering</h3>
-        {% if g.sc.ask_first_aid is sameas true %}
-            {{ reg_wtf.form_field(form.first_aid) }}
-        {% endif %}
-        {% if g.sc.ask_emergency_response_officer is sameas true %}
-            {{ reg_wtf.form_field(form.emergency_response_officer) }}
-        {% endif %}
+        <div class="form-row">
+            {% if g.sc.ask_first_aid and g.sc.ask_emergency_response_officer %}
+                <div class="col-12 col-xxl-6">
+                    {{ wtf.form_field(form.first_aid) }}
+                </div>
+                <div class="col-12 col-xxl-6">
+                    {{ wtf.form_field(form.emergency_response_officer) }}
+                </div>
+            {% elif g.sc.ask_first_aid %}
+                <div class="col-12">
+                    {{ wtf.form_field(form.first_aid) }}
+                </div>
+            {% elif g.sc.ask_emergency_response_officer %}
+                <div class="col-12">
+                    {{ wtf.form_field(form.emergency_response_officer) }}
+                </div>
+            {% endif %}
+        </div>
     {% endif %}
 
     <h3>Adjudication</h3>
-    {{ reg_wtf.form_field(form.jury_ballroom, **{'onchange': "adjudicatorGreyOut('jury_ballroom', 'license_jury_ballroom', 'level_jury_ballroom')", 'onkeyup': "adjudicatorGreyOut('jury_ballroom', 'license_jury_ballroom', 'level_jury_ballroom')"}) }}
-    {% if g.sc.ask_adjudicator_certification %}
-        {{ reg_wtf.form_field(form.license_jury_ballroom) }}
-    {% endif %}
-    {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true %}
-        {{ reg_wtf.form_field(form.level_jury_ballroom) }}
-    {% endif %}
-    {{ reg_wtf.form_field(form.jury_latin, **{'onchange': "adjudicatorGreyOut('jury_latin', 'license_jury_latin', 'level_jury_latin')", 'onkeyup': "adjudicatorGreyOut('jury_latin', 'license_jury_latin', 'level_jury_latin')"}) }}
-    {% if g.sc.ask_adjudicator_certification %}
-        {{ reg_wtf.form_field(form.license_jury_latin) }}
-    {% endif %}
-    {% if g.sc.ask_adjudicator_highest_achieved_level is sameas true %}
-        {{ reg_wtf.form_field(form.level_jury_latin) }}
-    {% endif %}
-    {% if g.sc.salsa_competition is sameas true %}
-        {{ reg_wtf.form_field(form.jury_salsa) }}
-    {% endif %}
-    {% if g.sc.polka_competition is sameas true %}
-        {{ reg_wtf.form_field(form.jury_polka) }}
-    {% endif %}
-    {{ reg_wtf.form_field(form.remark, placeholder='What kind of volunteering shifts would you like, and any addition relevant information.') }}
-    {% if mode == 'register' %}
-        <div class="row">
-            <div class="col-lg-2"></div>
-            <div class="col-lg-10">{% include 'privacy/checkbox.html' %}</div>
+    <div class="mb-4">
+        <div class="form-row">
+            <div class="col-12 col-lg-6">
+                {{ wtf.form_field(form.jury_ballroom, **{'onchange': "adjudicatorGreyOut('jury_ballroom', 'license_jury_ballroom', 'level_jury_ballroom')", 'onkeyup': "adjudicatorGreyOut('jury_ballroom', 'license_jury_ballroom', 'level_jury_ballroom')"}) }}
+                {% if g.sc.ask_adjudicator_certification %}
+                    {{ wtf.form_field(form.license_jury_ballroom) }}
+                {% endif %}
+                {% if g.sc.ask_adjudicator_highest_achieved_level %}
+                    {{ wtf.form_field(form.level_jury_ballroom) }}
+                {% endif %}
+            </div>
+            <div class="col-12 col-lg-6">
+                {{ wtf.form_field(form.jury_latin, **{'onchange': "adjudicatorGreyOut('jury_latin', 'license_jury_latin', 'level_jury_latin')", 'onkeyup': "adjudicatorGreyOut('jury_latin', 'license_jury_latin', 'level_jury_latin')"}) }}
+                {% if g.sc.ask_adjudicator_certification %}
+                    {{ wtf.form_field(form.license_jury_latin) }}
+                {% endif %}
+                {% if g.sc.ask_adjudicator_highest_achieved_level %}
+                    {{ wtf.form_field(form.level_jury_latin) }}
+                {% endif %}
+            </div>
         </div>
+        {% if g.sc.salsa_competition %}
+            {{ wtf.form_field(form.jury_salsa) }}
+        {% endif %}
+        {% if g.sc.polka_competition %}
+            {{ wtf.form_field(form.jury_polka) }}
+        {% endif %}
+    </div>
+
+    <h2>Final remarks</h2>
+    {{ wtf.form_field(form.remark, placeholder='What kind of volunteering shifts would you like, and any addition relevant information.') }}
+
+    {% if mode == 'register' %}
+        {% include 'privacy/checkbox.html' %}
     {% endif %}
-    {% if current_user.is_organizer() and mode == 'view' %}</fieldset>{% endif %}
-    <div class="form-group row">
-        <label class="control-label col-lg-2" ></label>
-        <div class="input-group col-lg-10">
-            {% if (current_user.is_super_volunteer() or current_user.is_anonymous or current_user.is_organizer()) and mode == 'register' %}
-            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Register{% endif %}">
+
+    <div class="form-group mt-3 mb-5">
+        <div class="input-group">
+            <input class="btn btn-primary" id="submit" name="submit" type="submit" {% if mode == 'register' %}disabled{% endif %} value="{% if mode == 'edit' %}Save changes{% else %}Register{% endif %}">
+            {% if current_user.is_super_volunteer() or current_user.is_organizer() %}
             <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.index') }}">Cancel</a>
-            {% elif request.path[:31] == '/organizer/view_super_volunteer' %}
-            <a role="button" class="btn btn-outline-secondary" href="{{ url_for('volunteering.volunteers') }}">Return to overview</a>
-            {% else %}
-            <a role="button" class="btn btn-outline-secondary" href="{{ url_for('main.dashboard') }}">Return to dashboard</a>
             {% endif %}
         </div>
     </div>
 </form>
-{% include 'privacy/modal.html' %}

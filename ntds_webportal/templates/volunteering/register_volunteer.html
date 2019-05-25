@@ -1,8 +1,4 @@
-{% if g.ts.super_volunteer_registration_open or current_user.is_organizer() %}
 {% extends "volunteering/register_edit_volunteer_base.html" %}
-{% else %}
-{% extends "base.html" %}
-{% endif %}
 
 {% block app_content %}
 {% if g.ts.super_volunteer_registration_open or current_user.is_organizer() %}

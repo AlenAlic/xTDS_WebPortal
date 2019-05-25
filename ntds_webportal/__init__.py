@@ -244,6 +244,10 @@ def create_app():
             db.session.add(Team(name=data.TEAM_SUPER_VOLUNTEER, country=data.TEAM_SUPER_VOLUNTEER,
                                 city=data.TEAM_SUPER_VOLUNTEER))
             db.session.commit()
+        if Team.query.filter(Team.name == data.TEAM_ADJUDICATOR).first() is not None:
+            db.session.add(Team(name=data.TEAM_ADJUDICATOR, country=data.TEAM_ADJUDICATOR,
+                                city=data.TEAM_ADJUDICATOR))
+            db.session.commit()
         if len(TournamentState.query.all()) == 0:
             db.session.add(TournamentState())
         if len(SystemConfiguration.query.all()) == 0:
