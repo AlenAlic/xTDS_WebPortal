@@ -1414,6 +1414,21 @@ class SuperVolunteer(db.Model):
         self.jury_polka = form.jury_polka.data
         self.remark = form.remark.data
 
+    def json(self):
+        return {
+            "username": self.username,
+            "user_id": self.user_id,
+            'email': self.email if self.email is not None else "",
+            'is_active': self.is_active,
+            'activate': self.activate,
+            "team": self.team.display_name() if self.team is not None else None,
+            'country': self.team.country if self.team is not None else None,
+            "is_teamcaptain": self.is_tc(),
+            "is_treasurer": self.is_treasurer(),
+            "pending": False,
+            "old_email": self.email if self.email is not None else "",
+        }
+
 
 class ShiftInfo(db.Model):
     __tablename__ = 'shift_info'

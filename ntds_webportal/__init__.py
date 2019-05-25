@@ -218,7 +218,7 @@ def create_app():
             db.session.commit()
 
     def create_configuration():
-        if User.query.filter(User.access == data.ACCESS[data.ORGANIZER]).first() is None:
+        if len(User.query.filter(User.access == data.ACCESS[data.ORGANIZER]).all()) == 0:
             organisation = User()
             organisation.username = 'NTDSEnschede2018'
             organisation.email = 'email@example.com'
@@ -228,7 +228,7 @@ def create_app():
             db.session.add(organisation)
             db.session.commit()
         for a in data.ASSISTANTS:
-            if User.query.filter(User.username == a).first() is None:
+            if len(User.query.filter(User.username == a).all()) == 0:
                 assistant = User()
                 assistant.username = a
                 assistant.set_password(random_password())
@@ -236,15 +236,15 @@ def create_app():
                 assistant.is_active = False
                 db.session.add(assistant)
         db.session.commit()
-        if Team.query.filter(Team.name == data.TEAM_ORGANIZATION).first() is not None:
+        if len(Team.query.filter(Team.name == data.TEAM_ORGANIZATION).all()) == 0:
             db.session.add(Team(name=data.TEAM_ORGANIZATION, country=data.TEAM_ORGANIZATION,
                                 city=data.TEAM_ORGANIZATION))
             db.session.commit()
-        if Team.query.filter(Team.name == data.TEAM_SUPER_VOLUNTEER).first() is not None:
+        if len(Team.query.filter(Team.name == data.TEAM_SUPER_VOLUNTEER).all()) == 0:
             db.session.add(Team(name=data.TEAM_SUPER_VOLUNTEER, country=data.TEAM_SUPER_VOLUNTEER,
                                 city=data.TEAM_SUPER_VOLUNTEER))
             db.session.commit()
-        if Team.query.filter(Team.name == data.TEAM_ADJUDICATOR).first() is not None:
+        if len(Team.query.filter(Team.name == data.TEAM_ADJUDICATOR).all()) == 0:
             db.session.add(Team(name=data.TEAM_ADJUDICATOR, country=data.TEAM_ADJUDICATOR,
                                 city=data.TEAM_ADJUDICATOR))
             db.session.commit()
@@ -254,6 +254,7 @@ def create_app():
             db.session.add(SystemConfiguration(website_accessible=True))
         if len(RaffleConfiguration.query.all()) == 0:
             db.session.add(RaffleConfiguration())
+        db.session.commit()
 
     with app.app_context():
         from sqlalchemy.exc import InternalError, ProgrammingError

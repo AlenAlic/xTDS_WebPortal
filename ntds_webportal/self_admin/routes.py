@@ -10,7 +10,7 @@ from ntds_webportal.models import requires_access_level, User, Team, SystemConfi
 from ntds_webportal.functions import str2bool, reset_tournament_state, \
     make_system_configuration_accessible_to_organizer, generate_maintenance_page
 from ntds_webportal.auth.email import send_organizer_activation_email
-from ntds_webportal.functions import random_password, active_teams
+from ntds_webportal.functions import random_password, active_teams, competing_teams
 from ntds_webportal.data import *
 from sqlalchemy import or_, case, exists
 import datetime
@@ -296,7 +296,7 @@ def switch_to_team_captain(team_id):
 def user_list():
     users = User.query.filter(or_(User.access == ACCESS[TEAM_CAPTAIN], User.access == ACCESS[TREASURER])) \
         .order_by(case({True: 0, False: 1}, value=User.is_active), User.team_id).all()
-    teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
+    teams = competing_teams().all()
     organizer = db.session.query(User).filter(User.access == ACCESS[ORGANIZER]).first()
     return render_template('admin/user_list.html', users=users, teams=teams, organizer=organizer)
 

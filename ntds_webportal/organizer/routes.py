@@ -5,7 +5,7 @@ from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, VolunteerInfo, \
     requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo, MerchandiseItem, MerchandiseItemVariant
-from ntds_webportal.functions import submit_updated_dancing_info, random_password, active_teams
+from ntds_webportal.functions import submit_updated_dancing_info, random_password, active_teams, competing_teams
 from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm, \
     CreateNewMerchandiseForm
 from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm, \
@@ -388,7 +388,7 @@ def edit_dancing_info(number):
 @requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def finances_overview():
-    all_teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION)
+    all_teams = competing_teams()
     if g.sc.tournament == NTDS:
         all_teams = all_teams.filter(Team.country == NETHERLANDS).all()
     else:
@@ -838,7 +838,7 @@ def bad():
         output = BytesIO(output.read().encode('utf-8-sig'))
         return send_file(output, as_attachment=True, attachment_filename="createDB.sql")
     if 'download_createTournament' in form:
-        teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
+        teams = competing_teams().all()
         dancers = Contestant.query.join(StatusInfo)\
             .filter(or_(StatusInfo.status == SELECTED, StatusInfo.status == CONFIRMED)).all()
         registered_dancers = Contestant.query.join(StatusInfo).filter(StatusInfo.status == REGISTERED).all()

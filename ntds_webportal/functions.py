@@ -9,8 +9,13 @@ import sqlalchemy as alchemy
 import os
 
 
+def competing_teams():
+    return Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION,
+                             Team.name != TEAM_ADJUDICATOR)
+
+
 def active_teams():
-    teams = Team.query.filter(Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION).all()
+    teams = competing_teams().all()
     return list(sorted([t for t in teams if t.is_active()], key=lambda x: x.display_name()))
 
 
