@@ -1,4 +1,4 @@
-from flask import current_app, request
+from flask import current_app, request, g
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, SelectField, StringField, PasswordField, IntegerField, DateField
 from wtforms.validators import DataRequired, Email, EqualTo, NumberRange
@@ -85,6 +85,11 @@ class ResetOrganizerAccountForm(SystemSetupTournamentForm):
 
 
 class SystemSetupForm(SystemSetupTournamentForm):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.first_time_ask.label.text = f"Will you ask dancers if this is their first time attending " \
+            f"an {g.sc.tournament}?"
+
     number_of_teamcaptains = IntegerField(f"What is number of team captains that a team can have? "
                                           f"(Remember, team captains are guaranteed entry to the tournament)",
                                           validators=[NumberRange(1, 2)], default=1)
@@ -105,8 +110,9 @@ class SystemSetupForm(SystemSetupTournamentForm):
     phd_student_price = IntegerField(f"What is the admission fee price for a {PHD_STUDENT}? (in Euro cents)",
                                      validators=[NumberRange(0)], default=DEFAULT_PHD_STUDENT_PRICE)
 
-    first_time_ask = SelectField(f"Will you ask dancers if this is their first time attending an {ETDS} or {NTDS}?",
-                                 choices=[(k, v) for k, v in YN.items()])
+    first_time_ask = SelectField("", choices=[(k, v) for k, v in YN.items()])
+    ask_adult = SelectField(f"Will you ask dancers if they are at least 18 years old at the time of the tournament?",
+                            choices=[(k, v) for k, v in YN.items()])
 
     ask_diet_allergies = SelectField("Will you ask dancers about their allergies and dietary restrictions?",
                                      choices=[(k, v) for k, v in YN.items()])

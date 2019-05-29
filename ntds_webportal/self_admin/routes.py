@@ -159,6 +159,7 @@ def system_configuration():
         form.finances_refund_date.data = datetime.date(frd.year, frd.month, frd.day)
 
         form.first_time_ask.data = str(g.sc.first_time_ask)
+        form.ask_adult.data = str(g.sc.ask_adult)
         form.ask_diet_allergies.data = str(g.sc.ask_diet_allergies)
         form.ask_volunteer.data = str(g.sc.ask_volunteer)
         form.ask_first_aid.data = str(g.sc.ask_first_aid)
@@ -212,6 +213,7 @@ def system_configuration():
             g.sc.finances_refund_date = frd.replace(tzinfo=datetime.timezone.utc).timestamp()
 
             g.sc.first_time_ask = str2bool(form.first_time_ask.data)
+            g.sc.ask_adult = str2bool(form.ask_adult.data)
             g.sc.ask_diet_allergies = str2bool(form.ask_diet_allergies.data)
             g.sc.ask_volunteer = str2bool(form.ask_volunteer.data)
             g.sc.ask_first_aid = str2bool(form.ask_first_aid.data)

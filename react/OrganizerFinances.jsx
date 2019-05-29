@@ -31,7 +31,7 @@ class OrganizerFinances extends React.Component {
                 this.setState({teams: newState});
                 receivedAmounts.forEach(i => i.value = "");
                 $(function () {
-                    $('[data-toggle="tooltip"]').tooltip("update")
+                    $('[data-toggle="tooltip"]').tooltip("dispose").tooltip()
                 })
             }
         ).catch(error => {
@@ -207,9 +207,7 @@ class OrganizerFinances extends React.Component {
                                 <tr key={'row'+`${d.contestant_id}`}>
                                     <td>{d.full_name}</td>
                                     <td>{d.contestant_info.team}</td>
-                                    <td className="text-right">
-                                        {currencyFormat(this.props.settings.merchandise_finalized ? d.payment_info.refund_entry_price : d.payment_info.refund_entry_price + d.merchandise_info.merchandise_price)}
-                                    </td>
+                                    <td className="text-right">{currencyFormat(d.payment_info.potential_refund_price)}</td>
                                     <td className="text-right">
                                         <button className="btn btn-warning btn-sm my-1 mx-2" onClick={() => this.giveRefund(d, true)}>Give refund</button>
                                         <button className="btn btn-danger btn-sm my-1 mx-2" data-toggle="modal" data-target={'#remove-modal-'+`${d.contestant_id}`}
@@ -228,7 +226,7 @@ class OrganizerFinances extends React.Component {
                                 {refundDancers.sort(sortDancersAlphabetically).map( d => (
                                 <tr key={'row'+`${d.contestant_id}`}>
                                     <td>{d.full_name}</td>
-                                    <td>{d.payment_info.refund_reasons}</td>
+                                    <td>{d.payment_info.refund_reasons.map(r => (<div key={'reason-'+r+`${d.contestant_id}`}>{r}</div>))}</td>
                                     <td className="text-right">{currencyFormat(d.payment_info.refund_price)}</td>
                                     <td className="text-right"><button className="btn btn-warning btn-sm my-1 mx-2" onClick={() => this.giveRefund(d, false)}>Remove refund</button></td>
                                 </tr>))}

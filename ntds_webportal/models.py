@@ -472,6 +472,7 @@ class ContestantInfo(db.Model):
     team_captain = db.Column(db.Boolean, nullable=False, default=False)
     student = db.Column(db.String(128), index=True, nullable=False, default=STUDENT)
     first_time = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    adult = db.Column(db.Boolean, index=True, nullable=False, default=False)
     diet_allergies = db.Column('Diet/Allergies', db.String(512), nullable=True, default="")
     organization_diet_notes = db.Column('Diet/Allergies Notes', db.String(512), nullable=False, default="")
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=False)
@@ -726,6 +727,7 @@ class PaymentInfo(db.Model):
             "payment_price": self.payment_price(),
             "refund": self.has_refund(),
             "refund_reasons": self.refund_reasons(),
+            "potential_refund_price": self.potential_refund_price(),
             "refund_price": self.refund_price(),
             "refund_entry_price": self.refund_entry_price(),
         }
@@ -769,6 +771,12 @@ class PaymentInfo(db.Model):
 
     def payment_price(self):
         return self.entry_price() + self.contestant.merchandise_info.merchandise_price()
+
+    def potential_refund_price(self):
+        entry_price = g.sc.entry_fee(self.contestant.contestant_info.student)
+        if g.sc.finances_partial_refund:
+            entry_price = entry_price * g.sc.finances_partial_refund_percentage / 100
+        return entry_price + self.contestant.merchandise_info.refund_price()
 
 
 class MerchandiseInfo(db.Model):
@@ -1196,6 +1204,7 @@ class SystemConfiguration(db.Model):
     phd_student_price = db.Column(db.Integer, nullable=False, default=DEFAULT_PHD_STUDENT_PRICE)
 
     first_time_ask = db.Column(db.Boolean, nullable=False, default=True)
+    ask_adult = db.Column(db.Boolean, nullable=False, default=True)
     ask_diet_allergies = db.Column(db.Boolean, nullable=False, default=True)
     ask_volunteer = db.Column(db.Boolean, nullable=False, default=True)
     ask_first_aid = db.Column(db.Boolean, nullable=False, default=True)

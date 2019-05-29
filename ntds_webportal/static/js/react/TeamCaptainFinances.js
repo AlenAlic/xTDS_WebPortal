@@ -974,7 +974,13 @@ var TeamCaptainFinances = function (_React$Component) {
                                 React.createElement(
                                     "td",
                                     null,
-                                    d.payment_info.refund_reasons
+                                    d.payment_info.refund_reasons.map(function (r) {
+                                        return React.createElement(
+                                            "div",
+                                            { key: 'reason-' + r + ("" + d.contestant_id) },
+                                            r
+                                        );
+                                    })
                                 ),
                                 React.createElement(
                                     "td",

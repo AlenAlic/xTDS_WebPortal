@@ -376,7 +376,7 @@ class TeamCaptainFinances extends React.Component {
                         {dancers.filter(filterHasRefund).sort(sortDancersAlphabetically).map( d => (
                         <tr key={'row'+`${d.contestant_id}`}>
                             <td>{d.full_name}</td>
-                            <td>{d.payment_info.refund_reasons}</td>
+                            <td>{d.payment_info.refund_reasons.map(r => (<div key={'reason-'+r+`${d.contestant_id}`}>{r}</div>))}</td>
                             <td className="text-right">{currencyFormat(d.payment_info.refund_price)}</td>
                             <td/>
                         </tr>))}

@@ -90,7 +90,6 @@ def todo():
     # NEXT TOURNAMENT - number of allowed team captains based on size of teams? Ask @ team captain meeting
 
     # ORGANIZER
-    # NEXT TOURNAMENT - Allow organizer to select what team captain to activate
     # NEXT TOURNAMENT - Allow organizer to enable/disable accounts
     return render_template('todo.html', title='#TODO')
 

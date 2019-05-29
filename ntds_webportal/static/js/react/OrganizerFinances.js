@@ -75,7 +75,7 @@ var OrganizerFinances = function (_React$Component) {
                     return i.value = "";
                 });
                 $(function () {
-                    $('[data-toggle="tooltip"]').tooltip("update");
+                    $('[data-toggle="tooltip"]').tooltip("dispose").tooltip();
                 });
             }).catch(function (error) {
                 console.log('Error: \n', error);
@@ -460,7 +460,7 @@ var OrganizerFinances = function (_React$Component) {
                                         React.createElement(
                                             "td",
                                             { className: "text-right" },
-                                            currencyFormat(_this5.props.settings.merchandise_finalized ? d.payment_info.refund_entry_price : d.payment_info.refund_entry_price + d.merchandise_info.merchandise_price)
+                                            currencyFormat(d.payment_info.potential_refund_price)
                                         ),
                                         React.createElement(
                                             "td",
@@ -522,7 +522,13 @@ var OrganizerFinances = function (_React$Component) {
                                         React.createElement(
                                             "td",
                                             null,
-                                            d.payment_info.refund_reasons
+                                            d.payment_info.refund_reasons.map(function (r) {
+                                                return React.createElement(
+                                                    "div",
+                                                    { key: 'reason-' + r + ("" + d.contestant_id) },
+                                                    r
+                                                );
+                                            })
                                         ),
                                         React.createElement(
                                             "td",

@@ -158,6 +158,9 @@ class BaseContestantForm(ReactForm, BaseRegistrationForm, DancingInfoForm, Volun
         first_time = {'': f'Is this your first {g.sc.tournament}?'}
         first_time.update(YN)
         self.first_time.choices = [(k, v) for k, v in first_time.items()]
+        adult = {'': f'Will you be 18 years or older at the time of the tournament?'}
+        adult.update(YN)
+        self.adult.choices = [(k, v) for k, v in adult.items()]
         self.ballroom_partner.label.text = f"Ballroom partner for {g.sc.tournament}"
         self.latin_partner.label.text = f"Latin partner for {g.sc.tournament}"
         self.ballroom_level.choices = participating_levels_choices(base_choices=True)
@@ -180,6 +183,7 @@ class BaseContestantForm(ReactForm, BaseRegistrationForm, DancingInfoForm, Volun
     volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in VOLUNTEER_FORM.items()])
     student = SelectField('Student', validators=[DataRequired()], default='')
     first_time = SelectField('First time', validators=[IsBoolean()])
+    adult = SelectField('Age', validators=[IsBoolean()])
 
     def custom_validate(self):
         # noinspection PyCallByClass

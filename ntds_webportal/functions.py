@@ -124,6 +124,7 @@ def submit_contestant(form, contestant=None):
     contestant.email = form.email.data
     ci.contestant = contestant
     ci.student = form.student.data
+    ci.adult = str2bool(form.adult.data)
     ci.first_time = str2bool(form.first_time.data)
     ci.diet_allergies = form.diet_allergies.data
 
