@@ -99,3 +99,16 @@ def contestants_remove_payment_requirement(contestant_id):
         dancer.status_info.remove_payment_requirement()
         db.session.commit()
     return jsonify(dancer.json())
+
+
+@bp.route('/contestants/<int:contestant_id>/purchase_ordered/<int:merchandise_purchased_id>/<bool:ordered>',
+          methods=["PATCH"])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def contestants_purchase_ordered(contestant_id, merchandise_purchased_id, ordered):
+    dancer = Contestant.query.get_or_404(contestant_id)
+    purchase = MerchandisePurchase.query.get_or_404(merchandise_purchased_id)
+    if request.method == "PATCH":
+        purchase.ordered = ordered
+        db.session.commit()
+    return jsonify(dancer.json())

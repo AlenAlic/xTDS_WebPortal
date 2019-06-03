@@ -4,7 +4,8 @@ from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, VolunteerInfo, \
-    requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo, MerchandiseItem, MerchandiseItemVariant
+    requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo, MerchandiseItem, MerchandiseItemVariant, \
+    MerchandisePurchase
 from ntds_webportal.functions import submit_updated_dancing_info, random_password, active_teams, competing_teams
 from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm, \
     CreateNewMerchandiseForm
@@ -33,6 +34,9 @@ def manage_merchandise():
         mcd = datetime.datetime.utcfromtimestamp(g.sc.merchandise_closing_date).replace(tzinfo=datetime.timezone.utc)
         mcd += datetime.timedelta(days=-1)
         merchandise_date_form.merchandise_closing_date.data = datetime.date(mcd.year, mcd.month, mcd.day)
+    purchases = sorted(MerchandisePurchase.query.all(),
+                       key=lambda x: (x.merchandise_info.contestant.contestant_info.team.display_name(),
+                                      x.merchandise_info.contestant.get_full_name()))
     if request.method == "POST":
         if merchandise_date_form.merchandise_closing_submit.name in request.form:
             if merchandise_date_form.validate_on_submit():
@@ -45,6 +49,18 @@ def manage_merchandise():
                 db.session.commit()
                 flash(f"Merchandise closing date set.", 'alert-success')
                 return redirect(url_for('organizer.manage_merchandise'))
+        if "cancel_purchase" in request.form:
+            purchase = MerchandisePurchase.query\
+                .filter(MerchandisePurchase.merchandise_purchased_id == request.form["cancel_purchase"]).first()
+            purchase.cancel(show_flash_messages=True)
+            return redirect(url_for('organizer.manage_merchandise'))
+        if "reinstate_purchase" in request.form:
+            purchase = MerchandisePurchase.query\
+                .filter(MerchandisePurchase.merchandise_purchased_id == request.form["reinstate_purchase"]).first()
+            purchase.cancelled = False
+            db.session.commit()
+            flash(f"Order for {purchase} has been reinstated.")
+            return redirect(url_for('organizer.manage_merchandise'))
         if not g.ts.merchandise_finalized:
             if form.new_item_submit.name in request.form:
                 if form.validate_on_submit():
@@ -100,7 +116,19 @@ def manage_merchandise():
                 flash(f"{merchandise_item} updated,", 'alert-success')
                 return redirect(url_for('organizer.manage_merchandise'))
     return render_template('organizer/manage_merchandise.html', form=form, all_merchandise=all_merchandise,
-                           merchandise_date_form=merchandise_date_form)
+                           merchandise_date_form=merchandise_date_form, purchases=purchases)
+#
+#
+# @bp.route('/cancel_purchase/<int:purchase_id>', methods=["DELETE"])
+# @login_required
+# @requires_access_level([ACCESS[ORGANIZER]])
+# @requires_tournament_state(SYSTEM_CONFIGURED)
+# def cancel_purchase(purchase_id):
+#     purchase = MerchandisePurchase.query.filter(MerchandisePurchase.merchandise_purchased_id == purchase_id).first()
+#     if request.method == "DELETE":
+#         if purchase.cancel():
+#             return purchase_id
+#     return 0
 
 
 @bp.route('/user_list', methods=['GET', 'POST'])
@@ -476,9 +504,8 @@ def add_refund(number):
 def merchandise():
     current_timestamp = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()
     form = FinalizeMerchandiseForm()
-    dancers = Contestant.query.join(StatusInfo, ContestantInfo, AdditionalInfo, MerchandiseInfo, Team) \
-        .filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == CANCELLED)) \
-        .order_by(Team.city, Contestant.first_name).all()
+    dancers = Contestant.query.join(StatusInfo)\
+        .filter(or_(StatusInfo.status == CONFIRMED, StatusInfo.status == CANCELLED)).all()
     dancers = [dancer for dancer in dancers if dancer.merchandise_info.ordered_merchandise()]
     if request.method == "POST":
         if form.submit.name in request.form:
@@ -498,6 +525,7 @@ def merchandise():
         for m in d.merchandise_info.purchases:
             all_merchandise[m.merchandise_item_variant.merchandise_item][m.merchandise_item_variant].append(m)
     total_merchandise = {m: sum([len(all_merchandise[m][v]) for v in m.variants]) for m in MerchandiseItem.query.all()}
+    dancers = {d.contestant_id: d.json() for d in dancers}
     return render_template('organizer/merchandise.html', dancers=dancers, current_timestamp=current_timestamp,
                            form=form, all_merchandise=all_merchandise, total_merchandise=total_merchandise)
 

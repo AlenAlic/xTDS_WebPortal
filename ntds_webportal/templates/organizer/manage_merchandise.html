@@ -47,28 +47,102 @@
                 Available merchandise
             </div>
             {% if all_merchandise|length > 0 %}
-            <table class="table table-borderless{% if not g.ts.merchandise_finalized %} table-hover clickable{% endif %} mb-0">
-            <tbody>
-                {% for merch in all_merchandise %}
-                <tr data-toggle="modal" data-target="#merch-{{ merch.merchandise_item_id }}">
-                    <td>
-                        <b>{{ merch }}</b>
-                        {% for var in merch.variants %}
-                            <div class="pl-3"><small>{{ var.variant_name() }}</small></div>
-                        {% endfor %}
-                    </td>
-                    <td><b>{{ g.data.euros(merch.price) }}</b></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            </table>
+                <table class="table table-borderless {% if not g.ts.merchandise_finalized %}table-hover clickable{% endif %} mb-0">
+                <tbody>
+                    {% for merch in all_merchandise %}
+                        <tr data-toggle="modal" data-target="#merch-{{ merch.merchandise_item_id }}">
+                            <td>
+                                <b>{{ merch }}</b>
+                                {% for var in merch.variants %}
+                                    <div class="pl-3"><small>{{ var.variant_name() }}</small></div>
+                                {% endfor %}
+                            </td>
+                            <td><b>{{ g.data.euros(merch.price) }}</b></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
             {% else %}
-            <div class="card-body">
-            There is no merchandise in the system.
-            </div>
+                <div class="card-body">
+                    There is no merchandise in the system.
+                </div>
             {% endif %}
         </div>
     </div>
+    {% if not g.ts.merchandise_finalized %}
+        <div class="card">
+            <div class="card-header">
+                Purchases
+            </div>
+            {% if purchases|length > 0 %}
+                <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Dancer</th>
+                        <th style="width: 15%;">Team</th>
+                        <th style="width: 15%;">Item</th>
+                        <th style="width: 10%;">Paid</th>
+                        <th style="width: 10%;">Ordered</th>
+                        <th style="width: 10%;">Received</th>
+                        <th style="width: 10%;">Cancelled</th>
+                        <th class="text-right" style="width: 15%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in purchases %}
+                    <tr>
+                        <td>{{ p.merchandise_info.contestant }}</td>
+                        <td>{{ p.merchandise_info.contestant.contestant_info.team.display_name() }}</td>
+                        <td>{{ p.merchandise_item_variant }}</td>
+                        <td>{{ check_icon(p.paid) }}</td>
+                        <td>{{ check_icon(p.ordered) }}</td>
+                        <td>{{ check_icon(p.received) }}</td>
+                        <td>{{ check_icon(p.cancelled) }}</td>
+                        <td class="text-right">
+                            {% if not p.cancelled  %}
+                                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#purchase-{{ p.merchandise_purchased_id }}">Cancel purchase</button>
+                            {% else %}
+                                <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#purchase-{{ p.merchandise_purchased_id }}">Reinstate purchase</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+                {% for p in purchases %}
+                    <div class="modal fade" id="purchase-{{ p.merchandise_purchased_id }}" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">{% if not p.cancelled %}Cancel{% else %}Reinstate{% endif %} purchase</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you wish to {% if not p.cancelled %}cancel{% else %}reinstate{% endif %} the purchase of {{ p.merchandise_item_variant }} by {{ p.merchandise_info.contestant }}?
+                                </div>
+                                <div class="modal-footer">
+                                    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                        {% if not p.cancelled %}
+                                        <button type="submit" class="btn btn-danger" name="cancel_purchase" value="{{ p.merchandise_purchased_id }}">Yes, cancel purchase</button>
+                                        {% else %}
+                                        <button type="submit" class="btn btn-success" name="reinstate_purchase" value="{{ p.merchandise_purchased_id }}">Yes, reinstate purchase</button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="card-body">
+                    Nobody has ordered any merchandise yet.
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
     {% if not g.ts.merchandise_finalized %}
     {% for merch in all_merchandise %}
     <form class="form" method="POST" enctype="multipart/form-data" novalidate>
@@ -98,14 +172,14 @@
                                 </div>
                             </div>
                         </div>
-                        {% if not merch.shirt %}
+                        {% if not merch.shirt or true %}
                             <div class="mb-2">Variants</div>
                             {% for var in merch.variants %}
                             <div class="form-group">
                                 <label class="d-none" for="variant-{{ var.merchandise_item_variant_id }}">Variant {{ loop.index }}</label>
                                 <div class="input-group input-group-sm">
                                     <div class="input-group-prepend">
-                                        <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ var.merchandise_item_variant_id }}" {% if merch.variants|length == 1 %}disabled{% endif %}>Delete</button>
+                                        <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ var.merchandise_item_variant_id }}" {% if merch.variants|length == 1 or not var.deletable() %}disabled{% endif %}>Delete</button>
                                     </div>
                                     <input class="form-control form-control-sm" id="variant-{{ var.merchandise_item_variant_id }}" name="{{ var.merchandise_item_variant_id }}" type="text" value="{{ var.variant }}">
                                 </div>
@@ -124,6 +198,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        {% if merch.deletable() %}
+                        <button type="submit" class="btn btn-danger" name="merchandise_item_delete" value="{{ merch.merchandise_item_id }}">Delete item</button>
+                        {% endif %}
                         <button type="submit" class="btn btn-primary" name="merchandise_item" value="{{ merch.merchandise_item_id }}">Save changes</button>
                     </div>
                 </div>

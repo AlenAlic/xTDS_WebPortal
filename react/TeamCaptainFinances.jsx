@@ -2,10 +2,6 @@ class TeamCaptainFinances extends React.Component {
     constructor(props) {
         super(props);
         this.state = {dancers: this.props.dancers};
-        this.setPending = this.setPending.bind(this);
-        this.entryPayment = this.entryPayment.bind(this);
-        this.allPayment = this.allPayment.bind(this);
-        this.merchandisePayment = this.merchandisePayment.bind(this);
     }
     setPending(dancer) {
         let newState = this.state.dancers;

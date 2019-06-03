@@ -453,6 +453,7 @@ class Contestant(db.Model):
         return {
             "contestant_id": self.contestant_id,
             "full_name": self.get_full_name(),
+            "email": self.email,
             'contestant_info': self.contestant_info.json(),
             'dancing_info': {d.competition: d.json() for d in self.dancing_info},
             # 'volunteer_info': self.volunteer_info.json(),
@@ -861,6 +862,15 @@ class MerchandisePurchase(db.Model):
             return "Your order has been cancelled"
         return "Your order has been received"
 
+    def item_status(self):
+        if self.received:
+            return "Item received by dancer"
+        if self.ordered:
+            return "Item ordered from supplier"
+        if self.cancelled:
+            return "Order cancelled"
+        return ""
+
     def cancellable(self):
         return not self.ordered and not self.cancelled
 
@@ -903,8 +913,11 @@ class MerchandisePurchase(db.Model):
             "price": self.merchandise_item_variant.merchandise_item.price,
             "paid": self.paid,
             "received": self.received,
+            "ordered": self.ordered,
             "description": self.merchandise_item_variant.merchandise_item.description,
-            "cancelled": self.cancelled
+            "cancelled": self.cancelled,
+            "contestant": self.merchandise_info.contestant.__repr__(),
+            "team": self.merchandise_info.contestant.contestant_info.team.display_name(),
         }
 
 
@@ -923,6 +936,9 @@ class MerchandiseItem(db.Model):
     def display_name(self):
         return f"{self.description} ({euros(self.price)})"
 
+    def deletable(self):
+        return all([v.deletable() for v in self.variants])
+
 
 class MerchandiseItemVariant(db.Model):
     __tablename__ = 'merchandise_item_variant'
@@ -933,6 +949,8 @@ class MerchandiseItemVariant(db.Model):
     purchases = db.relationship("MerchandisePurchase", back_populates='merchandise_item_variant')
 
     def __repr__(self):
+        if self.variant in SHIRT_SIZES:
+            return f"{self.merchandise_item}: {SHIRT_SIZES[self.variant]}"
         return f"{self.merchandise_item}: {self.variant}"
 
     def variant_name(self):
@@ -942,6 +960,9 @@ class MerchandiseItemVariant(db.Model):
 
     def payment_name(self):
         return f"{self.merchandise_item} - {self.variant_name()}"
+
+    def deletable(self):
+        return len(MerchandisePurchase.query.filter(MerchandisePurchase.merchandise_item_variant == self).all()) == 0
 
 
 class AttendedPreviousTournamentContestant(db.Model):

@@ -26,62 +26,25 @@
                 <div class="card-header">
                     {{ m }} orders <span class="badge badge-pill badge-dark">{{ total_merchandise[m] }}</span>
                 </div>
-                <div class="card-body">
-                    <table class="table table-borderless table-sm mb-0 merchandise-orders-table">
-                    <tbody>
-                        {% for v in all_merchandise[m] %}
-                        <tr>
-                            <td>{{ v.variant_name() }}</td>
-                            <td>{{ all_merchandise[m][v]|length }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                    </table>
-                </div>
+                <table class="table table-borderless table-sm mb-0 merchandise-orders-table">
+                <tbody>
+                    {% for v in all_merchandise[m] %}
+                    <tr>
+                        <td>{{ v.variant_name() }}</td>
+                        <td>{{ all_merchandise[m][v]|length }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
             </div>
         {% endfor %}
         </div>
-        <div class="panel-group page-break" id="merchandise-dancers">
-            <div class="card">
-                <div class="card-header" role="button" id="headingOne" data-toggle="collapse" data-parent="#merchandise-dancers" href="#collapseOne">
-                    Dancers that have ordered merchandise <span class="badge badge-pill badge-dark">{% if dancers|length > 0 %}{{ dancers|length }}{% else %}0{% endif %}</span>
-                </div>
-                <div id="collapseOne" class="collapse show card-body">
-                    {% if dancers|length > 0 %}
-                    <table class="table table-sm mb-0">
-                        <colgroup>
-                            <col span="1" style="width: 20%;">
-                            <col span="1" style="width: 30%;">
-                            <col span="1" style="width: 20%;">
-                            <col span="1" style="width: 30%;">
-                        </colgroup>
-                        <thead>
-                        <tr>
-                            <th style="width: 20%;">Dancer</th>
-                            <th style="width: 30%;">Email</th>
-                            <th style="width: 20%;">Team</th>
-                            <th style="width: 30%;">Status</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for dancer in dancers %}
-                        <tr>
-                            <td>{{ dancer.get_full_name() }}</td>
-                            <td>{{ dancer.email }}</td>
-                            <td>{{ dancer.contestant_info.team.city }}</td>
-                            <td>
-                                {% for p in dancer.merchandise_info.purchases|sort(attribute='merchandise_item_variant.merchandise_item.description') %}
-                                    <div>{{ p }}</div>
-                                {% endfor %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+        {{ react() }}
+        <script src="{{url_for('static', filename='js/react/OrderedMerchandise.js')}}{{ now }}" ></script>
+        <div id="root"></div>
+        <script>
+            ReactDOM.render(React.createElement(OrderedMerchandise, {dancers: {{dancers | tojson}}}), document.getElementById('root'));
+        </script>
     {% else %}
         <h2>The raffle has not taken place yet.</h2>
     {% endif %}

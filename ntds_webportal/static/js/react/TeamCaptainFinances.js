@@ -15,10 +15,6 @@ var TeamCaptainFinances = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (TeamCaptainFinances.__proto__ || Object.getPrototypeOf(TeamCaptainFinances)).call(this, props));
 
         _this.state = { dancers: _this.props.dancers };
-        _this.setPending = _this.setPending.bind(_this);
-        _this.entryPayment = _this.entryPayment.bind(_this);
-        _this.allPayment = _this.allPayment.bind(_this);
-        _this.merchandisePayment = _this.merchandisePayment.bind(_this);
         return _this;
     }
 
