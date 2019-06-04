@@ -449,6 +449,43 @@ class Contestant(db.Model):
         paid_string = {True: "Yes", False: "No"}
         return [self.get_full_name(), price / 100, description, paid_string[self.payment_info.is_all_paid()]]
 
+    def dancer_excel_data(self):
+        return {
+            "contestant_id": self.contestant_id,
+            "first_name": self.first_name,
+            "prefixes": self.prefixes,
+            "last_name": self.last_name,
+            "email": self.email,
+            "number": self.contestant_id,
+            "teamcaptain": self.contestant_info.team_captain,
+            "student": self.contestant_info.student,
+            "first_time": self.contestant_info.first_time,
+            "diet_allergies": self.contestant_info.diet_allergies,
+            "team": self.contestant_info.team.city,
+            "volunteer": self.volunteer_info.volunteer,
+            "first_aid": self.volunteer_info.first_aid,
+            "emergency_response_officer": self.volunteer_info.emergency_response_officer,
+            "jury_ballroom": self.volunteer_info.jury_ballroom,
+            "jury_latin": self.volunteer_info.jury_latin,
+            "license_ballroom": self.volunteer_info.license_jury_ballroom,
+            "license_latin": self.volunteer_info.license_jury_latin,
+            "jury_salsa": self.volunteer_info.jury_salsa,
+            "jury_polka": self.volunteer_info.jury_polka,
+            "ballroom_highest_level": self.volunteer_info.level_ballroom,
+            "latin_highest_level": self.volunteer_info.level_latin,
+            "sleeping_arrangements": self.additional_info.sleeping_arrangements,
+            "guaranteed_entry": self.status_info.guaranteed_entry,
+            "dancing_info": [{
+                'competition': d.competition,
+                'level': d.level,
+                'role': d.role,
+                'blind_date': d.blind_date,
+                'partner': d.partner
+            } for d in self.dancing_info],
+            "merchandise": {p.merchandise_item_variant.merchandise_item.description: p.merchandise_item_variant.variant
+                            for p in self.merchandise_info.purchases},
+        }
+
     def json(self):
         return {
             "contestant_id": self.contestant_id,

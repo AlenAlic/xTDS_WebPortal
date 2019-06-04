@@ -6,11 +6,13 @@ from ntds_webportal.data import ACCESS, DANCER, SHIRT_SIZES, NO, ORGANIZER, TEAM
 from ntds_webportal.functions import reset_tournament_state
 from test_data.etds2018brno import etds2018brno, etds2018brno_configuration
 from test_data.ntds2018enschede import ntds2018enschede, ntds2018enschede_configuration
+from test_data.ntds2019nijmegen import ntds2019nijmegen, ntds2019nijmegen_configuration
 import datetime
 
 PAST_TOURNAMENTS = {
     "NTDS 2018 Enschede": ntds2018enschede_configuration,
     "ETDS 2018 Brno": etds2018brno_configuration,
+    "NTDS 2019 Nijmengen": ntds2019nijmegen_configuration,
 }
 
 
@@ -34,6 +36,9 @@ def populate_test_data(tournament=None):
     if tournament == "ETDS 2018 Brno":
         test_contestants = etds2018brno
         test_configuration = etds2018brno_configuration
+    if tournament == "NTDS 2019 Nijmengen":
+        test_contestants = ntds2019nijmegen
+        test_configuration = ntds2019nijmegen_configuration
 
     User.query.filter(User.access >= ACCESS[ORGANIZER], User.access < ACCESS[TEAM_CAPTAIN])\
         .update({User.is_active: True})
@@ -53,6 +58,7 @@ def populate_test_data(tournament=None):
     g.sc.phd_student_price = test_configuration["phd_student_price"]
 
     g.sc.first_time_ask = test_configuration["first_time_ask"]
+    g.sc.ask_adult = test_configuration["ask_adult"]
     g.sc.ask_diet_allergies = test_configuration["ask_diet_allergies"]
     g.sc.ask_volunteer = test_configuration["ask_volunteer"]
     g.sc.ask_first_aid = test_configuration["ask_first_aid"]
@@ -71,8 +77,8 @@ def populate_test_data(tournament=None):
         else:
             item = MerchandiseItem(description=merchandise["description"],
                                    shirt=merchandise["shirt"], price=merchandise["price"])
-            for size in SHIRT_SIZES:
-                MerchandiseItemVariant(merchandise_item=item, variant=size)
+            for variant in merchandise["variants"]:
+                MerchandiseItemVariant(merchandise_item=item, variant=variant)
             db.session.add(item)
 
     g.sc.finances_full_refund = test_configuration["finances_full_refund"]
@@ -143,6 +149,11 @@ def populate_test_data(tournament=None):
                 MerchandisePurchase(merchandise_info=m_info,
                                     merchandise_item_variant=MerchandiseItemVariant.query
                                     .filter(MerchandiseItemVariant.variant == test_c['merchandise']['t_shirt']).first())
+        for p in test_c['merchandise']:
+            variant = MerchandiseItemVariant.query.join(MerchandiseItem)\
+                .filter(MerchandiseItemVariant.variant == test_c['merchandise'][p], MerchandiseItem.description == p)\
+                .first()
+            MerchandisePurchase(merchandise_info=m_info, merchandise_item_variant=variant)
         p_info = PaymentInfo()
         p_info.contestant = c
         dancer_account = User()

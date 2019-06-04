@@ -6,17 +6,17 @@
     <form class="form my-3" method="POST" enctype="multipart/form-data" novalidate>
         <button type="submit" class="btn btn-warning" name="clear_tables">Reset system</button>
     </form>
-    <div class="d-grid grid-template-columns-lg-2 grid-row-gap-3 grid-column-gap-3">
+    <div class="d-grid grid-row-gap-2 grid-column-gap-2">
     {% for tournament in past_tournaments %}
         <div class="card">
-            <div class="card-header">
-            {{ tournament }}
+            <div class="card-header clickable" data-toggle="collapse" data-target="#card-{{ tournament.replace(" ", "") }}">
+            {{ tournament }} <span class="badge badge-pill badge-dark">{{ past_tournaments[tournament]["contestants"] }}</span>
             </div>
-            <div class="card-body py-1">
-                <table>
+            <div class="card-body py-0 px-3 collapse" id="card-{{ tournament.replace(" ", "") }}">
+                <table class="table table-sm">
                     <tbody>
                     <tr>
-                        <th colspan="2">Competition settings</th>
+                        <th class="border-top-0" colspan="2">Competition settings</th>
                     </tr>
                     <tr>
                         <td style="width: 75%">Number of teamcaptains</td><td class="text-right">{{ past_tournaments[tournament]["number_of_teamcaptains"] }}</td>
@@ -85,6 +85,10 @@
                         <td class="text-right">{{ g.data.TF[past_tournaments[tournament]["first_time_ask"]] }}</td>
                     </tr>
                     <tr>
+                        <td>Will you be 18 years or older at the time of the tournament?</td>
+                        <td class="text-right">{{ g.data.TF[past_tournaments[tournament]["ask_adult"]] }}</td>
+                    </tr>
+                    <tr>
                         <td>Do you have any dietary restrictions and/or allergies?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["ask_diet_allergies"]] }}</td>
                     </tr>
                     <tr>
@@ -110,17 +114,17 @@
                         <td colspan="2">There was no merchandise for this tournament.</td>
                     </tr>
                     {% else %}
-                    <tr>
                         {% for merchandise in past_tournaments[tournament]["merchandise"] %}
-                        <td>
-                            <div>{{ merchandise["description"] }}</div>
-                            {% for variant in merchandise["variants"] %}
-                                <div class="pl-3"><small>{{ variant }}</small></div>
-                            {% endfor %}
-                        </td>
-                        <td class="text-right align-text-top">{{ g.data.euros(merchandise["price"]) }}</td>
+                            <tr>
+                                <td>
+                                    <div>{{ merchandise["description"] }}</div>
+                                    {% for variant in merchandise["variants"] %}
+                                        <div class="pl-3"><small>{{ variant }}</small></div>
+                                    {% endfor %}
+                                </td>
+                                <td class="text-right align-text-top">{{ g.data.euros(merchandise["price"]) }}</td>
+                            </tr>
                         {% endfor %}
-                    </tr>
                     {% endif %}
                     </tbody>
                 </table>

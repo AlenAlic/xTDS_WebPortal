@@ -5,6 +5,15 @@
 {% block app_content %}
     <div class="row">
         <div class="col-md-6">
+            {% if g.sc.main_raffle_result_visible or true %}
+                <div class="mb-4">
+                    <h2>Download dancers data</h2>
+                    <p>Download the data of the dancers to create a new test data from.</p>
+                    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                        <button type="submit" name="download_dancer_data" class="btn btn-outline-primary">Download dancer data</button>
+                    </form>
+                </div>
+            {% endif %}
             <div class="mb-4">
                 <h2>Reset Website</h2>
                 <p>Reset the data on the website and close off the website for all users except for the admin.</p>

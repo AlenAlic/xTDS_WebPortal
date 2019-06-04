@@ -4259,6 +4259,8 @@ etds2018brno = [
 
 
 etds2018brno_configuration = {
+    "contestants": len(etds2018brno),
+
     "tournament": ETDS,
     "year": 2018,
     "city": BRNO,
@@ -4276,6 +4278,7 @@ etds2018brno_configuration = {
     "phd_student_price": 0,
 
     "first_time_ask": True,
+    "ask_adult": False,
     "ask_diet_allergies": False,
     "ask_volunteer": False,
     "ask_first_aid": False,

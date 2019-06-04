@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, g, current_app
+from flask import render_template, request, redirect, url_for, flash, g, current_app, send_file
 from flask_login import login_required, current_user, logout_user, login_user
 from ntds_webportal import db
 from ntds_webportal.self_admin import bp
@@ -15,6 +15,8 @@ from ntds_webportal.data import *
 from sqlalchemy import or_, case, exists
 import datetime
 from test_data.test_populate import PAST_TOURNAMENTS, populate_test_data
+import xlsxwriter
+from io import BytesIO
 
 
 @bp.route('/system_setup', methods=['GET', 'POST'])
@@ -63,6 +65,7 @@ def system_setup():
                 flash(f"Organizer account has been reset. Login credentials have been sent to {organizer.email}.",
                       "alert-success")
                 make_system_configuration_accessible_to_organizer()
+                return redirect(url_for('main.dashboard'))
         if 'reset_website' in request.form:
             NameChangeRequest.query.delete()
             PartnerRequest.query.delete()
@@ -113,9 +116,29 @@ def system_setup():
                             db.session.execute(f"ALTER TABLE {table.name} AUTO_INCREMENT = 1;")
                 db.session.commit()
             flash("xTDS WebPortal has been reset.", "alert-success")
+            return redirect(url_for('main.dashboard'))
         if 'access_system_configuration' in request.form:
             make_system_configuration_accessible_to_organizer()
-        return redirect(url_for('main.dashboard'))
+            return redirect(url_for('main.dashboard'))
+        if 'download_dancer_data' in request.form:
+            pass
+            dancers = Contestant.query.all()
+            dancers = [d.dancer_excel_data() for d in dancers]
+            header = {d: i for i, d in enumerate(dancers[0], 3)}
+            fn = f'dancer_data_{g.sc.tournament}_{g.sc.city}_{g.sc.year}.xlsx'
+            output = BytesIO()
+            wb = xlsxwriter.Workbook(output, {'in_memory': True})
+            f = wb.add_format({'text_wrap': True, 'bold': True})
+            ws = wb.add_worksheet(name=datetime.date.today().strftime("%B %d, %Y"))
+            for name, index in header.items():
+                ws.write(0, index, name, f)
+            ws.set_column(1, 2, 80)
+            for i, d in enumerate(dancers, 1):
+                for data in d:
+                    ws.write(i, header[data], str(d[data]))
+            wb.close()
+            output.seek(0)
+            return send_file(output, as_attachment=True, attachment_filename=fn)
     return render_template('admin/system_setup.html', roa_form=reset_organizer_account_form)
 
 

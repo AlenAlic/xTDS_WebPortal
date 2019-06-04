@@ -3708,6 +3708,8 @@ ntds2018enschede = [
 ]
 
 ntds2018enschede_configuration = {
+    "contestants": len(ntds2018enschede),
+
     "tournament": NTDS,
     "year": 2018,
     "city": ENSCHEDE,
@@ -3725,6 +3727,7 @@ ntds2018enschede_configuration = {
     "phd_student_price": 0,
 
     "first_time_ask": False,
+    "ask_adult": False,
     "ask_diet_allergies": True,
     "ask_volunteer": True,
     "ask_first_aid": True,
