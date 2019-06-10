@@ -1,21 +1,15 @@
-Dear {{name}},
-<br/><br/><br/>
-Your team captain has registered you for the the {{g.sc.year}} {{g.sc.tournament}} in {{g.sc.city}}.
-<br/>
-An account for the xTDS WebPortal has been created for you.
-<br/><br/>
-Use the following credentials to log in:
-<br/>
-Username: {{ dancer.email }}
-<br/>
-Password: {{ password }}
-<br/><br/>
-Click <a href="{{ url_for('main.index', _external=True) }}">here</a> to visit the site.
-<br/><br/><br/>
-Please log in, and accept the GDPR policy to complete your registration.
-<br/><br/>
-If for some reason the information that your teamcaptain has submitted is incorrect (or has changed), you can indicate that to your team captain through your user account as well.
-<br/><br/><br/>
-Sincerely,
-<br/><br/>
-The xTDS WebPortal Admin
+<p>Dear {{name}},</p><br/>
+<p>Your team captain has registered you for the the {{g.sc.year}} {{g.sc.tournament}} in {{g.sc.city}}.</p>
+<p>An account at the xTDS WebPortal has been created for you.</p>
+<p>
+    Use the following credentials to log in:
+    <br/>
+    Username: {{ dancer.email }}
+    <br/>
+    Password: {{ password }}
+</p><br/>
+<p>Please log in, and accept the GDPR policy to complete your registration.</p><br/>
+<p>Click <a href="{{ url_for('main.index', _external=True) }}">here</a> to visit the site.</p><br/>
+<p>If for some reason the information that your teamcaptain has submitted is incorrect (or has changed), you can indicate that to your team captain through your user account as well.</p><br/>
+<p>Sincerely,</p>
+<p>The xTDS WebPortal Admin</p>

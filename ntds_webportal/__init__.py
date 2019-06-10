@@ -214,7 +214,7 @@ def create_app():
             a.set_password(password)
             a.access = data.ACCESS[data.ADMIN]
             a.is_active = True
-            db.session.add(admin)
+            db.session.add(a)
             db.session.commit()
 
     def create_configuration():

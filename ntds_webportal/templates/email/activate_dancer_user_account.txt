@@ -2,20 +2,20 @@ Dear {{name}},
 
 
 Your team captain has registered you for the the {{g.sc.year}} {{g.sc.tournament}} in {{g.sc.city}}.
-An account for the xTDS WebPortal has been created for you.
+An account at the xTDS WebPortal has been created for you.
 
 
 Use the following credentials to log in:
 Username: {{ dancer.email }}
 Password: {{ password }}
 
+Please log in, and accept the GDPR policy to complete your registration.
+
 
 You can click the link below to visit the site.
 
 {{ url_for('main.index', _external=True) }}
 
-
-Please log in, and accept the GDPR policy to complete your registration.
 
 If for some reason the information that your teamcaptain has submitted is incorrect (or has changed), you can indicate that to your team captain through your user account as well.
 

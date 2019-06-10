@@ -183,7 +183,7 @@ class BaseContestantForm(ReactForm, BaseRegistrationForm, DancingInfoForm, Volun
     volunteer = SelectField('Volunteer', validators=[ChoiceMade()], choices=[(k, v) for k, v in VOLUNTEER_FORM.items()])
     student = SelectField('Student', validators=[DataRequired()], default='')
     first_time = SelectField('First time', validators=[IsBoolean()])
-    adult = SelectField('Age', validators=[IsBoolean()])
+    adult = SelectField('Adult at time of tournament', validators=[IsBoolean()])
 
     def custom_validate(self):
         # noinspection PyCallByClass
@@ -227,6 +227,7 @@ class BaseContestantForm(ReactForm, BaseRegistrationForm, DancingInfoForm, Volun
         self.first_time.data = str(dancer.contestant_info.first_time)
         self.diet_allergies.data = dancer.contestant_info.diet_allergies
         self.sleeping_arrangements.data = str(dancer.additional_info.sleeping_arrangements)
+        self.adult.data = str(dancer.contestant_info.adult)
 
         self.first_aid.data = dancer.volunteer_info.first_aid
         self.emergency_response_officer.data = dancer.volunteer_info.emergency_response_officer
