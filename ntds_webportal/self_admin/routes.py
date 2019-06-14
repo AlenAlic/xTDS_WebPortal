@@ -386,29 +386,30 @@ def create_team_captain():
                               Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION)
     if len(query.all()) > 0:
         form.team.query = query
-        if form.validate_on_submit():
-            user = User()
-            user.username = form.username.data
-            user.email = form.email.data
-            user.set_password(form.password.data)
-            user.access = ACCESS[TEAM_CAPTAIN]
-            user.is_active = True
-            user.send_messages_email = True
-            db.session.add(user)
-            treasurer = User()
-            treasurer.username = form.username.data.replace("Teamcaptain", "Treasurer")
-            treasurer.access = ACCESS[TREASURER]
-            treasurer.is_active = False
-            treasurer.send_messages_email = False
-            db.session.add(treasurer)
-            db.session.commit()
-            flash(f"Team captain account \"{user.username}\" created.", 'alert-success')
-            flash(f"Treasurer account \"{treasurer.username}\" created.", 'alert-success')
-            return redirect(url_for('self_admin.user_list'))
+        if request.method == "POST":
+            if form.validate_on_submit():
+                user = User()
+                user.username = f"Teamcaptain{form.team.data}"
+                user.email = form.email.data
+                user.set_password(random_password())
+                user.access = ACCESS[TEAM_CAPTAIN]
+                user.is_active = False
+                user.send_messages_email = True
+                db.session.add(user)
+                treasurer = User()
+                treasurer.username = f"Treasurer{form.team.data}"
+                treasurer.access = ACCESS[TREASURER]
+                treasurer.is_active = False
+                treasurer.send_messages_email = False
+                db.session.add(treasurer)
+                db.session.commit()
+                flash(f"Team captain account \"{user.username}\" created.", 'alert-success')
+                flash(f"Treasurer account \"{treasurer.username}\" created.", 'alert-success')
+                return redirect(url_for('self_admin.user_list'))
+        return render_template('admin/team_captain.html', form=form, edit=False)
     else:
         flash(f"There is no team without a team captain. Please create a new team first.", 'alert-warning')
         return redirect(url_for('self_admin.user_list'))
-    return render_template('admin/team_captain.html', form=form, edit=False)
 
 
 @bp.route('/debug_tools', methods=['GET', 'POST'])

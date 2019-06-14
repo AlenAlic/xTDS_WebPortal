@@ -1,19 +1,11 @@
 {% extends "base.html" %}
 
-
-{% block body_attribs %}
-onload="onStart()"
-{% endblock %}
-
 {% block app_content %}
-<h2>Organizer account</h2>
+<h2>Team captain and Treasurer account</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {{ wtf.form_field(form.username, disabled='') }}
     {{ wtf.form_field(form.email) }}
     {{ wtf.form_field(form.team, **{'onchange': "updateUsername()"}) }}
-    {{ wtf.form_field(form.password) }}
-    {{ wtf.form_field(form.repeat_password) }}
     <div class="form-group required">
         <div class="input-group">
             <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if edit is sameas false %}Create Team{% else %}Save changes{% endif %}">&nbsp;
@@ -21,22 +13,4 @@ onload="onStart()"
         </div>
     </div>
 </form>
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-function onStart() {
-    document.getElementById("team").onchange();
-}
-function updateUsername() {
-    document.getElementById("username").value = "Teamcaptain" + getSelectedText('team');
-}
-function getSelectedText(elementId) {
-    var elt = document.getElementById(elementId);
-    if (elt.selectedIndex == -1)
-        return null;
-    return elt.options[elt.selectedIndex].text;
-}
-</script>
 {% endblock %}
