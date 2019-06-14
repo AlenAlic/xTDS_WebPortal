@@ -53,7 +53,8 @@ class EditAssistantAccountForm(CreateBaseUserWithoutEmailForm):
     repeat_password = PasswordField('Repeat Password')
 
 
-class CreateTeamCaptainAccountForm(CreateBaseUserWithEmailForm):
+class CreateTeamCaptainAccountForm(FlaskForm):
+    email = StringField('E-mail', validators=[DataRequired(), Email(), UniqueEmail()])
     team = QuerySelectField("Team", validators=[DataRequired()], allow_blank=False)
 
 

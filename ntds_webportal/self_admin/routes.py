@@ -382,8 +382,8 @@ def create_team_account():
 @requires_access_level([ACCESS[ADMIN]])
 def create_team_captain():
     form = CreateTeamCaptainAccountForm()
-    query = Team.query.filter(~exists().where(User.team),
-                              Team.name != TEAM_SUPER_VOLUNTEER, Team.name != TEAM_ORGANIZATION)
+    query = Team.query.filter(~exists().where(User.team), Team.name != TEAM_SUPER_VOLUNTEER,
+                              Team.name != TEAM_ORGANIZATION, Team.name != TEAM_ADJUDICATOR)
     if len(query.all()) > 0:
         form.team.query = query
         if request.method == "POST":
