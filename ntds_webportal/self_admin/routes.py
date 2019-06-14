@@ -395,12 +395,14 @@ def create_team_captain():
                 user.access = ACCESS[TEAM_CAPTAIN]
                 user.is_active = False
                 user.send_messages_email = True
+                user.team = form.team.data
                 db.session.add(user)
                 treasurer = User()
                 treasurer.username = f"Treasurer{form.team.data}"
                 treasurer.access = ACCESS[TREASURER]
                 treasurer.is_active = False
                 treasurer.send_messages_email = False
+                treasurer.team = form.team.data
                 db.session.add(treasurer)
                 db.session.commit()
                 flash(f"Team captain account \"{user.username}\" created.", 'alert-success')
