@@ -50,7 +50,7 @@
                 <td>{% if user.team is not none %}{{ user.team }}{% endif %}</td>
                 <td>{% if user.email is not none %}{{ user.email }}{% endif %}</td>
                 <td>{{ user.team.country }}</td>
-                <td>{{ data.TF[user.is_active] }}</td>
+                <td>{{ g.data.TF[user.is_active] }}</td>
             </tr>
         {% endfor %}
     </tbody>
