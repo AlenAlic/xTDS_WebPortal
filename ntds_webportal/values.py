@@ -51,13 +51,50 @@ ETDS = 'ETDS'
 # Countries
 NETHERLANDS = 'The Netherlands'
 GERMANY = 'Germany'
+ALBANIA = 'Albania'
+AUSTRIA = 'Austria'
+BELARUS = 'Belarus'
 BELGIUM = 'Belgium'
+BOSNIA = 'Bosnia and Herzegovina'
+BULGARIA = 'Bulgaria'
+CROATIA = 'Croatia'
 CZECH = 'Czech Republic'
+DENMARK = 'Denmark'
+ESTONIA = 'Estonia'
+FINLAND = 'Finland'
 FRANCE = 'France'
+GREECE = 'Greece'
+HUNGARY = 'Hungary'
+ICELAND = 'Iceland'
+ITALY = 'Italy'
+LATVIA = 'Latvia'
+LIECHTENSTEIN = 'Liechtenstein'
+LITHUANIA = 'Lithuania'
+LUXEMBOURG = 'Luxembourg'
+MOLDOVA = 'Moldova'
+MONACO = 'Monaco'
+MONTENEGRO = 'Montenegro'
+MACEDONIA = 'North Macedonia'
 NORWAY = 'Norway'
-UNITED_KINGDOM = 'United Kingdom'
 POLAND = 'Poland'
-COUNTRIES = [NETHERLANDS, GERMANY, BELGIUM, CZECH, FRANCE, NORWAY, UNITED_KINGDOM, POLAND]
+PORTUGAL = 'Portugal'
+ROMANIA = 'Romania'
+SAN_MARINO = 'San Marino'
+SERBIA = 'Serbia'
+SLOVAKIA = 'Slovakia'
+SLOVENIA = 'Slovenis'
+SPAIN = 'Spain'
+SWEDEN = 'Sweden'
+SWITZERLAND = 'Switzerland'
+UKRAINE = 'Ukraine'
+UNITED_KINGDOM = 'United Kingdom'
+COUNTRIES = [
+    NETHERLANDS, GERMANY,
+    ALBANIA, AUSTRIA, BELARUS, BELGIUM, BOSNIA, BULGARIA, CROATIA, CZECH, DENMARK, ESTONIA, FINLAND, FRANCE,
+    GREECE, HUNGARY, ICELAND, ITALY, LATVIA, LIECHTENSTEIN, LITHUANIA, LUXEMBOURG, MOLDOVA, MONACO, MONTENEGRO,
+    MACEDONIA, NORWAY, POLAND, PORTUGAL, ROMANIA, SAN_MARINO, SERBIA, SLOVAKIA, SLOVENIA, SPAIN, SWEDEN,
+    SWITZERLAND, UKRAINE, UNITED_KINGDOM
+]
 
 # Cities
 ENSCHEDE = 'Enschede'
