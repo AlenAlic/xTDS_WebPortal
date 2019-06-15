@@ -3,12 +3,12 @@ from flask_login import login_required, logout_user, login_user
 from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
-    StatusInfo, AdditionalInfo, NameChangeRequest, User, MerchandiseInfo, VolunteerInfo, \
+    StatusInfo, AdditionalInfo, NameChangeRequest, User, VolunteerInfo, \
     requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo, MerchandiseItem, MerchandiseItemVariant, \
     MerchandisePurchase
 from ntds_webportal.functions import submit_updated_dancing_info, random_password, active_teams, competing_teams
 from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm, \
-    CreateNewMerchandiseForm
+    CreateNewMerchandiseForm, CreateTeamForm
 from ntds_webportal.self_admin.forms import CreateBaseUserWithoutEmailForm, EditAssistantAccountForm, \
     MerchandiseDateForm
 from ntds_webportal.organizer.email import send_registration_open_email, send_gdpr_reminder_email
@@ -285,6 +285,41 @@ def change_email(number):
         flash(f"Changed e-mail of {user.username} to {form.email.data}.", 'alert-success')
         return redirect(url_for('organizer.user_list'))
     return render_template('admin/change_email.html', form=form, user=user)
+
+
+@bp.route('/create_team', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def create_team():
+    form = CreateTeamForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            team = Team()
+            team.name = form.name.data
+            team.city = form.city.data
+            team.country = form.country.data
+            db.session.add(team)
+            db.session.commit()
+            user = User()
+            user.username = f"Teamcaptain{team.city.replace(' ', '')}"
+            user.set_password(random_password())
+            user.access = ACCESS[TEAM_CAPTAIN]
+            user.is_active = False
+            user.send_messages_email = True
+            user.team = team
+            db.session.add(user)
+            treasurer = User()
+            treasurer.username = f"Treasurer{team.city.replace(' ', '')}"
+            treasurer.access = ACCESS[TREASURER]
+            treasurer.is_active = False
+            treasurer.send_messages_email = False
+            treasurer.team = team
+            db.session.add(treasurer)
+            db.session.commit()
+            flash(f"Team {team.name} from {team.city}, {team.country} created, together with the team captain "
+                  f"and treasurer accounts.", 'alert-success')
+            return redirect(url_for('main.dashboard'))
+    return render_template('organizer/create_team.html', form=form, edit=False)
 
 
 @bp.route('/registration_management', methods=['GET'])

@@ -2,8 +2,8 @@ from flask import render_template, request, redirect, url_for, flash, g, current
 from flask_login import login_required, current_user, logout_user, login_user
 from ntds_webportal import db
 from ntds_webportal.self_admin import bp
-from ntds_webportal.self_admin.forms import SwitchUserForm, CreateOrganizerForm, EditOrganizerForm, CreateTeamForm, \
-    CreateTeamCaptainAccountForm, SystemSetupForm, ResetOrganizerAccountForm
+from ntds_webportal.self_admin.forms import SwitchUserForm, CreateOrganizerForm, EditOrganizerForm, SystemSetupForm, \
+    ResetOrganizerAccountForm
 from ntds_webportal.models import requires_access_level, User, Team, SystemConfiguration, Contestant, \
     StatusInfo, AttendedPreviousTournamentContestant, NotSelectedContestant, EXCLUDED_FROM_CLEARING, \
     requires_testing_environment, Event, NameChangeRequest, PartnerRequest, ShiftSlot
@@ -334,84 +334,32 @@ def organizer_account():
     if organizer is None:
         form = CreateOrganizerForm()
         if form.validate_on_submit():
-            user = User()
-            user.username = form.username.data
-            user.email = form.email.data
-            user.set_password(form.password.data)
-            user.access = ACCESS[ORGANIZER]
-            user.send_messages_email = bool(form.send_email.data)
-            db.session.add(user)
-            db.session.commit()
-            flash(f"Organizer account \"{user.username}\" created.", 'alert-success')
-            return redirect(url_for('self_admin.user_list'))
+            if request.method == "POST":
+                user = User()
+                user.username = form.username.data
+                user.email = form.email.data
+                user.set_password(form.password.data)
+                user.access = ACCESS[ORGANIZER]
+                user.send_messages_email = bool(form.send_email.data)
+                db.session.add(user)
+                db.session.commit()
+                flash(f"Organizer account \"{user.username}\" created.", 'alert-success')
+                return redirect(url_for('self_admin.user_list'))
     else:
         form = EditOrganizerForm()
         form.username.data = organizer.username
         form.email.data = organizer.email
         form.send_email.data = TF[organizer.send_new_messages_email]
-        if form.validate_on_submit():
-            organizer.email = form.email.data
-            if form.password.data != '':
-                organizer.set_password(form.password.data)
-            organizer.send_messages_email = bool(form.send_email.data)
-            db.session.commit()
-            flash(f"Organizer account \"{organizer.username}\" updated.", 'alert-success')
-            return redirect(url_for('self_admin.user_list'))
-    return render_template('admin/organizer_account.html', form=form)
-
-
-@bp.route('/create_team_account', methods=['GET', 'POST'])
-@login_required
-@requires_access_level([ACCESS[ADMIN]])
-def create_team_account():
-    form = CreateTeamForm()
-    if form.validate_on_submit():
-        team = Team()
-        team.name = form.name.data
-        team.city = form.city.data
-        team.country = form.country.data
-        db.session.add(team)
-        db.session.commit()
-        flash(f"Team {team.name} from {team.city}, {team.country} created.", 'alert-success')
-        return redirect(url_for('self_admin.user_list'))
-    return render_template('admin/team_account.html', form=form, edit=False)
-
-
-@bp.route('/create_team_captain', methods=['GET', 'POST'])
-@login_required
-@requires_access_level([ACCESS[ADMIN]])
-def create_team_captain():
-    form = CreateTeamCaptainAccountForm()
-    query = Team.query.filter(~exists().where(User.team), Team.name != TEAM_SUPER_VOLUNTEER,
-                              Team.name != TEAM_ORGANIZATION, Team.name != TEAM_ADJUDICATOR)
-    if len(query.all()) > 0:
-        form.team.query = query
         if request.method == "POST":
             if form.validate_on_submit():
-                user = User()
-                user.username = f"Teamcaptain{form.team.data}"
-                user.email = form.email.data
-                user.set_password(random_password())
-                user.access = ACCESS[TEAM_CAPTAIN]
-                user.is_active = False
-                user.send_messages_email = True
-                user.team = form.team.data
-                db.session.add(user)
-                treasurer = User()
-                treasurer.username = f"Treasurer{form.team.data}"
-                treasurer.access = ACCESS[TREASURER]
-                treasurer.is_active = False
-                treasurer.send_messages_email = False
-                treasurer.team = form.team.data
-                db.session.add(treasurer)
+                organizer.email = form.email.data
+                if form.password.data != '':
+                    organizer.set_password(form.password.data)
+                organizer.send_messages_email = bool(form.send_email.data)
                 db.session.commit()
-                flash(f"Team captain account \"{user.username}\" created.", 'alert-success')
-                flash(f"Treasurer account \"{treasurer.username}\" created.", 'alert-success')
+                flash(f"Organizer account \"{organizer.username}\" updated.", 'alert-success')
                 return redirect(url_for('self_admin.user_list'))
-        return render_template('admin/team_captain.html', form=form, edit=False)
-    else:
-        flash(f"There is no team without a team captain. Please create a new team first.", 'alert-warning')
-        return redirect(url_for('self_admin.user_list'))
+    return render_template('admin/organizer_account.html', form=form)
 
 
 @bp.route('/debug_tools', methods=['GET', 'POST'])

@@ -14,16 +14,6 @@
             image=organizer_image,
             title='Organizer'
             ) }}
-    {{ dashboard_page(
-            url='self_admin.create_team_account',
-            image='team.png',
-            title='Create new Team'
-            ) }}
-    {{ dashboard_page(
-            url='self_admin.create_team_captain',
-            image='register_contestant.png',
-            title='Create new Team accounts'
-            ) }}
 </div>
 <h2>Available Teamcaptains and Treasurers</h2>
 <table class="table table-sm">
@@ -57,9 +47,6 @@
 </table>
 
 <h2>Available Teams</h2>
-{% if current_user.is_admin() %}
-<!--<a href="{{ url_for('self_admin.create_team_account') }}" class="btn btn-primary">Create new Team</a>-->
-{% endif %}
 <table class="table table-sm">
     <colgroup>
         <col span="1" style="width: 40%;">

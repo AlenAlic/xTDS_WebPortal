@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, TextAreaField, StringField, RadioField, IntegerField
+from wtforms import SubmitField, TextAreaField, StringField, RadioField, IntegerField, SelectField
 from wtforms.validators import Email, DataRequired, NumberRange
 from ntds_webportal.validators import UniqueEmail
+from ntds_webportal.data import COUNTRIES
 
 
 class NameChangeResponse(FlaskForm):
@@ -28,3 +29,9 @@ class CreateNewMerchandiseForm(FlaskForm):
     variants = StringField('Variants', validators=[DataRequired()], render_kw={"placeholder": "Red,Blue,Green,..."},
                            description="A comma separated list of variants of the item (color, size, etc.)")
     new_item_submit = SubmitField('Create item')
+
+
+class CreateTeamForm(FlaskForm):
+    name = StringField('Team name', validators=[DataRequired()])
+    city = StringField('Team city', validators=[DataRequired()])
+    country = SelectField('Country', choices=[(c, c) for c in COUNTRIES])

@@ -4,9 +4,9 @@ from wtforms import SubmitField, SelectField, StringField, PasswordField, Intege
 from wtforms.validators import DataRequired, Email, EqualTo, NumberRange
 from ntds_webportal.data import *
 from ntds_webportal.validators import UniqueEmail, UniqueUsername
-from wtforms_sqlalchemy.fields import QuerySelectField
 import wtforms_sqlalchemy.fields as f
 import datetime
+from ntds_webportal.models import Team
 
 
 def get_pk_from_identity(obj):
@@ -53,22 +53,15 @@ class EditAssistantAccountForm(CreateBaseUserWithoutEmailForm):
     repeat_password = PasswordField('Repeat Password')
 
 
-class CreateTeamCaptainAccountForm(FlaskForm):
-    email = StringField('E-mail', validators=[DataRequired(), Email(), UniqueEmail()])
-    team = QuerySelectField("Team", validators=[DataRequired()], allow_blank=False)
-
-
-class CreateTeamForm(FlaskForm):
-    name = StringField('Team name')
-    city = StringField('Team city')
-    country = SelectField('Country', choices=[(c, c) for c in COUNTRIES])
-
-
 class SystemSetupTournamentForm(FlaskForm):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.city.choices = sorted(set([t.city for t in Team.query.all()]))
+
     tournament = SelectField('What kind of tournament are you hosting?', choices=[(NTDS, NTDS), (ETDS, ETDS)])
     year = SelectField('Year', coerce=int, choices=[(year, year) for year in range(datetime.datetime.now().year,
                                                                                    datetime.datetime.now().year + 5)])
-    city = SelectField('City', choices=[(c, c) for c in CITIES])
+    city = SelectField('City')
     tournament_starting_date = DateField("Start date (the Friday)", validators=[DataRequired()],
                                          default=(datetime.datetime.now() + datetime.timedelta(days=120)).date(),
                                          render_kw={"type": "date", "max": "2099-12-30", "min": "2018-01-30"})
