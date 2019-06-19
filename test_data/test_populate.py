@@ -68,12 +68,11 @@ def populate_test_data(tournament=None):
 
     for merchandise in test_configuration["merchandise"]:
         if merchandise["shirt"]:
-            for variant in merchandise["variants"]:
-                item = MerchandiseItem(description=f'{variant} {merchandise["description"]}',
-                                       shirt=merchandise["shirt"], price=merchandise["price"])
-                for size in SHIRT_SIZES:
-                    MerchandiseItemVariant(merchandise_item=item, variant=size)
-                db.session.add(item)
+            item = MerchandiseItem(description=merchandise["description"],
+                                   shirt=merchandise["shirt"], price=merchandise["price"])
+            for size in SHIRT_SIZES:
+                MerchandiseItemVariant(merchandise_item=item, variant=size)
+            db.session.add(item)
         else:
             item = MerchandiseItem(description=merchandise["description"],
                                    shirt=merchandise["shirt"], price=merchandise["price"])
@@ -144,16 +143,12 @@ def populate_test_data(tournament=None):
         s_info.contestant = c
         m_info = MerchandiseInfo()
         m_info.contestant = c
-        if 't_shirt' in test_c['merchandise']:
-            if test_c['merchandise']['t_shirt'] != NO:
-                MerchandisePurchase(merchandise_info=m_info,
-                                    merchandise_item_variant=MerchandiseItemVariant.query
-                                    .filter(MerchandiseItemVariant.variant == test_c['merchandise']['t_shirt']).first())
         for p in test_c['merchandise']:
-            variant = MerchandiseItemVariant.query.join(MerchandiseItem)\
-                .filter(MerchandiseItemVariant.variant == test_c['merchandise'][p], MerchandiseItem.description == p)\
-                .first()
-            MerchandisePurchase(merchandise_info=m_info, merchandise_item_variant=variant)
+            if test_c['merchandise'][p] != NO:
+                variant = MerchandiseItemVariant.query.join(MerchandiseItem)\
+                    .filter(MerchandiseItemVariant.variant == test_c['merchandise'][p],
+                            MerchandiseItem.description == p).first()
+                MerchandisePurchase(merchandise_info=m_info, merchandise_item_variant=variant)
         p_info = PaymentInfo()
         p_info.contestant = c
         dancer_account = User()

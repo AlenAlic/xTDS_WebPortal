@@ -6,7 +6,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 2, 'first_name': 'Doris', 'prefixes': None, 'last_name': 'Harris',
@@ -14,7 +14,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': YES, 'emergency_response_officer': YES,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 61}]},
     {'contestant_id': 3, 'first_name': 'Irene', 'prefixes': None, 'last_name': 'Gonzales',
@@ -23,7 +23,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 4, 'first_name': 'Edward', 'prefixes': None, 'last_name': 'Nelson',
@@ -31,7 +31,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 5},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 5}]},
     {'contestant_id': 5, 'first_name': 'Patrick', 'prefixes': None, 'last_name': 'Wood',
@@ -39,7 +39,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 4},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 4}]},
     {'contestant_id': 6, 'first_name': 'Paul', 'prefixes': None, 'last_name': 'Ramirez',
@@ -47,7 +47,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 7},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 7}]},
     {'contestant_id': 7, 'first_name': 'Frances', 'prefixes': None, 'last_name': 'Diaz',
@@ -55,7 +55,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 6},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 6}]},
     {'contestant_id': 8, 'first_name': 'Mary', 'prefixes': None, 'last_name': 'White', 'email': 'marywhite8@test.com',
@@ -63,7 +63,7 @@ ntds2018enschede = [
      'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': False,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 15},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 15}]},
     {'contestant_id': 9, 'first_name': 'Nicholas', 'prefixes': None, 'last_name': 'Brown',
@@ -71,7 +71,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': YES,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 12},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 12}]},
     {'contestant_id': 10, 'first_name': 'Joe', 'prefixes': None, 'last_name': 'Bryant', 'email': 'joebryant10@test.com',
@@ -79,7 +79,7 @@ ntds2018enschede = [
      'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': False,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 11, 'first_name': 'Dorothy', 'prefixes': None, 'last_name': 'Davis',
@@ -87,7 +87,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 12, 'first_name': 'Carlos', 'prefixes': None, 'last_name': 'Evans',
@@ -95,7 +95,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 9},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 9}]},
     {'contestant_id': 13, 'first_name': 'Julia', 'prefixes': None, 'last_name': 'Kelly',
@@ -103,7 +103,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 14},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 14}]},
     {'contestant_id': 14, 'first_name': 'Todd', 'prefixes': None, 'last_name': 'Ross', 'email': 'toddross14@test.com',
@@ -111,7 +111,7 @@ ntds2018enschede = [
      'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': False,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 13},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 13}]},
     {'contestant_id': 15, 'first_name': 'Marilyn', 'prefixes': None, 'last_name': 'Young',
@@ -119,7 +119,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 8},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 8}]},
     {'contestant_id': 16, 'first_name': 'Carl', 'prefixes': None, 'last_name': 'Rodriguez',
@@ -128,7 +128,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 17, 'first_name': 'Patricia', 'prefixes': None, 'last_name': 'Watson',
@@ -137,7 +137,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 29},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 29}]},
     {'contestant_id': 18, 'first_name': 'Angela', 'prefixes': None, 'last_name': 'Bailey',
@@ -145,7 +145,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': MAYBE, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 19, 'first_name': 'Judy', 'prefixes': None, 'last_name': 'Gray', 'email': 'judygray19@test.com',
@@ -153,7 +153,7 @@ ntds2018enschede = [
      'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': MAYBE,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 20, 'first_name': 'Deborah', 'prefixes': None, 'last_name': 'Smith',
@@ -161,7 +161,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 31},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 21, 'first_name': 'Steve', 'prefixes': None, 'last_name': 'Anderson',
@@ -170,7 +170,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 22, 'first_name': 'Denise', 'prefixes': None, 'last_name': 'Jenkins',
@@ -178,7 +178,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 73},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 73}]},
     {'contestant_id': 23, 'first_name': 'Arthur', 'prefixes': None, 'last_name': 'Price',
@@ -186,7 +186,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 24},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 24}]},
     {'contestant_id': 24, 'first_name': 'Margaret', 'prefixes': None, 'last_name': 'Simmons',
@@ -195,7 +195,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 23},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 23}]},
     {'contestant_id': 25, 'first_name': 'Albert', 'prefixes': None, 'last_name': 'Lee', 'email': 'albertlee25@test.com',
@@ -203,7 +203,7 @@ ntds2018enschede = [
      'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': False,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 26, 'first_name': 'Lori', 'prefixes': None, 'last_name': 'Patterson',
@@ -212,7 +212,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 27, 'first_name': 'Jonathan', 'prefixes': None, 'last_name': 'Taylor',
@@ -221,7 +221,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 28},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 28}]},
     {'contestant_id': 28, 'first_name': 'Ashley', 'prefixes': None, 'last_name': 'Long',
@@ -229,7 +229,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 27},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 27}]},
     {'contestant_id': 29, 'first_name': 'Amanda', 'prefixes': None, 'last_name': 'Adams',
@@ -237,7 +237,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 17},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 17}]},
     {'contestant_id': 30, 'first_name': 'Martin', 'prefixes': None, 'last_name': 'Walker',
@@ -245,7 +245,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': YES, 'emergency_response_officer': NO,
      'jury_ballroom': YES, 'jury_latin': YES, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 31, 'first_name': 'Martha', 'prefixes': None, 'last_name': 'Lewis',
@@ -253,7 +253,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': YES,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 20},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 32, 'first_name': 'Joseph', 'prefixes': None, 'last_name': 'Wright',
@@ -261,7 +261,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 33},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 33}]},
     {'contestant_id': 33, 'first_name': 'Mark', 'prefixes': None, 'last_name': 'Griffin',
@@ -269,7 +269,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 32},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 32}]},
     {'contestant_id': 34, 'first_name': 'Virginia', 'prefixes': None, 'last_name': 'Williams',
@@ -278,7 +278,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 35, 'first_name': 'Lois', 'prefixes': None, 'last_name': 'Martinez',
@@ -286,7 +286,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 36},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 36}]},
     {'contestant_id': 36, 'first_name': 'James', 'prefixes': None, 'last_name': 'Robinson',
@@ -295,7 +295,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 35},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 35}]},
     {'contestant_id': 37, 'first_name': 'Norma', 'prefixes': None, 'last_name': 'Henderson',
@@ -304,7 +304,7 @@ ntds2018enschede = [
      'emergency_response_officer': YES, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 38},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 38}]},
     {'contestant_id': 38, 'first_name': 'Dennis', 'prefixes': None, 'last_name': 'Flores',
@@ -312,7 +312,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 37},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 37}]},
     {'contestant_id': 39, 'first_name': 'Keith', 'prefixes': None, 'last_name': 'Rogers',
@@ -320,7 +320,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 40, 'first_name': 'Jeremy', 'prefixes': None, 'last_name': 'Green',
@@ -328,7 +328,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 41},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 41}]},
     {'contestant_id': 41, 'first_name': 'Stephanie', 'prefixes': None, 'last_name': 'Moore',
@@ -337,7 +337,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 40},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 40}]},
     {'contestant_id': 42, 'first_name': 'Bobby', 'prefixes': None, 'last_name': 'Jones',
@@ -345,7 +345,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 43, 'first_name': 'Michelle', 'prefixes': None, 'last_name': 'Hughes',
@@ -354,7 +354,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 44},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 44}]},
     {'contestant_id': 44, 'first_name': 'Shawn', 'prefixes': None, 'last_name': 'Thomas',
@@ -362,7 +362,7 @@ ntds2018enschede = [
      'diet_allergies': 'j', 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 43},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 43}]},
     {'contestant_id': 45, 'first_name': 'Steven', 'prefixes': None, 'last_name': 'Campbell',
@@ -371,7 +371,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 46},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 46}]},
     {'contestant_id': 46, 'first_name': 'Brian', 'prefixes': None, 'last_name': 'James',
@@ -379,7 +379,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 45}]},
     {'contestant_id': 47, 'first_name': 'Kathleen', 'prefixes': None, 'last_name': 'Miller',
@@ -388,7 +388,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 49},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 49}]},
     {'contestant_id': 48, 'first_name': 'Aaron', 'prefixes': None, 'last_name': 'Jackson',
@@ -396,7 +396,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 51},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 51}]},
     {'contestant_id': 49, 'first_name': 'Douglas', 'prefixes': None, 'last_name': 'Coleman',
@@ -405,7 +405,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 47},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 47}]},
     {'contestant_id': 50, 'first_name': 'Carol', 'prefixes': None, 'last_name': 'Roberts',
@@ -413,7 +413,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 52},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 52}]},
     {'contestant_id': 51, 'first_name': 'Stephen', 'prefixes': None, 'last_name': 'Butler',
@@ -421,7 +421,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 48},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 48}]},
     {'contestant_id': 52, 'first_name': 'Ruth', 'prefixes': None, 'last_name': 'Hernandez',
@@ -429,7 +429,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 50},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 50}]},
     {'contestant_id': 53, 'first_name': 'Louis', 'prefixes': None, 'last_name': 'Gonzalez',
@@ -437,7 +437,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 56},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 56}]},
     {'contestant_id': 54, 'first_name': 'Sarah', 'prefixes': None, 'last_name': 'Baker',
@@ -446,7 +446,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 55, 'first_name': 'Ronald', 'prefixes': None, 'last_name': 'Garcia',
@@ -455,7 +455,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 56, 'first_name': 'Daniel', 'prefixes': None, 'last_name': 'Torres',
@@ -463,7 +463,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 53},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 53}]},
     {'contestant_id': 57, 'first_name': 'Evelyn', 'prefixes': None, 'last_name': 'Sanders',
@@ -472,7 +472,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 58},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 58}]},
     {'contestant_id': 58, 'first_name': 'Sean', 'prefixes': None, 'last_name': 'Carter',
@@ -481,7 +481,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 57},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 57}]},
     {'contestant_id': 59, 'first_name': 'Janet', 'prefixes': None, 'last_name': 'Alexander',
@@ -490,7 +490,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 60},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 60}]},
     {'contestant_id': 60, 'first_name': 'Jesse', 'prefixes': None, 'last_name': 'Perez',
@@ -498,7 +498,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 59},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 59}]},
     {'contestant_id': 61, 'first_name': 'Phillip', 'prefixes': None, 'last_name': 'Russell',
@@ -507,7 +507,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 2}]},
     {'contestant_id': 62, 'first_name': 'Andrew', 'prefixes': None, 'last_name': 'Edwards',
@@ -516,7 +516,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 63},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 63}]},
     {'contestant_id': 63, 'first_name': 'Justin', 'prefixes': None, 'last_name': 'Cox', 'email': 'justincox63@test.com',
@@ -524,7 +524,7 @@ ntds2018enschede = [
      'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': False,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 62},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 62}]},
     {'contestant_id': 64, 'first_name': 'Jessica', 'prefixes': None, 'last_name': 'Ward',
@@ -532,7 +532,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 65, 'first_name': 'Jimmy', 'prefixes': None, 'last_name': 'Bell', 'email': 'jimmybell65@test.com',
@@ -540,7 +540,7 @@ ntds2018enschede = [
      'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 66, 'first_name': 'Fred', 'prefixes': None, 'last_name': 'Turner',
@@ -549,7 +549,7 @@ ntds2018enschede = [
      'emergency_response_officer': MAYBE, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 67, 'first_name': 'Donna', 'prefixes': None, 'last_name': 'Rivera',
@@ -558,7 +558,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 68, 'first_name': 'Joan', 'prefixes': None, 'last_name': 'Parker',
@@ -567,7 +567,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': MAYBE, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 69, 'first_name': 'Charles', 'prefixes': None, 'last_name': 'Collins',
@@ -576,7 +576,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 70},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 70}]},
     {'contestant_id': 70, 'first_name': 'Peter', 'prefixes': None, 'last_name': 'Martin',
@@ -584,7 +584,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 69},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 69}]},
     {'contestant_id': 71, 'first_name': 'Terry', 'prefixes': None, 'last_name': 'Thompson',
@@ -593,7 +593,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 72, 'first_name': 'Phyllis', 'prefixes': None, 'last_name': 'Washington',
@@ -602,7 +602,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 73, 'first_name': 'Ryan', 'prefixes': None, 'last_name': 'Hill', 'email': 'ryanhill73@test.com',
@@ -610,7 +610,7 @@ ntds2018enschede = [
      'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': False,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 22},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 22}]},
     {'contestant_id': 74, 'first_name': 'Laura', 'prefixes': None, 'last_name': 'Bennett',
@@ -618,7 +618,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 75, 'first_name': 'Scott', 'prefixes': None, 'last_name': 'Brooks',
@@ -626,7 +626,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 76},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 76}]},
     {'contestant_id': 76, 'first_name': 'Juan', 'prefixes': None, 'last_name': 'Cooper',
@@ -634,7 +634,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 75},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 75}]},
     {'contestant_id': 77, 'first_name': 'Kimberly', 'prefixes': None, 'last_name': 'Peterson',
@@ -643,7 +643,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 78, 'first_name': 'Linda', 'prefixes': None, 'last_name': 'Morris',
@@ -651,7 +651,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Enschede', 'volunteer': YES, 'first_aid': YES, 'emergency_response_officer': YES,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D,
-     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'sleeping_arrangements': False, 'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 79, 'first_name': 'Jane', 'prefixes': None, 'last_name': 'Richardson',
@@ -660,7 +660,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 80, 'first_name': 'Heather', 'prefixes': None, 'last_name': 'Stewart',
@@ -669,7 +669,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 81, 'first_name': 'Gary', 'prefixes': None, 'last_name': 'Powell',
@@ -677,7 +677,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Amsterdam', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 82, 'first_name': 'Chris', 'prefixes': None, 'last_name': 'Allen',
@@ -685,7 +685,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Amsterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 83, 'first_name': 'Annie', 'prefixes': None, 'last_name': 'Reed', 'email': 'anniereed83@test.com',
@@ -693,7 +693,7 @@ ntds2018enschede = [
      'team': 'Amsterdam', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 84, 'first_name': 'Maria', 'prefixes': None, 'last_name': 'Sanchez',
@@ -701,7 +701,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Amsterdam', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 85, 'first_name': 'Kevin', 'prefixes': None, 'last_name': 'Johnson',
@@ -709,7 +709,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Amsterdam', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 86, 'first_name': 'Teresa', 'prefixes': None, 'last_name': 'Morgan',
@@ -717,7 +717,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Amsterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 87, 'first_name': 'Benjamin', 'prefixes': None, 'last_name': 'Murphy',
@@ -726,7 +726,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 88, 'first_name': 'Anna', 'prefixes': None, 'last_name': 'Barnes',
@@ -734,7 +734,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Amsterdam', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 98},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 98}]},
     {'contestant_id': 89, 'first_name': 'Joshua', 'prefixes': None, 'last_name': 'Cook',
@@ -743,7 +743,7 @@ ntds2018enschede = [
      'emergency_response_officer': YES, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 90, 'first_name': 'Ruby', 'prefixes': None, 'last_name': 'Mitchell',
@@ -752,7 +752,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 91, 'first_name': 'Russell', 'prefixes': None, 'last_name': 'Clark',
@@ -760,7 +760,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Amsterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 92},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 92}]},
     {'contestant_id': 92, 'first_name': 'Samuel', 'prefixes': None, 'last_name': 'Phillips',
@@ -769,7 +769,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 91},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 91}]},
     {'contestant_id': 93, 'first_name': 'Rachel', 'prefixes': None, 'last_name': 'Howard',
@@ -778,7 +778,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 94, 'first_name': 'Craig', 'prefixes': None, 'last_name': 'Perry',
@@ -787,7 +787,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 95, 'first_name': 'Brandon', 'prefixes': None, 'last_name': 'Scott',
@@ -795,7 +795,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Amsterdam', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': MAYBE, 'jury_latin': MAYBE, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 96, 'first_name': 'Theresa', 'prefixes': None, 'last_name': 'Foster',
@@ -804,7 +804,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 101},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 101}]},
     {'contestant_id': 97, 'first_name': 'Shirley', 'prefixes': None, 'last_name': 'Wilson',
@@ -813,7 +813,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 98, 'first_name': 'Jeffrey', 'prefixes': None, 'last_name': 'King',
@@ -822,7 +822,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 88},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 88}]},
     {'contestant_id': 99, 'first_name': 'Cynthia', 'prefixes': None, 'last_name': 'Lopez',
@@ -830,7 +830,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Amsterdam', 'volunteer': YES, 'first_aid': YES, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 100, 'first_name': 'Paul', 'prefixes': None, 'last_name': 'Parker',
@@ -838,7 +838,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Amsterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 101, 'first_name': 'Thomas', 'prefixes': None, 'last_name': 'Mitchell',
@@ -847,7 +847,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 96},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 96}]},
     {'contestant_id': 102, 'first_name': 'Sandra', 'prefixes': None, 'last_name': 'Smith',
@@ -856,7 +856,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': MAYBE, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 103, 'first_name': 'Phillip', 'prefixes': None, 'last_name': 'Turner',
@@ -865,7 +865,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': MAYBE, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 104, 'first_name': 'Russell', 'prefixes': None, 'last_name': 'Simmons',
@@ -874,7 +874,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 105, 'first_name': 'Sharon', 'prefixes': None, 'last_name': 'Powell',
@@ -883,7 +883,7 @@ ntds2018enschede = [
      'emergency_response_officer': MAYBE, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 106, 'first_name': 'Chris', 'prefixes': None, 'last_name': 'Lopez',
@@ -892,7 +892,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 107, 'first_name': 'Kevin', 'prefixes': None, 'last_name': 'Brown',
@@ -900,7 +900,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Delft', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 108},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 108}]},
     {'contestant_id': 108, 'first_name': 'Julie', 'prefixes': None, 'last_name': 'Allen',
@@ -908,7 +908,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Delft', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 107},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 107}]},
     {'contestant_id': 109, 'first_name': 'Richard', 'prefixes': None, 'last_name': 'Hughes',
@@ -917,7 +917,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 110},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 110, 'first_name': 'Betty', 'prefixes': None, 'last_name': 'Richardson',
@@ -926,7 +926,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 109},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 111}]},
     {'contestant_id': 111, 'first_name': 'Anna', 'prefixes': None, 'last_name': 'Harris',
@@ -934,7 +934,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Delft', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 112},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 110}]},
     {'contestant_id': 112, 'first_name': 'Terry', 'prefixes': None, 'last_name': 'Ramirez',
@@ -943,7 +943,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 111},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 113, 'first_name': 'Jeffrey', 'prefixes': None, 'last_name': 'Young',
@@ -952,7 +952,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 114, 'first_name': 'Justin', 'prefixes': None, 'last_name': 'Martin',
@@ -961,7 +961,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 115},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 118}]},
     {'contestant_id': 115, 'first_name': 'Diana', 'prefixes': None, 'last_name': 'Morgan',
@@ -970,7 +970,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 114},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 116, 'first_name': 'Raymond', 'prefixes': None, 'last_name': 'Morris',
@@ -979,7 +979,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False,
                        'partner': None}]},
@@ -989,7 +989,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False,
                        'partner': None}]},
@@ -999,7 +999,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 114}]},
     {'contestant_id': 119, 'first_name': 'Gerald', 'prefixes': None, 'last_name': 'Anderson',
@@ -1008,7 +1008,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 120},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 120, 'first_name': 'Frances', 'prefixes': None, 'last_name': 'Miller',
@@ -1017,7 +1017,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 119},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 121, 'first_name': 'Denise', 'prefixes': None, 'last_name': 'Russell',
@@ -1026,7 +1026,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 122},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 122}]},
     {'contestant_id': 122, 'first_name': 'Pamela', 'prefixes': None, 'last_name': 'Coleman',
@@ -1035,7 +1035,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 121},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 121}]},
     {'contestant_id': 123, 'first_name': 'Debra', 'prefixes': None, 'last_name': 'Thomas',
@@ -1043,7 +1043,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Delft', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': YES, 'jury_latin': YES, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 124, 'first_name': 'Tammy', 'prefixes': None, 'last_name': 'Carter',
@@ -1052,7 +1052,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 125, 'first_name': 'Jeremy', 'prefixes': None, 'last_name': 'Brooks',
@@ -1061,7 +1061,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 126, 'first_name': 'Sarah', 'prefixes': None, 'last_name': 'Gonzalez',
@@ -1070,7 +1070,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 127, 'first_name': 'Bonnie', 'prefixes': None, 'last_name': 'Wood',
@@ -1079,7 +1079,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 128, 'first_name': 'Evelyn', 'prefixes': None, 'last_name': 'Wilson',
@@ -1088,7 +1088,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 129},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 129, 'first_name': 'Bruce', 'prefixes': None, 'last_name': 'Griffin',
@@ -1097,7 +1097,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 128},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 130, 'first_name': 'Stephanie', 'prefixes': None, 'last_name': 'Lewis',
@@ -1106,7 +1106,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 184},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 184}]},
     {'contestant_id': 131, 'first_name': 'Donna', 'prefixes': None, 'last_name': 'Baker',
@@ -1114,7 +1114,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 136},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 136}]},
     {'contestant_id': 132, 'first_name': 'Mildred', 'prefixes': None, 'last_name': 'Gray',
@@ -1123,7 +1123,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 173},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 173}]},
     {'contestant_id': 133, 'first_name': 'Peter', 'prefixes': None, 'last_name': 'Thompson',
@@ -1132,7 +1132,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 147},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 147}]},
     {'contestant_id': 134, 'first_name': 'Aaron', 'prefixes': None, 'last_name': 'Cook',
@@ -1140,7 +1140,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 164},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 164}]},
     {'contestant_id': 135, 'first_name': 'Daniel', 'prefixes': None, 'last_name': 'Garcia',
@@ -1149,7 +1149,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 162},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 162}]},
     {'contestant_id': 136, 'first_name': 'Marilyn', 'prefixes': None, 'last_name': 'Patterson',
@@ -1158,7 +1158,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 131},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 131}]},
     {'contestant_id': 137, 'first_name': 'Ashley', 'prefixes': None, 'last_name': 'Perez',
@@ -1167,7 +1167,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 152}]},
     {'contestant_id': 138, 'first_name': 'Brandon', 'prefixes': None, 'last_name': 'Stewart',
@@ -1176,7 +1176,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 158}]},
     {'contestant_id': 139, 'first_name': 'Edward', 'prefixes': None, 'last_name': 'Hernandez',
@@ -1185,7 +1185,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 167},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 167}]},
     {'contestant_id': 140, 'first_name': 'Brian', 'prefixes': None, 'last_name': 'Nelson',
@@ -1194,7 +1194,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 141, 'first_name': 'Joan', 'prefixes': None, 'last_name': 'Campbell',
@@ -1203,7 +1203,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 188},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 188}]},
     {'contestant_id': 142, 'first_name': 'Elizabeth', 'prefixes': None, 'last_name': 'Flores',
@@ -1212,7 +1212,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 174},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 174}]},
     {'contestant_id': 143, 'first_name': 'Jennifer', 'prefixes': None, 'last_name': 'Hall',
@@ -1221,7 +1221,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 149},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 149}]},
     {'contestant_id': 144, 'first_name': 'Judith', 'prefixes': None, 'last_name': 'Kelly',
@@ -1230,7 +1230,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 155},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 155}]},
     {'contestant_id': 145, 'first_name': 'Melissa', 'prefixes': None, 'last_name': 'Ward',
@@ -1238,7 +1238,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 192},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 192}]},
     {'contestant_id': 146, 'first_name': 'Willie', 'prefixes': None, 'last_name': 'Green',
@@ -1246,7 +1246,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 147, 'first_name': 'Charles', 'prefixes': None, 'last_name': 'Peterson',
@@ -1255,7 +1255,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 133},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 133}]},
     {'contestant_id': 148, 'first_name': 'Anthony', 'prefixes': None, 'last_name': 'Reed',
@@ -1263,7 +1263,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 149, 'first_name': 'Marie', 'prefixes': None, 'last_name': 'Ross',
@@ -1271,7 +1271,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 143},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 143}]},
     {'contestant_id': 150, 'first_name': 'Janice', 'prefixes': None, 'last_name': 'Jackson',
@@ -1280,7 +1280,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 183},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 183}]},
     {'contestant_id': 151, 'first_name': 'Christopher', 'prefixes': None, 'last_name': 'Taylor',
@@ -1289,7 +1289,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 152, 'first_name': 'Irene', 'prefixes': None, 'last_name': 'Alexander',
@@ -1298,7 +1298,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 172},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 137}]},
     {'contestant_id': 153, 'first_name': 'Phyllis', 'prefixes': None, 'last_name': 'Clark',
@@ -1307,7 +1307,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 154, 'first_name': 'Carlos', 'prefixes': None, 'last_name': 'King',
@@ -1316,7 +1316,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True,
                        'partner': None}]},
@@ -1326,7 +1326,7 @@ ntds2018enschede = [
      'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO,
      'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 144},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 144}]},
     {'contestant_id': 156, 'first_name': 'Cynthia', 'prefixes': None, 'last_name': 'Rivera',
@@ -1335,7 +1335,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 157},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 157}]},
     {'contestant_id': 157, 'first_name': 'John', 'prefixes': None, 'last_name': 'Scott',
@@ -1343,7 +1343,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 156},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 156}]},
     {'contestant_id': 158, 'first_name': 'Fred', 'prefixes': None, 'last_name': 'Watson',
@@ -1351,7 +1351,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 138}]},
     {'contestant_id': 159, 'first_name': 'Stephen', 'prefixes': None, 'last_name': 'Rodriguez',
@@ -1360,7 +1360,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 160, 'first_name': 'Earl', 'prefixes': None, 'last_name': 'Foster',
@@ -1368,7 +1368,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 176},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 176}]},
     {'contestant_id': 161, 'first_name': 'Kathryn', 'prefixes': None, 'last_name': 'Sanders',
@@ -1377,7 +1377,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 191},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 191}]},
     {'contestant_id': 162, 'first_name': 'Bobby', 'prefixes': None, 'last_name': 'Cox', 'email': 'bobbycox162@test.com',
@@ -1385,7 +1385,7 @@ ntds2018enschede = [
      'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 135},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 135}]},
     {'contestant_id': 163, 'first_name': 'Walter', 'prefixes': None, 'last_name': 'Sanchez',
@@ -1394,7 +1394,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 164, 'first_name': 'Christina', 'prefixes': None, 'last_name': 'Bell',
@@ -1403,7 +1403,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 134},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 134}]},
     {'contestant_id': 165, 'first_name': 'Howard', 'prefixes': None, 'last_name': 'Barnes',
@@ -1412,7 +1412,7 @@ ntds2018enschede = [
      'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO,
      'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 166, 'first_name': 'Joshua', 'prefixes': None, 'last_name': 'Jenkins',
@@ -1421,7 +1421,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 167, 'first_name': 'Harold', 'prefixes': None, 'last_name': 'Bailey',
@@ -1430,7 +1430,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 139},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 139}]},
     {'contestant_id': 168, 'first_name': 'Shirley', 'prefixes': None, 'last_name': 'Phillips',
@@ -1439,7 +1439,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 178},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 178}]},
     {'contestant_id': 169, 'first_name': 'Steve', 'prefixes': None, 'last_name': 'Walker',
@@ -1448,7 +1448,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 170, 'first_name': 'Gary', 'prefixes': None, 'last_name': 'Lee', 'email': 'garylee170@test.com',
@@ -1456,7 +1456,7 @@ ntds2018enschede = [
      'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': YES,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 171, 'first_name': 'Roy', 'prefixes': None, 'last_name': 'Williams',
@@ -1465,7 +1465,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 172, 'first_name': 'Susan', 'prefixes': None, 'last_name': 'Collins',
@@ -1474,7 +1474,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 152},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 173, 'first_name': 'Randy', 'prefixes': None, 'last_name': 'Evans',
@@ -1482,7 +1482,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 132},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 132}]},
     {'contestant_id': 174, 'first_name': 'Ronald', 'prefixes': None, 'last_name': 'Price',
@@ -1491,7 +1491,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 142},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 142}]},
     {'contestant_id': 175, 'first_name': 'Gloria', 'prefixes': None, 'last_name': 'Adams',
@@ -1499,7 +1499,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 181},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 181}]},
     {'contestant_id': 176, 'first_name': 'Jerry', 'prefixes': None, 'last_name': 'Wright',
@@ -1508,7 +1508,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 160},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 160}]},
     {'contestant_id': 177, 'first_name': 'Keith', 'prefixes': None, 'last_name': 'Henderson',
@@ -1517,7 +1517,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 178, 'first_name': 'Victor', 'prefixes': None, 'last_name': 'Martinez',
@@ -1526,7 +1526,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 168},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 168}]},
     {'contestant_id': 179, 'first_name': 'Jesse', 'prefixes': None, 'last_name': 'Robinson',
@@ -1535,7 +1535,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 186}]},
     {'contestant_id': 180, 'first_name': 'Kathy', 'prefixes': None, 'last_name': 'Torres',
@@ -1544,7 +1544,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 181, 'first_name': 'Joe', 'prefixes': None, 'last_name': 'Rogers',
@@ -1552,7 +1552,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 175},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 175}]},
     {'contestant_id': 182, 'first_name': 'Maria', 'prefixes': None, 'last_name': 'Edwards',
@@ -1561,7 +1561,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 187},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 187}]},
     {'contestant_id': 183, 'first_name': 'Nicole', 'prefixes': None, 'last_name': 'Perry',
@@ -1569,7 +1569,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Nijmegen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 150},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 150}]},
     {'contestant_id': 184, 'first_name': 'Rachel', 'prefixes': None, 'last_name': 'Roberts',
@@ -1578,7 +1578,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 130},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 130}]},
     {'contestant_id': 185, 'first_name': 'Adam', 'prefixes': None, 'last_name': 'Washington',
@@ -1587,7 +1587,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 189},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 189}]},
     {'contestant_id': 186, 'first_name': 'Jacqueline', 'prefixes': None, 'last_name': 'Jones',
@@ -1596,7 +1596,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False,
                        'partner': 179}]},
@@ -1606,7 +1606,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 182},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 182}]},
     {'contestant_id': 188, 'first_name': 'Kelly', 'prefixes': None, 'last_name': 'Bryant',
@@ -1614,7 +1614,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Nijmegen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 141},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 141}]},
     {'contestant_id': 189, 'first_name': 'Jonathan', 'prefixes': None, 'last_name': 'Moore',
@@ -1623,7 +1623,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 185},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 185}]},
     {'contestant_id': 190, 'first_name': 'Patricia', 'prefixes': None, 'last_name': 'Diaz',
@@ -1632,7 +1632,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 191, 'first_name': 'Juan', 'prefixes': None, 'last_name': 'Davis',
@@ -1641,7 +1641,7 @@ ntds2018enschede = [
      'emergency_response_officer': YES, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 161},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 161}]},
     {'contestant_id': 192, 'first_name': 'Christine', 'prefixes': None, 'last_name': 'Bennett',
@@ -1650,7 +1650,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 145},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 145}]},
     {'contestant_id': 193, 'first_name': 'Eugene', 'prefixes': None, 'last_name': 'Butler',
@@ -1658,7 +1658,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Rotterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 194, 'first_name': 'Anne', 'prefixes': None, 'last_name': 'Long', 'email': 'annelong194@test.com',
@@ -1666,7 +1666,7 @@ ntds2018enschede = [
      'team': 'Rotterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 201},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 195, 'first_name': 'Samuel', 'prefixes': None, 'last_name': 'Murphy',
@@ -1675,7 +1675,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 196, 'first_name': 'Johnny', 'prefixes': None, 'last_name': 'Gonzales',
@@ -1684,7 +1684,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 197, 'first_name': 'Harry', 'prefixes': None, 'last_name': 'Johnson',
@@ -1693,7 +1693,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 198},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 198}]},
     {'contestant_id': 198, 'first_name': 'Deborah', 'prefixes': None, 'last_name': 'Cooper',
@@ -1702,7 +1702,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 197},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 197}]},
     {'contestant_id': 199, 'first_name': 'Howard', 'prefixes': None, 'last_name': 'Baker',
@@ -1711,7 +1711,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False,
                        'partner': 200}]},
@@ -1721,7 +1721,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False,
                        'partner': 199}]},
@@ -1731,7 +1731,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': YES, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 194},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 202, 'first_name': 'Bruce', 'prefixes': None, 'last_name': 'White',
@@ -1740,7 +1740,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 203},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 203}]},
     {'contestant_id': 203, 'first_name': 'Melissa', 'prefixes': None, 'last_name': 'James',
@@ -1749,7 +1749,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 202},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 202}]},
     {'contestant_id': 204, 'first_name': 'Gary', 'prefixes': None, 'last_name': 'Butler',
@@ -1758,7 +1758,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 205},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 205}]},
     {'contestant_id': 205, 'first_name': 'Edward', 'prefixes': None, 'last_name': 'Wilson',
@@ -1767,7 +1767,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 204},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 204}]},
     {'contestant_id': 206, 'first_name': 'Bobby', 'prefixes': None, 'last_name': 'Ward',
@@ -1776,7 +1776,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': YES, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True,
                        'partner': None}]},
@@ -1786,7 +1786,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 208, 'first_name': 'Ralph', 'prefixes': None, 'last_name': 'Bell',
@@ -1795,7 +1795,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': YES, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True,
                        'partner': None}]},
@@ -1805,7 +1805,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 210, 'first_name': 'Jessica', 'prefixes': None, 'last_name': 'Patterson',
@@ -1814,7 +1814,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 211, 'first_name': 'George', 'prefixes': None, 'last_name': 'Cook',
@@ -1822,7 +1822,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Rotterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 212},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 212}]},
     {'contestant_id': 212, 'first_name': 'Kelly', 'prefixes': None, 'last_name': 'Russell',
@@ -1831,7 +1831,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 211},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 211}]},
     {'contestant_id': 213, 'first_name': 'Ashley', 'prefixes': None, 'last_name': 'Martinez',
@@ -1840,7 +1840,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 214},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 214}]},
     {'contestant_id': 214, 'first_name': 'Lillian', 'prefixes': None, 'last_name': 'Lewis',
@@ -1849,7 +1849,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 213},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 213}]},
     {'contestant_id': 215, 'first_name': 'William', 'prefixes': None, 'last_name': 'King',
@@ -1857,7 +1857,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Rotterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 216},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 216}]},
     {'contestant_id': 216, 'first_name': 'Kevin', 'prefixes': None, 'last_name': 'Roberts',
@@ -1866,7 +1866,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 215},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 215}]},
     {'contestant_id': 217, 'first_name': 'Stephen', 'prefixes': None, 'last_name': 'Thomas',
@@ -1875,7 +1875,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 218},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 218}]},
     {'contestant_id': 218, 'first_name': 'Jason', 'prefixes': None, 'last_name': 'Carter',
@@ -1883,7 +1883,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Rotterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 217},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 217}]},
     {'contestant_id': 219, 'first_name': 'Laura', 'prefixes': None, 'last_name': 'Hughes',
@@ -1891,7 +1891,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Rotterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 220},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 220}]},
     {'contestant_id': 220, 'first_name': 'Julia', 'prefixes': None, 'last_name': 'Taylor',
@@ -1899,7 +1899,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Rotterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 219},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 219}]},
     {'contestant_id': 221, 'first_name': 'Lois', 'prefixes': None, 'last_name': 'Green',
@@ -1907,7 +1907,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Rotterdam', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 222, 'first_name': 'Michelle', 'prefixes': None, 'last_name': 'Robinson',
@@ -1916,7 +1916,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 223, 'first_name': 'Deborah', 'prefixes': None, 'last_name': 'Bennett',
@@ -1925,7 +1925,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 224},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 224}]},
     {'contestant_id': 224, 'first_name': 'Kathy', 'prefixes': None, 'last_name': 'Campbell',
@@ -1934,7 +1934,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 223},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 223}]},
     {'contestant_id': 225, 'first_name': 'Douglas', 'prefixes': None, 'last_name': 'Gonzalez',
@@ -1943,7 +1943,7 @@ ntds2018enschede = [
      'emergency_response_officer': YES, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 229},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 226, 'first_name': 'Catherine', 'prefixes': None, 'last_name': 'Brooks',
@@ -1952,7 +1952,7 @@ ntds2018enschede = [
      'emergency_response_officer': YES, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 227, 'first_name': 'Julie', 'prefixes': None, 'last_name': 'Rodriguez',
@@ -1961,7 +1961,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 231},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 231}]},
     {'contestant_id': 228, 'first_name': 'Dennis', 'prefixes': None, 'last_name': 'Walker',
@@ -1970,7 +1970,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 229, 'first_name': 'Dorothy', 'prefixes': None, 'last_name': 'Gonzales',
@@ -1979,7 +1979,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 225},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 230, 'first_name': 'Jonathan', 'prefixes': None, 'last_name': 'Hall',
@@ -1988,7 +1988,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 232},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 232}]},
     {'contestant_id': 231, 'first_name': 'Sarah', 'prefixes': None, 'last_name': 'Anderson',
@@ -1997,7 +1997,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 227},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 227}]},
     {'contestant_id': 232, 'first_name': 'Diana', 'prefixes': None, 'last_name': 'Wright',
@@ -2006,7 +2006,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 230},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 230}]},
     {'contestant_id': 233, 'first_name': 'Debra', 'prefixes': None, 'last_name': 'Cox', 'email': 'debracox233@test.com',
@@ -2014,7 +2014,7 @@ ntds2018enschede = [
      'team': 'Eindhoven', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 234, 'first_name': 'Maria', 'prefixes': None, 'last_name': 'Jenkins',
@@ -2023,7 +2023,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 235, 'first_name': 'Paula', 'prefixes': None, 'last_name': 'Perez',
@@ -2032,7 +2032,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True,
                        'partner': None}]},
@@ -2042,7 +2042,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 237, 'first_name': 'Brandon', 'prefixes': None, 'last_name': 'Scott',
@@ -2051,7 +2051,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 260},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 260}]},
     {'contestant_id': 238, 'first_name': 'Gerald', 'prefixes': None, 'last_name': 'Lopez',
@@ -2060,7 +2060,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 239, 'first_name': 'Beverly', 'prefixes': None, 'last_name': 'Peterson',
@@ -2069,7 +2069,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 240, 'first_name': 'Lawrence', 'prefixes': None, 'last_name': 'Jones',
@@ -2078,7 +2078,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 241},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 241}]},
     {'contestant_id': 241, 'first_name': 'Sara', 'prefixes': None, 'last_name': 'Nelson',
@@ -2087,7 +2087,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 240},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 240}]},
     {'contestant_id': 242, 'first_name': 'Teresa', 'prefixes': None, 'last_name': 'Martin',
@@ -2096,7 +2096,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 243, 'first_name': 'Billy', 'prefixes': None, 'last_name': 'Gray',
@@ -2105,7 +2105,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 244, 'first_name': 'Carol', 'prefixes': None, 'last_name': 'Murphy',
@@ -2114,7 +2114,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 245, 'first_name': 'Harry', 'prefixes': None, 'last_name': 'Brown',
@@ -2122,7 +2122,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Leiden', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 246, 'first_name': 'Linda', 'prefixes': None, 'last_name': 'Kelly',
@@ -2130,7 +2130,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Leiden', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 261},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 261}]},
     {'contestant_id': 247, 'first_name': 'Lisa', 'prefixes': None, 'last_name': 'Garcia',
@@ -2138,7 +2138,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Leiden', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 251},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 251}]},
     {'contestant_id': 248, 'first_name': 'Virginia', 'prefixes': None, 'last_name': 'Price',
@@ -2147,7 +2147,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 249, 'first_name': 'Mildred', 'prefixes': None, 'last_name': 'Sanchez',
@@ -2156,7 +2156,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 250, 'first_name': 'Thomas', 'prefixes': None, 'last_name': 'Stewart',
@@ -2165,7 +2165,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 251, 'first_name': 'Norma', 'prefixes': None, 'last_name': 'Torres',
@@ -2174,7 +2174,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 247},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 247}]},
     {'contestant_id': 252, 'first_name': 'Martin', 'prefixes': None, 'last_name': 'Parker',
@@ -2183,7 +2183,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 253},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 253}]},
     {'contestant_id': 253, 'first_name': 'Matthew', 'prefixes': None, 'last_name': 'Diaz',
@@ -2191,7 +2191,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Leiden', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 252},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 252}]},
     {'contestant_id': 254, 'first_name': 'Carl', 'prefixes': None, 'last_name': 'Simmons',
@@ -2200,7 +2200,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 255},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 255}]},
     {'contestant_id': 255, 'first_name': 'Kathryn', 'prefixes': None, 'last_name': 'Mitchell',
@@ -2209,7 +2209,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 254},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 254}]},
     {'contestant_id': 256, 'first_name': 'Rachel', 'prefixes': None, 'last_name': 'Young',
@@ -2218,7 +2218,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 257, 'first_name': 'Amanda', 'prefixes': None, 'last_name': 'Washington',
@@ -2227,7 +2227,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': YES, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 258, 'first_name': 'Kathleen', 'prefixes': None, 'last_name': 'Foster',
@@ -2236,7 +2236,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True,
                        'partner': None}]},
@@ -2246,7 +2246,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 260, 'first_name': 'Rebecca', 'prefixes': None, 'last_name': 'Henderson',
@@ -2255,7 +2255,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 237},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 237}]},
     {'contestant_id': 261, 'first_name': 'Katherine', 'prefixes': None, 'last_name': 'Turner',
@@ -2264,7 +2264,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 246},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 246}]},
     {'contestant_id': 262, 'first_name': 'Evelyn', 'prefixes': None, 'last_name': 'Phillips',
@@ -2273,7 +2273,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 263, 'first_name': 'Jean', 'prefixes': None, 'last_name': 'Flores',
@@ -2282,7 +2282,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 264},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 264}]},
     {'contestant_id': 264, 'first_name': 'Annie', 'prefixes': None, 'last_name': 'Howard',
@@ -2291,7 +2291,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 263},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 263}]},
     {'contestant_id': 265, 'first_name': 'Robert', 'prefixes': None, 'last_name': 'Edwards',
@@ -2300,7 +2300,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 266},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 266}]},
     {'contestant_id': 266, 'first_name': 'Jeffrey', 'prefixes': None, 'last_name': 'Ross',
@@ -2309,7 +2309,7 @@ ntds2018enschede = [
      'first_aid': MAYBE, 'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO,
      'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 265},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 265}]},
     {'contestant_id': 267, 'first_name': 'Louis', 'prefixes': None, 'last_name': 'Collins',
@@ -2318,7 +2318,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': YES, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 268, 'first_name': 'John', 'prefixes': None, 'last_name': 'Watson',
@@ -2327,7 +2327,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 269},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 269}]},
     {'contestant_id': 269, 'first_name': 'Jesse', 'prefixes': None, 'last_name': 'Morgan',
@@ -2336,7 +2336,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 268},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 268}]},
     {'contestant_id': 270, 'first_name': 'Betty', 'prefixes': None, 'last_name': 'Jackson',
@@ -2345,7 +2345,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 271},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 271}]},
     {'contestant_id': 271, 'first_name': 'Willie', 'prefixes': None, 'last_name': 'Allen',
@@ -2354,7 +2354,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 270},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 270}]},
     {'contestant_id': 272, 'first_name': 'Wayne', 'prefixes': None, 'last_name': 'Richardson',
@@ -2363,7 +2363,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': YES, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True,
                        'partner': None}]},
@@ -2373,7 +2373,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 274, 'first_name': 'Paul', 'prefixes': None, 'last_name': 'Perry',
@@ -2382,7 +2382,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 275},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 275}]},
     {'contestant_id': 275, 'first_name': 'Timothy', 'prefixes': None, 'last_name': 'Lee',
@@ -2390,7 +2390,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Maastricht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 274},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 274}]},
     {'contestant_id': 276, 'first_name': 'Chris', 'prefixes': None, 'last_name': 'Bryant',
@@ -2399,7 +2399,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 277, 'first_name': 'Phyllis', 'prefixes': None, 'last_name': 'Hernandez',
@@ -2408,7 +2408,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 278},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 278}]},
     {'contestant_id': 278, 'first_name': 'Ann', 'prefixes': None, 'last_name': 'Long', 'email': 'annlong278@test.com',
@@ -2416,7 +2416,7 @@ ntds2018enschede = [
      'team': 'Maastricht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 277},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 277}]},
     {'contestant_id': 279, 'first_name': 'Christina', 'prefixes': None, 'last_name': 'Clark',
@@ -2425,7 +2425,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 285},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 285}]},
     {'contestant_id': 280, 'first_name': 'Joe', 'prefixes': None, 'last_name': 'Miller',
@@ -2433,7 +2433,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 282},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 282}]},
     {'contestant_id': 281, 'first_name': 'Ronald', 'prefixes': None, 'last_name': 'Bailey',
@@ -2442,7 +2442,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 282, 'first_name': 'Mark', 'prefixes': None, 'last_name': 'Evans',
@@ -2450,7 +2450,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 280},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 280}]},
     {'contestant_id': 283, 'first_name': 'Angela', 'prefixes': None, 'last_name': 'Williams',
@@ -2459,7 +2459,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 284, 'first_name': 'Clarence', 'prefixes': None, 'last_name': 'Ramirez',
@@ -2468,7 +2468,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 288},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 288}]},
     {'contestant_id': 285, 'first_name': 'Louise', 'prefixes': None, 'last_name': 'Morris',
@@ -2477,7 +2477,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'MM'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'MM'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 279},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 279}]},
     {'contestant_id': 286, 'first_name': 'Alice', 'prefixes': None, 'last_name': 'Alexander',
@@ -2486,7 +2486,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 290},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 287, 'first_name': 'Emily', 'prefixes': None, 'last_name': 'Moore',
@@ -2494,7 +2494,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'ML'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'ML'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 288, 'first_name': 'Nicole', 'prefixes': None, 'last_name': 'Barnes',
@@ -2503,7 +2503,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 284},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 284}]},
     {'contestant_id': 289, 'first_name': 'Shawn', 'prefixes': None, 'last_name': 'Rogers',
@@ -2512,7 +2512,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 299},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 299}]},
     {'contestant_id': 290, 'first_name': 'Carolyn', 'prefixes': None, 'last_name': 'Hill',
@@ -2520,7 +2520,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 286},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 313}]},
     {'contestant_id': 291, 'first_name': 'Russell', 'prefixes': None, 'last_name': 'Rivera',
@@ -2529,7 +2529,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 292, 'first_name': 'Anthony', 'prefixes': None, 'last_name': 'Adams',
@@ -2538,7 +2538,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 293, 'first_name': 'Jack', 'prefixes': None, 'last_name': 'Wood', 'email': 'jackwood293@test.com',
@@ -2547,7 +2547,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 294, 'first_name': 'Barbara', 'prefixes': None, 'last_name': 'Johnson',
@@ -2556,7 +2556,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 295},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 295}]},
     {'contestant_id': 295, 'first_name': 'Scott', 'prefixes': None, 'last_name': 'Reed',
@@ -2565,7 +2565,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 294},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 294}]},
     {'contestant_id': 296, 'first_name': 'Doris', 'prefixes': None, 'last_name': 'Smith',
@@ -2573,7 +2573,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 297}]},
     {'contestant_id': 297, 'first_name': 'Denise', 'prefixes': None, 'last_name': 'Griffin',
@@ -2582,7 +2582,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 296}]},
     {'contestant_id': 298, 'first_name': 'Peter', 'prefixes': None, 'last_name': 'Hernandez',
@@ -2591,7 +2591,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 299, 'first_name': 'Aaron', 'prefixes': None, 'last_name': 'Rogers',
@@ -2600,7 +2600,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 289},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 289}]},
     {'contestant_id': 300, 'first_name': 'Laura', 'prefixes': None, 'last_name': 'Lopez',
@@ -2608,7 +2608,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 301, 'first_name': 'Louis', 'prefixes': None, 'last_name': 'Long',
@@ -2617,7 +2617,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 309},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 309}]},
     {'contestant_id': 302, 'first_name': 'Cynthia', 'prefixes': None, 'last_name': 'Thompson',
@@ -2626,7 +2626,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 303},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 303}]},
     {'contestant_id': 303, 'first_name': 'Gregory', 'prefixes': None, 'last_name': 'Adams',
@@ -2635,7 +2635,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'MM'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'MM'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 302},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 302}]},
     {'contestant_id': 304, 'first_name': 'Marie', 'prefixes': None, 'last_name': 'Alexander',
@@ -2644,7 +2644,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 305, 'first_name': 'Juan', 'prefixes': None, 'last_name': 'Gray', 'email': 'juangray305@test.com',
@@ -2652,7 +2652,7 @@ ntds2018enschede = [
      'team': 'Groningen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 306},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 306}]},
     {'contestant_id': 306, 'first_name': 'Cheryl', 'prefixes': None, 'last_name': 'Morgan',
@@ -2661,7 +2661,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 305},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 305}]},
     {'contestant_id': 307, 'first_name': 'Susan', 'prefixes': None, 'last_name': 'Foster',
@@ -2669,7 +2669,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 308, 'first_name': 'Carolyn', 'prefixes': None, 'last_name': 'Ross',
@@ -2677,7 +2677,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 309, 'first_name': 'Steven', 'prefixes': None, 'last_name': 'Thomas',
@@ -2686,7 +2686,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 301},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 301}]},
     {'contestant_id': 310, 'first_name': 'Margaret', 'prefixes': None, 'last_name': 'Williams',
@@ -2695,7 +2695,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 311, 'first_name': 'Catherine', 'prefixes': None, 'last_name': 'Carter',
@@ -2704,7 +2704,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 312, 'first_name': 'Gerald', 'prefixes': None, 'last_name': 'Gonzales',
@@ -2713,7 +2713,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 313, 'first_name': 'Charles', 'prefixes': None, 'last_name': 'Reed',
@@ -2721,7 +2721,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 290}]},
     {'contestant_id': 314, 'first_name': 'Eric', 'prefixes': None, 'last_name': 'Ramirez',
@@ -2729,7 +2729,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 315, 'first_name': 'Fred', 'prefixes': None, 'last_name': 'Campbell',
@@ -2738,7 +2738,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 316, 'first_name': 'Katherine', 'prefixes': None, 'last_name': 'Moore',
@@ -2747,7 +2747,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 317, 'first_name': 'Diana', 'prefixes': None, 'last_name': 'King',
@@ -2755,7 +2755,7 @@ ntds2018enschede = [
      'diet_allergies': 'Vega', 'team': 'Groningen', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 318},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 318}]},
     {'contestant_id': 318, 'first_name': 'Sarah', 'prefixes': None, 'last_name': 'Harris',
@@ -2764,7 +2764,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 317},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 317}]},
     {'contestant_id': 319, 'first_name': 'Linda', 'prefixes': None, 'last_name': 'Cooper',
@@ -2772,7 +2772,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 320, 'first_name': 'Ralph', 'prefixes': None, 'last_name': 'Green',
@@ -2780,7 +2780,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Groningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 422},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 422}]},
     {'contestant_id': 321, 'first_name': 'Norma', 'prefixes': None, 'last_name': 'Bennett',
@@ -2789,7 +2789,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 322},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 322}]},
     {'contestant_id': 322, 'first_name': 'Theresa', 'prefixes': None, 'last_name': 'Torres',
@@ -2798,7 +2798,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 321},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 321}]},
     {'contestant_id': 323, 'first_name': 'Julia', 'prefixes': None, 'last_name': 'Johnson',
@@ -2807,7 +2807,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 324, 'first_name': 'Frances', 'prefixes': None, 'last_name': 'Anderson',
@@ -2816,7 +2816,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 325},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 325}]},
     {'contestant_id': 325, 'first_name': 'Todd', 'prefixes': None, 'last_name': 'Washington',
@@ -2825,7 +2825,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 324},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 324}]},
     {'contestant_id': 326, 'first_name': 'Evelyn', 'prefixes': None, 'last_name': 'Patterson',
@@ -2834,7 +2834,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 327, 'first_name': 'Arthur', 'prefixes': None, 'last_name': 'Scott',
@@ -2843,7 +2843,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 341}]},
     {'contestant_id': 328, 'first_name': 'Jesse', 'prefixes': None, 'last_name': 'Morris',
@@ -2851,7 +2851,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Utrecht', 'volunteer': MAYBE, 'first_aid': YES, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 353},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 353}]},
     {'contestant_id': 329, 'first_name': 'Anne', 'prefixes': None, 'last_name': 'Rodriguez',
@@ -2860,7 +2860,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 330, 'first_name': 'Chris', 'prefixes': None, 'last_name': 'Bell',
@@ -2869,7 +2869,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 344},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 331, 'first_name': 'Larry', 'prefixes': None, 'last_name': 'Diaz',
@@ -2878,7 +2878,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 345},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 345}]},
     {'contestant_id': 332, 'first_name': 'Robert', 'prefixes': None, 'last_name': 'Jenkins',
@@ -2887,7 +2887,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 348},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 348}]},
     {'contestant_id': 333, 'first_name': 'Johnny', 'prefixes': None, 'last_name': 'Barnes',
@@ -2896,7 +2896,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 334, 'first_name': 'Jeremy', 'prefixes': None, 'last_name': 'Stewart',
@@ -2905,7 +2905,7 @@ ntds2018enschede = [
      'emergency_response_officer': YES, 'jury_ballroom': NO, 'jury_latin': YES, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True,
                        'partner': None}]},
@@ -2915,7 +2915,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': MAYBE, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 336, 'first_name': 'Phillip', 'prefixes': None, 'last_name': 'Phillips',
@@ -2924,7 +2924,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 346},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 346}]},
     {'contestant_id': 337, 'first_name': 'Joan', 'prefixes': None, 'last_name': 'Brooks',
@@ -2932,7 +2932,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': MAYBE, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 338, 'first_name': 'Christine', 'prefixes': None, 'last_name': 'Wilson',
@@ -2941,7 +2941,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 365},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 365}]},
     {'contestant_id': 339, 'first_name': 'Ronald', 'prefixes': None, 'last_name': 'Allen',
@@ -2950,7 +2950,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': MAYBE, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 340, 'first_name': 'Janice', 'prefixes': None, 'last_name': 'Watson',
@@ -2959,7 +2959,7 @@ ntds2018enschede = [
      'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 341, 'first_name': 'Timothy', 'prefixes': None, 'last_name': 'Griffin',
@@ -2968,7 +2968,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 327}]},
     {'contestant_id': 342, 'first_name': 'Alice', 'prefixes': None, 'last_name': 'Robinson',
@@ -2977,7 +2977,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 343, 'first_name': 'Rose', 'prefixes': None, 'last_name': 'Perez',
@@ -2985,7 +2985,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Utrecht', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 359},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 359}]},
     {'contestant_id': 344, 'first_name': 'Joe', 'prefixes': None, 'last_name': 'Roberts',
@@ -2994,7 +2994,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 330},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 345, 'first_name': 'Lois', 'prefixes': None, 'last_name': 'Richardson',
@@ -3003,7 +3003,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 331},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 331}]},
     {'contestant_id': 346, 'first_name': 'Joyce', 'prefixes': None, 'last_name': 'Hill',
@@ -3011,7 +3011,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 336},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 336}]},
     {'contestant_id': 347, 'first_name': 'Daniel', 'prefixes': None, 'last_name': 'Hall',
@@ -3019,7 +3019,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 348, 'first_name': 'Adam', 'prefixes': None, 'last_name': 'White',
@@ -3027,7 +3027,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 332},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 332}]},
     {'contestant_id': 349, 'first_name': 'Beverly', 'prefixes': None, 'last_name': 'Price',
@@ -3036,7 +3036,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 350, 'first_name': 'Phyllis', 'prefixes': None, 'last_name': 'Bryant',
@@ -3045,7 +3045,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 351, 'first_name': 'Kenneth', 'prefixes': None, 'last_name': 'Hughes',
@@ -3054,7 +3054,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': MAYBE, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 352, 'first_name': 'Bonnie', 'prefixes': None, 'last_name': 'Martin',
@@ -3063,7 +3063,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 369},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 369}]},
     {'contestant_id': 353, 'first_name': 'Jessica', 'prefixes': None, 'last_name': 'Martinez',
@@ -3072,7 +3072,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 328},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 328}]},
     {'contestant_id': 354, 'first_name': 'Marilyn', 'prefixes': None, 'last_name': 'Lewis',
@@ -3081,7 +3081,7 @@ ntds2018enschede = [
      'emergency_response_officer': MAYBE, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 355, 'first_name': 'Donald', 'prefixes': None, 'last_name': 'Murphy',
@@ -3090,7 +3090,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 356, 'first_name': 'Michelle', 'prefixes': None, 'last_name': 'Nelson',
@@ -3099,7 +3099,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 357, 'first_name': 'Rebecca', 'prefixes': None, 'last_name': 'Gonzalez',
@@ -3108,7 +3108,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 358, 'first_name': 'Henry', 'prefixes': None, 'last_name': 'Flores',
@@ -3117,7 +3117,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 359, 'first_name': 'Christina', 'prefixes': None, 'last_name': 'James',
@@ -3126,7 +3126,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 343},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 343}]},
     {'contestant_id': 360, 'first_name': 'Judith', 'prefixes': None, 'last_name': 'Wood',
@@ -3134,7 +3134,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': YES, 'first_aid': YES, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 361},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 361}]},
     {'contestant_id': 361, 'first_name': 'William', 'prefixes': None, 'last_name': 'Miller',
@@ -3143,7 +3143,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'ML'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'ML'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 360},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 360}]},
     {'contestant_id': 362, 'first_name': 'Kevin', 'prefixes': None, 'last_name': 'Howard',
@@ -3152,7 +3152,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 363, 'first_name': 'Dorothy', 'prefixes': None, 'last_name': 'Young',
@@ -3161,7 +3161,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 364, 'first_name': 'Doris', 'prefixes': None, 'last_name': 'Lee', 'email': 'dorislee364@test.com',
@@ -3169,7 +3169,7 @@ ntds2018enschede = [
      'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 365, 'first_name': 'Justin', 'prefixes': None, 'last_name': 'Powell',
@@ -3178,7 +3178,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 338},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 338}]},
     {'contestant_id': 366, 'first_name': 'Angela', 'prefixes': None, 'last_name': 'Brown',
@@ -3187,7 +3187,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': MAYBE, 'jury_latin': MAYBE, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 367, 'first_name': 'Nancy', 'prefixes': None, 'last_name': 'Walker',
@@ -3196,7 +3196,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 368},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 368}]},
     {'contestant_id': 368, 'first_name': 'Virginia', 'prefixes': None, 'last_name': 'Parker',
@@ -3205,7 +3205,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 367},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 367}]},
     {'contestant_id': 369, 'first_name': 'Jose', 'prefixes': None, 'last_name': 'Bailey',
@@ -3213,7 +3213,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 352},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 352}]},
     {'contestant_id': 370, 'first_name': 'Anna', 'prefixes': None, 'last_name': 'Collins',
@@ -3222,7 +3222,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 377},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 377}]},
     {'contestant_id': 371, 'first_name': 'Sandra', 'prefixes': None, 'last_name': 'Edwards',
@@ -3231,7 +3231,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 372, 'first_name': 'Randy', 'prefixes': None, 'last_name': 'Cook',
@@ -3239,7 +3239,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 373},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 373}]},
     {'contestant_id': 373, 'first_name': 'Douglas', 'prefixes': None, 'last_name': 'Coleman',
@@ -3248,7 +3248,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 372},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 372}]},
     {'contestant_id': 374, 'first_name': 'Heather', 'prefixes': None, 'last_name': 'Garcia',
@@ -3257,7 +3257,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 378},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 378}]},
     {'contestant_id': 375, 'first_name': 'Roger', 'prefixes': None, 'last_name': 'Clark',
@@ -3265,7 +3265,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 376, 'first_name': 'Tina', 'prefixes': None, 'last_name': 'Baker',
@@ -3273,7 +3273,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 382},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 382}]},
     {'contestant_id': 377, 'first_name': 'Anthony', 'prefixes': None, 'last_name': 'Perry',
@@ -3282,7 +3282,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 370},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 370}]},
     {'contestant_id': 378, 'first_name': 'Karen', 'prefixes': None, 'last_name': 'Smith',
@@ -3290,7 +3290,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 374},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 374}]},
     {'contestant_id': 379, 'first_name': 'Wanda', 'prefixes': None, 'last_name': 'Peterson',
@@ -3299,7 +3299,7 @@ ntds2018enschede = [
      'emergency_response_officer': YES, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 380, 'first_name': 'Jack', 'prefixes': None, 'last_name': 'Jackson',
@@ -3308,7 +3308,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 381, 'first_name': 'Craig', 'prefixes': None, 'last_name': 'Taylor',
@@ -3316,7 +3316,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 387},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 387}]},
     {'contestant_id': 382, 'first_name': 'Julie', 'prefixes': None, 'last_name': 'Sanders',
@@ -3325,7 +3325,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 376},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 376}]},
     {'contestant_id': 383, 'first_name': 'Carl', 'prefixes': None, 'last_name': 'Simmons',
@@ -3333,7 +3333,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 384, 'first_name': 'George', 'prefixes': None, 'last_name': 'Kelly',
@@ -3342,7 +3342,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': MAYBE, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 386}]},
     {'contestant_id': 385, 'first_name': 'Kelly', 'prefixes': None, 'last_name': 'Jones',
@@ -3351,7 +3351,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 386, 'first_name': 'Janet', 'prefixes': None, 'last_name': 'Cox', 'email': 'janetcox386@test.com',
@@ -3359,7 +3359,7 @@ ntds2018enschede = [
      'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 384}]},
     {'contestant_id': 387, 'first_name': 'Earl', 'prefixes': None, 'last_name': 'Ward', 'email': 'earlward387@test.com',
@@ -3367,7 +3367,7 @@ ntds2018enschede = [
      'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO,
      'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO,
      'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 381},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 381}]},
     {'contestant_id': 388, 'first_name': 'Helen', 'prefixes': None, 'last_name': 'Rivera',
@@ -3376,7 +3376,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 393},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 393}]},
     {'contestant_id': 389, 'first_name': 'Mildred', 'prefixes': None, 'last_name': 'Sanchez',
@@ -3385,7 +3385,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 390, 'first_name': 'Nicole', 'prefixes': None, 'last_name': 'Davis',
@@ -3394,7 +3394,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 391, 'first_name': 'Lawrence', 'prefixes': None, 'last_name': 'Wright',
@@ -3403,7 +3403,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 400},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 400}]},
     {'contestant_id': 392, 'first_name': 'Shawn', 'prefixes': None, 'last_name': 'Russell',
@@ -3412,7 +3412,7 @@ ntds2018enschede = [
      'emergency_response_officer': MAYBE, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 394},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 394}]},
     {'contestant_id': 393, 'first_name': 'Frank', 'prefixes': None, 'last_name': 'Butler',
@@ -3421,7 +3421,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 388},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 388}]},
     {'contestant_id': 394, 'first_name': 'Jennifer', 'prefixes': None, 'last_name': 'Evans',
@@ -3430,7 +3430,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 392},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 392}]},
     {'contestant_id': 395, 'first_name': 'Victor', 'prefixes': None, 'last_name': 'Turner',
@@ -3439,7 +3439,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 396, 'first_name': 'Lisa', 'prefixes': None, 'last_name': 'Mitchell',
@@ -3448,7 +3448,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 397},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 397}]},
     {'contestant_id': 397, 'first_name': 'Amanda', 'prefixes': None, 'last_name': 'Allen',
@@ -3456,7 +3456,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 396},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 396}]},
     {'contestant_id': 398, 'first_name': 'Joshua', 'prefixes': None, 'last_name': 'James',
@@ -3464,7 +3464,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': NO, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 399, 'first_name': 'Phyllis', 'prefixes': None, 'last_name': 'Smith',
@@ -3473,7 +3473,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 400, 'first_name': 'Jeffrey', 'prefixes': None, 'last_name': 'Coleman',
@@ -3482,7 +3482,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 391},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 391}]},
     {'contestant_id': 401, 'first_name': 'Laura', 'prefixes': None, 'last_name': 'Cook',
@@ -3490,7 +3490,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Utrecht', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 402, 'first_name': 'Larry', 'prefixes': None, 'last_name': 'Jones',
@@ -3499,7 +3499,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 403, 'first_name': 'David', 'prefixes': None, 'last_name': 'Perry',
@@ -3508,7 +3508,7 @@ ntds2018enschede = [
      'first_aid': NO, 'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 404, 'first_name': 'Joseph', 'prefixes': None, 'last_name': 'Lee',
@@ -3516,7 +3516,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Wageningen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 405, 'first_name': 'Virginia', 'prefixes': None, 'last_name': 'Johnson',
@@ -3525,7 +3525,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 406, 'first_name': 'Sharon', 'prefixes': None, 'last_name': 'Wright',
@@ -3534,7 +3534,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 407, 'first_name': 'Kelly', 'prefixes': None, 'last_name': 'Evans',
@@ -3542,7 +3542,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Wageningen', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 408, 'first_name': 'Richard', 'prefixes': None, 'last_name': 'Cox',
@@ -3550,7 +3550,7 @@ ntds2018enschede = [
      'diet_allergies': '', 'team': 'Wageningen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 409},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 409}]},
     {'contestant_id': 409, 'first_name': 'Gerald', 'prefixes': None, 'last_name': 'Price',
@@ -3558,7 +3558,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Wageningen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 408},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 408}]},
     {'contestant_id': 410, 'first_name': 'Paula', 'prefixes': None, 'last_name': 'Collins',
@@ -3567,7 +3567,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 411, 'first_name': 'Debra', 'prefixes': None, 'last_name': 'Torres',
@@ -3576,7 +3576,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 412, 'first_name': 'Steve', 'prefixes': None, 'last_name': 'Phillips',
@@ -3585,7 +3585,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 413},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 413}]},
     {'contestant_id': 413, 'first_name': 'Amy', 'prefixes': None, 'last_name': 'Foster',
@@ -3593,7 +3593,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Wageningen', 'volunteer': YES, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 412},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Follow', 'blind_date': False, 'partner': 412}]},
     {'contestant_id': 414, 'first_name': 'Chris', 'prefixes': None, 'last_name': 'Richardson',
@@ -3602,7 +3602,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 415, 'first_name': 'Nancy', 'prefixes': None, 'last_name': 'Ross',
@@ -3610,7 +3610,7 @@ ntds2018enschede = [
      'diet_allergies': None, 'team': 'Eindhoven', 'volunteer': MAYBE, 'first_aid': NO, 'emergency_response_officer': NO,
      'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO, 'license_latin': NO, 'jury_salsa': NO,
      'jury_polka': NO, 'ballroom_highest_level': BELOW_D, 'latin_highest_level': BELOW_D, 'sleeping_arrangements': True,
-     'guaranteed_entry': False, 'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'guaranteed_entry': False, 'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 416, 'first_name': 'Willie', 'prefixes': None, 'last_name': 'Sanders',
@@ -3619,7 +3619,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 417, 'first_name': 'Jerry', 'prefixes': None, 'last_name': 'Simmons',
@@ -3628,7 +3628,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': 418},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 418, 'first_name': 'Helen', 'prefixes': None, 'last_name': 'Williams',
@@ -3637,7 +3637,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': False, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': 417},
         {'competition': 'Latin', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 419, 'first_name': 'Jesse', 'prefixes': None, 'last_name': 'Bell',
@@ -3646,7 +3646,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 420, 'first_name': 'Mildred', 'prefixes': None, 'last_name': 'Gonzales',
@@ -3655,7 +3655,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Follow', 'blind_date': False, 'partner': None}]},
     {'contestant_id': 421, 'first_name': 'Michael', 'prefixes': None, 'last_name': 'King',
@@ -3664,7 +3664,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': YES, 'jury_latin': YES, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 422, 'first_name': 'Shirley', 'prefixes': None, 'last_name': 'Young',
@@ -3673,7 +3673,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 320},
         {'competition': 'Latin', 'level': 'Beginners', 'role': 'Lead', 'blind_date': False, 'partner': 320}]},
     {'contestant_id': 423, 'first_name': 'George', 'prefixes': None, 'last_name': 'Cooper',
@@ -3682,7 +3682,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'}, 'dancing_info': [
+     'merchandise': {'Grey T-shirt': 'No'}, 'dancing_info': [
         {'competition': 'Ballroom', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True, 'partner': None},
         {'competition': 'Latin', 'level': 'Breitensport', 'role': 'Lead', 'blind_date': True, 'partner': None}]},
     {'contestant_id': 424, 'first_name': 'Kimberly', 'prefixes': None, 'last_name': 'Kelly',
@@ -3691,7 +3691,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Open Class', 'role': 'Lead', 'blind_date': True,
                        'partner': None}]},
@@ -3701,7 +3701,7 @@ ntds2018enschede = [
      'emergency_response_officer': NO, 'jury_ballroom': NO, 'jury_latin': NO, 'license_ballroom': NO,
      'license_latin': NO, 'jury_salsa': NO, 'jury_polka': NO, 'ballroom_highest_level': BELOW_D,
      'latin_highest_level': BELOW_D, 'sleeping_arrangements': True, 'guaranteed_entry': False,
-     'merchandise': {'t_shirt': 'No'},
+     'merchandise': {'Grey T-shirt': 'No'},
      'dancing_info': [{'competition': 'Ballroom', 'level': 'No', 'role': 'No', 'blind_date': False, 'partner': None},
                       {'competition': 'Latin', 'level': 'Open Class', 'role': 'Follow', 'blind_date': True,
                        'partner': None}]},
@@ -3737,10 +3737,9 @@ ntds2018enschede_configuration = {
 
     "merchandise": [
         {
-            "description": "T-shirt",
+            "description": "Grey T-shirt",
             "shirt": True,
             "price": 1500,
-            "variants": ["Grey"]
         }
     ],
 
