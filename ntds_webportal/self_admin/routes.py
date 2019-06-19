@@ -42,8 +42,8 @@ def system_setup():
                                         reset_organizer_account_form.tournament_starting_date.data.day, 0, 0, 0, 0)
                 sc.tournament_starting_date = tsd.replace(tzinfo=datetime.timezone.utc).timestamp()
 
-                organizer.username = f"{reset_organizer_account_form.tournament.data}{reset_organizer_account_form.city.data}" \
-                    f"{reset_organizer_account_form.year.data}"
+                organizer.username = f"{reset_organizer_account_form.tournament.data}" \
+                    f"{reset_organizer_account_form.city.data}{reset_organizer_account_form.year.data}"
                 organizer.email = reset_organizer_account_form.email.data
                 organizer_pass = random_password()
                 organizer.set_password(organizer_pass)
@@ -174,9 +174,8 @@ def system_configuration():
         form.phd_student_category.data = str(g.sc.phd_student_category)
         form.phd_student_price.data = g.sc.phd_student_price
 
-        form.finances_full_refund.data = str(g.sc.finances_full_refund)
-        form.finances_partial_refund.data = str(g.sc.finances_partial_refund)
-        form.finances_partial_refund_percentage.data = g.sc.finances_partial_refund_percentage
+        form.finances_refund.data = str(g.sc.finances_refund)
+        form.finances_refund_percentage.data = g.sc.finances_refund_percentage
         frd = datetime.datetime.utcfromtimestamp(g.sc.finances_refund_date).replace(tzinfo=datetime.timezone.utc)
         frd += datetime.timedelta(days=-1)
         form.finances_refund_date.data = datetime.date(frd.year, frd.month, frd.day)
@@ -196,10 +195,7 @@ def system_configuration():
             form.city.data = g.sc.city
             tsd = datetime.datetime.utcfromtimestamp(g.sc.tournament_starting_date)
             form.tournament_starting_date.data = datetime.date(tsd.year, tsd.month, tsd.day)
-        if str2bool(form.finances_full_refund.data):
-            form.finances_partial_refund.data = str(False)
-            form.finances_partial_refund_percentage.data = 100
-        if not str2bool(form.finances_full_refund.data) and not str2bool(form.finances_partial_refund.data):
+        if not str2bool(form.finances_refund.data):
             form.finances_refund_date.data = datetime.date.today()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -227,12 +223,10 @@ def system_configuration():
             g.sc.phd_student_category = str2bool(form.phd_student_category.data)
             g.sc.phd_student_price = form.phd_student_price.data
 
-            g.sc.finances_full_refund = str2bool(form.finances_full_refund.data)
-            g.sc.finances_partial_refund = str2bool(form.finances_partial_refund.data)
-            g.sc.finances_partial_refund_percentage = form.finances_partial_refund_percentage.data
+            g.sc.finances_refund = str2bool(form.finances_refund.data)
+            g.sc.finances_refund_percentage = form.finances_refund_percentage.data
             frd = datetime.datetime(form.finances_refund_date.data.year, form.finances_refund_date.data.month,
-                                    form.finances_refund_date.data.day, 3, 0, 0, 0)
-            frd += datetime.timedelta(days=1)
+                                    form.finances_refund_date.data.day, 3, 0, 0, 0) + datetime.timedelta(days=1)
             g.sc.finances_refund_date = frd.replace(tzinfo=datetime.timezone.utc).timestamp()
 
             g.sc.first_time_ask = str2bool(form.first_time_ask.data)

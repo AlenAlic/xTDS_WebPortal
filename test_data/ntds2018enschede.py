@@ -3743,7 +3743,6 @@ ntds2018enschede_configuration = {
         }
     ],
 
-    "finances_full_refund": False,
-    "finances_partial_refund": True,
-    "finances_partial_refund_percentage": 80,
+    "finances_refund": False,
+    "finances_refund_percentage": 80,
 }

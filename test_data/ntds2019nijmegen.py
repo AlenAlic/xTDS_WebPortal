@@ -4062,7 +4062,6 @@ ntds2019nijmegen_configuration = {
         }
     ],
 
-    "finances_full_refund": True,
-    "finances_partial_refund": False,
-    "finances_partial_refund_percentage": 100,
+    "finances_refund": True,
+    "finances_refund_percentage": 100,
 }

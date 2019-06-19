@@ -4294,7 +4294,6 @@ etds2018brno_configuration = {
         }
     ],
 
-    "finances_full_refund": False,
-    "finances_partial_refund": False,
-    "finances_partial_refund_percentage": 0,
+    "finances_refund": False,
+    "finances_refund_percentage": 0,
 }

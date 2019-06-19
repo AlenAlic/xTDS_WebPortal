@@ -80,9 +80,8 @@ def populate_test_data(tournament=None):
                 MerchandiseItemVariant(merchandise_item=item, variant=variant)
             db.session.add(item)
 
-    g.sc.finances_full_refund = test_configuration["finances_full_refund"]
-    g.sc.finances_partial_refund = test_configuration["finances_partial_refund"]
-    g.sc.finances_partial_refund_percentage = test_configuration["finances_partial_refund_percentage"]
+    g.sc.finances_refund = test_configuration["finances_refund"]
+    g.sc.finances_refund_percentage = test_configuration["finances_refund_percentage"]
 
     now = datetime.datetime.now()
     now = datetime.datetime(year=now.year, month=now.month, day=now.day)

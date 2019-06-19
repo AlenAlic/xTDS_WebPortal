@@ -56,7 +56,7 @@ class EditAssistantAccountForm(CreateBaseUserWithoutEmailForm):
 class SystemSetupTournamentForm(FlaskForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.city.choices = sorted(set([t.city for t in Team.query.all()]))
+        self.city.choices = sorted(set([(t.city, t.city) for t in Team.query.all()]), key=lambda x: x[0])
 
     tournament = SelectField('What kind of tournament are you hosting?', choices=[(NTDS, NTDS), (ETDS, ETDS)])
     year = SelectField('Year', coerce=int, choices=[(year, year) for year in range(datetime.datetime.now().year,
@@ -64,7 +64,7 @@ class SystemSetupTournamentForm(FlaskForm):
     city = SelectField('City')
     tournament_starting_date = DateField("Start date (the Friday)", validators=[DataRequired()],
                                          default=(datetime.datetime.now() + datetime.timedelta(days=120)).date(),
-                                         render_kw={"type": "date", "max": "2099-12-30", "min": "2018-01-30"})
+                                         render_kw={"type": "date", "max": "2099-12-30", "min": "2018-03-02"})
 
 
 class ResetOrganizerAccountForm(SystemSetupTournamentForm):
@@ -122,15 +122,13 @@ class SystemSetupForm(SystemSetupTournamentForm):
     ask_adjudicator_certification = SelectField("Will you ask volunteers that wish to be an adjudicator "
                                                 "if they have a certification to adjudicate?",
                                                 choices=[(k, v) for k, v in YN.items()])
-    finances_full_refund = SelectField("Will you be giving full refunds to dancers that cancel their registration?",
-                                       choices=[(k, v) for k, v in YN.items()])
-    finances_partial_refund = SelectField("Will you be giving partial refunds to dancers that cancel their "
-                                          "registration?", choices=[(k, v) for k, v in YN.items()])
-    finances_partial_refund_percentage = IntegerField(f"What is the refund percentage?",
-                                                      validators=[NumberRange(0, 100)], default=50)
+    finances_refund = SelectField("Will you be giving (partial) refunds to dancers that cancel their registration?",
+                                  choices=[(k, v) for k, v in YN.items()])
+    finances_refund_percentage = IntegerField(f"What is the refund percentage?", validators=[NumberRange(0, 100)],
+                                              default=70)
     finances_refund_date = DateField("What is the date past which there will not be any more refunds?",
                                      validators=[DataRequired()], default=datetime.datetime.now().date(),
-                                     render_kw={"type": "date", "max": "2099-12-30", "min": "2018-01-30"})
+                                     render_kw={"type": "date", "max": "2099-12-30", "min": "2018-03-02"})
 
     main_page_link = StringField(f"What is the main domain of your website?", render_kw=WEB_PAGE_PLACEHOLDER)
     terms_and_conditions_link = StringField(f"What is the web page that the terms and conditions for the tournament?",
@@ -142,5 +140,5 @@ class SystemSetupForm(SystemSetupTournamentForm):
 class MerchandiseDateForm(FlaskForm):
     merchandise_closing_date = DateField("What is the last date at which merchandise can be ordered?",
                                          validators=[], default=datetime.datetime.now().date(),
-                                         render_kw={"type": "date", "max": "2099-12-30", "min": "2018-01-30"})
+                                         render_kw={"type": "date", "max": "2099-12-30", "min": "2018-03-02"})
     merchandise_closing_submit = SubmitField("Set date")

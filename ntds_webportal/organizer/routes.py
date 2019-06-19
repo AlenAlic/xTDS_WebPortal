@@ -558,7 +558,8 @@ def merchandise():
     all_merchandise = {m: {v: [] for v in m.variants} for m in MerchandiseItem.query.all()}
     for d in dancers:
         for m in d.merchandise_info.purchases:
-            all_merchandise[m.merchandise_item_variant.merchandise_item][m.merchandise_item_variant].append(m)
+            if not m.cancelled:
+                all_merchandise[m.merchandise_item_variant.merchandise_item][m.merchandise_item_variant].append(m)
     total_merchandise = {m: sum([len(all_merchandise[m][v]) for v in m.variants]) for m in MerchandiseItem.query.all()}
     dancers = {d.contestant_id: d.json() for d in dancers}
     return render_template('organizer/merchandise.html', dancers=dancers, current_timestamp=current_timestamp,
