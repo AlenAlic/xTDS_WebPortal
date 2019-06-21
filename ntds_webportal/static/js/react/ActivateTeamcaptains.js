@@ -239,11 +239,11 @@ var ActivateTeamcaptains = function (_React$Component) {
                                             } },
                                         u.is_active ? "De-activate" : "Activate"
                                     ) : null : React.createElement(
-                                        "button",
-                                        { className: "btn btn-outline-secondary", onClick: function onClick() {
+                                        "span",
+                                        { className: "clickable font-size-4 mr-2", onClick: function onClick() {
                                                 return _this5.activateUser(u);
                                             } },
-                                        React.createElement(CheckMark, { flag: u.activate })
+                                        React.createElement(Toggle, { flag: u.activate })
                                     )
                                 )
                             );

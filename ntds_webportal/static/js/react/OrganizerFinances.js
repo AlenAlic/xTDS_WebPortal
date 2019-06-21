@@ -82,11 +82,11 @@ var OrganizerFinances = function (_React$Component) {
             });
         }
     }, {
-        key: "giveRefund",
-        value: function giveRefund(dancer, flag) {
+        key: "giveEntryFeeRefund",
+        value: function giveEntryFeeRefund(dancer) {
             var _this3 = this;
 
-            fetch("/api/contestants/" + dancer.contestant_id + "/give_refund/" + Number(flag), { method: "PATCH", credentials: 'same-origin' }).then(function (response) {
+            fetch("/api/contestants/" + dancer.contestant_id + "/give_entry_fee_refund", { method: "PATCH", credentials: 'same-origin' }).then(function (response) {
                 return response.json();
             }).then(function (result) {
                 var newState = _this3.state.teams;
@@ -112,9 +112,69 @@ var OrganizerFinances = function (_React$Component) {
             });
         }
     }, {
+        key: "giveGeneralRefund",
+        value: function giveGeneralRefund() {
+            var _this5 = this;
+
+            var dancer = document.getElementById("general-dancer");
+            var contestant_id = dancer.options[dancer.selectedIndex].value;
+            var name = dancer.options[dancer.selectedIndex].innerText;
+            var data = {
+                "reason": document.getElementById("general-reason").value,
+                "amount": document.getElementById("general-amount").value
+            };
+            dancer.selectedIndex = 0;
+            document.getElementById("general-reason").value = "";
+            document.getElementById("general-amount").value = "";
+            fetch("/api/contestants/" + contestant_id + "/give_general_refund", { method: "PATCH", credentials: 'same-origin', body: JSON.stringify(data) }).then(function (response) {
+                return response.json();
+            }).then(function (result) {
+                var newState = _this5.state.teams;
+                newState[result.contestant_info.team_id].finances_data.dancers[result.contestant_id] = result;
+                _this5.setState({ teams: newState });
+                $.notify({ message: "Refund given to " + name + "." }, { type: 'alert-info' });
+            }).catch(function (error) {
+                console.log('Error: \n', error);
+            });
+        }
+    }, {
+        key: "updateRefund",
+        value: function updateRefund(dancer, refund) {
+            var _this6 = this;
+
+            var data = {
+                "reason": document.getElementById("reason-" + refund.refund_id).value,
+                "amount": document.getElementById("amount-" + refund.refund_id).value
+            };
+            fetch("/api/contestants/" + dancer.contestant_id + "/update_refund/" + refund.refund_id, { method: "PATCH", credentials: 'same-origin', body: JSON.stringify(data) }).then(function (response) {
+                return response.json();
+            }).then(function (result) {
+                var newState = _this6.state.teams;
+                newState[result.contestant_info.team_id].finances_data.dancers[result.contestant_id] = result;
+                _this6.setState({ teams: newState });
+            }).catch(function (error) {
+                console.log('Error: \n', error);
+            });
+        }
+    }, {
+        key: "deleteRefund",
+        value: function deleteRefund(dancer, refund) {
+            var _this7 = this;
+
+            fetch("/api/contestants/" + dancer.contestant_id + "/delete_refund/" + refund.refund_id, { method: "PATCH", credentials: 'same-origin' }).then(function (response) {
+                return response.json();
+            }).then(function (result) {
+                var newState = _this7.state.teams;
+                newState[result.contestant_info.team_id].finances_data.dancers[result.contestant_id] = result;
+                _this7.setState({ teams: newState });
+            }).catch(function (error) {
+                console.log('Error: \n', error);
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
-            var _this5 = this;
+            var _this8 = this;
 
             var teams = Object.values(this.state.teams);
             var activeTeams = teams.filter(filterTeamsWithDancers);
@@ -143,7 +203,7 @@ var OrganizerFinances = function (_React$Component) {
 
             var cancelledDancers = dancers.filter(filterCancelled);
             var noRefundDancers = cancelledDancers.filter(filterDoesNotHaveRefund).filter(filterPaymentRequired);
-            var refundDancers = cancelledDancers.filter(filterHasRefund);
+            var refundDancers = dancers.filter(filterHasRefund);
 
             return React.createElement(
                 React.Fragment,
@@ -173,15 +233,15 @@ var OrganizerFinances = function (_React$Component) {
                     DutchTeams.length > 0 ? React.createElement(OrganizerFinancesDropDown, { text: "Dutch", teams: DutchTeams }) : null,
                     GermanTeams.length > 0 ? React.createElement(OrganizerFinancesDropDown, { text: "German", teams: GermanTeams }) : null,
                     OtherTeams.length > 0 ? React.createElement(OrganizerFinancesDropDown, { text: "Other", teams: OtherTeams }) : null,
-                    dancersWithRefund.length > 0 ? React.createElement(
+                    React.createElement(
                         "li",
                         { className: "nav-item", role: "presentation" },
                         React.createElement(
                             "a",
-                            { className: "nav-link", href: "#refunds", id: "refunds-tab", role: "tab", "data-toggle": "tab" },
+                            { className: dancersWithRefund.length > 0 ? "nav-link" : "nav-link disabled", href: "#refunds", id: "refunds-tab", role: "tab", "data-toggle": "tab" },
                             "Refunds"
                         )
-                    ) : null
+                    )
                 ),
                 React.createElement(
                     "div",
@@ -197,7 +257,7 @@ var OrganizerFinances = function (_React$Component) {
                         React.createElement(
                             "button",
                             { className: "btn btn-outline-primary my-2", type: "button", onClick: function onClick() {
-                                    return _this5.updateReceivedAmount();
+                                    return _this8.updateReceivedAmount();
                                 } },
                             "Save changes"
                         ),
@@ -304,7 +364,7 @@ var OrganizerFinances = function (_React$Component) {
                                             null,
                                             students.length
                                         ),
-                                        _this5.props.settings.phd_student_category ? React.createElement(
+                                        _this8.props.settings.phd_student_category ? React.createElement(
                                             "td",
                                             null,
                                             phdStudents.length
@@ -317,7 +377,7 @@ var OrganizerFinances = function (_React$Component) {
                                         React.createElement(
                                             "td",
                                             null,
-                                            _this5.props.settings.merchandise ? merchandise : null
+                                            _this8.props.settings.merchandise ? merchandise : null
                                         ),
                                         React.createElement(
                                             "td",
@@ -404,18 +464,18 @@ var OrganizerFinances = function (_React$Component) {
                     cancelledDancers.length > 0 ? React.createElement(
                         "div",
                         { className: "tab-pane fade", id: "refunds" },
-                        React.createElement(
+                        noRefundDancers.length > 0 ? React.createElement(
                             "table",
-                            { className: "table table-sm table-finances mt-2" },
+                            { className: "table table-sm mt-2" },
                             React.createElement(
-                                "thead",
+                                "tbody",
                                 null,
                                 React.createElement(
                                     "tr",
                                     null,
                                     React.createElement(
                                         "th",
-                                        { className: "font-size-4", colSpan: "4" },
+                                        { className: "font-size-4", colSpan: "5" },
                                         "Cancelled dancers"
                                     )
                                 ),
@@ -429,7 +489,7 @@ var OrganizerFinances = function (_React$Component) {
                                     ),
                                     React.createElement(
                                         "th",
-                                        { style: { width: '20%' } },
+                                        { style: { width: '40%' } },
                                         "Team"
                                     ),
                                     React.createElement(
@@ -437,12 +497,8 @@ var OrganizerFinances = function (_React$Component) {
                                         { style: { width: '20%' }, className: "text-right" },
                                         "Potential refund"
                                     ),
-                                    React.createElement("th", { style: { width: '40%' } })
-                                )
-                            ),
-                            React.createElement(
-                                "tbody",
-                                null,
+                                    React.createElement("th", { style: { width: '20%' } })
+                                ),
                                 noRefundDancers.sort(sortDancersAlphabetically).map(function (d) {
                                     return React.createElement(
                                         "tr",
@@ -460,27 +516,104 @@ var OrganizerFinances = function (_React$Component) {
                                         React.createElement(
                                             "td",
                                             { className: "text-right" },
-                                            currencyFormat(d.payment_info.potential_refund_price)
+                                            currencyFormat(d.payment_info.entry_price_refund)
                                         ),
                                         React.createElement(
                                             "td",
                                             { className: "text-right" },
                                             React.createElement(
                                                 "button",
-                                                { className: "btn btn-warning btn-sm my-1 mx-2", onClick: function onClick() {
-                                                        return _this5.giveRefund(d, true);
-                                                    } },
-                                                "Give refund"
+                                                { className: "btn btn-danger btn-sm d-inline-block my-1", "data-toggle": "modal", "data-target": '#remove-modal-' + ("" + d.contestant_id),
+                                                    "data-keyboard": "false", "data-backdrop": "static" },
+                                                "Remove payment requirement"
                                             ),
                                             React.createElement(
                                                 "button",
-                                                { className: "btn btn-danger btn-sm my-1 mx-2", "data-toggle": "modal", "data-target": '#remove-modal-' + ("" + d.contestant_id),
-                                                    "data-keyboard": "false", "data-backdrop": "static" },
-                                                "Remove payment requirement"
+                                                { className: "btn btn-warning btn-sm d-inline-block my-1", onClick: function onClick() {
+                                                        return _this8.giveEntryFeeRefund(d);
+                                                    } },
+                                                "Give entry fee refund"
                                             )
                                         )
                                     );
-                                }),
+                                })
+                            )
+                        ) : null,
+                        React.createElement(
+                            "div",
+                            { className: "card mt-2" },
+                            React.createElement(
+                                "div",
+                                { className: "card-body" },
+                                React.createElement(
+                                    "h5",
+                                    { className: "card-title" },
+                                    "Give refund"
+                                ),
+                                React.createElement(
+                                    "form",
+                                    { className: "form", method: "POST", encType: "multipart/form-data", noValidate: true },
+                                    React.createElement(
+                                        "div",
+                                        { className: "form-group" },
+                                        React.createElement(
+                                            "label",
+                                            { htmlFor: "general-dancer" },
+                                            "Dancer"
+                                        ),
+                                        React.createElement(
+                                            "select",
+                                            { className: "form-control", id: "general-dancer" },
+                                            React.createElement(
+                                                "option",
+                                                { value: 0 },
+                                                "Select dancer"
+                                            ),
+                                            dancers.sort(sortDancersAlphabetically).map(function (d) {
+                                                return React.createElement(
+                                                    "option",
+                                                    { key: 'option-' + ("" + d.contestant_id), value: d.contestant_id },
+                                                    d.full_name
+                                                );
+                                            })
+                                        )
+                                    ),
+                                    React.createElement(
+                                        "div",
+                                        { className: "form-group" },
+                                        React.createElement(
+                                            "label",
+                                            { htmlFor: "general-reason" },
+                                            "Refund reason"
+                                        ),
+                                        React.createElement("input", { type: "text", className: "form-control", id: "general-reason" })
+                                    ),
+                                    React.createElement(
+                                        "div",
+                                        { className: "form-group" },
+                                        React.createElement(
+                                            "label",
+                                            { htmlFor: "general-amount" },
+                                            "Refund amount (eurocents)"
+                                        ),
+                                        React.createElement("input", { type: "number", className: "form-control", id: "general-amount", min: "0", step: "1" })
+                                    ),
+                                    React.createElement(
+                                        "button",
+                                        { type: "button", className: "btn btn-primary", onClick: function onClick() {
+                                                return _this8.giveGeneralRefund();
+                                            } },
+                                        "Give refund"
+                                    )
+                                )
+                            )
+                        ),
+                        React.createElement(
+                            "table",
+                            { className: "table table-sm mt-2" },
+                            React.createElement(
+                                "tbody",
+                                null,
                                 React.createElement(
                                     "tr",
                                     null,
@@ -500,51 +633,110 @@ var OrganizerFinances = function (_React$Component) {
                                     ),
                                     React.createElement(
                                         "th",
-                                        { style: { width: '20%' } },
-                                        "Refund reason(s)"
+                                        { style: { width: '40%' } },
+                                        "Refund"
                                     ),
                                     React.createElement(
                                         "th",
                                         { style: { width: '20%' }, className: "text-right" },
-                                        "Refund"
+                                        "Amount"
                                     ),
-                                    React.createElement("th", { style: { width: '40%' } })
+                                    React.createElement("th", { style: { width: '20%' }, className: "text-right" })
                                 ),
                                 refundDancers.sort(sortDancersAlphabetically).map(function (d) {
                                     return React.createElement(
-                                        "tr",
-                                        { key: 'row' + ("" + d.contestant_id) },
+                                        React.Fragment,
+                                        { key: 'row-' + ("-" + d.contestant_id) },
+                                        d.payment_info.refunds.map(function (r, i) {
+                                            return i === 0 ? React.createElement(
+                                                "tr",
+                                                { key: 'row-' + r.refund_id + ("-" + d.contestant_id) },
+                                                React.createElement(
+                                                    "td",
+                                                    null,
+                                                    d.full_name
+                                                ),
+                                                React.createElement(
+                                                    "td",
+                                                    null,
+                                                    r.reason
+                                                ),
+                                                React.createElement(
+                                                    "td",
+                                                    { className: "text-right " },
+                                                    currencyFormat(r.amount)
+                                                ),
+                                                React.createElement(
+                                                    "td",
+                                                    { className: "text-right" },
+                                                    React.createElement(
+                                                        "button",
+                                                        { className: "btn btn-info btn-sm", "data-toggle": "modal", "data-target": '#update-modal-' + r.refund_id,
+                                                            "data-keyboard": "false", "data-backdrop": "static" },
+                                                        "Edit"
+                                                    ),
+                                                    React.createElement(
+                                                        "button",
+                                                        { className: "btn btn-danger btn-sm ml-1", "data-toggle": "modal", "data-target": '#delete-modal-' + r.refund_id,
+                                                            "data-keyboard": "false", "data-backdrop": "static" },
+                                                        "Delete"
+                                                    )
+                                                )
+                                            ) : React.createElement(
+                                                "tr",
+                                                { key: 'row-' + r.refund_id + ("-" + d.contestant_id) },
+                                                React.createElement("td", { className: "border-0" }),
+                                                React.createElement(
+                                                    "td",
+                                                    { className: "border-0" },
+                                                    r.reason
+                                                ),
+                                                React.createElement(
+                                                    "td",
+                                                    { className: "border-0 text-right" },
+                                                    currencyFormat(r.amount)
+                                                ),
+                                                React.createElement(
+                                                    "td",
+                                                    { className: "border-0 text-right" },
+                                                    React.createElement(
+                                                        "button",
+                                                        { className: "btn btn-info btn-sm", "data-toggle": "modal", "data-target": '#update-modal-' + r.refund_id,
+                                                            "data-keyboard": "false", "data-backdrop": "static" },
+                                                        "Edit"
+                                                    ),
+                                                    React.createElement(
+                                                        "button",
+                                                        { className: "btn btn-danger btn-sm ml-1", "data-toggle": "modal", "data-target": '#delete-modal-' + r.refund_id,
+                                                            "data-keyboard": "false", "data-backdrop": "static" },
+                                                        "Delete"
+                                                    )
+                                                )
+                                            );
+                                        }),
                                         React.createElement(
-                                            "td",
+                                            "tr",
                                             null,
-                                            d.full_name
-                                        ),
-                                        React.createElement(
-                                            "td",
-                                            null,
-                                            d.payment_info.refund_reasons.map(function (r) {
-                                                return React.createElement(
-                                                    "div",
-                                                    { key: 'reason-' + r + ("" + d.contestant_id) },
-                                                    r
-                                                );
-                                            })
-                                        ),
-                                        React.createElement(
-                                            "td",
-                                            { className: "text-right" },
-                                            currencyFormat(d.payment_info.refund_price)
-                                        ),
-                                        React.createElement(
-                                            "td",
-                                            { className: "text-right" },
+                                            React.createElement("td", { className: "border-0" }),
                                             React.createElement(
-                                                "button",
-                                                { className: "btn btn-warning btn-sm my-1 mx-2", onClick: function onClick() {
-                                                        return _this5.giveRefund(d, false);
-                                                    } },
-                                                "Remove refund"
-                                            )
+                                                "td",
+                                                { className: "border-0 text-right" },
+                                                React.createElement(
+                                                    "b",
+                                                    null,
+                                                    "Total"
+                                                )
+                                            ),
+                                            React.createElement(
+                                                "td",
+                                                { className: "border-0 text-right" },
+                                                React.createElement(
+                                                    "b",
+                                                    null,
+                                                    currencyFormat(d.payment_info.refund_price)
+                                                )
+                                            ),
+                                            React.createElement("td", { className: "border-0 text-right" })
                                         )
                                     );
                                 })
@@ -552,10 +744,10 @@ var OrganizerFinances = function (_React$Component) {
                         )
                     ) : null
                 ),
-                noRefundDancers.sort(sortDancersAlphabetically).map(function (d) {
+                noRefundDancers.map(function (d) {
                     return React.createElement(
                         "div",
-                        { className: "modal fade", id: 'remove-modal-' + ("" + d.contestant_id), key: 'remove-modal-' + ("" + d.contestant_id), tabIndex: "-1", role: "dialog", "data-keyboard": "false", "data-backdrop": "static" },
+                        { className: "modal fade", id: 'remove-modal-' + ("" + d.contestant_id), key: 'remove-add-modal-' + ("" + d.contestant_id), tabIndex: "-1", role: "dialog", "data-keyboard": "false", "data-backdrop": "static" },
                         React.createElement(
                             "div",
                             { className: "modal-dialog modal-lg", role: "document" },
@@ -607,7 +799,7 @@ var OrganizerFinances = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { type: "button", className: "btn btn-primary", "data-dismiss": "modal", onClick: function onClick() {
-                                                return _this5.removePaymentRequirement(d);
+                                                return _this8.removePaymentRequirement(d);
                                             } },
                                         "Yes"
                                     )
@@ -615,6 +807,150 @@ var OrganizerFinances = function (_React$Component) {
                             )
                         )
                     );
+                }),
+                refundDancers.map(function (d) {
+                    return d.payment_info.refunds.map(function (r) {
+                        return React.createElement(
+                            React.Fragment,
+                            { key: 'modals-' + r.refund_id },
+                            React.createElement(
+                                "div",
+                                { className: "modal fade", id: 'update-modal-' + r.refund_id, tabIndex: "-1", role: "dialog", "data-keyboard": "false", "data-backdrop": "static" },
+                                React.createElement(
+                                    "div",
+                                    { className: "modal-dialog modal-lg", role: "document" },
+                                    React.createElement(
+                                        "div",
+                                        { className: "modal-content" },
+                                        React.createElement(
+                                            "div",
+                                            { className: "modal-header" },
+                                            React.createElement(
+                                                "h5",
+                                                { className: "modal-title" },
+                                                "Edit refund"
+                                            ),
+                                            React.createElement(
+                                                "button",
+                                                { type: "button", className: "close", "data-dismiss": "modal", "aria-label": "Close" },
+                                                React.createElement(
+                                                    "span",
+                                                    { "aria-hidden": "true" },
+                                                    "\xD7"
+                                                )
+                                            )
+                                        ),
+                                        React.createElement(
+                                            "div",
+                                            { className: "modal-body" },
+                                            React.createElement(
+                                                "div",
+                                                { className: "form-group" },
+                                                React.createElement(
+                                                    "label",
+                                                    { htmlFor: 'reason-' + r.refund_id },
+                                                    "Refund reason"
+                                                ),
+                                                React.createElement("input", { type: "text", className: "form-control", id: 'reason-' + r.refund_id, defaultValue: r.reason })
+                                            ),
+                                            React.createElement(
+                                                "div",
+                                                { className: "form-group" },
+                                                React.createElement(
+                                                    "label",
+                                                    { htmlFor: 'amount-' + r.refund_id },
+                                                    "Refund amount (eurocents)"
+                                                ),
+                                                React.createElement("input", { type: "text", className: "form-control", id: 'amount-' + r.refund_id, defaultValue: r.amount })
+                                            )
+                                        ),
+                                        React.createElement(
+                                            "div",
+                                            { className: "modal-footer" },
+                                            React.createElement(
+                                                "button",
+                                                { type: "button", className: "btn btn-secondary", "data-dismiss": "modal" },
+                                                "Cancel"
+                                            ),
+                                            React.createElement(
+                                                "button",
+                                                { type: "button", className: "btn btn-primary", "data-dismiss": "modal", onClick: function onClick() {
+                                                        return _this8.updateRefund(d, r);
+                                                    } },
+                                                "Save"
+                                            )
+                                        )
+                                    )
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "modal fade", id: 'delete-modal-' + r.refund_id, tabIndex: "-1", role: "dialog", "data-keyboard": "false", "data-backdrop": "static" },
+                                React.createElement(
+                                    "div",
+                                    { className: "modal-dialog modal-lg", role: "document" },
+                                    React.createElement(
+                                        "div",
+                                        { className: "modal-content" },
+                                        React.createElement(
+                                            "div",
+                                            { className: "modal-header" },
+                                            React.createElement(
+                                                "h5",
+                                                { className: "modal-title" },
+                                                "Delete refund"
+                                            ),
+                                            React.createElement(
+                                                "button",
+                                                { type: "button", className: "close", "data-dismiss": "modal", "aria-label": "Close" },
+                                                React.createElement(
+                                                    "span",
+                                                    { "aria-hidden": "true" },
+                                                    "\xD7"
+                                                )
+                                            )
+                                        ),
+                                        React.createElement(
+                                            "div",
+                                            { className: "modal-body" },
+                                            React.createElement(
+                                                "p",
+                                                null,
+                                                "You are about to remove the refund of ",
+                                                d.full_name,
+                                                " for ",
+                                                r.reason,
+                                                " (",
+                                                currencyFormat(r.amount),
+                                                ")."
+                                            ),
+                                            React.createElement(
+                                                "p",
+                                                null,
+                                                "Are you sure you wish to do this?"
+                                            )
+                                        ),
+                                        React.createElement(
+                                            "div",
+                                            { className: "modal-footer" },
+                                            React.createElement(
+                                                "button",
+                                                { type: "button", className: "btn btn-secondary", "data-dismiss": "modal" },
+                                                "No"
+                                            ),
+                                            React.createElement(
+                                                "button",
+                                                { type: "button", className: "btn btn-primary", "data-dismiss": "modal", onClick: function onClick() {
+                                                        return _this8.deleteRefund(d, r);
+                                                    } },
+                                                "Yes"
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        );
+                    });
                 })
             );
         }

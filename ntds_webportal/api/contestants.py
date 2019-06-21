@@ -1,7 +1,7 @@
-from flask import jsonify, request
+from flask import jsonify, request, json
 from flask_login import login_required
 from ntds_webportal import db
-from ntds_webportal.models import requires_access_level, Contestant, MerchandisePurchase
+from ntds_webportal.models import requires_access_level, Contestant, MerchandisePurchase, Refund
 from ntds_webportal.api import bp
 from ntds_webportal.data import *
 
@@ -76,16 +76,13 @@ def contestants_merchandise_received(contestant_id, merchandise_purchased_id, me
     return jsonify(dancer.json())
 
 
-@bp.route('/contestants/<int:contestant_id>/give_refund/<bool:give_refund>', methods=["PATCH"])
+@bp.route('/contestants/<int:contestant_id>/give_entry_fee_refund', methods=["PATCH"])
 @login_required
 @requires_access_level([ACCESS[ORGANIZER]])
-def contestants_give_refund(contestant_id, give_refund):
+def contestants_give_entry_fee_refund(contestant_id):
     dancer = Contestant.query.get_or_404(contestant_id)
     if request.method == "PATCH":
-        if give_refund:
-            dancer.payment_info.set_refund()
-        else:
-            dancer.payment_info.remove_refund()
+        dancer.payment_info.give_entry_fee_refund()
         db.session.commit()
     return jsonify(dancer.json())
 
@@ -110,5 +107,47 @@ def contestants_purchase_ordered(contestant_id, merchandise_purchased_id, ordere
     purchase = MerchandisePurchase.query.get_or_404(merchandise_purchased_id)
     if request.method == "PATCH":
         purchase.ordered = ordered
+        db.session.commit()
+    return jsonify(dancer.json())
+
+
+@bp.route('/contestants/<int:contestant_id>/give_general_refund', methods=["PATCH"])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def contestants_give_general_refund(contestant_id):
+    dancer = Contestant.query.get_or_404(contestant_id)
+    data = json.loads(request.data)
+    if request.method == "PATCH":
+        refund = Refund()
+        refund.reason = data["reason"]
+        refund.amount = int(data["amount"])
+        refund.payment_info = dancer.payment_info
+        db.session.add(refund)
+        db.session.commit()
+    return jsonify(dancer.json())
+
+
+@bp.route('/contestants/<int:contestant_id>/update_refund/<int:refund_id>', methods=["PATCH"])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def contestants_update_refund(contestant_id, refund_id):
+    dancer = Contestant.query.get_or_404(contestant_id)
+    refund = Refund.query.get_or_404(refund_id)
+    data = json.loads(request.data)
+    if request.method == "PATCH":
+        refund.reason = data["reason"]
+        refund.amount = int(data["amount"])
+        db.session.commit()
+    return jsonify(dancer.json())
+
+
+@bp.route('/contestants/<int:contestant_id>/delete_refund/<int:refund_id>', methods=["PATCH"])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+def contestants_delete_refund(contestant_id, refund_id):
+    dancer = Contestant.query.get_or_404(contestant_id)
+    refund = Refund.query.get_or_404(refund_id)
+    if request.method == "PATCH":
+        db.session.delete(refund)
         db.session.commit()
     return jsonify(dancer.json())

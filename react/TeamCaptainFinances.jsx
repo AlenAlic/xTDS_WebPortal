@@ -223,7 +223,7 @@ class TeamCaptainFinances extends React.Component {
                         </form>
                     </React.Fragment>
                 }
-                <table className="table table-sm table-hover table-finances">
+                <table className="table table-sm table-hover">
                     <thead>
                     <tr>
                         <th style={{width: '26%'}} className="font-size-4">Confirmed dancers</th>
@@ -289,7 +289,7 @@ class TeamCaptainFinances extends React.Component {
                         )): <tr><td colSpan="8">There are no confirmed dancers with a payment requirement.</td></tr>}
                     </tbody>
                 </table>
-                <table className="table table-sm table-hover table-finances">
+                <table className="table table-sm table-hover">
                     <thead>
                     <tr>
                         <th style={{width: '26%'}} className="font-size-4">Cancelled dancers</th>
@@ -325,17 +325,17 @@ class TeamCaptainFinances extends React.Component {
                                     }
                                 </td>
                                 <td className="text-right">
-                                    {Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(p => (
+                                    {Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).filter(filterPurchaseNotCancelled).sort(sortMerchandiseAlphabetically).map(p => (
                                         <div key={'item'+`${p.merchandise_purchased_id}`}>{p.item}</div>
                                     )) : "-"}
                                 </td>
                                 <td className="text-right">
-                                    {Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(p => (
+                                    {Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).filter(filterPurchaseNotCancelled).sort(sortMerchandiseAlphabetically).map(p => (
                                         <div key={'price'+`${p.merchandise_purchased_id}`}>{currencyFormat(p.price)}</div>
                                     )) : "-"}
                                 </td>
                                 <td className="text-right">
-                                    {Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(p => (
+                                    {Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).filter(filterPurchaseNotCancelled).sort(sortMerchandiseAlphabetically).map(p => (
                                         <div key={'paid'+`${p.merchandise_purchased_id}`}>
                                             {this.props.settings.view_only ?
                                                 <input type="checkbox" disabled defaultChecked={p.paid}/> :
@@ -356,23 +356,25 @@ class TeamCaptainFinances extends React.Component {
                     </tbody>
                 </table>
                 {dancers.filter(filterHasRefund).length > 0 ?
-                    <table className="table table-sm table-finances mt-3">
+                    <table className="table table-sm mt-3">
                         <thead>
                         <tr>
-                            <th className="font-size-4" colSpan="4">Refunds</th>
+                            <th className="font-size-4" colSpan="5">Refunds</th>
                         </tr>
                         <tr>
                             <th style={{width: '32%'}}>Dancer</th>
-                            <th style={{width: '50%'}}>Refund reason(s)</th>
-                            <th style={{width: '10%'}} className="text-right">Refund</th>
+                            <th style={{width: '35%'}}>Refund</th>
+                            <th style={{width: '15%'}} className="text-right">Amount</th>
+                            <th style={{width: '10%'}} className="text-right">Total</th>
                             <th style={{width: '8%'}}/>
                         </tr>
                         </thead>
                         <tbody>
-                        {dancers.filter(filterHasRefund).sort(sortDancersAlphabetically).map( d => (
+                        {dancers.filter(filterHasRefund).sort(sortDancersAlphabetically).map( (d, i) => (
                         <tr key={'row'+`${d.contestant_id}`}>
                             <td>{d.full_name}</td>
-                            <td>{d.payment_info.refund_reasons.map(r => (<div key={'reason-'+r+`${d.contestant_id}`}>{r}</div>))}</td>
+                            <td>{d.payment_info.refunds.map(r => (<div key={'reason-'+r.refund_id+`${d.contestant_id}`}>{r.reason}</div>))}</td>
+                            <td className="text-right">{d.payment_info.refunds.map(r => (<div key={'price-'+r.refund_id+`${d.contestant_id}`}>{currencyFormat(r.amount)}</div>))}</td>
                             <td className="text-right">{currencyFormat(d.payment_info.refund_price)}</td>
                             <td/>
                         </tr>))}

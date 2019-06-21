@@ -128,7 +128,7 @@ class CheckinCard extends React.Component {
                 </div>
                 <div id={'collapse-'+`${this.props.team_id}`} className="collapse">
                     {dancers.length === 0 ? null : (
-                        <table className="table table-hover mb-0">
+                        <table className="table table-hover table-sm mb-0">
                             <thead>
                                 <tr>
                                     <th/>
@@ -149,33 +149,33 @@ class CheckinCard extends React.Component {
                             </thead>
                             <tbody>
                             {dancers.sort(sortDancersAlphabetically).map(d =>
-                                (   
-                                    <tr className={d.pending ? 'table-warning': d.payment_info.all_paid && d.merchandise_info.merchandise_received ? d.status_info.checked_in && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? 'table-success' : null: null} key={'row'+`${d.contestant_id}`} >
-                                        <td>{d.full_name}{d.contestant_info.team_captain ? ' - TC': null}</td>
-                                        <td>{d.contestant_info.student === "student" ? "Yes": d.contestant_info.student === "non-student" ? "No" : "PhD student"}</td>
-                                        <td>{currencyFormat(this.props.prices[d.contestant_info.student])}</td>
-                                        <td><button className={`btn ${d.payment_info.entry_paid ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.entryPayment(d)}>{d.payment_info.entry_paid ? <i className="fas fa-check"/>: <i className="fas fa-times"/>}</button></td>
-                                        <td>
-                                            {Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(p => (
-                                                !p.cancelled && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? <div key={'item'+`${p.merchandise_purchased_id}`}>{p.item} ({currencyFormat(p.price)})</div> : null
-                                            )) : '-'}
-                                        </td>
-                                        <td>
-                                            {Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(p => (
-                                                 !p.cancelled && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? <div key={'paid'+`${p.merchandise_purchased_id}`}>
-                                                    <button className={`btn ${p.paid ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.merchandisePayment(d, p)}>{p.paid ? <i className="fas fa-check"/>: <i className="fas fa-times"/>} Paid</button>
-                                                </div> : null
-                                            )) : "-"}
-                                        </td>
-                                        <td>
-                                            {Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(p => (
-                                                 !p.cancelled && d.status_info.status === "confirmed" ||  d.status_info.status === "cancelled" ? <div key={'received'+`${p.merchandise_purchased_id}`}>
-                                                    <button className={`btn ${p.received ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.merchandiseReceived(d, p)}>{p.received ? <i className="fas fa-check"/>: <i className="fas fa-times"/>} Received</button>
-                                                </div> : null
-                                            )) : "-"}
-                                        </td>
-                                        <td>{d.status_info.status === "confirmed" ? <button className={`btn ${d.status_info.checked_in ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.tryCheckIn(d)}>{d.status_info.checked_in ? <i className="fas fa-check"/>: <i className="fas fa-times"/>}</button> : null}</td>
-                                    </tr>
+                                (
+                                    Object.keys(d.merchandise_info.purchases).length === 0 ?
+                                        <tr className={d.pending ? 'table-warning': d.payment_info.all_paid && d.merchandise_info.merchandise_received ? d.status_info.checked_in && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? 'table-success' : null: null} key={'row'+`${d.contestant_id}`} >
+                                            <td>{d.full_name}{d.contestant_info.team_captain ? ' - TC': null}</td>
+                                            <td>{d.contestant_info.student === "student" ? "Yes": d.contestant_info.student === "non-student" ? "No" : "PhD student"}</td>
+                                            <td>{currencyFormat(this.props.prices[d.contestant_info.student])}</td>
+                                            <td><button className={`btn ${d.payment_info.entry_paid ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.entryPayment(d)}>{d.payment_info.entry_paid ? <i className="fas fa-check"/>: <i className="fas fa-times"/>}</button></td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>{d.status_info.status === "confirmed" ? <button className={`btn ${d.status_info.checked_in ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.tryCheckIn(d)}>{d.status_info.checked_in ? <i className="fas fa-check"/>: <i className="fas fa-times"/>}</button> : null}</td>
+                                        </tr> :
+                                        Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map((p, i) => (
+                                            <tr className={d.pending ? 'table-warning': d.payment_info.all_paid && d.merchandise_info.merchandise_received ? d.status_info.checked_in && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? 'table-success' : null: null} key={'row'+`${d.contestant_id}-${p.merchandise_purchased_id}`} >
+                                                {i === 0 ?
+                                                    <React.Fragment>
+                                                        <td>{d.full_name}{d.contestant_info.team_captain ? ' - TC': null}</td>
+                                                        <td>{d.contestant_info.student === "student" ? "Yes": d.contestant_info.student === "non-student" ? "No" : "PhD student"}</td>
+                                                        <td>{currencyFormat(this.props.prices[d.contestant_info.student])}</td>
+                                                        <td><button className={`btn ${d.payment_info.entry_paid ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.entryPayment(d)}>{d.payment_info.entry_paid ? <i className="fas fa-check"/>: <i className="fas fa-times"/>}</button></td>
+                                                    </React.Fragment> : <td className="border-0" colSpan="4"/>}
+                                                <td className={i === 0 ? "" : "border-0"}>{p.item} ({currencyFormat(p.price)})</td>
+                                                <td className={i === 0 ? "" : "border-0"}><button className={`btn ${p.paid ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.merchandisePayment(d, p)}>{p.paid ? <i className="fas fa-check"/>: <i className="fas fa-times"/>} Paid</button></td>
+                                                <td className={i === 0 ? "" : "border-0"}><button className={`btn ${p.received ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.merchandiseReceived(d, p)}>{p.received ? <i className="fas fa-check"/>: <i className="fas fa-times"/>} Received</button></td>
+                                                {i === 0 ? <td>{d.status_info.status === "confirmed" ? <button className={`btn ${d.status_info.checked_in ? "btn-outline-secondary" : "btn-danger"}`} onClick={() => this.tryCheckIn(d)}>{d.status_info.checked_in ? <i className="fas fa-check"/>: <i className="fas fa-times"/>}</button> : null}</td> : <td className="border-0"/>}
+                                            </tr>
+                                        ))
                                 )
                             )}
                             </tbody>

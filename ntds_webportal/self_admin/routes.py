@@ -12,7 +12,7 @@ from ntds_webportal.functions import str2bool, reset_tournament_state, \
 from ntds_webportal.auth.email import send_organizer_activation_email
 from ntds_webportal.functions import random_password, active_teams, competing_teams
 from ntds_webportal.data import *
-from sqlalchemy import or_, case, exists
+from sqlalchemy import or_, case
 import datetime
 from test_data.test_populate import PAST_TOURNAMENTS, populate_test_data
 import xlsxwriter
@@ -117,9 +117,6 @@ def system_setup():
                 db.session.commit()
             flash("xTDS WebPortal has been reset.", "alert-success")
             return redirect(url_for('main.dashboard'))
-        if 'access_system_configuration' in request.form:
-            make_system_configuration_accessible_to_organizer()
-            return redirect(url_for('main.dashboard'))
         if 'download_dancer_data' in request.form:
             pass
             dancers = Contestant.query.all()
@@ -146,9 +143,6 @@ def system_setup():
 @login_required
 @requires_access_level([ACCESS[ADMIN], ACCESS[ORGANIZER]])
 def system_configuration():
-    if current_user.is_organizer() and g.ts.registration_period_started:
-        flash('Page currently inaccessible. The registration has started. For emergency access, contact the admin.')
-        return redirect(url_for('main.dashboard'))
     form = SystemSetupForm()
     if request.method == 'GET':
         form.tournament.data = g.sc.tournament
@@ -195,6 +189,12 @@ def system_configuration():
             form.city.data = g.sc.city
             tsd = datetime.datetime.utcfromtimestamp(g.sc.tournament_starting_date)
             form.tournament_starting_date.data = datetime.date(tsd.year, tsd.month, tsd.day)
+            if g.ts.main_raffle_result_visible:
+                form.number_of_teamcaptains.data = g.sc.number_of_teamcaptains
+            if g.ts.registration_period_started:
+                form.beginners_level.data = str(g.sc.beginners_level)
+                form.closed_level.data = str(g.sc.closed_level)
+                form.breitensport_obliged_blind_date.data = str(g.sc.breitensport_obliged_blind_date)
         if not str2bool(form.finances_refund.data):
             form.finances_refund_date.data = datetime.date.today()
     if request.method == 'POST':
@@ -240,10 +240,6 @@ def system_configuration():
 
             db.session.commit()
             flash("Configuration saved.", "alert-success")
-            if g.ts.system_configured:
-                g.sc.system_configuration_accessible = False
-            else:
-                g.ts.system_configured = True
             db.session.commit()
             if current_user.is_organizer():
                 return redirect(url_for('main.dashboard'))

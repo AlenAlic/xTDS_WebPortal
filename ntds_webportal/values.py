@@ -253,12 +253,12 @@ SHIRT_SIZES = {
     'ML': 'Men\'s L',
     'MXL': 'Men\'s XL',
     'MXXL': 'Men\'s XXL',
-    'FXS': 'Woman\'s XS',
-    'FS': 'Woman\'s S',
-    'FM': 'Woman\'s M',
-    'FL': 'Woman\'s L',
-    'FXL': 'Woman\'s XL',
-    'FXXL': 'Woman\'s XXL'
+    'FXS': 'Women\'s XS',
+    'FS': 'Women\'s S',
+    'FM': 'Women\'s M',
+    'FL': 'Women\'s L',
+    'FXL': 'Women\'s XL',
+    'FXXL': 'Women\'s XXL'
 }
 
 # Website state warnings

@@ -38,8 +38,8 @@ class OrganizerFinances extends React.Component {
             console.log('Error: \n', error);
         });
     }
-    giveRefund(dancer, flag) {
-        fetch("/api/contestants/" + dancer.contestant_id +"/give_refund/" + Number(flag), {method: "PATCH", credentials: 'same-origin'})
+    giveEntryFeeRefund(dancer) {
+        fetch("/api/contestants/" + dancer.contestant_id +"/give_entry_fee_refund", {method: "PATCH", credentials: 'same-origin'})
         .then(response => response.json())
         .then(result => {
                 let newState = this.state.teams;
@@ -52,6 +52,57 @@ class OrganizerFinances extends React.Component {
     }
     removePaymentRequirement(dancer, flag) {
         fetch("/api/contestants/" + dancer.contestant_id +"/remove_payment_requirement/", {method: "PATCH", credentials: 'same-origin'})
+        .then(response => response.json())
+        .then(result => {
+                let newState = this.state.teams;
+                newState[result.contestant_info.team_id].finances_data.dancers[result.contestant_id] = result;
+                this.setState({teams: newState})
+            }
+        ).catch(error => {
+            console.log('Error: \n', error);
+        });
+    }
+    giveGeneralRefund() {
+        let dancer = document.getElementById("general-dancer");
+        let contestant_id = dancer.options[dancer.selectedIndex].value;
+        let name = dancer.options[dancer.selectedIndex].innerText;
+        let data = {
+            "reason": document.getElementById("general-reason").value,
+            "amount": document.getElementById("general-amount").value
+        };
+        dancer.selectedIndex = 0;
+        document.getElementById("general-reason").value = "";
+        document.getElementById("general-amount").value = "";
+        fetch("/api/contestants/" + contestant_id +"/give_general_refund", {method: "PATCH", credentials: 'same-origin', body: JSON.stringify(data)})
+        .then(response => response.json())
+        .then(result => {
+                let newState = this.state.teams;
+                newState[result.contestant_info.team_id].finances_data.dancers[result.contestant_id] = result;
+                this.setState({teams: newState});
+                $.notify({message: `Refund given to ${name}.`},{type: 'alert-info'});
+            }
+        ).catch(error => {
+            console.log('Error: \n', error);
+        });
+    }
+    updateRefund(dancer, refund) {
+        let data = {
+            "reason": document.getElementById("reason-"+refund.refund_id).value,
+            "amount": document.getElementById("amount-"+refund.refund_id).value
+        };
+        fetch("/api/contestants/" + dancer.contestant_id + "/update_refund/" + refund.refund_id, {method: "PATCH", credentials: 'same-origin', body: JSON.stringify(data)})
+        .then(response => response.json())
+        .then(result => {
+                let newState = this.state.teams;
+                newState[result.contestant_info.team_id].finances_data.dancers[result.contestant_id] = result;
+                this.setState({teams: newState})
+            }
+        ).catch(error => {
+            console.log('Error: \n', error);
+        });
+    }
+    deleteRefund(dancer, refund) {
+        fetch("/api/contestants/" + dancer.contestant_id + "/delete_refund/" + refund.refund_id, {method: "PATCH", credentials: 'same-origin'})
         .then(response => response.json())
         .then(result => {
                 let newState = this.state.teams;
@@ -85,7 +136,7 @@ class OrganizerFinances extends React.Component {
 
         const cancelledDancers = dancers.filter(filterCancelled);
         const noRefundDancers = cancelledDancers.filter(filterDoesNotHaveRefund).filter(filterPaymentRequired);
-        const refundDancers = cancelledDancers.filter(filterHasRefund);
+        const refundDancers = dancers.filter(filterHasRefund);
 
         return (
             <React.Fragment>
@@ -98,11 +149,9 @@ class OrganizerFinances extends React.Component {
                     {DutchTeams.length > 0 ? <OrganizerFinancesDropDown text={"Dutch"} teams={DutchTeams}/> : null}
                     {GermanTeams.length > 0 ? <OrganizerFinancesDropDown text={"German"} teams={GermanTeams}/> : null}
                     {OtherTeams.length > 0 ? <OrganizerFinancesDropDown text={"Other"} teams={OtherTeams}/> : null}
-                    {dancersWithRefund.length > 0 ?
-                        <li className="nav-item" role="presentation">
-                            <a className="nav-link" href="#refunds" id="refunds-tab" role="tab" data-toggle="tab">Refunds</a>
-                        </li>
-                    : null}
+                    <li className="nav-item" role="presentation">
+                        <a className={dancersWithRefund.length > 0 ? "nav-link" : "nav-link disabled"} href="#refunds" id="refunds-tab" role="tab" data-toggle="tab">Refunds</a>
+                    </li>
                 </ul>
                 <div className="tab-content">
                     <div className="tab-pane fade show active" id="all-teams">
@@ -190,53 +239,111 @@ class OrganizerFinances extends React.Component {
                     ))}
                     {cancelledDancers.length > 0 ?
                         <div className="tab-pane fade" id="refunds">
-                            <table className="table table-sm table-finances mt-2">
-                                <thead>
-                                <tr>
-                                    <th className="font-size-4" colSpan="4">Cancelled dancers</th>
-                                </tr>
-                                <tr>
-                                    <th style={{width: '20%'}}>Dancer</th>
-                                    <th style={{width: '20%'}}>Team</th>
-                                    <th style={{width: '20%'}} className="text-right">Potential refund</th>
-                                    <th style={{width: '40%'}}/>
-                                </tr>
-                                </thead>
+                            {noRefundDancers.length > 0 ?
+                                <table className="table table-sm mt-2">
+                                    <tbody>
+                                        <tr>
+                                            <th className="font-size-4" colSpan="5">Cancelled dancers</th>
+                                        </tr>
+                                        <tr>
+                                            <th style={{width: '20%'}}>Dancer</th>
+                                            <th style={{width: '40%'}}>Team</th>
+                                            <th style={{width: '20%'}} className="text-right">Potential refund</th>
+                                            <th style={{width: '20%'}}/>
+                                        </tr>
+
+                                    {noRefundDancers.sort(sortDancersAlphabetically).map( d => (
+                                    <tr key={'row'+`${d.contestant_id}`}>
+                                        <td>{d.full_name}</td>
+                                        <td>{d.contestant_info.team}</td>
+                                        <td className="text-right">{currencyFormat(d.payment_info.entry_price_refund)}</td>
+                                        <td className="text-right">
+                                            <button className="btn btn-danger btn-sm d-inline-block my-1" data-toggle="modal" data-target={'#remove-modal-'+`${d.contestant_id}`}
+                                                    data-keyboard="false" data-backdrop="static">Remove payment requirement</button>
+                                            <button className="btn btn-warning btn-sm d-inline-block my-1" onClick={() => this.giveEntryFeeRefund(d)}>Give entry fee refund</button>
+                                        </td>
+                                    </tr>))}
+                                    </tbody>
+                                </table>
+                                : null}
+                            <div className="card mt-2">
+                                <div className="card-body">
+                                    <h5 className="card-title">Give refund</h5>
+                                    <form className="form" method="POST" encType="multipart/form-data" noValidate>
+                                        <div className="form-group">
+                                            <label htmlFor="general-dancer">Dancer</label>
+                                            <select className="form-control" id="general-dancer">
+                                                <option value={0}>Select dancer</option>
+                                                {dancers.sort(sortDancersAlphabetically).map(d => (
+                                                    <option key={'option-'+`${d.contestant_id}`} value={d.contestant_id}>{d.full_name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="general-reason">Refund reason</label>
+                                            <input type="text" className="form-control" id="general-reason"/>
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="general-amount">Refund amount (eurocents)</label>
+                                            <input type="number" className="form-control" id="general-amount" min="0" step="1"/>
+                                        </div>
+                                        <button type="button" className="btn btn-primary" onClick={() => this.giveGeneralRefund()}>Give refund</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <table className="table table-sm mt-2">
                                 <tbody>
-                                {noRefundDancers.sort(sortDancersAlphabetically).map( d => (
-                                <tr key={'row'+`${d.contestant_id}`}>
-                                    <td>{d.full_name}</td>
-                                    <td>{d.contestant_info.team}</td>
-                                    <td className="text-right">{currencyFormat(d.payment_info.potential_refund_price)}</td>
-                                    <td className="text-right">
-                                        <button className="btn btn-warning btn-sm my-1 mx-2" onClick={() => this.giveRefund(d, true)}>Give refund</button>
-                                        <button className="btn btn-danger btn-sm my-1 mx-2" data-toggle="modal" data-target={'#remove-modal-'+`${d.contestant_id}`}
-                                                data-keyboard="false" data-backdrop="static">Remove payment requirement</button>
-                                    </td>
-                                </tr>))}
                                 <tr>
                                     <th className="font-size-4" colSpan="4">Refunds</th>
                                 </tr>
                                 <tr>
                                     <th style={{width: '20%'}}>Dancer</th>
-                                    <th style={{width: '20%'}}>Refund reason(s)</th>
-                                    <th style={{width: '20%'}} className="text-right">Refund</th>
-                                    <th style={{width: '40%'}}/>
+                                    <th style={{width: '40%'}}>Refund</th>
+                                    <th style={{width: '20%'}} className="text-right">Amount</th>
+                                    <th style={{width: '20%'}} className="text-right"/>
                                 </tr>
                                 {refundDancers.sort(sortDancersAlphabetically).map( d => (
-                                <tr key={'row'+`${d.contestant_id}`}>
-                                    <td>{d.full_name}</td>
-                                    <td>{d.payment_info.refund_reasons.map(r => (<div key={'reason-'+r+`${d.contestant_id}`}>{r}</div>))}</td>
-                                    <td className="text-right">{currencyFormat(d.payment_info.refund_price)}</td>
-                                    <td className="text-right"><button className="btn btn-warning btn-sm my-1 mx-2" onClick={() => this.giveRefund(d, false)}>Remove refund</button></td>
-                                </tr>))}
+                                    <React.Fragment key={'row-'+`-${d.contestant_id}`}>
+                                        {d.payment_info.refunds.map((r, i) => (
+                                            (i === 0 ?
+                                                <tr key={'row-'+r.refund_id+`-${d.contestant_id}`}>
+                                                    <td>{d.full_name}</td>
+                                                    <td>{r.reason}</td>
+                                                    <td className="text-right ">{currencyFormat(r.amount)}</td>
+                                                    <td className="text-right">
+                                                        <button className="btn btn-info btn-sm" data-toggle="modal" data-target={'#update-modal-'+r.refund_id}
+                                                                data-keyboard="false" data-backdrop="static">Edit</button>
+                                                        <button className="btn btn-danger btn-sm ml-1" data-toggle="modal" data-target={'#delete-modal-'+r.refund_id}
+                                                                data-keyboard="false" data-backdrop="static">Delete</button>
+                                                    </td>
+                                                </tr> :
+                                                <tr key={'row-'+r.refund_id+`-${d.contestant_id}`}>
+                                                    <td className="border-0"/>
+                                                    <td className="border-0">{r.reason}</td>
+                                                    <td className="border-0 text-right">{currencyFormat(r.amount)}</td>
+                                                    <td className="border-0 text-right">
+                                                        <button className="btn btn-info btn-sm" data-toggle="modal" data-target={'#update-modal-'+r.refund_id}
+                                                                data-keyboard="false" data-backdrop="static">Edit</button>
+                                                        <button className="btn btn-danger btn-sm ml-1" data-toggle="modal" data-target={'#delete-modal-'+r.refund_id}
+                                                                data-keyboard="false" data-backdrop="static">Delete</button>
+                                                    </td>
+                                                </tr>)
+                                        ))}
+                                        <tr>
+                                            <td className="border-0"/>
+                                            <td className="border-0 text-right"><b>Total</b></td>
+                                            <td className="border-0 text-right"><b>{currencyFormat(d.payment_info.refund_price)}</b></td>
+                                            <td className="border-0 text-right"/>
+                                        </tr>
+                                    </React.Fragment>
+                                ))}
                                 </tbody>
                             </table>
                         </div>
                     : null}
                 </div>
-                {noRefundDancers.sort(sortDancersAlphabetically).map( d => (
-                    <div className="modal fade" id={'remove-modal-'+`${d.contestant_id}`} key={'remove-modal-'+`${d.contestant_id}`} tabIndex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+                {noRefundDancers.map( d => (
+                    <div className="modal fade" id={'remove-modal-'+`${d.contestant_id}`} key={'remove-add-modal-'+`${d.contestant_id}`} tabIndex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
                         <div className="modal-dialog modal-lg" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
@@ -256,6 +363,58 @@ class OrganizerFinances extends React.Component {
                             </div>
                         </div>
                     </div>
+                ))}
+                {refundDancers.map( d => (
+                    d.payment_info.refunds.map(r => (
+                        <React.Fragment  key={'modals-'+r.refund_id}>
+                            <div className="modal fade" id={'update-modal-'+r.refund_id} tabIndex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+                                <div className="modal-dialog modal-lg" role="document">
+                                    <div className="modal-content">
+                                        <div className="modal-header">
+                                            <h5 className="modal-title">Edit refund</h5>
+                                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div className="modal-body">
+                                            <div className="form-group">
+                                                <label htmlFor={'reason-'+r.refund_id}>Refund reason</label>
+                                                <input type="text" className="form-control" id={'reason-'+r.refund_id} defaultValue={r.reason}/>
+                                            </div>
+                                            <div className="form-group">
+                                                <label htmlFor={'amount-'+r.refund_id}>Refund amount (eurocents)</label>
+                                                <input type="text" className="form-control" id={'amount-'+r.refund_id} defaultValue={r.amount}/>
+                                            </div>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={() => this.updateRefund(d, r)}>Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal fade" id={'delete-modal-'+r.refund_id} tabIndex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+                                <div className="modal-dialog modal-lg" role="document">
+                                    <div className="modal-content">
+                                        <div className="modal-header">
+                                            <h5 className="modal-title">Delete refund</h5>
+                                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div className="modal-body">
+                                            <p>You are about to remove the refund of {d.full_name} for {r.reason} ({currencyFormat(r.amount)}).</p>
+                                            <p>Are you sure you wish to do this?</p>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="button" className="btn btn-secondary" data-dismiss="modal">No</button>
+                                            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={() => this.deleteRefund(d, r)}>Yes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </React.Fragment>
+                        ))
                 ))}
             </React.Fragment>
         )

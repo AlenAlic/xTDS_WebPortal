@@ -116,7 +116,7 @@ def create_app():
     Create instance of website.
     """
     from ntds_webportal.models import User, Team, Contestant, ContestantInfo, DancingInfo, StatusInfo, PaymentInfo, \
-        VolunteerInfo, AdditionalInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, \
+        Refund, VolunteerInfo, AdditionalInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, \
         TournamentState, SystemConfiguration, RaffleConfiguration, AttendedPreviousTournamentContestant, \
         NotSelectedContestant, SuperVolunteer, ShiftInfo, Shift, ShiftSlot, MerchandiseItem, MerchandiseItemVariant, \
         MerchandisePurchase
@@ -146,21 +146,22 @@ def create_app():
     admin.add_view(BaseView(DancingInfo, db.session))
     admin.add_view(BaseView(StatusInfo, db.session))
     admin.add_view(BaseView(PaymentInfo, db.session))
+    admin.add_view(BaseView(Refund, db.session))
     admin.add_view(BaseView(VolunteerInfo, db.session))
     admin.add_view(BaseView(AdditionalInfo, db.session))
     admin.add_view(BaseView(MerchandiseInfo, db.session))
+    admin.add_view(BaseView(MerchandisePurchase, db.session))
     admin.add_view(BaseView(MerchandiseItem, db.session))
     admin.add_view(BaseView(MerchandiseItemVariant, db.session))
-    admin.add_view(BaseView(MerchandisePurchase, db.session))
-    admin.add_view(BaseView(Notification, db.session))
+    admin.add_view(BaseView(SuperVolunteer, db.session))
     admin.add_view(BaseView(PartnerRequest, db.session))
     admin.add_view(BaseView(NameChangeRequest, db.session))
+    admin.add_view(BaseView(Notification, db.session))
     admin.add_view(BaseView(TournamentState, db.session))
     admin.add_view(BaseView(SystemConfiguration, db.session))
     admin.add_view(BaseView(RaffleConfiguration, db.session))
     admin.add_view(BaseView(AttendedPreviousTournamentContestant, db.session))
     admin.add_view(BaseView(NotSelectedContestant, db.session))
-    admin.add_view(BaseView(SuperVolunteer, db.session))
     admin.add_view(BaseView(ShiftInfo, db.session))
     admin.add_view(BaseView(Shift, db.session))
     admin.add_view(BaseView(ShiftSlot, db.session))

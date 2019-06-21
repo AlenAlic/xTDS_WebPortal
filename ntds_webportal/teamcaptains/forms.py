@@ -357,7 +357,6 @@ class EditContestantForm(BaseContestantForm):
 
 
 class TeamCaptainForm(FlaskForm):
-    number = QuerySelectField('Team captain', allow_blank=True)
     team_captain_one = QuerySelectField('Teamcaptain', allow_blank=True, blank_text='No team captain')
     team_captain_two = QuerySelectField('Teamcaptain', allow_blank=True, blank_text='No team captain')
     submit = SubmitField('Set team captain')

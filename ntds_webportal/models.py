@@ -302,10 +302,11 @@ class Team(db.Model):
         return self.display_name()
 
     def display_name(self):
+        # if self.country == NETHERLANDS:
+        #     return f"{self.name}"
         if g.sc.tournament == NTDS:
-            return '{}'.format(self.name)
-        else:
-            return '{}'.format(self.city)
+            return f"{self.name}"
+        return f"{self.city}"
 
     def is_active(self):
         team_captain = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.team_id == self.team_id).first()
@@ -403,21 +404,16 @@ class Contestant(db.Model):
             di.set_partner(None)
         self.contestant_info.team_captain = False
         self.additional_info.bus_to_brno = False
+        self.merchandise_info.cancel_merchandise()
         if self.status_info.payment_required:
             if int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) < \
-                    g.sc.finances_refund_date:
-                if g.sc.finances_full_refund:
-                    self.payment_info.full_refund = True
-                if g.sc.finances_partial_refund:
-                    self.payment_info.partial_refund = True
-        if int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()) < \
-                g.sc.merchandise_closing_date:
-            self.merchandise_info.cancel_merchandise()
+                    g.sc.finances_refund_date and g.sc.finances_refund:
+                self.payment_info.give_entry_fee_refund()
         db.session.commit()
 
     def deletable(self):
         return not (self.status_info.payment_required or self.merchandise_info.ordered_merchandise() or
-                    self.payment_info.entry_paid or self.payment_info.full_refund or self.payment_info.partial_refund)
+                    self.payment_info.entry_paid or self.payment_info.has_refund())
 
     def get_dancing_info(self, competition):
         for di in self.dancing_info:
@@ -714,7 +710,6 @@ class StatusInfo(db.Model):
 
     def remove_payment_requirement(self):
         self.payment_required = False
-        self.contestant.payment_info.remove_refund()
         db.session.commit()
 
     def json(self):
@@ -737,24 +732,21 @@ class PaymentInfo(db.Model):
     entry_paid = db.Column(db.Boolean, index=True, nullable=False, default=False)
     full_refund = db.Column(db.Boolean, index=True, nullable=False, default=False)
     partial_refund = db.Column(db.Boolean, index=True, nullable=False, default=False)
+    refunds = db.relationship('Refund', back_populates='payment_info', cascade='all, delete-orphan')
 
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
     def has_refund(self):
-        return self.full_refund or self.partial_refund or self.contestant.merchandise_info.has_refund()
+        return len(self.refunds) > 0
 
-    def remove_refund(self):
-        self.partial_refund = False
-        self.full_refund = False
+    def give_entry_fee_refund(self):
+        self.refunds.append(Refund(reason=f"Entry fee ({g.sc.finances_refund_percentage}%)",
+                                   amount=self.entry_price_refund(), payment_info=self))
         db.session.commit()
 
-    def set_refund(self):
-        if g.sc.finances_full_refund:
-            self.full_refund = True
-        if g.sc.finances_partial_refund:
-            self.partial_refund = True
-        db.session.commit()
+    def entry_price_refund(self):
+        return g.sc.entry_fee(self.contestant.contestant_info.student) * g.sc.finances_refund_percentage / 100
 
     def json(self):
         return {
@@ -763,11 +755,10 @@ class PaymentInfo(db.Model):
             "partial_paid": self.is_partial_paid(),
             "entry_price": self.entry_price(),
             "payment_price": self.payment_price(),
+            "refunds": [r.json() for r in self.refunds],
             "refund": self.has_refund(),
-            "refund_reasons": self.refund_reasons(),
-            "potential_refund_price": self.potential_refund_price(),
+            "entry_price_refund": self.entry_price_refund(),
             "refund_price": self.refund_price(),
-            "refund_entry_price": self.refund_entry_price(),
         }
 
     def is_all_paid(self):
@@ -781,28 +772,8 @@ class PaymentInfo(db.Model):
         self.contestant.merchandise_info.merchandise_is_paid(paid)
         db.session.commit()
 
-    def refund_reasons(self):
-        reasons = []
-        if self.full_refund is True or self.partial_refund:
-            reasons.append("Entry fee return")
-        if self.contestant.merchandise_info.has_refund():
-            reasons.append("Merchandise payment return")
-        return reasons
-
-    def refund_entry_price(self):
-        entry_price = g.sc.entry_fee(self.contestant.contestant_info.student)
-        if self.partial_refund:
-            entry_price = entry_price * g.sc.finances_partial_refund_percentage / 100
-        return entry_price
-
     def refund_price(self):
-        if self.full_refund or self.partial_refund:
-            entry_price = g.sc.entry_fee(self.contestant.contestant_info.student)
-        else:
-            entry_price = 0
-        if self.partial_refund:
-            entry_price = entry_price * g.sc.finances_partial_refund_percentage / 100
-        return entry_price + self.contestant.merchandise_info.refund_price()
+        return sum([r.amount for r in self.refunds])
 
     def entry_price(self):
         return g.sc.entry_fee(self.contestant.contestant_info.student)
@@ -810,11 +781,27 @@ class PaymentInfo(db.Model):
     def payment_price(self):
         return self.entry_price() + self.contestant.merchandise_info.merchandise_price()
 
-    def potential_refund_price(self):
-        entry_price = g.sc.entry_fee(self.contestant.contestant_info.student)
-        if g.sc.finances_partial_refund:
-            entry_price = entry_price * g.sc.finances_partial_refund_percentage / 100
-        return entry_price + self.contestant.merchandise_info.refund_price()
+
+class Refund(db.Model):
+    __tablename__ = 'refund'
+    refund_id = db.Column(db.Integer, primary_key=True)
+    payment_info_id = db.Column(db.Integer, db.ForeignKey('payment_info.contestant_id'))
+    payment_info = db.relationship('PaymentInfo', back_populates='refunds')
+    reason = db.Column(db.String(128), nullable=False)
+    amount = db.Column(db.Integer, nullable=False, default=0)
+    timestamp = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
+    merchandise_purchased_id = db.Column(db.Integer, db.ForeignKey('merchandise_purchase.merchandise_purchased_id'))
+    merchandise_purchase = db.relationship('MerchandisePurchase', back_populates='merchandise_refund')
+
+    def __repr__(self):
+        return f"{self.payment_info.contestant} - Refund: {self.reason}"
+
+    def json(self):
+        return {
+            "refund_id": self.refund_id,
+            "reason": self.reason,
+            "amount": self.amount,
+        }
 
 
 class MerchandiseInfo(db.Model):
@@ -825,16 +812,20 @@ class MerchandiseInfo(db.Model):
     purchases = db.relationship('MerchandisePurchase', back_populates='merchandise_info')
 
     def __repr__(self):
-        return '{name}'.format(name=self.contestant)
+        return f"{self.contestant}"
 
     def ordered_merchandise(self):
-        return len(self.purchases) > 0
+        return len([p for p in self.purchases]) > 0
 
     def cancel_merchandise(self):
         for purchase in self.purchases:
-            if purchase.paid or purchase.ordered:
+            if purchase.paid and not purchase.ordered:
                 purchase.cancelled = True
-            else:
+                self.contestant.payment_info.refunds\
+                    .append(Refund(reason=f"Merchandise purchase: {purchase}", merchandise_purchase=purchase,
+                                   amount=purchase.merchandise_item_variant.merchandise_item.price,
+                                   payment_info=self.contestant.payment_info))
+            if not purchase.paid and not purchase.ordered:
                 db.session.delete(purchase)
         db.session.commit()
 
@@ -886,6 +877,7 @@ class MerchandisePurchase(db.Model):
     received = db.Column(db.Boolean, nullable=False, default=False)
     ordered = db.Column(db.Boolean, nullable=False, default=False)
     cancelled = db.Column(db.Boolean, nullable=False, default=False)
+    merchandise_refund = db.relationship('Refund', back_populates='merchandise_purchase', single_parent=True)
 
     def __repr__(self):
         return f"{self.merchandise_item_variant.payment_name()}"
@@ -896,6 +888,8 @@ class MerchandisePurchase(db.Model):
         if self.ordered:
             return "Your item has been ordered"
         if self.cancelled:
+            if self.merchandise_refund is not None:
+                return "Your order has been cancelled, and you are eligible for a refund for the merchandise"
             return "Your order has been cancelled"
         return "Your order has been received"
 
@@ -1030,6 +1024,12 @@ class NotSelectedContestant(db.Model):
     last_name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), nullable=False)
     tournament = db.Column(db.String(16), nullable=False)
+
+    def get_full_name(self):
+        if self.prefixes is None or self.prefixes == '':
+            return ' '.join((self.first_name, self.last_name))
+        else:
+            return ' '.join((self.first_name, self.prefixes, self.last_name))
 
 
 def send_new_messages_email(sender, recipient):
@@ -1273,9 +1273,8 @@ class SystemConfiguration(db.Model):
     merchandise_link = db.Column(db.String(1028), nullable=True)
     merchandise_closing_date = db.Column(db.Integer, nullable=False, default=1538449200)
 
-    finances_full_refund = db.Column(db.Boolean, nullable=False, default=False)
-    finances_partial_refund = db.Column(db.Boolean, nullable=False, default=True)
-    finances_partial_refund_percentage = db.Column(db.Integer, nullable=False, default=70)
+    finances_refund = db.Column(db.Boolean, nullable=False, default=True)
+    finances_refund_percentage = db.Column(db.Integer, nullable=False, default=70)
     finances_refund_date = db.Column(db.Integer, nullable=False, default=1538449200)
 
     main_page_link = db.Column(db.String(1028), nullable=True)
@@ -1331,9 +1330,6 @@ class SystemConfiguration(db.Model):
             "team": team
         }
 
-    def does_tournament_have_refund(self):
-        return self.finances_full_refund or self.finances_partial_refund
-
     def json_settings(self, view_only=False):
         return {
             "first_time_ask": self.first_time_ask,
@@ -1348,8 +1344,8 @@ class SystemConfiguration(db.Model):
             "phd_student_category": self.phd_student_category,
             "merchandise": len(MerchandiseItem.query.all()) > 0,
             "merchandise_finalized": g.ts.merchandise_finalized,
-            "refund": self.does_tournament_have_refund(),
-            "refund_percentage": self.finances_partial_refund_percentage / 100,
+            "refund": self.finances_refund,
+            "refund_percentage": self.finances_refund_percentage / 100,
             "view_only": view_only,
         }
 

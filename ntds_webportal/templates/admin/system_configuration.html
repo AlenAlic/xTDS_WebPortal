@@ -1,52 +1,36 @@
 {% extends "base.html" %}
 
-{% block body_attribs %}
-onload="onStart()"
-{% endblock %}
-
-{% block container_style -%}
-visibility:hidden
-{%- endblock %}
-
 {% block app_content %}
 <h2>System configuration</h2>
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
-    {% if current_user.is_admin() is sameas true %}
     <h3>Tournament</h3>
-    {{ wtf.form_field(form.tournament) }}
-    {{ wtf.form_field(form.year) }}
-    {{ wtf.form_field(form.city) }}
-    {{ wtf.form_field(form.tournament_starting_date) }}
-    {% elif current_user.is_organizer() is sameas true %}
-    Please fill in this questionnaire to configure the system to your likings.
-    {{ wtf.form_field(form.tournament, disabled=true) }}
-    {{ wtf.form_field(form.year, disabled=true) }}
-    {{ wtf.form_field(form.city, disabled=true) }}
-    {{ wtf.form_field(form.tournament_starting_date, disabled=true) }}
-    {% endif%}
+    {% if current_user.is_organizer() %}Please fill in this questionnaire to configure the system to your likings.{% endif%}
+    {{ wtf.form_field(form.tournament, disabled=current_user.is_organizer()) }}
+    {{ wtf.form_field(form.year, disabled=current_user.is_organizer()) }}
+    {{ wtf.form_field(form.city, disabled=current_user.is_organizer()) }}
+    {{ wtf.form_field(form.tournament_starting_date, disabled=current_user.is_organizer()) }}
     <h3>Website links</h3>
     {{ wtf.form_field(form.main_page_link) }}
     {{ wtf.form_field(form.terms_and_conditions_link) }}
     {{ wtf.form_field(form.merchandise_link) }}
     <h3>Team captains</h3>
-    {{ wtf.form_field(form.number_of_teamcaptains) }}
+    {{ wtf.form_field(form.number_of_teamcaptains, disabled=(current_user.is_organizer() and g.ts.main_raffle_result_visible)) }}
     <h3>Tournament levels</h3>
-    {{ wtf.form_field(form.beginners_level) }}
-    {{ wtf.form_field(form.closed_level) }}
-    {{ wtf.form_field(form.breitensport_obliged_blind_date) }}
+    {{ wtf.form_field(form.beginners_level, disabled=(current_user.is_organizer() and g.ts.registration_period_started)) }}
+    {{ wtf.form_field(form.closed_level, disabled=(current_user.is_organizer() and g.ts.registration_period_started)) }}
+    {{ wtf.form_field(form.breitensport_obliged_blind_date, disabled=(current_user.is_organizer() and g.ts.registration_period_started)) }}
     {{ wtf.form_field(form.salsa_competition) }}
     {{ wtf.form_field(form.polka_competition) }}
     <h3>Pricing categories</h3>
     {{ wtf.form_field(form.student_price) }}
     {{ wtf.form_field(form.non_student_price) }}
     {{ wtf.form_field(form.phd_student_category, **{'onchange': "Price(this)", 'onkeyup': "Price(this)"}) }}
-    {{ wtf.form_field(form.phd_student_price) }}
+    {{ wtf.form_field(form.phd_student_price, disabled=form.phd_student_category.data=="False") }}
     <h3>Finances</h3>
-    {{ wtf.form_field(form.finances_full_refund, **{'onchange': "fullRefund()", 'onkeyup': "fullRefund()"}) }}
-    {{ wtf.form_field(form.finances_partial_refund, **{'onchange': "partialRefund()", 'onkeyup': "partialRefund()"}) }}
-    {{ wtf.form_field(form.finances_partial_refund_percentage) }}
-    {{ wtf.form_field(form.finances_refund_date) }}
+    {{ wtf.form_field(form.finances_refund, **{'onchange': "Refund()", 'onkeyup': "Refund()"}) }}
+    {{ wtf.form_field(form.finances_refund_percentage, disabled=form.finances_refund.data=="False") }}
+    {{ wtf.form_field(form.finances_refund_date, disabled=form.finances_refund.data=="False") }}
     <h3>Registration questions</h3>
     {{ wtf.form_field(form.first_time_ask) }}
     {{ wtf.form_field(form.ask_adult) }}
@@ -68,50 +52,24 @@ visibility:hidden
 {% block scripts %}
 {{ super() }}
 <script>
-function onStart() {
-    document.getElementById('phd_student_category').onchange();
-    document.getElementById('finances_full_refund').onchange();
-    let container = document.getElementById('container-hidden').style.visibility = "visible";
-}
 function Price(question) {
     let price = document.getElementById('phd_student_price');
     if (question.value === "True") {
         price.removeAttribute('disabled');
     } else {
-        price.setAttribute('disabled', true);
+        price.setAttribute('disabled', "");
     }
 }
-function fullRefund() {
-    let refund = document.getElementById('finances_full_refund');
-    let partial = document.getElementById('finances_partial_refund');
-
-    if (refund.value === "False") {
-        partial.removeAttribute('disabled');
+function Refund() {
+    let refund = document.getElementById('finances_refund');
+    let refundPercentage = document.getElementById("finances_refund_percentage");
+    let refundDate = document.getElementById("finances_refund_date");
+    if (refund.value === "True") {
+        refundPercentage.removeAttribute('disabled');
+        refundDate.removeAttribute('disabled');
     } else {
-        partial.setAttribute('disabled', true);
-        partial.value = "False"
-    }
-    partialRefund()
-}
-function partialRefund() {
-    refundPercentage();
-    refundDate();
-}
-function refundPercentage() {
-    let partial = document.getElementById('finances_partial_refund');
-    let refund_percentage = document.getElementById("finances_partial_refund_percentage");
-    if (partial.value === "True") {
-        refund_percentage.removeAttribute('disabled');
-    } else {
-        refund_percentage.setAttribute('disabled', true);
-    }
-}
-function refundDate() {
-    let refund_date = document.getElementById("finances_refund_date");
-    if (document.getElementById('finances_full_refund').value === "True" || document.getElementById('finances_partial_refund').value === "True") {
-        refund_date.removeAttribute('disabled');
-    } else {
-        refund_date.setAttribute('disabled', true);
+        refundPercentage.setAttribute('disabled', "");
+        refundDate.setAttribute('disabled', "");
     }
 }
 </script>

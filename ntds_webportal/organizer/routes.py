@@ -4,7 +4,7 @@ from ntds_webportal import db
 from ntds_webportal.organizer import bp
 from ntds_webportal.models import requires_access_level, Team, Contestant, ContestantInfo, DancingInfo,\
     StatusInfo, AdditionalInfo, NameChangeRequest, User, VolunteerInfo, \
-    requires_tournament_state, SuperVolunteer, Adjudicator, PaymentInfo, MerchandiseItem, MerchandiseItemVariant, \
+    requires_tournament_state, SuperVolunteer, Adjudicator, MerchandiseItem, MerchandiseItemVariant, \
     MerchandisePurchase
 from ntds_webportal.functions import submit_updated_dancing_info, random_password, active_teams, competing_teams
 from ntds_webportal.organizer.forms import NameChangeResponse, ChangeEmailForm, FinalizeMerchandiseForm, \
@@ -333,7 +333,6 @@ def registration_management():
     if 'start_registration_period' in form:
         g.ts.registration_period_started = True
         g.ts.registration_open = True
-        g.sc.system_configuration_accessible = False
         team_captains = User.query.filter(User.access == ACCESS[TEAM_CAPTAIN], User.is_active.is_(True)).all()
         for tc in team_captains:
             send_registration_open_email(tc.email)
@@ -512,29 +511,9 @@ def finances_overview():
     return render_template('organizer/finances_overview.html', teams=teams)
 
 
-@bp.route('/remove_payment_requirement/<int:number>', methods=['GET', 'POST'])
-@login_required
-@requires_access_level([ACCESS[ORGANIZER]])
-@requires_tournament_state(RAFFLE_CONFIRMED)
-def remove_payment_requirement(number):
-    dancer = StatusInfo.query.filter(StatusInfo.contestant_id == number).first()
-    dancer.remove_payment_requirement()
-    return redirect(url_for('organizer.finances_overview'))
-
-
-@bp.route('/add_refund/<int:number>', methods=['GET', 'POST'])
-@login_required
-@requires_access_level([ACCESS[ORGANIZER]])
-@requires_tournament_state(RAFFLE_CONFIRMED)
-def add_refund(number):
-    dancer = PaymentInfo.query.filter(PaymentInfo.contestant_id == number).first()
-    dancer.set_refund()
-    return redirect(url_for('organizer.finances_overview'))
-
-
 @bp.route('/merchandise', methods=['GET', 'POST'])
 @login_required
-@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+@requires_access_level([ACCESS[ORGANIZER]])
 @requires_tournament_state(RAFFLE_CONFIRMED)
 def merchandise():
     current_timestamp = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp()

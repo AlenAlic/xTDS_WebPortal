@@ -191,7 +191,7 @@ var CheckinCard = function (_React$Component) {
                     { id: 'collapse-' + ("" + this.props.team_id), className: "collapse" },
                     dancers.length === 0 ? null : React.createElement(
                         "table",
-                        { className: "table table-hover mb-0" },
+                        { className: "table table-hover table-sm mb-0" },
                         React.createElement(
                             "thead",
                             null,
@@ -260,7 +260,7 @@ var CheckinCard = function (_React$Component) {
                             "tbody",
                             null,
                             dancers.sort(sortDancersAlphabetically).map(function (d) {
-                                return React.createElement(
+                                return Object.keys(d.merchandise_info.purchases).length === 0 ? React.createElement(
                                     "tr",
                                     { className: d.pending ? 'table-warning' : d.payment_info.all_paid && d.merchandise_info.merchandise_received ? d.status_info.checked_in && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? 'table-success' : null : null, key: 'row' + ("" + d.contestant_id) },
                                     React.createElement(
@@ -293,52 +293,17 @@ var CheckinCard = function (_React$Component) {
                                     React.createElement(
                                         "td",
                                         null,
-                                        Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(function (p) {
-                                            return !p.cancelled && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? React.createElement(
-                                                "div",
-                                                { key: 'item' + ("" + p.merchandise_purchased_id) },
-                                                p.item,
-                                                " (",
-                                                currencyFormat(p.price),
-                                                ")"
-                                            ) : null;
-                                        }) : '-'
+                                        "-"
                                     ),
                                     React.createElement(
                                         "td",
                                         null,
-                                        Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(function (p) {
-                                            return !p.cancelled && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? React.createElement(
-                                                "div",
-                                                { key: 'paid' + ("" + p.merchandise_purchased_id) },
-                                                React.createElement(
-                                                    "button",
-                                                    { className: "btn " + (p.paid ? "btn-outline-secondary" : "btn-danger"), onClick: function onClick() {
-                                                            return _this7.merchandisePayment(d, p);
-                                                        } },
-                                                    p.paid ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" }),
-                                                    " Paid"
-                                                )
-                                            ) : null;
-                                        }) : "-"
+                                        "-"
                                     ),
                                     React.createElement(
                                         "td",
                                         null,
-                                        Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(function (p) {
-                                            return !p.cancelled && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? React.createElement(
-                                                "div",
-                                                { key: 'received' + ("" + p.merchandise_purchased_id) },
-                                                React.createElement(
-                                                    "button",
-                                                    { className: "btn " + (p.received ? "btn-outline-secondary" : "btn-danger"), onClick: function onClick() {
-                                                            return _this7.merchandiseReceived(d, p);
-                                                        } },
-                                                    p.received ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" }),
-                                                    " Received"
-                                                )
-                                            ) : null;
-                                        }) : "-"
+                                        "-"
                                     ),
                                     React.createElement(
                                         "td",
@@ -351,7 +316,86 @@ var CheckinCard = function (_React$Component) {
                                             d.status_info.checked_in ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" })
                                         ) : null
                                     )
-                                );
+                                ) : Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(function (p, i) {
+                                    return React.createElement(
+                                        "tr",
+                                        { className: d.pending ? 'table-warning' : d.payment_info.all_paid && d.merchandise_info.merchandise_received ? d.status_info.checked_in && d.status_info.status === "confirmed" || d.status_info.status === "cancelled" ? 'table-success' : null : null, key: 'row' + (d.contestant_id + "-" + p.merchandise_purchased_id) },
+                                        i === 0 ? React.createElement(
+                                            React.Fragment,
+                                            null,
+                                            React.createElement(
+                                                "td",
+                                                null,
+                                                d.full_name,
+                                                d.contestant_info.team_captain ? ' - TC' : null
+                                            ),
+                                            React.createElement(
+                                                "td",
+                                                null,
+                                                d.contestant_info.student === "student" ? "Yes" : d.contestant_info.student === "non-student" ? "No" : "PhD student"
+                                            ),
+                                            React.createElement(
+                                                "td",
+                                                null,
+                                                currencyFormat(_this7.props.prices[d.contestant_info.student])
+                                            ),
+                                            React.createElement(
+                                                "td",
+                                                null,
+                                                React.createElement(
+                                                    "button",
+                                                    { className: "btn " + (d.payment_info.entry_paid ? "btn-outline-secondary" : "btn-danger"), onClick: function onClick() {
+                                                            return _this7.entryPayment(d);
+                                                        } },
+                                                    d.payment_info.entry_paid ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" })
+                                                )
+                                            )
+                                        ) : React.createElement("td", { className: "border-0", colSpan: "4" }),
+                                        React.createElement(
+                                            "td",
+                                            { className: i === 0 ? "" : "border-0" },
+                                            p.item,
+                                            " (",
+                                            currencyFormat(p.price),
+                                            ")"
+                                        ),
+                                        React.createElement(
+                                            "td",
+                                            { className: i === 0 ? "" : "border-0" },
+                                            React.createElement(
+                                                "button",
+                                                { className: "btn " + (p.paid ? "btn-outline-secondary" : "btn-danger"), onClick: function onClick() {
+                                                        return _this7.merchandisePayment(d, p);
+                                                    } },
+                                                p.paid ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" }),
+                                                " Paid"
+                                            )
+                                        ),
+                                        React.createElement(
+                                            "td",
+                                            { className: i === 0 ? "" : "border-0" },
+                                            React.createElement(
+                                                "button",
+                                                { className: "btn " + (p.received ? "btn-outline-secondary" : "btn-danger"), onClick: function onClick() {
+                                                        return _this7.merchandiseReceived(d, p);
+                                                    } },
+                                                p.received ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" }),
+                                                " Received"
+                                            )
+                                        ),
+                                        i === 0 ? React.createElement(
+                                            "td",
+                                            null,
+                                            d.status_info.status === "confirmed" ? React.createElement(
+                                                "button",
+                                                { className: "btn " + (d.status_info.checked_in ? "btn-outline-secondary" : "btn-danger"), onClick: function onClick() {
+                                                        return _this7.tryCheckIn(d);
+                                                    } },
+                                                d.status_info.checked_in ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" })
+                                            ) : null
+                                        ) : React.createElement("td", { className: "border-0" })
+                                    );
+                                });
                             })
                         )
                     )

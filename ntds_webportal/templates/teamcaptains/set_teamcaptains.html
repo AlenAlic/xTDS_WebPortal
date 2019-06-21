@@ -1,13 +1,5 @@
 {% extends "base.html" %}
 
-{% block body_attribs %}
-onload="onStart()"
-{% endblock %}
-
-{% block container_style -%}
-visibility:hidden
-{%- endblock %}
-
 {% block styles %}
 {{ super() }}
 <style type="text/css">
@@ -35,12 +27,18 @@ visibility:hidden
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
     <div class="form-row">
-        <div class="col-12 col-md-6">
-            {{ wtf.form_field(form.team_captain_one, **{'onchange': "setTeamCaptain()", 'onkeyup': "setTeamCaptain()"}) }}
-        </div>
-        <div class="col-12 col-md-6">
-            {{ wtf.form_field(form.team_captain_two, disabled=true, **{'onchange': "setTeamCaptain()", 'onkeyup': "setTeamCaptain()"}) }}
-        </div>
+        {% if g.sc.number_of_teamcaptains == 2 %}
+            <div class="col-12 col-md-6">
+                {{ wtf.form_field(form.team_captain_one, **{'onchange': "setTeamCaptain()", 'onkeyup': "setTeamCaptain()"}) }}
+            </div>
+            <div class="col-12 col-md-6">
+                {{ wtf.form_field(form.team_captain_two, disabled=(g.sc.number_of_teamcaptains == 1 or (g.sc.number_of_teamcaptains == 2 and form.team_captain_one.data is none)), **{'onchange': "setTeamCaptain()", 'onkeyup': "setTeamCaptain()"}) }}
+            </div>
+        {% elif g.sc.number_of_teamcaptains == 1 %}
+            <div class="col-12">
+                {{ wtf.form_field(form.team_captain_one, **{'onchange': "setTeamCaptain()", 'onkeyup': "setTeamCaptain()"}) }}
+            </div>
+        {% endif %}
     </div>
     <div class="form-group">
         <div class="input-group">
@@ -54,11 +52,6 @@ visibility:hidden
 {% block scripts %}
 {{ super() }}
 <script>
-function onStart() {
-    setTeamCaptain();
-    document.getElementById('container-hidden').style.visibility = "visible";
-}
-
 let disabled_i = 0;
 let disabled_k = 0;
 

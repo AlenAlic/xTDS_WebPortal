@@ -597,7 +597,7 @@ var TeamCaptainFinances = function (_React$Component) {
                 ),
                 React.createElement(
                     "table",
-                    { className: "table table-sm table-hover table-finances" },
+                    { className: "table table-sm table-hover" },
                     React.createElement(
                         "thead",
                         null,
@@ -759,7 +759,7 @@ var TeamCaptainFinances = function (_React$Component) {
                 ),
                 React.createElement(
                     "table",
-                    { className: "table table-sm table-hover table-finances" },
+                    { className: "table table-sm table-hover" },
                     React.createElement(
                         "thead",
                         null,
@@ -863,7 +863,7 @@ var TeamCaptainFinances = function (_React$Component) {
                                 React.createElement(
                                     "td",
                                     { className: "text-right" },
-                                    Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(function (p) {
+                                    Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).filter(filterPurchaseNotCancelled).sort(sortMerchandiseAlphabetically).map(function (p) {
                                         return React.createElement(
                                             "div",
                                             { key: 'item' + ("" + p.merchandise_purchased_id) },
@@ -874,7 +874,7 @@ var TeamCaptainFinances = function (_React$Component) {
                                 React.createElement(
                                     "td",
                                     { className: "text-right" },
-                                    Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(function (p) {
+                                    Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).filter(filterPurchaseNotCancelled).sort(sortMerchandiseAlphabetically).map(function (p) {
                                         return React.createElement(
                                             "div",
                                             { key: 'price' + ("" + p.merchandise_purchased_id) },
@@ -885,7 +885,7 @@ var TeamCaptainFinances = function (_React$Component) {
                                 React.createElement(
                                     "td",
                                     { className: "text-right" },
-                                    Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).sort(sortMerchandiseAlphabetically).map(function (p) {
+                                    Object.keys(d.merchandise_info.purchases).length > 0 ? Object.values(d.merchandise_info.purchases).filter(filterPurchaseNotCancelled).sort(sortMerchandiseAlphabetically).map(function (p) {
                                         return React.createElement(
                                             "div",
                                             { key: 'paid' + ("" + p.merchandise_purchased_id) },
@@ -921,7 +921,7 @@ var TeamCaptainFinances = function (_React$Component) {
                 ),
                 dancers.filter(filterHasRefund).length > 0 ? React.createElement(
                     "table",
-                    { className: "table table-sm table-finances mt-3" },
+                    { className: "table table-sm mt-3" },
                     React.createElement(
                         "thead",
                         null,
@@ -930,7 +930,7 @@ var TeamCaptainFinances = function (_React$Component) {
                             null,
                             React.createElement(
                                 "th",
-                                { className: "font-size-4", colSpan: "4" },
+                                { className: "font-size-4", colSpan: "5" },
                                 "Refunds"
                             )
                         ),
@@ -944,13 +944,18 @@ var TeamCaptainFinances = function (_React$Component) {
                             ),
                             React.createElement(
                                 "th",
-                                { style: { width: '50%' } },
-                                "Refund reason(s)"
+                                { style: { width: '35%' } },
+                                "Refund"
+                            ),
+                            React.createElement(
+                                "th",
+                                { style: { width: '15%' }, className: "text-right" },
+                                "Amount"
                             ),
                             React.createElement(
                                 "th",
                                 { style: { width: '10%' }, className: "text-right" },
-                                "Refund"
+                                "Total"
                             ),
                             React.createElement("th", { style: { width: '8%' } })
                         )
@@ -958,7 +963,7 @@ var TeamCaptainFinances = function (_React$Component) {
                     React.createElement(
                         "tbody",
                         null,
-                        dancers.filter(filterHasRefund).sort(sortDancersAlphabetically).map(function (d) {
+                        dancers.filter(filterHasRefund).sort(sortDancersAlphabetically).map(function (d, i) {
                             return React.createElement(
                                 "tr",
                                 { key: 'row' + ("" + d.contestant_id) },
@@ -970,11 +975,22 @@ var TeamCaptainFinances = function (_React$Component) {
                                 React.createElement(
                                     "td",
                                     null,
-                                    d.payment_info.refund_reasons.map(function (r) {
+                                    d.payment_info.refunds.map(function (r) {
                                         return React.createElement(
                                             "div",
-                                            { key: 'reason-' + r + ("" + d.contestant_id) },
-                                            r
+                                            { key: 'reason-' + r.refund_id + ("" + d.contestant_id) },
+                                            r.reason
+                                        );
+                                    })
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "text-right" },
+                                    d.payment_info.refunds.map(function (r) {
+                                        return React.createElement(
+                                            "div",
+                                            { key: 'price-' + r.refund_id + ("" + d.contestant_id) },
+                                            currencyFormat(r.amount)
                                         );
                                     })
                                 ),

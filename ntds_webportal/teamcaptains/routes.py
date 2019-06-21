@@ -539,7 +539,6 @@ def set_teamcaptains():
     tc_query = Contestant.query.join(ContestantInfo).join(StatusInfo)\
         .filter(ContestantInfo.team == current_user.team, StatusInfo.status != CANCELLED)\
         .order_by(Contestant.first_name)
-    form.number.query = tc_query
     form.team_captain_one.query = tc_query
     form.team_captain_two.query = tc_query
     current_tcs = db.session.query(Contestant).join(ContestantInfo) \

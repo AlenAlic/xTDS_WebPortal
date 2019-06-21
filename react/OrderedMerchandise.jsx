@@ -50,7 +50,7 @@ class OrderedMerchandise extends React.Component {
                                 </thead>
                                 <tbody>
                                 {dancers.map(d => (
-                                    Object.values(d.merchandise_info.purchases).map((p, i) => (
+                                    Object.values(d.merchandise_info.purchases).filter(filterPurchaseNotCancelled).map((p, i) => (
                                     <tr className={d.pending ? "table-warning" : p.ordered && p.paid && p.received ? "table-success" : null} key={`row-${d.contestant_id}`}>
                                         {i === 0 ?
                                         <React.Fragment>

@@ -110,7 +110,7 @@ class ActivateTeamcaptains extends React.Component {
                             <td className="text-right">
                                 {this.props.settings.website_accessible_to_teamcaptains ?
                                     u.is_teamcaptain ? <button className="btn btn-outline-secondary" onClick={() => this.activateTeamcaptain(u)}>{u.is_active ? "De-activate" : "Activate"}</button> : null :
-                                    <button className="btn btn-outline-secondary" onClick={() => this.activateUser(u)}><CheckMark flag={u.activate}/></button>
+                                    <span className="clickable font-size-4 mr-2" onClick={() => this.activateUser(u)}><Toggle flag={u.activate}/></span>
                                 }
                             </td>
                         </tr>

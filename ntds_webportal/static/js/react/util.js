@@ -82,6 +82,9 @@ var filterUserIsNotActive = function filterUserIsNotActive(user) {
 var filterUserIsTreasurer = function filterUserIsTreasurer(user) {
     return user.is_treasurer;
 };
+var filterPurchaseNotCancelled = function filterPurchaseNotCancelled(purchase) {
+    return !purchase.cancelled;
+};
 
 // Mappings
 var mapEntryPrice = function mapEntryPrice(dancer) {
@@ -201,6 +204,11 @@ var CheckMark = function CheckMark(_ref) {
     var flag = _ref.flag;
 
     return flag ? React.createElement("i", { className: "fas fa-check" }) : React.createElement("i", { className: "fas fa-times" });
+};
+var Toggle = function Toggle(_ref2) {
+    var flag = _ref2.flag;
+
+    return flag ? React.createElement("i", { className: "fas fa-toggle-on" }) : React.createElement("i", { className: "fas fa-toggle-off" });
 };
 
 // General functionz

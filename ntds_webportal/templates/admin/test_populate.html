@@ -62,16 +62,13 @@
                         <th colspan="2">Refunds (before certain date)</th>
                     </tr>
                     <tr>
-                        <td>Is there a full refund?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["finances_full_refund"]] }}</td>
+                        <td>Is there a refund?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["finances_refund"]] }}</td>
                     </tr>
                     <tr>
-                        <td>Is there a partial refund?</td><td class="text-right">{{ g.data.TF[past_tournaments[tournament]["finances_partial_refund"]] }}</td>
-                    </tr>
-                    <tr>
-                        <td>How much is the partial refund?</td>
+                        <td>How much is the refund?</td>
                         <td class="text-right">
-                            {% if past_tournaments[tournament]["finances_partial_refund"] %}
-                            {{ past_tournaments[tournament]["finances_partial_refund_percentage"] }}%
+                            {% if past_tournaments[tournament]["finances_refund"] %}
+                            {{ past_tournaments[tournament]["finances_refund_percentage"] }}%
                             {% else %}
                             -
                             {% endif %}

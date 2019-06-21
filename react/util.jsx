@@ -26,6 +26,7 @@ const filterUserActivate = user => {return user.activate};
 const filterUserIsActive = user => {return user.is_active};
 const filterUserIsNotActive = user => {return !user.is_active};
 const filterUserIsTreasurer = user => {return user.is_treasurer};
+const filterPurchaseNotCancelled = purchase => {return !purchase.cancelled};
 
 // Mappings
 const mapEntryPrice = dancer => dancer.payment_info.entry_price;
@@ -102,6 +103,9 @@ const currencyFormat = num => {
 // General DOM elements
 const CheckMark = ({flag}) => {
     return flag ? <i className="fas fa-check"/>: <i className="fas fa-times"/>;
+};
+const Toggle = ({flag}) => {
+    return flag ? <i className="fas fa-toggle-on"/>: <i className="fas fa-toggle-off"/>;
 };
 
 

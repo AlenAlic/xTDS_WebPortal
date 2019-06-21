@@ -38,19 +38,6 @@
                     </div>
                 </form>
             </div>
-            {% if g.ts.organizer_account_set %}
-            <div class="mb-4">
-                <h2>Organizer system configuration access</h2>
-                {% if g.sc.system_configuration_accessible %}
-                    The system configuration is accessible to the organizer.
-                {% else %}
-                    <p>Make the system configuration form accessible to the organizer. This is for <b>emergencies</b> only.</p>
-                    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-                        <button class="btn btn-outline-primary" name="access_system_configuration">System Configuration Accessible</button>
-                    </form>
-                {% endif %}
-            </div>
-            {% endif %}
         </div>
         <div class="col-md-6">
             <h2>Reset Organizer account</h2>

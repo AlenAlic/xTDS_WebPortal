@@ -122,7 +122,7 @@ class SystemSetupForm(SystemSetupTournamentForm):
     ask_adjudicator_certification = SelectField("Will you ask volunteers that wish to be an adjudicator "
                                                 "if they have a certification to adjudicate?",
                                                 choices=[(k, v) for k, v in YN.items()])
-    finances_refund = SelectField("Will you be giving (partial) refunds to dancers that cancel their registration?",
+    finances_refund = SelectField("Will you be giving refunds to dancers that cancel their registration?",
                                   choices=[(k, v) for k, v in YN.items()])
     finances_refund_percentage = IntegerField(f"What is the refund percentage?", validators=[NumberRange(0, 100)],
                                               default=70)
