@@ -82,7 +82,6 @@ def dashboard():
 def todo():
     # GENERAL
     # TODO - Clean up partner requests.
-    # TODO - Merchandise testen
     # TODO - Maak csv downloadable for Badges
 
     # ADMIN
