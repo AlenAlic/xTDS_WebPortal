@@ -15,7 +15,7 @@
         <div class="nav flex-column nav-pills" id=myTabs role=tablist>
             <a href="{{ url_for('notifications.create') }}" class="btn btn-primary nav-link">Compose message</a>
             <div style="height:30px"></div>
-            <a class="nav-link" href=#inbox id=inbox-tab role=tab data-toggle=tab aria-controls=inbox-contents aria-expanded=true style="font-size:large;">Inbox <span class="badge badge-pill badge-light">{{ inbod_messages|length }}</span></a>
+            <a class="nav-link" href=#inbox id=inbox-tab role=tab data-toggle=tab aria-controls=inbox-contents aria-expanded=true style="font-size:large;">Inbox <span class="badge badge-pill badge-light">{{ inbox_messages|length }}</span></a>
             <a class="nav-link" href=#archive id=archive-tab data-toggle=tab aria-controls=archive-contents style="font-size:large;">Archive <span class="badge badge-pill badge-light">{{ archived_messages|length }}</span></a>
             <a class="nav-link" href=#sent id=sent-tab data-toggle=tab aria-controls=sent-contents style="font-size:large;">Sent <span class="badge badge-pill badge-light">{{ sent_messages|length }}</span></a>
         </div>
