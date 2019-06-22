@@ -81,7 +81,7 @@ class UniqueEmail(object):
     """Checks if an e-mail address is unique."""
     def __call__(self, form, field):
         email_list = [i[0] for i in db.session.query(Contestant.email).all()] + \
-                     [i[0] for i in db.session.query(User.email).all()]
+                     [i[0] for i in db.session.query(User.email).all() if i[0] is not None]
         email_list = [mail.lower() for mail in email_list]
         if field.data.lower() in email_list:
             raise ValidationError(field.gettext('This e-mail address is already in use.'))

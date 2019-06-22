@@ -737,7 +737,7 @@ def bus_to_brno():
             .order_by(Team.city, ContestantInfo.number).all()
     else:
         included_dancers = None
-    if ts.main_raffle_result_visible:
+    if g.ts.main_raffle_result_visible:
         confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo).join(AdditionalInfo) \
             .filter(ContestantInfo.team == current_user.team, StatusInfo.status == CONFIRMED) \
             .order_by(ContestantInfo.number).all()

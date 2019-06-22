@@ -1,7 +1,7 @@
 from flask import g, flash
 from ntds_webportal import db
 from ntds_webportal.models import User, Contestant, ContestantInfo, StatusInfo, RaffleConfiguration, Notification, \
-    SuperVolunteer
+    SuperVolunteer, NotSelectedContestant
 from ntds_webportal.functions import get_dancing_categories
 from ntds_webportal.data import *
 import time
@@ -26,9 +26,9 @@ GROUP_MATCHED_INCOMPLETE_GENERAL_EXCEPTION = 'Incomplete group: {}\n\tSelected d
 
 
 def string_group(group, base_string):
-    g = [d.get_full_name() for d in group.dancers]
-    g = ', '.join(g)
-    return base_string.format(g)
+    group = [d.get_full_name() for d in group.dancers]
+    group = ', '.join(group)
+    return base_string.format(group)
 
 
 def string_group_matched(group):
@@ -120,6 +120,13 @@ class RaffleSystem(Balance):
 
     def first_time_dancers(self):
         return [dancer for dancer in self.registered_dancers if dancer.contestant_info.first_time]
+
+    def not_selected_last_time_dancers(self):
+        nsd = NotSelectedContestant.query.filter(NotSelectedContestant.tournament == g.sc.tournament).all()
+        nsd_names = [d.get_full_name() for d in nsd]
+        nsd_emails = [d.email for d in nsd]
+        return [dancer for dancer in self.registered_dancers if dancer.get_full_name()
+                in nsd_names or dancer.email in nsd_emails]
 
     def number_of_first_time_dancers(self):
         return len(self.first_time_dancers())
@@ -333,8 +340,12 @@ class RaffleSystem(Balance):
             dancers = self.beginners()
         elif dancers_source == LIONS:
             dancers = self.lions()
-        else:
+        elif dancers_source == FIRST_TIME:
             dancers = self.first_time_dancers()
+        elif dancers_source == NOT_SELECTED_LAST_TIME:
+            dancers = self.first_time_dancers()
+        else:
+            return []
         if team is not None:
             dancers = [d for d in dancers if d.contestant_info.team == team]
         groups = []
@@ -425,6 +436,14 @@ class RaffleSystem(Balance):
             with open('stats_balance.txt', 'a', encoding='utf-8') as f1:
                 f1.write(str(self.balance_sum()) + str(self.balance) + '\n')
 
+    def orig_groups(self):
+        increased_chance_groups = []
+        if self.config.beginners_increased_chance:
+            increased_chance_groups += self.specific_groups(BEGINNERS)
+        if self.config.first_time_increased_chance:
+            increased_chance_groups += self.specific_groups(FIRST_TIME)
+        return [grp for grp in self.registered_groups] + increased_chance_groups
+
     def select_guaranteed_balanced_groups(self):
         guaranteed_balanced = self.guaranteed_groups(balanced=True)
         guaranteed_unbalanced = self.guaranteed_groups(balanced=False)
@@ -458,12 +477,7 @@ class RaffleSystem(Balance):
                     self.add_groups(groups, guaranteed=True)
 
     def raffle_groups(self, guaranteed=False, save_extra_buffer=False):
-        increased_chance_groups = []
-        if self.config.beginners_increased_chance:
-            increased_chance_groups += self.specific_groups(BEGINNERS)
-        if self.config.first_time_increased_chance:
-            increased_chance_groups += self.specific_groups(FIRST_TIME)
-        original_groups = [grp for grp in self.registered_groups] + increased_chance_groups
+        original_groups = self.orig_groups()
         r = list(range(0, len(original_groups)))
         shuffle(r)
         for i in r:
@@ -657,7 +671,7 @@ class RaffleSystem(Balance):
     def finish_raffle(self, non_sleeping_hall_dancers=False):
         if not non_sleeping_hall_dancers:
             self.balance_raffle()
-        original_groups = [grp for grp in self.registered_groups]
+        original_groups = self.orig_groups()
         r = list(range(0, len(self.registered_groups)))
         shuffle(r)
         if not self.almost_full():
