@@ -17,7 +17,7 @@
     <p>{{current_tcs[0].get_full_name()}} is the current team captain</p>
     {% endif %}
 {% endif %}
-{% if g.sc.number_of_teamcaptains == 2 %}
+{% if g.sc.number_of_teamcaptains == 2 or current_user.team.number_of_dancers() > 20 %}
 <h2>Set team captains</h2>
 <p>You can change who the team captains are below.</p>
 {% elif g.sc.number_of_teamcaptains == 1 %}

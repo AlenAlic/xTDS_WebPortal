@@ -1,5 +1,8 @@
 I crashed!
 
+Current user:
+{{ current_user }}
+
 Error message:
 
 {% if message is defined %}
