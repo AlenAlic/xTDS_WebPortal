@@ -317,6 +317,9 @@ class Team(db.Model):
         else:
             return False
 
+    def number_of_dancers(self):
+        return len(Contestant.query.join(ContestantInfo, StatusInfo).filter(ContestantInfo.team == self).all())
+
     def confirmed_dancers(self):
         return Contestant.query.join(ContestantInfo, StatusInfo) \
             .filter(ContestantInfo.team == self, StatusInfo.status == CONFIRMED).order_by(Contestant.first_name).all()

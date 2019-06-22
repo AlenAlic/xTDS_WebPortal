@@ -118,6 +118,9 @@ def edit_dancer(number):
         .order_by(Contestant.contestant_id).first_or_404()
     possible_partners = TeamPossiblePartners(current_user, dancer=dancer, include_gdpr=True).possible_partners()
     form = EditContestantForm(dancer)
+    # TEMP FIX
+    form.first_name.validators = []
+    form.last_name.validators = []
     if request.method == GET:
         form.populate(dancer)
     if request.method == POST:
@@ -428,6 +431,9 @@ def partner_request():
                     DancingInfo.level == BEGINNERS)).order_by(Contestant.first_name)
     if len(dancer_choices.all()) == 0:
         flash(f"There are currently no dancers registered in your team that require a partner.", 'alert-warning')
+        flash(f"Dancers that have not accepted the GDPR yet, cannot be used for a partner request, as this would mean "
+              f"sharing some of their personal data. Once the GDPR has been accepted, dancers are available for a "
+              f"partner request")
         return redirect(url_for('teamcaptains.partner_request_list'))
     other_choices = db.session.query(Contestant).join(ContestantInfo).join(DancingInfo).join(StatusInfo) \
         .filter(ContestantInfo.team != current_user.team, StatusInfo.status == REGISTERED,

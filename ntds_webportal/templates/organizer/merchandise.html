@@ -40,7 +40,7 @@
         {% endfor %}
         </div>
         {{ react() }}
-        <script src="{{url_for('static', filename='js/react/OrderedMerchandise.js')}}{{ now }}" ></script>
+        <script src="{{url_for('static', filename='js/react/OrderedMerchandise.js')}}{{ aver }}" ></script>
         <div id="root"></div>
         <script>
             ReactDOM.render(React.createElement(OrderedMerchandise, {dancers: {{dancers | tojson}}}), document.getElementById('root'));
