@@ -82,6 +82,8 @@ def dashboard():
 def todo():
     # GENERAL
     # TODO - Clean up partner requests.
+    # TODO - Fix give refund button in organizer finances tab, button show up when refunds are off.
+    # TODO - Add increased chances for second big raffle
     # TODO - Maak csv downloadable for Badges
 
     # ADMIN

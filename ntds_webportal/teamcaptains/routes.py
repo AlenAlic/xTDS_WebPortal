@@ -132,9 +132,10 @@ def edit_dancer(number):
               'alert-success')
         return redirect(url_for('teamcaptains.edit_dancers', wide=wide))
     if dancer.status_info.feedback_about_information is not None:
-        flash(Markup(f'{dancer.get_full_name()} sent feedback about his/her submitted information:<br/>'
-                     f'{dancer.status_info.feedback_about_information}<br/><br/> You can remove this notification '
-                     f'by saving the form on this page.'), 'alert-info')
+        feedback = dancer.status_info.feedback_about_information.replace("\r\n", "<br/>")
+        flash(f'{dancer.get_full_name()} sent feedback about his/her submitted information:<br/><br/>'
+              f'<i>{feedback}</i><br/><br/>You can remove this notification by saving the form on this page.',
+              'alert-info')
     return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, wide=wide,
                            possible_partners=possible_partners)
 
