@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, Markup, g
+from flask import render_template, request, redirect, url_for, flash, g
 from flask_login import login_required, current_user
 from ntds_webportal import db
 from ntds_webportal.volunteering import bp
@@ -43,11 +43,11 @@ def register():
             emails = [u.email for u in all_users if u.email is not None]
             form_email = form.email.data
             if form_email in emails and form_email is not None:
-                flash(Markup(f'There is already a dancer registered with the e-mail address {form.email.data}.<br/>'
-                             f'You cannot register as both a dancer in the tournament, and a Super Volunteer.<br/>'
-                             f'If you are already registered as a dancer, and wish to be a Super Volunteer instead, '
-                             f'please contact your team captain to completely remove your registration as a dancer '
-                             f'from the tournament first. Afterwards, you can register as a Super Volunteer.'),
+                flash(f'There is already a dancer registered with the e-mail address {form.email.data}.<br/>'
+                      f'You cannot register as both a dancer in the tournament, and a Super Volunteer.<br/>'
+                      f'If you are already registered as a dancer, and wish to be a Super Volunteer instead, '
+                      f'please contact your team captain to completely remove your registration as a dancer '
+                      f'from the tournament first. Afterwards, you can register as a Super Volunteer.',
                       "alert-danger")
             else:
                 if form.validate_on_submit():
@@ -56,8 +56,8 @@ def register():
                         super_volunteer.update_data(form)
                         db.session.add(super_volunteer)
                         db.session.commit()
-                        flash(Markup(f'<b>Registration complete:</b> {super_volunteer.get_full_name()}, '
-                                     f'you have been successfully registered as a Super Volunteer.'), 'alert-success')
+                        flash(f'<b>Registration complete:</b> {super_volunteer.get_full_name()}, '
+                              f'you have been successfully registered as a Super Volunteer.', 'alert-success')
                         # noinspection PyTypeChecker
                         create_super_volunteer_user_account(form, super_volunteer)
                         return redirect(url_for('main.index'))
@@ -150,7 +150,7 @@ def create_task():
         db.session.add(ShiftInfo(name=form.name.data, location=form.location.data,
                                  coordinator=form.coordinator.data, description=form.description.data))
         db.session.commit()
-        flash("Added shift type: " + form.name.data)
+        flash(f"Added shift type: {form.name.data}")
         return redirect(url_for('volunteering.tasks'))
     return render_template('volunteering/create_task.html', form=form)
 
@@ -169,7 +169,7 @@ def edit_task(shift_id):
         task.description = form.description.data
         db.session.add(task)
         db.session.commit()
-        flash("Updated shift type: " + form.name.data)
+        flash(f"Updated shift type: {form.name.data}")
         return redirect(url_for('volunteering.tasks'))
     form.populate(task)
     return render_template('volunteering/edit_task.html', form=form, task=task)
@@ -359,9 +359,9 @@ def shift_slot(slot_id):
                             test_shifts = [s for s in test_shifts if not (slot.shift.stop_time <= s.start_time or
                                                                           slot.shift.start_time >= s.stop_time)]
                             if len(test_shifts) > 0:
-                                flash(Markup(f"Added {volunteer} to {slot.shift}.<br/>{volunteer} is already assigned "
-                                             f"to {test_shifts[0]} at the same time, so make sure that this is is "
-                                             f"possible!"), "alert-warning")
+                                flash(f"Added {volunteer} to {slot.shift}.<br/>{volunteer} is already assigned "
+                                      f"to {test_shifts[0]} at the same time, so make sure that this is is "
+                                      f"possible!", "alert-warning")
                         slot.user = volunteer
                         slot.team = team
                         if volunteer is not None and team is not None:
@@ -383,8 +383,8 @@ def shift_slot(slot_id):
                         test_shifts = [s for s in test_shifts if not (slot.shift.stop_time <= s.start_time or
                                                                       slot.shift.start_time >= s.stop_time)]
                         if len(test_shifts) > 0:
-                            flash(Markup(f"Cannot add {volunteer} to {slot.shift}.<br/>{volunteer} is already assigned "
-                                         f"to {test_shifts[0]}."), "alert-danger")
+                            flash(f"Cannot add {volunteer} to {slot.shift}.<br/>{volunteer} is already assigned "
+                                  f"to {test_shifts[0]}.", "alert-danger")
                             return redirect(url_for('volunteering.shift_slot', slot_id=slot.slot_id))
                         if not slot.user_assigned_to_shift(volunteer):
                             slot.user = volunteer

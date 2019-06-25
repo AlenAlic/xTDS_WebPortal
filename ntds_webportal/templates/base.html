@@ -169,7 +169,7 @@ $(document).ready(function($) {
     {% if messages %}
         <script>
         {% for category, message in messages %}
-            $.notify({message: '{{ message|safe }}'},{type: {% if category=='message' %}'alert-info'{% else %}'{{ category }}'{% endif %}});
+            $.notify({message: "{{ message.replace("'", "\'")|safe }}"},{type: {% if category=='message' %}'alert-info'{% else %}'{{ category }}'{% endif %}, mouse_over: "pause"});
         {% endfor %}
         </script>
     {% endif %}
