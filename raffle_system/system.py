@@ -2,7 +2,6 @@ from flask import g, flash
 from ntds_webportal import db
 from ntds_webportal.models import User, Contestant, ContestantInfo, StatusInfo, RaffleConfiguration, Notification, \
     SuperVolunteer, NotSelectedContestant
-from ntds_webportal.functions import get_dancing_categories
 from ntds_webportal.data import *
 import time
 from random import shuffle
@@ -124,9 +123,9 @@ class RaffleSystem(Balance):
     def not_selected_last_time_dancers(self):
         nsd = NotSelectedContestant.query.filter(NotSelectedContestant.tournament == g.sc.tournament).all()
         nsd_names = [d.get_full_name() for d in nsd]
-        nsd_emails = [d.email for d in nsd]
+        nsd_emails = [d.email.lower() for d in nsd]
         return [dancer for dancer in self.registered_dancers if dancer.get_full_name()
-                in nsd_names or dancer.email in nsd_emails]
+                in nsd_names or dancer.email.lower() in nsd_emails]
 
     def number_of_first_time_dancers(self):
         return len(self.first_time_dancers())
@@ -289,8 +288,7 @@ class RaffleSystem(Balance):
     def update_stats(self, source_list):
         stats = self.get_empty_stats()
         for d in source_list:
-            di = get_dancing_categories(d.dancing_info)
-            for cat, info in di.items():
+            for info in d.dancing_info:
                 if info.level != NO:
                     stats[info.level][info.competition][info.role] += 1
         for _, cat in stats.items():

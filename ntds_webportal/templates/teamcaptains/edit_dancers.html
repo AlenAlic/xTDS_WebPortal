@@ -166,11 +166,11 @@
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).level] }}</td>
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}</td>
     {% if g.sc.breitensport_obliged_blind_date %}<td>{{ g.data.TF[dancer.dancing_information(g.data.BALLROOM).blind_date] }}</td>{% endif %}
-    <td>{{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner) }}</td>
+    <td>{{ dancer.dancing_information(g.data.BALLROOM).get_partner_name() }}</td>
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}</td>
     <td>{{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}</td>
     {% if g.sc.breitensport_obliged_blind_date %}<td>{{ g.data.TF[dancer.dancing_information(g.data.LATIN).blind_date] }}</td>{% endif %}
-    <td>{{ dancer.dancing_information(g.data.LATIN).get_partner() }}</td>
+    <td>{{ dancer.dancing_information(g.data.LATIN).get_partner_name() }}</td>
     <td>{{ g.data.YMN[dancer.volunteer_info.volunteer] }}</td>
     <td>{{ g.data.YMN[dancer.volunteer_info.first_aid] }}</td>
     <td>{{ g.data.YMN[dancer.volunteer_info.jury_ballroom] }}</td>

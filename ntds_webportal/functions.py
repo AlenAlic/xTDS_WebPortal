@@ -26,13 +26,6 @@ def database_is_empty():
     return is_empty
 
 
-def get_dancing_categories(dancing_info):
-    if dancing_info is None:
-        return {cat: DancingInfo(competition=cat) for cat in ALL_COMPETITIONS}
-    else:
-        return {di.competition: di for di in dancing_info}
-
-
 def notify_teamcaptains_couple_created(lead, follow, competition):
     teamcaptain_lead = User.query.filter(User.is_active, User.access == ACCESS[TEAM_CAPTAIN],
                                          User.team == lead.contestant_info.team).first()

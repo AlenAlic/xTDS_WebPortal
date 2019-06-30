@@ -46,7 +46,7 @@
                 {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.BALLROOM).role] }}
             </td>
             <td>
-                {{ g.data.has_partner_display(dancer.dancing_information(g.data.BALLROOM).partner) }}
+                {{ dancer.dancing_information(g.data.BALLROOM).get_partner_name() }}
             </td>
             <td>
                 {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).level] }}
@@ -55,7 +55,7 @@
                 {{ g.data.LEVEL_ROLE_DISPLAY[dancer.dancing_information(g.data.LATIN).role] }}
             </td>
             <td>
-                {{ g.data.has_partner_display(dancer.dancing_information(g.data.LATIN).partner) }}
+                {{ dancer.dancing_information(g.data.LATIN).get_partner_name() }}
             </td>
             <td align="right">
                 <input class="checkbox dancer" type="checkbox" value="y" id="{{ dancer.contestant_id }}" name="{{ dancer.contestant_id }}">

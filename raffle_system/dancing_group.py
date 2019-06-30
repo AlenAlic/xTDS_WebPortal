@@ -1,5 +1,5 @@
 from ntds_webportal import db
-from ntds_webportal.functions import get_dancing_categories, uniquify
+from ntds_webportal.functions import uniquify
 from ntds_webportal.data import *
 from raffle_system.balance import Balance
 from raffle_system.functions import get_partners_ids
@@ -18,10 +18,9 @@ class DancingGroup(Balance):
                 self.add(dancers_input)
 
     def add(self, dancer):
-        dancing_categories = get_dancing_categories(dancer.dancing_info)
         if dancer not in self.dancers:
             self.dancers.append(dancer)
-            for _, di in dancing_categories.items():
+            for di in dancer.dancing_info:
                 self.balance[di.competition][di.level] += self.measure[di.role]
 
     def add_dancers(self, dancers):

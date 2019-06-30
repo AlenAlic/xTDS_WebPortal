@@ -399,7 +399,11 @@ class Contestant(db.Model):
         self.last_name.title()
 
     def competition(self, competition):
-        return [di for di in self.dancing_info if di.competition == competition][0]
+        try:
+            return sorted([di for di in self.dancing_info if di.competition == competition],
+                          key=lambda x: x.contest_id)[0]
+        except IndexError:
+            return None
 
     def cancel_registration(self):
         self.status_info.set_status(CANCELLED, set_raffle_status=False)
@@ -419,13 +423,13 @@ class Contestant(db.Model):
                     self.payment_info.entry_paid or self.payment_info.has_refund())
 
     def get_dancing_info(self, competition):
-        for di in self.dancing_info:
+        for di in sorted([d for d in self.dancing_info], key=lambda x: x.contest_id):
             if di.competition == competition:
                 return di
         return None
 
     def dancing_information(self, competition):
-        for di in self.dancing_info:
+        for di in sorted([d for d in self.dancing_info], key=lambda x: x.contest_id):
             if di.competition == competition:
                 return di
 
@@ -588,12 +592,19 @@ class DancingInfo(db.Model):
         self.blind_date = False
         self.partner = None
 
-    def get_partner(self):
+    def get_partner_name(self):
         if self.partner is None:
             return "No partner"
         partner = DancingInfo.query.filter(DancingInfo.competition == self.competition,
                                            DancingInfo.contestant_id == self.partner).first()
         return partner.contestant.get_full_name()
+
+    def get_partner(self):
+        if self.partner is None:
+            return None
+        partner = DancingInfo.query.filter(DancingInfo.competition == self.competition,
+                                           DancingInfo.contestant_id == self.partner).first()
+        return partner
 
     def json(self):
         data = {

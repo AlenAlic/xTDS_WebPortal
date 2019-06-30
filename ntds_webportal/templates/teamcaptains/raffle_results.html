@@ -5,41 +5,42 @@
 
 {% block app_content %}
 {% if g.ts.main_raffle_result_visible is sameas false %}
-<h2>The raffle has not taken place yet.</h2>
+    <h2>The raffle has not taken place yet.</h2>
 {% else %}
 
-{% if selected_dancers|length == 0 and confirmed_dancers|length == 0 %}
-You have no selected dancers
-{% endif %}
+    {% if selected_dancers|length == 0 and confirmed_dancers|length == 0 %}
+    You have no selected dancers
+    {% endif %}
 
-{% if selected_dancers|length > 0 %}
-<div class="no-print">
-    <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-        {% with status='Selected dancers', dancers=selected_dancers %}
-            {% include 'teamcaptains/_raffle_list_selected.html' %}
+    {% if selected_dancers|length > 0 %}
+    <div class="no-print">
+        <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+            {% with status='Selected dancers', dancers=selected_dancers %}
+                {% include 'teamcaptains/_raffle_list_selected.html' %}
+            {% endwith %}
+            <button type="submit" id="submit-confirm" name="confirm" class="btn btn-primary">Confirm selected dancers</button>
+            <div style="height:10px;"></div>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if confirmed_dancers|length > 0 %}
+        <h2 class="no-print">Confirmed dancers</h2>
+        <div>Dancers marked yellow have been selected by the raffle, but have not yet confirmed for the tournament.</div>
+        <button class="btn btn-outline-primary no-print mt-1 my-3" onclick="printPage()">Print lists of confirmed dancers</button>
+        {% with category='Ballroom', couples=confirmed_ballroom_couples, show_break_up_button=false %}
+            {% include 'teamcaptains/_couples_list.html' %}
         {% endwith %}
-        <button type="submit" id="submit-confirm" name="confirm" class="btn btn-primary">Confirm selected dancers</button>
-        <div style="height:10px;"></div>
-    </form>
-</div>
-{% endif %}
-
-{% if confirmed_dancers|length > 0 %}
-<h2 class="no-print">Confirmed dancers</h2>
-<button class="btn btn-outline-primary no-print mt-1 mb-2" onclick="printPage()">Print lists of confirmed dancers</button>
-{% with category='Ballroom', couples=confirmed_ballroom_couples, show_break_up_button=false %}
-    {% include 'teamcaptains/_couples_list.html' %}
-{% endwith %}
-{% with category='Latin', couples=confirmed_latin_couples, show_break_up_button=false %}
-    {% include 'teamcaptains/_couples_list.html' %}
-{% endwith %}
-{% with category='Ballroom', leads=ballroom_lead_blind_daters, follows=ballroom_follow_blind_daters %}
-    {% include 'teamcaptains/_blind_daters_lists.html' %}
-{% endwith %}
-{% with category='Latin', leads=latin_lead_blind_daters, follows=latin_follow_blind_daters %}
-    {% include 'teamcaptains/_blind_daters_lists.html' %}
-{% endwith %}
-{% endif %}
+        {% with category='Latin', couples=confirmed_latin_couples, show_break_up_button=false %}
+            {% include 'teamcaptains/_couples_list.html' %}
+        {% endwith %}
+        {% with category='Ballroom', leads=ballroom_lead_blind_daters, follows=ballroom_follow_blind_daters %}
+            {% include 'teamcaptains/_blind_daters_lists.html' %}
+        {% endwith %}
+        {% with category='Latin', leads=latin_lead_blind_daters, follows=latin_follow_blind_daters %}
+            {% include 'teamcaptains/_blind_daters_lists.html' %}
+        {% endwith %}
+    {% endif %}
 
 {% endif %}
 
