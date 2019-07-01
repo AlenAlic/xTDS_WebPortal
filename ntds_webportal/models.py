@@ -1391,6 +1391,9 @@ class RaffleConfiguration(db.Model):
     first_time_guaranteed_entry = db.Column(db.Boolean, nullable=False, default=False)
     first_time_increased_chance = db.Column(db.Boolean, nullable=False, default=False)
 
+    not_selected_last_time_guaranteed_entry = db.Column(db.Boolean, nullable=False, default=False)
+    not_selected_last_time_increased_chance = db.Column(db.Boolean, nullable=False, default=False)
+
     guaranteed_team_size = db.Column(db.Boolean, nullable=False, default=False)
     minimum_team_size = db.Column(db.Integer, nullable=False, default=0)
 

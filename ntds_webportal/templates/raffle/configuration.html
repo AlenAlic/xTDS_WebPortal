@@ -34,6 +34,9 @@ visibility:hidden
     {{ wtf.form_field(form.first_time_guaranteed_entry, disabled=g.ts.main_raffle_taken_place, **{'onchange': "FirstTime(this)", 'onkeyup': "FirstTime(this)"}) }}
     {{ wtf.form_field(form.first_time_increased_chance, disabled=g.ts.main_raffle_taken_place) }}
     {% endif %}
+    <h3>Not selected last tournament</h3>
+    {{ wtf.form_field(form.not_selected_last_time_guaranteed_entry, disabled=g.ts.main_raffle_taken_place, **{'onchange': "NotSelected(this)", 'onkeyup': "NotSelected(this)"}) }}
+    {{ wtf.form_field(form.not_selected_last_time_increased_chance, disabled=g.ts.main_raffle_taken_place) }}
     <h3>Teams</h3>
     {{ wtf.form_field(form.guaranteed_team_size, disabled=g.ts.main_raffle_taken_place, **{'onchange': "TeamSize(this)", 'onkeyup': "TeamSize(this)"}) }}
     {{ wtf.form_field(form.minimum_team_size, disabled=g.ts.main_raffle_taken_place) }}
@@ -64,6 +67,7 @@ function onStart() {
     {% if g.sc.first_time_ask is sameas true %}
     document.getElementById('first_time_guaranteed_entry').onchange();
     {% endif %}
+    document.getElementById('{{ form.not_selected_last_time_guaranteed_entry.name }}').onchange();
     document.getElementById('guaranteed_team_size').onchange();
     {% if g.sc.tournament == g.data.NTDS %}
     document.getElementById('lions_guaranteed_per_team').onchange();
@@ -135,7 +139,21 @@ function FirstTime(first_time_guaranteed_entry) {
     }
 }
 
-var old_minimum_team_size = {{form.minimum_team_size.data}}
+var old_not_selected_increased_chance = "{{ form.not_selected_last_time_increased_chance.data }}";
+function NotSelected(not_selected_guaranteed_entry) {
+    let not_selected_increased_chance = document.getElementById("{{ form.not_selected_last_time_increased_chance.name }}");
+
+    if (not_selected_guaranteed_entry.value === "True") {
+        not_selected_increased_chance.setAttribute('disabled', true);
+        old_not_selected_increased_chance = first_time_increased_chance.value;
+        not_selected_increased_chance.value = "False"
+    } else {
+        not_selected_increased_chance.removeAttribute('disabled');
+        not_selected_increased_chance.value = old_not_selected_increased_chance;
+    }
+}
+
+var old_minimum_team_size = {{form.minimum_team_size.data}};
 function TeamSize(guaranteed_team_size) {
     let minimum_team_size = document.getElementById("minimum_team_size");
 
@@ -181,6 +199,7 @@ function LionsPerTeam(lions_guaranteed_per_team) {
 function BeginnersCutoff(beginners_guaranteed_entry_cutoff) {}
 function BeginnersPerTeam(beginners_guaranteed_per_team) {}
 function FirstTime(first_time_guaranteed_entry) {}
+function NotSelected(not_selected_guaranteed_entry) {}
 function TeamSize(guaranteed_team_size) {}
 function LionsPerTeam(lions_guaranteed_per_team) {}
 {% endif %}

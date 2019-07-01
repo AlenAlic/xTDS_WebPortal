@@ -19,7 +19,7 @@ GUARANTEED_EXCEPTION = 'Selected {} alone because he/she is guaranteed entry by 
 NO_PARTNER = 'No partner available for: {}\n\tTemporarily removing from selection'
 BEGINNER_EXCEPTION = 'Selected {} because he/she is a Beginner'
 GROUP_MATCHED_INCOMPLETE_REDUCING_DIFFERENCE = 'Incomplete group: {}\n\tSelected due to difference reduction'
-GROUP_MATCHED_INCOMPLETE_TEAM_CAPTAIN_EXCEPTION = 'Incomplete group: {}\n\tSelected due to team captain in group'
+GROUP_MATCHED_INCOMPLETE_TEAM_CAPTAIN_EXCEPTION = 'Incomplete group: {}\n\tSelected due to teamcaptain in group'
 GROUP_MATCHED_INCOMPLETE_BEGINNERS_EXCEPTION = 'Incomplete group: {}\n\tSelected due to Beginners exception'
 GROUP_MATCHED_INCOMPLETE_GENERAL_EXCEPTION = 'Incomplete group: {}\n\tSelected due to general exception'
 
@@ -341,7 +341,7 @@ class RaffleSystem(Balance):
         elif dancers_source == FIRST_TIME:
             dancers = self.first_time_dancers()
         elif dancers_source == NOT_SELECTED_LAST_TIME:
-            dancers = self.first_time_dancers()
+            dancers = self.not_selected_last_time_dancers()
         else:
             return []
         if team is not None:
@@ -440,6 +440,8 @@ class RaffleSystem(Balance):
             increased_chance_groups += self.specific_groups(BEGINNERS)
         if self.config.first_time_increased_chance:
             increased_chance_groups += self.specific_groups(FIRST_TIME)
+        if self.config.not_selected_last_time_increased_chance:
+            increased_chance_groups += self.specific_groups(NOT_SELECTED_LAST_TIME)
         return [grp for grp in self.registered_groups] + increased_chance_groups
 
     def select_guaranteed_balanced_groups(self):
@@ -790,7 +792,7 @@ class RaffleSystem(Balance):
                 n = Notification(title=f"Selected {dancer.get_full_name()} for the tournament", text=text,
                                  user=teamcaptain)
                 n.send()
-        flash('Marked dancers are now selected and this is visible to the team captains.')
+        flash('Marked dancers are now selected and this is visible to the teamcaptains.')
         db.session.commit()
 
     def cancel_selection(self, dancers):

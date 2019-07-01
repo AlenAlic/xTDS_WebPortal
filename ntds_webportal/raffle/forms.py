@@ -53,6 +53,13 @@ class RaffleConfigurationForm(FlaskForm):
     first_time_increased_chance = SelectField("Will first time attendees be given an increased chance to be selected "
                                               "for the tournament?", choices=[(k, v) for k, v in YN.items()])
 
+    not_selected_last_time_guaranteed_entry = SelectField("Will dancers that have not been selected for the last "
+                                                          "tournament be guaranteed entry to the tournament?",
+                                                          choices=[(k, v) for k, v in YN.items()])
+    not_selected_last_time_increased_chance = SelectField("Will dancers that have not been selected for the last "
+                                                          "tournament be given an increased chance to be selected for "
+                                                          "the tournament?", choices=[(k, v) for k, v in YN.items()])
+
     guaranteed_team_size = SelectField(f"Will there be a minimum team size, below which all dancers are granted entry "
                                        f"to the tournament?", choices=[(k, v) for k, v in YN.items()])
     minimum_team_size = IntegerField(f"What is the minimum team size for the tournament?",
@@ -81,6 +88,9 @@ class RaffleConfigurationForm(FlaskForm):
         self.first_time_guaranteed_entry.data = str(g.rc.first_time_guaranteed_entry)
         self.first_time_increased_chance.data = str(g.rc.first_time_increased_chance)
 
+        self.not_selected_last_time_guaranteed_entry.data = str(g.rc.not_selected_last_time_guaranteed_entry)
+        self.not_selected_last_time_increased_chance.data = str(g.rc.not_selected_last_time_increased_chance)
+
         self.guaranteed_team_size.data = str(g.rc.guaranteed_team_size)
         self.minimum_team_size.data = g.rc.minimum_team_size
 
@@ -99,6 +109,9 @@ class RaffleConfigurationForm(FlaskForm):
 
             self.first_time_guaranteed_entry.data = str(g.rc.first_time_guaranteed_entry)
             self.first_time_increased_chance.data = str(g.rc.first_time_increased_chance)
+
+            self.not_selected_last_time_guaranteed_entry.data = str(g.rc.not_selected_last_time_guaranteed_entry)
+            self.not_selected_last_time_increased_chance.data = str(g.rc.not_selected_last_time_increased_chance)
 
             self.guaranteed_team_size.data = str(g.rc.guaranteed_team_size)
             self.minimum_team_size.data = g.rc.minimum_team_size
@@ -121,6 +134,9 @@ class RaffleConfigurationForm(FlaskForm):
         if str2bool(self.first_time_guaranteed_entry.data):
             self.first_time_increased_chance.data = str(False)
 
+        if str2bool(self.not_selected_last_time_guaranteed_entry.data):
+            self.not_selected_last_time_increased_chance.data = str(False)
+
         if not str2bool(self.guaranteed_team_size.data):
             self.minimum_team_size.data = 0
 
@@ -141,6 +157,9 @@ class RaffleConfigurationForm(FlaskForm):
 
         g.rc.first_time_guaranteed_entry = str2bool(self.first_time_guaranteed_entry.data)
         g.rc.first_time_increased_chance = str2bool(self.first_time_increased_chance.data)
+
+        g.rc.not_selected_last_time_guaranteed_entry = str2bool(self.not_selected_last_time_guaranteed_entry.data)
+        g.rc.not_selected_last_time_increased_chance = str2bool(self.not_selected_last_time_increased_chance.data)
 
         g.rc.guaranteed_team_size = str2bool(self.guaranteed_team_size.data)
         g.rc.minimum_team_size = self.minimum_team_size.data
