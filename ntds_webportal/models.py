@@ -1263,6 +1263,8 @@ class SystemConfiguration(db.Model):
     tournament_starting_date = db.Column(db.Integer, nullable=False, default=1538449200)
 
     number_of_teamcaptains = db.Column(db.Integer, nullable=False, default=1)
+    additional_teamcaptain_large_teams = db.Column(db.Boolean, nullable=False, default=True)
+    additional_teamcaptain_large_teams_cutoff = db.Column(db.Integer, nullable=False, default=20)
 
     beginners_level = db.Column(db.Boolean, nullable=False, default=True)
     closed_level = db.Column(db.Boolean, nullable=False, default=True)

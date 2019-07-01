@@ -10,19 +10,19 @@
 {% block app_content %}
 {% if current_tc != None %}
     {% if current_tcs|length == 2 %}
-    <h2>Current team captains</h2>
-    <p>The current team captains are {{current_tcs[0].get_full_name()}} and {{current_tcs[1].get_full_name()}}</p>
+    <h2>Current teamcaptains</h2>
+    <p>The current teamcaptains are {{current_tcs[0].get_full_name()}} and {{current_tcs[1].get_full_name()}}</p>
     {% elif current_tcs|length == 1 %}
-    <h2>Current team captain</h2>
-    <p>{{current_tcs[0].get_full_name()}} is the current team captain</p>
+    <h2>Current teamcaptain</h2>
+    <p>{{current_tcs[0].get_full_name()}} is the current teamcaptain</p>
     {% endif %}
 {% endif %}
-{% if g.sc.number_of_teamcaptains == 2 or current_user.team.number_of_dancers() > 20 %}
-<h2>Set team captains</h2>
-<p>You can change who the team captains are below.</p>
+{% if g.sc.number_of_teamcaptains == 2 or (g.sc.additional_teamcaptain_large_teams and current_user.team.number_of_dancers() > g.sc.additional_teamcaptain_large_teams_cutoff) %}
+<h2>Set teamcaptains</h2>
+<p>You can change who the teamcaptains are below.</p>
 {% elif g.sc.number_of_teamcaptains == 1 %}
-<h2>Set team captain</h2>
-<p>You can change who the team captain is below.</p>
+<h2>Set teamcaptain</h2>
+<p>You can change who the teamcaptain is below.</p>
 {% endif %}
 <form class="form" method="POST" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
@@ -34,7 +34,7 @@
             <div class="col-12 col-md-6">
                 {{ wtf.form_field(form.team_captain_two, disabled=(g.sc.number_of_teamcaptains == 1 or (g.sc.number_of_teamcaptains == 2 and form.team_captain_one.data is none)), **{'onchange': "setTeamCaptain()", 'onkeyup': "setTeamCaptain()"}) }}
             </div>
-        {% elif g.sc.number_of_teamcaptains == 1 and current_user.team.number_of_dancers() > 20 %}
+        {% elif g.sc.number_of_teamcaptains == 1 and g.sc.additional_teamcaptain_large_teams and current_user.team.number_of_dancers() > g.sc.additional_teamcaptain_large_teams_cutoff %}
             <div class="col-12 col-md-6">
                 {{ wtf.form_field(form.team_captain_one, **{'onchange': "setTeamCaptain()", 'onkeyup': "setTeamCaptain()"}) }}
             </div>
@@ -49,7 +49,7 @@
     </div>
     <div class="form-group">
         <div class="input-group">
-            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Set team captain{% if g.sc.number_of_teamcaptains > 1 %}s{% endif %}{% endif %}">&nbsp;
+            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="{% if mode == 'edit' %}Save changes{% else %}Set teamcaptain{% if g.sc.number_of_teamcaptains > 1 %}s{% endif %}{% endif %}">&nbsp;
             <a role="button" class="btn btn-outline-secondary ml-2" href="{{ url_for('main.dashboard') }}">Cancel</a>
         </div>
     </div>

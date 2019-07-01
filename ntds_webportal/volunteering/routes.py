@@ -46,7 +46,7 @@ def register():
                 flash(f'There is already a dancer registered with the e-mail address {form.email.data}.<br/>'
                       f'You cannot register as both a dancer in the tournament, and a Super Volunteer.<br/>'
                       f'If you are already registered as a dancer, and wish to be a Super Volunteer instead, '
-                      f'please contact your team captain to completely remove your registration as a dancer '
+                      f'please contact your teamcaptain to completely remove your registration as a dancer '
                       f'from the tournament first. Afterwards, you can register as a Super Volunteer.',
                       "alert-danger")
             else:

@@ -5,7 +5,7 @@ from ntds_webportal.models import MerchandiseItem, MerchandiseItemVariant
 
 
 class FeedbackForm(FlaskForm):
-    feedback = TextAreaField('Feedback for team captain (only if there is anything wrong with your submitted data)',
+    feedback = TextAreaField('Feedback for teamcaptain (only if there is anything wrong with your submitted data)',
                              validators=[DataRequired()],
                              render_kw={"style": "resize:none", "rows": "4", "maxlength": "512"})
 

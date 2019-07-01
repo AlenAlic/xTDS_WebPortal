@@ -113,7 +113,7 @@ class CheckinCard extends React.Component {
         .then(res => {
                 let myList = [];
                 for (let i=0; i < res.length; i++) { myList.push(res[i].full_name)}
-                res.length > 0 ? alert(`ATTENTION!!\n\nThere are dancers that have ordered merchandise, but have cancelled their registration.\n\nThese are:\n${myList.join('\n')}\n\nPlease give the merchandise of those dancers to the team captain, and mark the merchandise as received in this list`) : null
+                res.length > 0 ? alert(`ATTENTION!!\n\nThere are dancers that have ordered merchandise, but have cancelled their registration.\n\nThese are:\n${myList.join('\n')}\n\nPlease give the merchandise of those dancers to the teamcaptain, and mark the merchandise as received in this list`) : null
             }
         )
     }

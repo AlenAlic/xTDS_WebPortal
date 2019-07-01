@@ -1,7 +1,7 @@
 <h2>Guaranteed dancers</h2>
 <p>
-    {% if g.sc.number_of_teamcaptains == 2 %}Teams marked red are missing both team captains, and teams marked yellow are missing one team captain.
-    {% elif g.sc.number_of_teamcaptains == 1 %}Teams marked red are missing their team captain.{% endif %}
+    {% if g.sc.number_of_teamcaptains == 2 %}Teams marked red are missing both teamcaptains, and teams marked yellow are missing one teamcaptain.
+    {% elif g.sc.number_of_teamcaptains == 1 %}Teams marked red are missing their teamcaptain.{% endif %}
 </p>
 <div id="accordion" >
 {% for team in teams %}

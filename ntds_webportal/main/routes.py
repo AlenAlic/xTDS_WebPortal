@@ -90,7 +90,6 @@ def todo():
 
     # ADMIN
     # WISH - Make "Tournament" section in system setup throw warnings when doing something stupid
-    # NEXT TOURNAMENT - number of allowed team captains based on size of teams? Ask @ team captain meeting
 
     # ORGANIZER
     # NEXT TOURNAMENT - Allow organizer to enable/disable accounts

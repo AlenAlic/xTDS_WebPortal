@@ -152,7 +152,7 @@ def user_list():
                                                        tournament=g.sc.tournament, year=g.sc.year, city=g.sc.city)
             g.ts.website_accessible_to_teamcaptains = True
             db.session.commit()
-            message = f"The accounts for all team captains{f' from {NETHERLANDS}' if g.sc.tournament == NTDS else ''} "\
+            message = f"The accounts for all teamcaptains{f' from {NETHERLANDS}' if g.sc.tournament == NTDS else ''} "\
                 f"have been activated.<br/><br/>An e-mail with the login credentials has been sent to all teamcaptains."
             flash(Markup(message), "alert-success")
             return redirect(url_for('main.dashboard'))
@@ -316,7 +316,7 @@ def create_team():
             treasurer.team = team
             db.session.add(treasurer)
             db.session.commit()
-            flash(f"Team {team.name} from {team.city}, {team.country} created, together with the team captain "
+            flash(f"Team {team.name} from {team.city}, {team.country} created, together with the teamcaptain "
                   f"and treasurer accounts.", 'alert-success')
             return redirect(url_for('main.dashboard'))
     return render_template('organizer/create_team.html', form=form, edit=False)

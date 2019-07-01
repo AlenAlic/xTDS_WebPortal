@@ -71,14 +71,14 @@ function onStart() {
     var container = document.getElementById('container-hidden').style.visibility = "visible";
 }
 {% if not g.ts.main_raffle_taken_place %}
-var old_beginners_increased_chance = "{{form.beginners_increased_chance.data}}"
-var old_beginners_guaranteed_cutoff = {{form.beginners_guaranteed_cutoff.data}}
+var old_beginners_increased_chance = "{{form.beginners_increased_chance.data}}";
+var old_beginners_guaranteed_cutoff = {{form.beginners_guaranteed_cutoff.data}};
 function BeginnersCutoff(beginners_guaranteed_entry_cutoff) {
-    let beginners_guaranteed_cutoff = document.getElementById("beginners_guaranteed_cutoff")
-    let beginners_guaranteed_per_team = document.getElementById("beginners_guaranteed_per_team")
-    let beginners_increased_chance = document.getElementById("beginners_increased_chance")
+    let beginners_guaranteed_cutoff = document.getElementById("beginners_guaranteed_cutoff");
+    let beginners_guaranteed_per_team = document.getElementById("beginners_guaranteed_per_team");
+    let beginners_increased_chance = document.getElementById("beginners_increased_chance");
 
-    if (beginners_guaranteed_entry_cutoff.value == "True") {
+    if (beginners_guaranteed_entry_cutoff.value === "True") {
         beginners_guaranteed_cutoff.removeAttribute('disabled');
         beginners_guaranteed_cutoff.value = old_beginners_guaranteed_cutoff;
         beginners_guaranteed_per_team.setAttribute('disabled', true);
@@ -97,18 +97,18 @@ function BeginnersCutoff(beginners_guaranteed_entry_cutoff) {
     beginners_guaranteed_per_team.onchange();
 }
 
-var old_beginners_guaranteed_per_team = "{{form.beginners_guaranteed_per_team.data}}"
-var old_beginners_minimum_entry_per_team = {{form.beginners_minimum_entry_per_team.data}}
+var old_beginners_guaranteed_per_team = "{{form.beginners_guaranteed_per_team.data}}";
+var old_beginners_minimum_entry_per_team = {{form.beginners_minimum_entry_per_team.data}};
 function BeginnersPerTeam(beginners_guaranteed_per_team) {
-    let beginners_minimum_entry_per_team = document.getElementById("beginners_minimum_entry_per_team")
-    let beginners_increased_chance = document.getElementById("beginners_increased_chance")
-    let beginners_guaranteed_entry_cutoff = document.getElementById("beginners_guaranteed_entry_cutoff")
+    let beginners_minimum_entry_per_team = document.getElementById("beginners_minimum_entry_per_team");
+    let beginners_increased_chance = document.getElementById("beginners_increased_chance");
+    let beginners_guaranteed_entry_cutoff = document.getElementById("beginners_guaranteed_entry_cutoff");
 
-    if (beginners_guaranteed_per_team.value == "False") {
+    if (beginners_guaranteed_per_team.value === "False") {
         beginners_minimum_entry_per_team.setAttribute('disabled', true);
         old_beginners_minimum_entry_per_team = beginners_minimum_entry_per_team.value;
         beginners_minimum_entry_per_team.value = 0;
-        if (beginners_guaranteed_entry_cutoff.value == "False") {
+        if (beginners_guaranteed_entry_cutoff.value === "False") {
             beginners_increased_chance.removeAttribute('disabled');
             beginners_increased_chance.value = old_beginners_increased_chance;
         }
@@ -121,11 +121,11 @@ function BeginnersPerTeam(beginners_guaranteed_per_team) {
     }
 }
 
-var old_first_time_increased_chance = "{{form.first_time_increased_chance.data}}"
+var old_first_time_increased_chance = "{{form.first_time_increased_chance.data}}";
 function FirstTime(first_time_guaranteed_entry) {
-    let first_time_increased_chance = document.getElementById("first_time_increased_chance")
+    let first_time_increased_chance = document.getElementById("first_time_increased_chance");
 
-    if (first_time_guaranteed_entry.value == "True") {
+    if (first_time_guaranteed_entry.value === "True") {
         first_time_increased_chance.setAttribute('disabled', true);
         old_first_time_increased_chance = first_time_increased_chance.value;
         first_time_increased_chance.value = "False"
@@ -137,9 +137,9 @@ function FirstTime(first_time_guaranteed_entry) {
 
 var old_minimum_team_size = {{form.minimum_team_size.data}}
 function TeamSize(guaranteed_team_size) {
-    let minimum_team_size = document.getElementById("minimum_team_size")
+    let minimum_team_size = document.getElementById("minimum_team_size");
 
-    if (guaranteed_team_size.value == "False") {
+    if (guaranteed_team_size.value === "False") {
         minimum_team_size.setAttribute('disabled', true);
         old_minimum_team_size = minimum_team_size.value;
         minimum_team_size.value = 0
@@ -149,16 +149,16 @@ function TeamSize(guaranteed_team_size) {
     }
 }
 
-var old_lions_guaranteed_per_team = "{{form.lions_guaranteed_per_team.data}}"
-var old_closed_lion = "{{form.closed_lion.data}}"
-var old_open_class_lion = "{{form.open_class_lion.data}}"
-var old_lions_minimum_entry_per_team = {{form.lions_minimum_entry_per_team.data}}
+var old_lions_guaranteed_per_team = "{{form.lions_guaranteed_per_team.data}}";
+var old_closed_lion = "{{form.closed_lion.data}}";
+var old_open_class_lion = "{{form.open_class_lion.data}}";
+var old_lions_minimum_entry_per_team = {{form.lions_minimum_entry_per_team.data}};
 function LionsPerTeam(lions_guaranteed_per_team) {
-    let lions_minimum_entry_per_team = document.getElementById("lions_minimum_entry_per_team")
-    let closed_lion = document.getElementById("closed_lion")
-    let open_class_lion = document.getElementById("open_class_lion")
+    let lions_minimum_entry_per_team = document.getElementById("lions_minimum_entry_per_team");
+    let closed_lion = document.getElementById("closed_lion");
+    let open_class_lion = document.getElementById("open_class_lion");
 
-    if (lions_guaranteed_per_team.value == "False") {
+    if (lions_guaranteed_per_team.value === "False") {
         lions_minimum_entry_per_team.setAttribute('disabled', true);
         old_lions_minimum_entry_per_team = lions_minimum_entry_per_team.value;
         lions_minimum_entry_per_team.value = 0;

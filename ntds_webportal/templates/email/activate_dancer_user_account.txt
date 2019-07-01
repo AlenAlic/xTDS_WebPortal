@@ -1,7 +1,7 @@
 Dear {{name}},
 
 
-Your team captain has registered you for the the {{g.sc.year}} {{g.sc.tournament}} in {{g.sc.city}}.
+Your teamcaptain has registered you for the the {{g.sc.year}} {{g.sc.tournament}} in {{g.sc.city}}.
 An account at the xTDS WebPortal has been created for you.
 
 
@@ -17,7 +17,7 @@ You can click the link below to visit the site.
 {{ url_for('main.index', _external=True) }}
 
 
-If for some reason the information that your teamcaptain has submitted is incorrect (or has changed), you can indicate that to your team captain through your user account as well.
+If for some reason the information that your teamcaptain has submitted is incorrect (or has changed), you can indicate that to your teamcaptain through your user account as well.
 
 
 Sincerely,

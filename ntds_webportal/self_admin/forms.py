@@ -84,9 +84,14 @@ class SystemSetupForm(SystemSetupTournamentForm):
         self.first_time_ask.label.text = f"Will you ask dancers if this is their first time attending " \
             f"an {g.sc.tournament}?"
 
-    number_of_teamcaptains = IntegerField(f"What is number of team captains that a team can have? "
-                                          f"(Remember, team captains are guaranteed entry to the tournament)",
-                                          validators=[NumberRange(1, 2)], default=1)
+    number_of_teamcaptains = SelectField("What is number of teamcaptains that a team can have? "
+                                         "(Remember, teamcaptains are guaranteed entry to the tournament)",
+                                         choices=[(x, x) for x in [1, 2]], default=1, coerce=int)
+    additional_teamcaptain_large_teams = SelectField("Do you wish to let large teams have an additional teamcaptain?",
+                                                     choices=[(k, v) for k, v in YN.items()])
+    additional_teamcaptain_large_teams_cutoff = IntegerField("How many dancers does a team need at least to get an "
+                                                             "additional teamcaptain?",
+                                                             validators=[NumberRange(1)], default=20)
 
     beginners_level = SelectField(ASK_LEVEL.format(level=BEGINNERS), choices=[(k, v) for k, v in YN.items()])
     closed_level = SelectField(ASK_LEVEL.format(level=CLOSED), choices=[(k, v) for k, v in YN.items()])

@@ -156,6 +156,8 @@ def system_configuration():
         form.merchandise_link.data = g.sc.merchandise_link
 
         form.number_of_teamcaptains.data = g.sc.number_of_teamcaptains
+        form.additional_teamcaptain_large_teams.data = g.sc.additional_teamcaptain_large_teams
+        form.additional_teamcaptain_large_teams_cutoff.data = g.sc.additional_teamcaptain_large_teams_cutoff
 
         form.beginners_level.data = str(g.sc.beginners_level)
         form.closed_level.data = str(g.sc.closed_level)
@@ -182,7 +184,7 @@ def system_configuration():
         form.ask_emergency_response_officer.data = str(g.sc.ask_emergency_response_officer)
         form.ask_adjudicator_highest_achieved_level.data = str(g.sc.ask_adjudicator_highest_achieved_level)
         form.ask_adjudicator_certification.data = str(g.sc.ask_adjudicator_certification)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         if current_user.is_organizer():
             form.tournament.data = g.sc.tournament
             form.year.data = g.sc.year
@@ -191,13 +193,17 @@ def system_configuration():
             form.tournament_starting_date.data = datetime.date(tsd.year, tsd.month, tsd.day)
             if g.ts.main_raffle_result_visible:
                 form.number_of_teamcaptains.data = g.sc.number_of_teamcaptains
+                form.additional_teamcaptain_large_teams.data = g.sc.additional_teamcaptain_large_teams
+                form.additional_teamcaptain_large_teams_cutoff.data = g.sc.additional_teamcaptain_large_teams_cutoff
             if g.ts.registration_period_started:
                 form.beginners_level.data = str(g.sc.beginners_level)
                 form.closed_level.data = str(g.sc.closed_level)
                 form.breitensport_obliged_blind_date.data = str(g.sc.breitensport_obliged_blind_date)
+        if form.number_of_teamcaptains.data == 2:
+            form.additional_teamcaptain_large_teams.data = str(g.sc.additional_teamcaptain_large_teams)
+            form.additional_teamcaptain_large_teams_cutoff.data = g.sc.additional_teamcaptain_large_teams_cutoff
         if not str2bool(form.finances_refund.data):
             form.finances_refund_date.data = datetime.date.today()
-    if request.method == 'POST':
         if form.validate_on_submit():
             g.sc.tournament = form.tournament.data
             g.sc.year = form.year.data
@@ -211,6 +217,8 @@ def system_configuration():
             g.sc.merchandise_link = form.merchandise_link.data
 
             g.sc.number_of_teamcaptains = form.number_of_teamcaptains.data
+            g.sc.additional_teamcaptain_large_teams = str2bool(form.additional_teamcaptain_large_teams.data)
+            g.sc.additional_teamcaptain_large_teams_cutoff = form.additional_teamcaptain_large_teams_cutoff.data
 
             g.sc.beginners_level = str2bool(form.beginners_level.data)
             g.sc.closed_level = str2bool(form.closed_level.data)

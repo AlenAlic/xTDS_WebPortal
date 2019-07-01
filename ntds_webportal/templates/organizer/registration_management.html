@@ -3,7 +3,7 @@
 {% block app_content %}
 <h2>Registration period</h2>
 {% if not g.ts.registration_period_started and not g.ts.registration_open %}
-<p>The registration period has not started yet. Starting the registration period will alert the team captains by sending an e-mail that the registration period has started.</p>
+<p>The registration period has not started yet. Starting the registration period will alert the teamcaptains by sending an e-mail that the registration period has started.</p>
 <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#startRegistration"><b>Start registration period</b></button>
 <div class="modal fade" id="startRegistration" tabindex="-1" role="dialog" aria-labelledby="startRegistration" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -13,7 +13,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to start the registration period?<br><br>This will automatically send out e-mail to the team captains that the registration has started.</p>
+                <p>Are you sure you want to start the registration period?<br><br>This will automatically send out e-mail to the teamcaptains that the registration has started.</p>
             </div>
             <div class="modal-footer">
                 <a href="{{url_for('organizer.registration_management')}}?start_registration_period" class="btn btn-primary">Yes, start registration period</a>

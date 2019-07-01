@@ -357,9 +357,9 @@ class EditContestantForm(BaseContestantForm):
 
 
 class TeamCaptainForm(FlaskForm):
-    team_captain_one = QuerySelectField('Teamcaptain', allow_blank=True, blank_text='No team captain')
-    team_captain_two = QuerySelectField('Teamcaptain', allow_blank=True, blank_text='No team captain')
-    submit = SubmitField('Set team captain')
+    team_captain_one = QuerySelectField('Teamcaptain', allow_blank=True, blank_text='No teamcaptain')
+    team_captain_two = QuerySelectField('Teamcaptain', allow_blank=True, blank_text='No teamcaptain')
+    submit = SubmitField('Set teamcaptain')
 
 
 class CreateCoupleForm(FlaskForm):

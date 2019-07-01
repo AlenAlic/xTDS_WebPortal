@@ -44,31 +44,31 @@
         title='Floor Manager'
         ) }}
     </div>
-    <h2>Activate team captain accounts</h2>
+    <h2>Activate teamcaptain accounts</h2>
     <div class="mb-4">
         {% if not g.ts.website_accessible_to_teamcaptains %}
             <p>
-                Click the button below to activate the team captains accounts for the xTDS WebPortal. The accounts that are marked green will be activated.<br/>
-                Activating the accounts will also automatically send out an e-mail (with login credentials) to the team captains, alerting them that the website is accessible to them.
+                Click the button below to activate the teamcaptains accounts for the xTDS WebPortal. The accounts that are marked green will be activated.<br/>
+                Activating the accounts will also automatically send out an e-mail (with login credentials) to the teamcaptains, alerting them that the website is accessible to them.
             </p>
             <p>This wil <b>NOT</b> open the registration yet.</p>
-            <p>Before activating the accounts, please make sure that the e-mails of the team captain accounts are correct.</p>
-            <button class="btn btn-primary" data-toggle="modal" data-target="#activateTeamCaptains"><b>Activate team captain accounts</b></button>
+            <p>Before activating the accounts, please make sure that the e-mails of the teamcaptain accounts are correct.</p>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#activateTeamCaptains"><b>Activate teamcaptain accounts</b></button>
             <div class="modal fade" id="activateTeamCaptains" tabindex="-1" role="dialog" aria-labelledby="activateTeamCaptains" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Activate team captain accounts</h5>
+                            <h5 class="modal-title">Activate teamcaptain accounts</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         </div>
                         <div class="modal-body">
-                            <p>Are you sure you want to activate the team captain accounts?</p>
+                            <p>Are you sure you want to activate the teamcaptain accounts?</p>
                         </div>
                         <div class="modal-footer">
                             <form class="form" method="POST" enctype="multipart/form-data" novalidate>
-                                <button class="btn btn-primary" type="submit" name="activate_teamcaptains">Yes, activate team captain accounts</button>
+                                <button class="btn btn-primary" type="submit" name="activate_teamcaptains">Yes, activate teamcaptain accounts</button>
                             </form>
-                            <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, do not activate team captain accounts</button>
+                            <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">No, do not activate teamcaptain accounts</button>
                         </div>
                     </div>
                 </div>

@@ -14,8 +14,8 @@
         {% if g.ts.raffle_completed_message_sent is sameas false %}
         <div id="send-message-to-team-captains" style="width:100%">
             <div style="display: table; margin: 0 auto; text-align: center;">
-                <h2>Notify team captains</h2>
-                <p>Send a generic e-mail to all team captains to notify them that the main raffle has taken place and that the results are now visible.</p>
+                <h2>Notify teamcaptains</h2>
+                <p>Send a generic e-mail to all teamcaptains to notify them that the main raffle has taken place and that the results are now visible.</p>
                 <button class="btn btn-outline-primary" onclick="sendRaffleNotificationEmail('/api/tournament_state/raffle_completed_message_sent/send_generic_email/', 'PATCH')">Send generic e-mail</button>
                 <p></p>
                 <button class="btn btn-outline-secondary" onclick="sendRaffleNotificationEmail('/api/tournament_state/raffle_completed_message_sent/send_own_email/', 'PATCH')">I will send my own e-mails</button>

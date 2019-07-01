@@ -15,7 +15,9 @@
     {{ wtf.form_field(form.terms_and_conditions_link) }}
     {{ wtf.form_field(form.merchandise_link) }}
     <h3>Team captains</h3>
-    {{ wtf.form_field(form.number_of_teamcaptains, disabled=(current_user.is_organizer() and g.ts.main_raffle_result_visible)) }}
+    {{ wtf.form_field(form.number_of_teamcaptains, disabled=(current_user.is_organizer() and g.ts.main_raffle_result_visible), **{'onchange': "additionalTeamcaptain(this)", 'onkeyup': "additionalTeamcaptain(this)"}) }}
+    {{ wtf.form_field(form.additional_teamcaptain_large_teams, disabled=((current_user.is_organizer() and g.ts.main_raffle_result_visible) or form.number_of_teamcaptains.data == 2), **{'onchange': "additionalTeamcaptainCutoff(this)", 'onkeyup': "additionalTeamcaptainCutoff(this)"}) }}
+    {{ wtf.form_field(form.additional_teamcaptain_large_teams_cutoff, disabled=((current_user.is_organizer() and g.ts.main_raffle_result_visible) or form.number_of_teamcaptains.data == 2)) }}
     <h3>Tournament levels</h3>
     {{ wtf.form_field(form.beginners_level, disabled=(current_user.is_organizer() and g.ts.registration_period_started)) }}
     {{ wtf.form_field(form.closed_level, disabled=(current_user.is_organizer() and g.ts.registration_period_started)) }}
@@ -52,8 +54,27 @@
 {% block scripts %}
 {{ super() }}
 <script>
+function additionalTeamcaptain(question) {
+    let additionalTeamcaptain = document.getElementById('{{ form.additional_teamcaptain_large_teams.name }}');
+    let cutoff = document.getElementById('{{ form.additional_teamcaptain_large_teams_cutoff.name }}');
+    if (question.value === "1") {
+        additionalTeamcaptain.removeAttribute('disabled');
+        additionalTeamcaptainCutoff(additionalTeamcaptain);
+    } else {
+        additionalTeamcaptain.setAttribute('disabled', "");
+        cutoff.setAttribute('disabled', "");
+    }
+}
+function additionalTeamcaptainCutoff(question) {
+    let cutoff = document.getElementById('{{ form.additional_teamcaptain_large_teams_cutoff.name }}');
+    if (question.value === "True") {
+        cutoff.removeAttribute('disabled');
+    } else {
+        cutoff.setAttribute('disabled', "");
+    }
+}
 function Price(question) {
-    let price = document.getElementById('phd_student_price');
+    let price = document.getElementById('{{ form.phd_student_price.name }}');
     if (question.value === "True") {
         price.removeAttribute('disabled');
     } else {
@@ -61,9 +82,9 @@ function Price(question) {
     }
 }
 function Refund() {
-    let refund = document.getElementById('finances_refund');
-    let refundPercentage = document.getElementById("finances_refund_percentage");
-    let refundDate = document.getElementById("finances_refund_date");
+    let refund = document.getElementById('{{ form.finances_refund.name }}');
+    let refundPercentage = document.getElementById("{{ form.finances_refund_percentage.name }}");
+    let refundDate = document.getElementById("{{ form.finances_refund_date.name }}");
     if (refund.value === "True") {
         refundPercentage.removeAttribute('disabled');
         refundDate.removeAttribute('disabled');

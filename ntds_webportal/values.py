@@ -272,7 +272,7 @@ RAFFLE_COMPLETED = 7
 RAFFLE_CONFIRMED = 8
 
 WEBSITE_NOT_CONFIGURED_TEXT = "Cannot enter page. Please configure the xTDS WebPortal first."
-TEAM_CAPTAINS_DO_NOT_HAVE_ACCESS_TEXT = "Cannot enter page. This page will be accessible after the team captain " \
+TEAM_CAPTAINS_DO_NOT_HAVE_ACCESS_TEXT = "Cannot enter page. This page will be accessible after the teamcaptain " \
                                         "accounts have been activated."
 REGISTRATION_NOT_STARTED_TEXT = "Cannot enter page. " \
                                 "This page will be accessible after the registration period has started."

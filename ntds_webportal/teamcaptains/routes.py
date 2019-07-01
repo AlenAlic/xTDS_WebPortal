@@ -544,23 +544,23 @@ def set_teamcaptains():
         db.session.commit()
         if first_team_captain is not None and second_team_captain is not None:
             if first_team_captain in current_tcs and second_team_captain not in current_tcs:
-                flash(f"Set {second_team_captain.get_full_name()} as team captain.")
+                flash(f"Set {second_team_captain.get_full_name()} as teamcaptain.")
             if first_team_captain not in current_tcs and second_team_captain in current_tcs:
-                flash(f"Set {first_team_captain.get_full_name()} as team captain.")
+                flash(f"Set {first_team_captain.get_full_name()} as teamcaptain.")
             if first_team_captain not in current_tcs and second_team_captain not in current_tcs:
                 flash(f"Set {first_team_captain.get_full_name()} and {second_team_captain.get_full_name()} as "
-                      f"team captains.")
+                      f"teamcaptains.")
         if first_team_captain is not None and second_team_captain is None:
             if first_team_captain not in current_tcs:
-                flash(f"Set {first_team_captain.get_full_name()} as team captain.")
+                flash(f"Set {first_team_captain.get_full_name()} as teamcaptain.")
             if current_tc_two is not None:
-                flash(f"Removed {current_tc_two.get_full_name()} as team captain.")
+                flash(f"Removed {current_tc_two.get_full_name()} as teamcaptain.")
         if first_team_captain is None and second_team_captain is None:
             if current_tc_one is not None and current_tc_two is not None:
                 flash(f"Removed {current_tc_one.get_full_name()} and {current_tc_two.get_full_name()} as "
-                      f"team captains.")
+                      f"teamcaptains.")
             if current_tc_one is not None and current_tc_two is None:
-                flash(f"Removed {current_tc_one.get_full_name()} as team captain.")
+                flash(f"Removed {current_tc_one.get_full_name()} as teamcaptain.")
         return redirect(url_for('teamcaptains.set_teamcaptains'))
     return render_template('teamcaptains/set_teamcaptains.html', form=form, current_tcs=current_tcs)
 

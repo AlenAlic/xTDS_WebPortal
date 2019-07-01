@@ -1,4 +1,4 @@
-Dear team captain,
+Dear teamcaptain,
 
 
 The registration of the {{year}} {{tournament}} in {{city}} is now open!

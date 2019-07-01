@@ -109,14 +109,14 @@
             url='organizer.create_team',
             image='team.png',
             title='Create new Team',
-            text='Create a new Team, together with a team captain and treasurer account',
+            text='Create a new Team, together with a teamcaptain and treasurer account',
             accessible=g.ts.system_configured
             ) }}
     {{ dashboard_page(
             url='organizer.user_list',
             image='users.png',
             title='Manage accounts',
-            text='Manage the login accounts of the team captains and treasurers. Team captain accounts can be activated from here.',
+            text='Manage the login accounts of the teamcaptains and treasurers. Team captain accounts can be activated from here.',
             accessible=g.ts.system_configured
             ) }}
 </div>
@@ -382,10 +382,10 @@
 {% if current_user.is_tc() %}
     {% if g.sc.number_of_teamcaptains > 1 %}
         {% set tc_title = 'Set Teamcaptains' %}
-        {% set tc_text = 'Set who the team captains are.' %}
+        {% set tc_text = 'Set who the teamcaptains are.' %}
     {% else %}
         {% set tc_title = 'Set Teamcaptain' %}
-        {% set tc_text = 'Set who the team captains is.' %}
+        {% set tc_text = 'Set who the teamcaptains is.' %}
     {% endif %}
     {{ dashboard_page(
             url='teamcaptains.register_dancers',
