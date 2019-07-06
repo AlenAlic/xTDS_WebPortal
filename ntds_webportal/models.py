@@ -406,7 +406,7 @@ class Contestant(db.Model):
             return None
 
     def cancel_registration(self):
-        self.status_info.set_status(CANCELLED, set_raffle_status=False)
+        self.status_info.set_status(CANCELLED)
         for di in self.dancing_info:
             di.set_partner(None)
         self.contestant_info.team_captain = False
@@ -708,11 +708,10 @@ class StatusInfo(db.Model):
     def __repr__(self):
         return '{name}'.format(name=self.contestant)
 
-    def set_status(self, status, set_raffle_status=True):
+    def set_status(self, status):
         if status is not None:
             self.status = status
-            if set_raffle_status:
-                self.raffle_status = status
+            self.raffle_status = status
         if self.status == CONFIRMED:
             self.payment_required = True
         elif self.status == REGISTERED:
