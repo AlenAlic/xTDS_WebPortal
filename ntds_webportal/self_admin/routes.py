@@ -49,8 +49,11 @@ def system_setup():
                 organizer.set_password(organizer_pass)
                 organizer.send_new_messages_email = True
                 organizer.is_active = True
-                User.query.filter(User.access > ACCESS[ORGANIZER], User.access < ACCESS[TEAM_CAPTAIN])\
-                    .update({User.is_active: False})
+                assistants = User.query.filter(User.access > ACCESS[ORGANIZER], User.access < ACCESS[TEAM_CAPTAIN])\
+                    .all()
+                for assistant in assistants:
+                    assistant.is_active = True
+                    assistant.set_password(random_password())
                 db.session.commit()
                 g.ts.organizer_account_set = True
                 db.session.commit()

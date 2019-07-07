@@ -206,6 +206,7 @@ def assistant_account(access_level):
         if form.validate_on_submit():
             if form.password.data != '':
                 user.set_password(form.password.data)
+                user.is_active = True
                 db.session.commit()
                 flash(f"Assistant account \"{user.username}\" updated.", 'alert-success')
             else:
@@ -920,8 +921,11 @@ def bad():
 def switch_to_bda():
     bda = User.query.filter(User.access == ACCESS[BLIND_DATE_ASSISTANT]).first()
     if bda is not None:
-        logout_user()
-        login_user(bda)
+        if bda.is_active:
+            logout_user()
+            login_user(bda)
+        else:
+            flash('Blind Date Assistant password not set.')
     else:
         flash('Blind Date Assistant account not created.')
     return redirect(url_for('main.index'))
@@ -934,10 +938,13 @@ def switch_to_bda():
 def switch_to_cia():
     cia = User.query.filter(User.access == ACCESS[CHECK_IN_ASSISTANT]).first()
     if cia is not None:
-        logout_user()
-        login_user(cia)
+        if cia.is_active:
+            logout_user()
+            login_user(cia)
+        else:
+            flash('Check-In Assistant password not set.')
     else:
-        flash('Check-in Assistant account not created.')
+        flash('Check-In Assistant account not created.')
     return redirect(url_for('main.index'))
 
 
@@ -948,8 +955,11 @@ def switch_to_cia():
 def switch_to_ada():
     ada = User.query.filter(User.access == ACCESS[ADJUDICATOR_ASSISTANT]).first()
     if ada is not None:
-        logout_user()
-        login_user(ada)
+        if ada.is_active:
+            logout_user()
+            login_user(ada)
+        else:
+            flash('Adjudicator Assistant password not set.')
     else:
         flash('Adjudicator Assistant account not created.')
     return redirect(url_for('main.index'))
@@ -962,8 +972,11 @@ def switch_to_ada():
 def switch_to_tom():
     tom = User.query.filter(User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER]).first()
     if tom is not None:
-        logout_user()
-        login_user(tom)
+        if tom.is_active:
+            logout_user()
+            login_user(tom)
+        else:
+            flash('Tournament Office Manager password not set.')
     else:
         flash('Tournament Office Manager account not created.')
     return redirect(url_for('main.index'))
@@ -976,11 +989,14 @@ def switch_to_tom():
 def switch_to_fm():
     fm = User.query.filter(User.access == ACCESS[FLOOR_MANAGER]).first()
     if fm is not None:
-        if g.event is not None:
-            logout_user()
-            login_user(fm)
+        if fm.is_active:
+            if g.event is not None:
+                logout_user()
+                login_user(fm)
+            else:
+                flash('There is no event yet.')
         else:
-            flash('There is no event yet.')
+            flash('Floor Manager password not set.')
     else:
         flash('Floor Manager account not created.')
     return redirect(url_for('main.index'))
