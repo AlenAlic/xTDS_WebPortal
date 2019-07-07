@@ -590,11 +590,11 @@ def raffle_result():
                                    **{follow.get_partner(): follow for follow in latin_follows}}
         ballroom_lead_blind_daters = dancers.filter(DancingInfo.role == LEAD, DancingInfo.partner.is_(None),
                                                     DancingInfo.competition == BALLROOM).all()
-        ballroom_follow_blind_daters = dancers.filter(DancingInfo.role == LEAD, DancingInfo.partner.is_(None),
+        ballroom_follow_blind_daters = dancers.filter(DancingInfo.role == FOLLOW, DancingInfo.partner.is_(None),
                                                       DancingInfo.competition == BALLROOM).all()
         latin_lead_blind_daters = dancers.filter(DancingInfo.role == LEAD, DancingInfo.partner.is_(None),
                                                  DancingInfo.competition == LATIN).all()
-        latin_follow_blind_daters = dancers.filter(DancingInfo.role == LEAD, DancingInfo.partner.is_(None),
+        latin_follow_blind_daters = dancers.filter(DancingInfo.role == FOLLOW, DancingInfo.partner.is_(None),
                                                    DancingInfo.competition == LATIN).all()
 
         all_dancers = Contestant.query.join(ContestantInfo, StatusInfo)\
