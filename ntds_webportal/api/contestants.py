@@ -1,5 +1,5 @@
 from flask import jsonify, request, json
-from flask_login import login_required
+from flask_login import login_required, current_user
 from ntds_webportal import db
 from ntds_webportal.models import requires_access_level, Contestant, MerchandisePurchase, Refund
 from ntds_webportal.api import bp
@@ -8,7 +8,7 @@ from ntds_webportal.data import *
 
 @bp.route('/contestants/<int:contestant_id>/status_info/guaranteed_entry', methods=["PATCH"])
 @login_required
-@requires_access_level([ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+@requires_access_level([ACCESS[ORGANIZER]])
 def contestants_status_info_guaranteed_entry(contestant_id):
     dancer = Contestant.query.get_or_404(contestant_id)
     if request.method == "PATCH":
@@ -19,7 +19,7 @@ def contestants_status_info_guaranteed_entry(contestant_id):
 
 @bp.route('/contestants/<int:contestant_id>/check_in/<bool:check_in>', methods=["PATCH"])
 @login_required
-@requires_access_level([ACCESS[TEAM_CAPTAIN], ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+@requires_access_level([ACCESS[CHECK_IN_ASSISTANT]])
 def contestants_check_in(contestant_id, check_in):
     dancer = Contestant.query.get_or_404(contestant_id)
     if request.method == "PATCH":
@@ -30,43 +30,52 @@ def contestants_check_in(contestant_id, check_in):
 
 @bp.route('/contestants/<int:contestant_id>/entry_payment/<bool:entry_paid>', methods=["PATCH"])
 @login_required
-@requires_access_level([ACCESS[TEAM_CAPTAIN], ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+@requires_access_level([ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER], ACCESS[CHECK_IN_ASSISTANT]])
 def contestants_entry_payment(contestant_id, entry_paid):
     dancer = Contestant.query.get_or_404(contestant_id)
-    if request.method == "PATCH":
-        dancer.payment_info.entry_paid = entry_paid
-        db.session.commit()
-    return jsonify(dancer.json())
+    if current_user.is_cia() or ((current_user.is_tc() or current_user.is_treasurer())
+                                 and dancer.contestant_info.team == current_user.team):
+        if request.method == "PATCH":
+            dancer.payment_info.entry_paid = entry_paid
+            db.session.commit()
+        return jsonify(dancer.json())
+    return jsonify(None)
 
 
 @bp.route('/contestants/<int:contestant_id>/all_payment/<bool:all_paid>', methods=["PATCH"])
 @login_required
-@requires_access_level([ACCESS[TEAM_CAPTAIN], ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+@requires_access_level([ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER], ACCESS[CHECK_IN_ASSISTANT]])
 def contestants_all_payment(contestant_id, all_paid):
     dancer = Contestant.query.get_or_404(contestant_id)
-    if request.method == "PATCH":
-        dancer.payment_info.all_is_paid(all_paid)
-        db.session.commit()
-    return jsonify(dancer.json())
+    if current_user.is_cia() or ((current_user.is_tc() or current_user.is_treasurer())
+                                 and dancer.contestant_info.team == current_user.team):
+        if request.method == "PATCH":
+            dancer.payment_info.all_is_paid(all_paid)
+            db.session.commit()
+        return jsonify(dancer.json())
+    return jsonify(None)
 
 
 @bp.route('/contestants/<int:contestant_id>/merchandise_payment/<int:merchandise_purchased_id>/'
           '<bool:merchandise_paid>', methods=["PATCH"])
 @login_required
-@requires_access_level([ACCESS[TEAM_CAPTAIN], ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+@requires_access_level([ACCESS[TEAM_CAPTAIN], ACCESS[TREASURER], ACCESS[CHECK_IN_ASSISTANT]])
 def contestants_merchandise_payment(contestant_id, merchandise_purchased_id, merchandise_paid):
     dancer = Contestant.query.get_or_404(contestant_id)
     purchase = MerchandisePurchase.query.get_or_404(merchandise_purchased_id)
-    if request.method == "PATCH":
-        purchase.paid = merchandise_paid
-        db.session.commit()
-    return jsonify(dancer.json())
+    if current_user.is_cia() or ((current_user.is_tc() or current_user.is_treasurer())
+                                 and dancer.contestant_info.team == current_user.team):
+        if request.method == "PATCH":
+            purchase.paid = merchandise_paid
+            db.session.commit()
+        return jsonify(dancer.json())
+    return jsonify(None)
 
 
 @bp.route('/contestants/<int:contestant_id>/merchandise_received/<int:merchandise_purchased_id>/'
           '<bool:merchandise_received>', methods=["PATCH"])
 @login_required
-@requires_access_level([ACCESS[TEAM_CAPTAIN], ACCESS[ORGANIZER], ACCESS[CHECK_IN_ASSISTANT]])
+@requires_access_level([ACCESS[CHECK_IN_ASSISTANT]])
 def contestants_merchandise_received(contestant_id, merchandise_purchased_id, merchandise_received):
     dancer = Contestant.query.get_or_404(contestant_id)
     purchase = MerchandisePurchase.query.get_or_404(merchandise_purchased_id)

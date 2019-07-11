@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, flash, request, send_file, g, Markup, jsonify, json
+from flask import render_template, url_for, redirect, flash, request, send_file, g, jsonify, json
 from flask_login import current_user, login_required
 from ntds_webportal import db
 from ntds_webportal.teamcaptains import bp
@@ -14,7 +14,6 @@ import ntds_webportal.functions as func
 from ntds_webportal.data import *
 from ntds_webportal.helper_classes import TeamPossiblePartners
 from sqlalchemy import and_, or_
-import itertools
 import datetime
 import xlsxwriter
 from io import BytesIO, StringIO
