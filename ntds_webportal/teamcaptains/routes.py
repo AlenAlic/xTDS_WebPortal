@@ -115,7 +115,9 @@ def edit_dancer(number):
     dancer = db.session.query(Contestant).join(ContestantInfo) \
         .filter(ContestantInfo.team == current_user.team, Contestant.contestant_id == number) \
         .order_by(Contestant.contestant_id).first_or_404()
-    possible_partners = TeamPossiblePartners(current_user, dancer=dancer, include_gdpr=True).possible_partners()
+    possible_partners = TeamPossiblePartners(current_user, dancer=dancer, include_gdpr=True,
+                                             partners_only=(dancer.status_info.status == SELECTED or
+                                                            dancer.status_info.status == CONFIRMED)).possible_partners()
     form = EditContestantForm(dancer)
     form.first_name.validators = []
     form.last_name.validators = []
@@ -123,17 +125,17 @@ def edit_dancer(number):
         form.populate(dancer)
     if request.method == POST:
         form.custom_validate(dancer)
-    if form.validate_on_submit():
-        dancer.status_info.feedback_about_information = None
-        db.session.commit()
-        flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
-              'alert-success')
-        return redirect(url_for('teamcaptains.edit_dancers', wide=wide))
-    if dancer.status_info.feedback_about_information is not None:
-        feedback = dancer.status_info.feedback_about_information.replace("\r\n", "<br/>")
-        flash(f'{dancer.get_full_name()} sent feedback about his/her submitted information:<br/><br/>'
-              f'<i>{feedback}</i><br/><br/>You can remove this notification by saving the form on this page.',
-              'alert-info')
+        if form.validate_on_submit():
+            dancer.status_info.feedback_about_information = None
+            db.session.commit()
+            flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
+                  'alert-success')
+            return redirect(url_for('teamcaptains.edit_dancers', wide=wide))
+        if dancer.status_info.feedback_about_information is not None:
+            feedback = dancer.status_info.feedback_about_information.replace("\r\n", "<br/>")
+            flash(f'{dancer.get_full_name()} sent feedback about his/her submitted information:<br/><br/>'
+                  f'<i>{feedback}</i><br/><br/>You can remove this notification by saving the form on this page.',
+                  'alert-info')
     return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, wide=wide,
                            possible_partners=possible_partners)
 

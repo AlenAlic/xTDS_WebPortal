@@ -46,11 +46,12 @@ class ReactForm(FlaskForm):
 
 class TeamPossiblePartners:
 
-    def __init__(self, team_captain, dancer=None, other_teams=False, include_gdpr=False):
+    def __init__(self, team_captain, dancer=None, other_teams=False, include_gdpr=False, partners_only=False):
         self.team = team_captain.team
         self.dancer = dancer
         self.other_teams = other_teams
         self.include_gdpr = include_gdpr
+        self.partners_only = partners_only
 
     def get_dancing_info_list(self, competition, level, role):
         dancers = DancingInfo.query\
@@ -58,8 +59,10 @@ class TeamPossiblePartners:
             .join(ContestantInfo, DancingInfo.contestant_id == ContestantInfo.contestant_id) \
             .join(Contestant, DancingInfo.contestant_id == Contestant.contestant_id) \
             .order_by(Contestant.first_name)
-        if self.include_gdpr:
+        if self.include_gdpr and not self.partners_only:
             dancers = dancers.filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR))
+        elif self.partners_only:
+            pass
         else:
             dancers = dancers.filter(StatusInfo.status == REGISTERED)
         if not self.other_teams and self.dancer is not None:
