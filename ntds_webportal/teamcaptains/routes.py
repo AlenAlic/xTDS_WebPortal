@@ -131,11 +131,11 @@ def edit_dancer(number):
             flash('{} data has been changed successfully.'.format(submit_contestant(form, contestant=dancer)),
                   'alert-success')
             return redirect(url_for('teamcaptains.edit_dancers', wide=wide))
-        if dancer.status_info.feedback_about_information is not None:
-            feedback = dancer.status_info.feedback_about_information.replace("\r\n", "<br/>")
-            flash(f'{dancer.get_full_name()} sent feedback about his/her submitted information:<br/><br/>'
-                  f'<i>{feedback}</i><br/><br/>You can remove this notification by saving the form on this page.',
-                  'alert-info')
+    if dancer.status_info.feedback_about_information is not None:
+        feedback = dancer.status_info.feedback_about_information
+        flash(f'{dancer.get_full_name()} sent feedback about his/her submitted information:<br/><br/>'
+              f'<i>{feedback}</i><br/><br/>You can remove this notification by saving the form on this page.',
+              'alert-info')
     return render_template('teamcaptains/edit_dancer.html', dancer=dancer, form=form, wide=wide,
                            possible_partners=possible_partners)
 
