@@ -1528,8 +1528,7 @@ class Shift(db.Model):
     __tablename__ = 'shift'
     shift_id = db.Column(db.Integer, primary_key=True)
     info_id = db.Column(db.Integer, db.ForeignKey('shift_info.shift_info_id', onupdate="CASCADE", ondelete="CASCADE"))
-    info = db.relationship("ShiftInfo", back_populates="shifts", uselist=False, single_parent=True,
-                           cascade='all, delete-orphan')
+    info = db.relationship("ShiftInfo", back_populates="shifts", uselist=False)
     slots = db.relationship("ShiftSlot", cascade='all, delete-orphan')
     start_time = db.Column(db.DateTime)
     stop_time = db.Column(db.DateTime)
