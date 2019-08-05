@@ -197,6 +197,10 @@ class BaseContestantForm(ReactForm, BaseRegistrationForm, DancingInfoForm, Volun
         if g.sc.ask_volunteer and self.volunteer.data == NO:
             self.first_aid.data = NO
             self.emergency_response_officer.data = NO
+
+        if not g.sc.ask_adult:
+            self.adult.data = str(False)
+
         if self.ballroom_level.data == BEGINNERS or self.ballroom_level.data == BREITENSPORT:
             self.jury_ballroom.data = NO
             self.license_jury_ballroom.data = NO

@@ -59,6 +59,8 @@ class TeamPossiblePartners:
             .join(ContestantInfo, DancingInfo.contestant_id == ContestantInfo.contestant_id) \
             .join(Contestant, DancingInfo.contestant_id == Contestant.contestant_id) \
             .order_by(Contestant.first_name)
+        if self.dancer is not None:
+            dancers = dancers.filter(DancingInfo.contestant_id != self.dancer.contestant_id)
         if self.include_gdpr and not self.partners_only:
             dancers = dancers.filter(or_(StatusInfo.status == REGISTERED, StatusInfo.status == NO_GDPR))
         elif self.partners_only:
