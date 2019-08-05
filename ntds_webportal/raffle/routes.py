@@ -100,6 +100,7 @@ def completed():
                                        if d.contestant_info.team == t['team']]
         return render_template('raffle/completed.html', raffle_sys=raffle_sys, teams=teams)
     if request.method == 'POST':
+        raffle_sys.clear_no_gdpr_dancers_partners()
         form = request.form
         if 'cancel_raffle' in form:
             for dancer in [d for d in raffle_sys.all_dancers if d.status_info.status != NO_GDPR]:
@@ -148,6 +149,7 @@ def confirmed():
                                       if d.contestant_info.team == t['team']]
         return render_template('raffle/confirmed.html', raffle_sys=raffle_sys, teams=teams)
     if request.method == 'POST':
+        raffle_sys.clear_no_gdpr_dancers_partners()
         form = request.form
         if 'select_marked_dancers' in form:
             raffle_sys.confirm_selection([d for d in raffle_sys.selected_dancers if str(d.contestant_id) in form])
@@ -291,6 +293,7 @@ def test_completed():
                                        if d.contestant_info.team == t['team']]
         return render_template('raffle/test_completed.html', raffle_sys=raffle_sys, teams=teams)
     if request.method == 'POST':
+        raffle_sys.clear_no_gdpr_dancers_partners()
         form = request.form
         if 'cancel_raffle' in form:
             for dancer in raffle_sys.all_dancers:
@@ -340,6 +343,7 @@ def test_confirmed():
         flash(f"All {CONFIRMED} dancers are now {SELECTED}.")
     raffle_sys = RaffleSystem()
     if request.method == 'GET':
+        raffle_sys.clear_no_gdpr_dancers_partners()
         all_teams = competing_teams().all()
         teams = [{'team': team, 'id': team.name.replace(' ', '-').replace('`', ''),
                   'id_title': team.name.replace(' ', '-').replace('`', '') + '-title'} for team in all_teams]

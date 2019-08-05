@@ -63,15 +63,13 @@ class RaffleSystem(Balance):
         self.test = False
         self.batch = False
         self.config = RaffleConfiguration.query.first()
-        self.all_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-            .filter(StatusInfo.raffle_status != CANCELLED).order_by(ContestantInfo.team_id, Contestant.first_name).all()
-        self.registered_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-            .filter(StatusInfo.raffle_status == REGISTERED).order_by(ContestantInfo.team_id, Contestant.first_name)\
-            .all()
-        self.selected_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-            .filter(StatusInfo.raffle_status == SELECTED).order_by(ContestantInfo.team_id, Contestant.first_name).all()
-        self.confirmed_dancers = db.session.query(Contestant).join(ContestantInfo).join(StatusInfo) \
-            .filter(StatusInfo.raffle_status == CONFIRMED).order_by(ContestantInfo.team_id, Contestant.first_name).all()
+        self.dancer_query = Contestant.query.join(ContestantInfo).join(StatusInfo)\
+            .order_by(ContestantInfo.team_id, Contestant.first_name)
+        self.all_dancers = self.dancer_query.filter(StatusInfo.raffle_status != CANCELLED,
+                                                    StatusInfo.raffle_status != NO_GDPR).all()
+        self.registered_dancers = self.dancer_query.filter(StatusInfo.raffle_status == REGISTERED).all()
+        self.selected_dancers = self.dancer_query.filter(StatusInfo.raffle_status == SELECTED).all()
+        self.confirmed_dancers = self.dancer_query.filter(StatusInfo.raffle_status == CONFIRMED).all()
         self.no_partner_list = []
         self.dancer_lists = {REGISTERED: self.registered_dancers, SELECTED: self.selected_dancers,
                              CONFIRMED: self.confirmed_dancers, self.NO_PARTNER: self.no_partner_list}
@@ -82,6 +80,13 @@ class RaffleSystem(Balance):
         self.no_partner_groups = []
         self.group_lists = {REGISTERED: self.registered_groups, SELECTED: self.selected_groups,
                             CONFIRMED: self.confirmed_groups, self.NO_PARTNER: self.no_partner_groups}
+
+    def clear_no_gdpr_dancers_partners(self):
+        no_gdpr_dancers = self.dancer_query.filter(StatusInfo.status == NO_GDPR).all()
+        for d in no_gdpr_dancers:
+            for di in d.dancing_info:
+                di.set_partner(None)
+        db.session.commit()
 
     def groups(self, source):
         source = self.dancer_lists[source]
@@ -391,6 +396,9 @@ class RaffleSystem(Balance):
 
         # Start raffle
         self.start_message()
+
+        # Clear partners of dancers that have not accepted the GDPR
+        self.clear_no_gdpr_dancers_partners()
 
         # Guaranteed dancers
         self.select_guaranteed_balanced_groups()
