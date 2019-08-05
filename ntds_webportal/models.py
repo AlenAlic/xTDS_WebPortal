@@ -1756,6 +1756,7 @@ class CompetitionMode(enum.Enum):
 
 COMPETITION_SHORT_NAMES = {CompetitionMode.single_partner: 'SP', CompetitionMode.random_single_partner: 'RSP',
                            CompetitionMode.change_per_round: 'CPR', CompetitionMode.change_per_dance: 'CPD'}
+CHANGE_MODES = [CompetitionMode.change_per_dance, CompetitionMode.change_per_round]
 
 
 class Competition(db.Model):
@@ -1770,7 +1771,7 @@ class Competition(db.Model):
     floors = db.Column(db.Integer, default=1)
     when = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now())
     rounds = db.relationship("Round", back_populates="competition", cascade='all, delete, delete-orphan')
-    mode = db.Column(db.Enum(CompetitionMode))
+    mode = db.Column(db.Enum(CompetitionMode), default=CompetitionMode.single_partner)
     results_published = db.Column(db.Boolean, nullable=False, default=False)
     couples = db.relationship("Couple", secondary=competition_couple_table, back_populates="competitions")
     leads = db.relationship("Dancer", secondary=competition_lead_table, back_populates="competitions_lead")
@@ -2118,12 +2119,17 @@ class RoundType(enum.Enum):
     re_dance = "Re-dance"
     second_round = "Second round"
     intermediate_round = "Intermediate round"
+    eight_final = "Eight final"
+    quarter_final = "Quarter final"
     semi_final = "Semi-final"
     final = "Final"
 
 
-ROUND_SHORT_NAMES = {RoundType.general_look: 'GL', RoundType.first_round: '1st', RoundType.re_dance: 'R',
-                     RoundType.intermediate_round: 'I', RoundType.semi_final: 'SF', RoundType.final: 'F'}
+ROUND_SHORT_NAMES = {
+    RoundType.general_look: 'GL', RoundType.first_round: '1st', RoundType.second_round: 'SR', RoundType.re_dance: 'R',
+    RoundType.intermediate_round: 'I', RoundType.eight_final: 'EF', RoundType.quarter_final: 'QF',
+    RoundType.semi_final: 'SF', RoundType.final: 'F'
+}
 
 
 class Round(db.Model):

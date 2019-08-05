@@ -186,7 +186,7 @@ def dances():
     dance_form = DanceForm()
     if dance_form.dance_submit.name in request.form:
         if dance_form.validate_on_submit():
-            check = Discipline.query.filter(or_(Dance.name == dance_form.name.data, Dance.tag == dance_form.tag.data))\
+            check = Dance.query.filter(or_(Dance.name == dance_form.name.data, Dance.tag == dance_form.tag.data))\
                 .first()
             if check is None:
                 d = Dance()
@@ -216,9 +216,9 @@ def edit_dance(dance_id):
             dance_form.tag.data = dance.tag
         if 'save_changes' in request.form:
             if dance_form.validate_on_submit():
-                check = Discipline.query.filter(
-                    or_(Dance.name == dance_form.name.data, Dance.tag == dance_form.tag.data)).first()
-                if check is None:
+                check = Dance.query.filter(or_(Dance.name == dance_form.name.data, Dance.tag == dance_form.tag.data))\
+                    .first()
+                if check is None or check.dance_id == dance.dance_id:
                     dance.name = dance_form.name.data
                     dance.tag = dance_form.tag.data
                     db.session.commit()
@@ -277,7 +277,7 @@ def edit_discipline(discipline_id):
         if 'save_changes' in request.form:
             if discipline_form.validate_on_submit():
                 check = Discipline.query.filter(Discipline.name == discipline_form.name.data).first()
-                if check is None:
+                if check is None or check.discipline_id == discipline.discipline_id:
                     discipline.name = discipline_form.name.data
                     discipline.dances = Dance.query.filter(Dance.dance_id.in_(discipline_form.dances.data)).all()
                     db.session.commit()
@@ -338,7 +338,7 @@ def edit_dancing_class(dancing_class_id):
         if 'save_changes' in request.form:
             if dancing_class_form.validate_on_submit():
                 check = DancingClass.query.filter(DancingClass.name == dancing_class_form.name.data).first()
-                if check is None:
+                if check is None or check.dancing_class_id == dancing_class.dancing_class_id:
                     dancing_class.name = dancing_class_form.name.data
                     db.session.commit()
                     flash(f"Edited {dancing_class}.")
