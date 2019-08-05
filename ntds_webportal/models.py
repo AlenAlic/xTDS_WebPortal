@@ -2029,7 +2029,6 @@ class Adjudicator(db.Model):
 
     def active_round(self):
         if self.round != 0:
-            r = Round.query.filter(Round.round_id == self.round).first()
             return f"{Round.query.filter(Round.round_id == self.round).first()}"
         return "Offline"
 

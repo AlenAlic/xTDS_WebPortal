@@ -187,8 +187,11 @@ EMPTY = "-"
 COMPETITION = 'competition'
 BALLROOM = 'Ballroom'
 LATIN = 'Latin'
+BONUS = 'Bonus'
 SALSA = 'Salsa'
 POLKA = 'Polka'
+BACHATA= 'Bachata'
+MERENGUE = 'Merengue'
 ALL_COMPETITIONS = [BALLROOM, LATIN]
 COMPETITION_CHOICE = {"": "Choose a competition", BALLROOM: BALLROOM, LATIN: LATIN}
 
