@@ -2,7 +2,7 @@
 
 {% macro assistant(url="", account_made=false, title="", text="") %}
 <a href="{{url_for(url)}}" class="grid-place-self-stretch text-decoration-none card my-0 text-black">
-    <img src="{% if account_made %}{{url_for('static', filename='dashboard_images/edit_contestant.png')}}{% else %}{{url_for('static', filename='dashboard_images/edit_contestant.png')}}{% endif %}" class="card-img mx-auto mt-3" style="max-width: 112px; max-height: 112px;" alt="Switch image">
+    <img src="{% if account_made %}{{url_for('static', filename='dashboard_images/edit_contestant.png')}}{% else %}{{url_for('static', filename='dashboard_images/register_contestant.png')}}{% endif %}" class="card-img mx-auto mt-3" style="max-width: 112px; max-height: 112px;" alt="Switch image">
     <div class="card-body pb-3 text-center">
         <h5 class="card-title">{{ title }}</h5>
         {% if text != "" %}<p class="card-text">{{ text }}</p>{% endif %}
@@ -14,7 +14,7 @@
 {% block app_content %}
     <h2>Manage assistant accounts</h2>
     <p>There are a few accounts for special tasks. You can change the password for each of these accounts by clicking on the account tab.</p>
-    <div class="mb-4 d-grid grid-column-gap-2 grid-row-gap-2 grid-template-columns-2 grid-template-columns-sm-2 grid-template-columns-md-3 grid-template-columns-lg-4 grid-template-columns-xl-5 grid-template-columns-xxl-5">
+    <div class="mb-4 d-grid grid-column-gap-2 grid-row-gap-2 grid-template-columns-2 grid-template-columns-sm-2 grid-template-columns-md-3 grid-template-columns-lg-4 grid-template-columns-xxl-6">
     {{ assistant(
         url='organizer.check_in_assistant_account',
         account_made=(chi is not none),
@@ -42,6 +42,11 @@
         url='organizer.floor_manager_account',
         account_made=(fm is not none),
         title='Floor Manager'
+        ) }}
+    {{ assistant(
+        url='organizer.presenter_account',
+        account_made=(p is not none),
+        title='Presenter'
         ) }}
     </div>
     <h2>Activate teamcaptain accounts</h2>

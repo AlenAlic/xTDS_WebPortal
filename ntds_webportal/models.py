@@ -149,6 +149,9 @@ class User(UserMixin, Anonymous, db.Model):
     def is_ada(self):
         return self.access == ACCESS[ADJUDICATOR_ASSISTANT]
 
+    def is_presenter(self):
+        return self.access == ACCESS[PRESENTER]
+
     def is_dancer(self):
         return self.access == ACCESS[DANCER]
 
@@ -1888,6 +1891,14 @@ class Competition(db.Model):
     def dancers(self):
         return [d for d in self.leads + self.follows]
 
+    def presenter_rounds(self):
+        return [{"id": r.round_id,
+                 "type": r.type.name,
+                 "name": r.type.value,
+                 "completed": r.is_completed(),
+                 "mode": r.competition.mode.name
+                 } for r in self.rounds]
+
 
 def create_couples_list(couples=None, leads=None, follows=None):
     if couples is not None:
@@ -2016,6 +2027,20 @@ class Adjudicator(db.Model):
     def deletable(self):
         return len(self.competitions) == 0
 
+    def active_round(self):
+        if self.round != 0:
+            r = Round.query.filter(Round.round_id == self.round).first()
+            return f"{Round.query.filter(Round.round_id == self.round).first()}"
+        return "Offline"
+
+    def active_dance(self):
+        if self.dance != 0:
+            return f"{Dance.query.filter(Dance.dance_id == self.dance).first()}"
+        return "Offline"
+
+    def is_present(self, r):
+        return r.round_id == self.round
+
 
 class Dancer(db.Model):
     __tablename__ = TABLE_DANCER
@@ -2110,6 +2135,9 @@ class Couple(db.Model):
             return self.lead.team
         else:
             return f"{self.lead.team} / {self.follow.team}"
+
+    def names(self):
+        return f"{self.lead.name} / {self.follow.name}"
 
 
 class RoundType(enum.Enum):
@@ -2592,6 +2620,61 @@ class Round(db.Model):
         if previous_round is not None:
             return [result.couple for result in self.round_results if result.marks == -1]
 
+    def presenter_adjudicators(self):
+        return list(sorted([{
+            "id": a.adjudicator_id,
+            "name": a.name,
+            "present": a.is_present(self),
+            "round": a.active_round(),
+            "dance": a.active_dance()
+        } for a in self.competition.adjudicators], key=lambda x: x["name"]))
+
+    def leads(self):
+        return [c.lead for c in self.couples]
+
+    def follows(self):
+        return [c.follow for c in self.couples]
+
+    @staticmethod
+    def presenter_dancers_list(couples=None, leads=None, follows=None):
+        if couples is not None:
+            return list(sorted([{"number": c.number, "name": c.names(), "team": c.teams()} for c in couples],
+                               key=lambda x: x["number"]))
+        if leads is not None and follows is not None:
+            return {"leads": list(sorted([{"number": d.number, "name": d.name, "teams": d.team}
+                                          for d in leads], key=lambda x: x["number"])),
+                    "follows": list(sorted([{"number": d.number, "name": d.name, "teams": d.team}
+                                            for d in follows], key=lambda x: x["number"]))
+                    }
+
+    def starting_list(self):
+        if self.competition.mode in CHANGE_MODES:
+            return self.presenter_dancers_list(leads=self.leads(), follows=self.follows())
+        return self.presenter_dancers_list(couples=self.couples)
+
+    def presenter_no_redance_couples(self):
+        r = self.previous_round()
+        if self.competition.mode in CHANGE_MODES:
+            return self.presenter_dancers_list(leads=[d for d in r.leads() if d not in self.leads()],
+                                               follows=[d for d in r.follows() if d not in self.follows()])
+        return self.presenter_dancers_list(couples=[c for c in r.couples if c not in self.couples])
+
+    def couples_present(self):
+        couples = {d: {
+            "name": d.name,
+            "order": DANCE_ORDER[self.competition.discipline.name][d.name],
+            "id": d.dance_id,
+            "heats": []
+        } for d in self.dances}
+        for h in self.heats:
+            couples[h.dance]["heats"].append({
+                "number": h.number,
+                "id": h.heat_id,
+                "couples": list(sorted([{"number": c.couple_number(), "present": c.present} for c in h.couples_present],
+                                       key=lambda x: x["number"]))
+            })
+        return list(couples.values())
+
 
 class DanceActive(db.Model):
     __tablename__ = TABLE_DANCE_ACTIVE
@@ -2694,6 +2777,11 @@ class CouplePresent(db.Model):
     def __repr__(self):
         return '{round} - {dance} - {couple}'\
             .format(couple=self.couple, dance=self.heat.dance, round=self.heat.round)
+
+    def couple_number(self):
+        if self.heat.round.competition.mode in CHANGE_MODES:
+            return f"{self.couple.lead.number} / {self.couple.follow.number}"
+        return self.couple.number
 
 
 class RoundResult(db.Model):

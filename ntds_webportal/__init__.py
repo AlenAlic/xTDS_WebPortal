@@ -91,6 +91,10 @@ class Anonymous(AnonymousUserMixin):
         return False
 
     @staticmethod
+    def is_presenter():
+        return False
+
+    @staticmethod
     def is_dancer():
         return False
 
@@ -311,6 +315,9 @@ def create_app():
 
     from ntds_webportal.adjudication_system.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/adjudication_system/api')
+
+    from ntds_webportal.presenter import bp as pres_bp
+    app.register_blueprint(pres_bp, url_prefix='/presenter')
 
     # from ntds_webportal.companion_app import bp as app_bp
     # app.register_blueprint(app_bp, url_prefix='/app')

@@ -76,6 +76,8 @@ def dashboard():
         return redirect(url_for('adjudication_system.available_couples'))
     if current_user.is_floor_manager():
         return redirect(url_for('adjudication_system.floor_manager_start_page'))
+    if current_user.is_presenter():
+        return redirect(url_for('presenter.dashboard'))
     return render_template('dashboard.html')
 
 

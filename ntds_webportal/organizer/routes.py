@@ -171,7 +171,8 @@ def user_list():
     ada = db.session.query(User).filter(User.access == ACCESS[ADJUDICATOR_ASSISTANT]).first()
     tom = db.session.query(User).filter(User.access == ACCESS[TOURNAMENT_OFFICE_MANAGER]).first()
     fm = db.session.query(User).filter(User.access == ACCESS[FLOOR_MANAGER]).first()
-    return render_template('organizer/user_list.html', users=users, bda=bda, chi=chi, ada=ada, tom=tom, fm=fm)
+    p = db.session.query(User).filter(User.access == ACCESS[PRESENTER]).first()
+    return render_template('organizer/user_list.html', users=users, bda=bda, chi=chi, ada=ada, tom=tom, fm=fm, p=p)
 
 
 def assistant_account(access_level):
@@ -189,6 +190,8 @@ def assistant_account(access_level):
             form.username.data = TOURNAMENT_OFFICE_MANAGER_ACCOUNT_NAME
         elif access_level == FLOOR_MANAGER:
             form.username.data = FLOOR_MANAGER_ACCOUNT_NAME
+        elif access_level == PRESENTER:
+            form.username.data = PRESENTER_ACCOUNT_NAME
         if form.validate_on_submit():
             user = User()
             user.username = form.username.data
@@ -269,6 +272,17 @@ def floor_manager_account():
     if submit:
         return redirect(url_for('organizer.user_list'))
     return render_template('organizer/assistant_account.html', form=form, user=user, assistant=FLOOR_MANAGER)
+
+
+@bp.route('/presenter_account', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(SYSTEM_CONFIGURED)
+def presenter_account():
+    form, user, submit = assistant_account(PRESENTER)
+    if submit:
+        return redirect(url_for('organizer.user_list'))
+    return render_template('organizer/assistant_account.html', form=form, user=user, assistant=PRESENTER)
 
 
 @bp.route('/change_email/<number>', methods=['GET', 'POST'])
@@ -1000,3 +1014,21 @@ def switch_to_fm():
     else:
         flash('Floor Manager account not created.')
     return redirect(url_for('main.index'))
+
+
+@bp.route('/switch_to_p', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(RAFFLE_CONFIRMED)
+def switch_to_p():
+    p = User.query.filter(User.access == ACCESS[PRESENTER]).first()
+    if p is not None:
+        if g.event is not None:
+            logout_user()
+            login_user(p)
+        else:
+            flash('There is no event yet.')
+    else:
+        flash('Presenter account not created.')
+    return redirect(url_for('main.index'))
+

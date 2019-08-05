@@ -6,6 +6,7 @@ from ntds_webportal.adjudication_system.api import adjudication
 from ntds_webportal.adjudication_system.api import tournament_office
 from ntds_webportal.adjudication_system.api import floor_manager
 from ntds_webportal.adjudication_system.api import app
+from ntds_webportal.adjudication_system.api import presenter
 
 
 @bp.after_request

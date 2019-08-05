@@ -19,6 +19,7 @@ CHECK_IN_ASSISTANT = 'check_in_assistant'
 ADJUDICATOR_ASSISTANT = 'adjudicator_assistant'
 TOURNAMENT_OFFICE_MANAGER = 'tournament_office_manager'
 FLOOR_MANAGER = 'floor_manager'
+PRESENTER = 'presenter'
 TEAM_CAPTAIN = 'team_captain'
 TREASURER = 'treasurer'
 DANCER = 'dancer'
@@ -31,6 +32,7 @@ ACCESS_LEVELS = {
     ADJUDICATOR_ASSISTANT: 'Adjudicator assistant',
     TOURNAMENT_OFFICE_MANAGER: 'Tournament office manager',
     FLOOR_MANAGER: 'Floor manager',
+    PRESENTER: 'Presenter',
     TEAM_CAPTAIN: 'Team captain',
     TREASURER: 'Treasurer',
     DANCER: 'Dancer',
@@ -43,6 +45,7 @@ CHECK_IN_ASSISTANT_ACCOUNT_NAME = 'CheckInAssistant'
 ADJUDICATOR_ASSISTANT_ACCOUNT_NAME = 'AdjudicatorAssistant'
 TOURNAMENT_OFFICE_MANAGER_ACCOUNT_NAME = 'TournamentOfficeManager'
 FLOOR_MANAGER_ACCOUNT_NAME = 'FloorManager'
+PRESENTER_ACCOUNT_NAME = 'Presenter'
 
 #  Tournaments
 NTDS = 'NTDS'
