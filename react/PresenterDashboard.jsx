@@ -61,7 +61,7 @@ class PresenterDashboard extends React.Component {
                 </div>
                 <div className={`d-grid grid-column-gap-2 grid-template-columns-${windows.length}`}>
                     {windows.map(c => (
-                        <PresenterWindow key={`competition-title-${c.id}`} competition={c}>{c.name}</PresenterWindow>
+                        <PresenterWindow key={`competition-title-${c.id}`} competition={c} windows={windows.length}>{c.name}</PresenterWindow>
                     ))}
                 </div>
             </React.Fragment>

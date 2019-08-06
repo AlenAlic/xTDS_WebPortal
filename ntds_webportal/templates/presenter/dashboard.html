@@ -6,6 +6,6 @@
     <script src="{{url_for('static', filename='js/react/PresenterDashboard.js')}}{{ aver }}" ></script>
     <div id="dashboard" class="mt-3 mx-3"></div>
     <script>
-        ReactDOM.render(React.createElement(PresenterDashboard, {tournamentDate: new Date({{ g.sc.tournament_starting_date * 1000 }})}), document.getElementById('dashboard'));
+        ReactDOM.render(React.createElement(PresenterDashboard), document.getElementById('dashboard'));
     </script>
 {% endblock %}

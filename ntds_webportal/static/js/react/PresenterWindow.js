@@ -143,6 +143,292 @@ var DancersList = function DancersList(_ref2) {
     );
 };
 
+var FinalPlacingsCouples = function FinalPlacingsCouples(_ref3) {
+    var couples = _ref3.couples;
+
+    return React.createElement(
+        "div",
+        { className: "d-flex justify-content-around mb-3" },
+        React.createElement(
+            "table",
+            { className: "table table-sm" },
+            React.createElement(
+                "thead",
+                null,
+                React.createElement(
+                    "tr",
+                    null,
+                    React.createElement(
+                        "th",
+                        null,
+                        "Place"
+                    ),
+                    React.createElement(
+                        "th",
+                        null,
+                        "#"
+                    ),
+                    React.createElement(
+                        "th",
+                        null,
+                        "Lead"
+                    ),
+                    React.createElement(
+                        "th",
+                        null,
+                        "Follow"
+                    ),
+                    React.createElement(
+                        "th",
+                        null,
+                        "Team(s)"
+                    )
+                )
+            ),
+            React.createElement(
+                "tbody",
+                null,
+                couples.map(function (c) {
+                    return React.createElement(
+                        "tr",
+                        { key: "place-" + c.place },
+                        React.createElement(
+                            "td",
+                            null,
+                            c.place
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            c.number
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            c.lead
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            c.follow
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            c.team
+                        )
+                    );
+                })
+            )
+        )
+    );
+};
+var FinalPlacingsDancers = function FinalPlacingsDancers(_ref4) {
+    var dancers = _ref4.dancers;
+
+    return React.createElement(
+        "div",
+        { className: "d-flex justify-content-around mb-3" },
+        React.createElement(
+            "table",
+            { className: "table table-sm" },
+            React.createElement(
+                "thead",
+                null,
+                React.createElement(
+                    "tr",
+                    null,
+                    React.createElement(
+                        "th",
+                        null,
+                        "Place"
+                    ),
+                    React.createElement(
+                        "th",
+                        null,
+                        "#"
+                    ),
+                    React.createElement(
+                        "th",
+                        null,
+                        "Name"
+                    ),
+                    React.createElement(
+                        "th",
+                        null,
+                        "Team"
+                    )
+                )
+            ),
+            React.createElement(
+                "tbody",
+                null,
+                dancers.map(function (d) {
+                    return React.createElement(
+                        "tr",
+                        { key: "place-" + d.place },
+                        React.createElement(
+                            "td",
+                            null,
+                            d.place
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            d.number
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            d.name
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            d.team
+                        )
+                    );
+                })
+            )
+        )
+    );
+};
+var SkatingSummary = function SkatingSummary(_ref5) {
+    var finalResult = _ref5.finalResult;
+
+    return React.createElement(
+        "table",
+        { className: "table-sm table-skating print-friendly text-center mb-4" },
+        React.createElement(
+            "thead",
+            null,
+            React.createElement(
+                "tr",
+                null,
+                React.createElement(
+                    "th",
+                    { colSpan: finalResult.dances.length + 3 },
+                    "Final Summary"
+                )
+            ),
+            React.createElement(
+                "tr",
+                null,
+                React.createElement(
+                    "th",
+                    { rowSpan: "2", className: "align-bottom" },
+                    "No."
+                ),
+                React.createElement(
+                    "th",
+                    { colSpan: finalResult.dances.length },
+                    "Dances"
+                ),
+                React.createElement(
+                    "th",
+                    { rowSpan: "2", className: "align-bottom" },
+                    "Tot."
+                ),
+                React.createElement(
+                    "th",
+                    { rowSpan: "2", className: "align-bottom" },
+                    "Res."
+                )
+            ),
+            React.createElement(
+                "tr",
+                null,
+                finalResult.dances.map(function (d) {
+                    return React.createElement(
+                        "th",
+                        { key: "dance-" + d },
+                        d
+                    );
+                })
+            )
+        ),
+        React.createElement(
+            "tbody",
+            null,
+            finalResult.rows.map(function (r, i) {
+                return React.createElement(
+                    "tr",
+                    { key: "row-" + i },
+                    r.map(function (c, j) {
+                        return React.createElement(
+                            "td",
+                            { key: "column-" + j },
+                            c
+                        );
+                    })
+                );
+            })
+        )
+    );
+};
+var SkatingRule = function SkatingRule(_ref6) {
+    var rule = _ref6.rule,
+        ruleText = _ref6.ruleText,
+        places = _ref6.places;
+
+    return React.createElement(
+        "table",
+        { className: "table-sm table-skating text-center mb-2" },
+        React.createElement(
+            "thead",
+            null,
+            React.createElement(
+                "tr",
+                null,
+                React.createElement(
+                    "th",
+                    { rowSpan: "2", className: "align-bottom" },
+                    "No."
+                ),
+                React.createElement(
+                    "th",
+                    { colSpan: places.length },
+                    ruleText
+                ),
+                React.createElement(
+                    "th",
+                    { rowSpan: "2", className: "align-bottom" },
+                    "Res."
+                )
+            ),
+            React.createElement(
+                "tr",
+                null,
+                places.map(function (c, i) {
+                    return React.createElement(
+                        "th",
+                        { key: "column-" + i },
+                        1,
+                        i > 0 ? "-" + (i + 1) : ""
+                    );
+                })
+            )
+        ),
+        React.createElement(
+            "tbody",
+            null,
+            rule.rows.map(function (r, i) {
+                return React.createElement(
+                    "tr",
+                    { key: "row-" + i },
+                    r.map(function (c, j) {
+                        return React.createElement(
+                            "td",
+                            { key: "column-" + j },
+                            c
+                        );
+                    })
+                );
+            })
+        )
+    );
+};
+
 var UPDATE_INTERVAL = 3000;
 
 var PresenterWindow = function (_React$Component2) {
@@ -156,6 +442,7 @@ var PresenterWindow = function (_React$Component2) {
         _this2.state = {
             rounds: [],
             selectedRound: null,
+            noRounds: false,
 
             adjudicators: null,
             loadingAdjudicators: false,
@@ -212,6 +499,7 @@ var PresenterWindow = function (_React$Component2) {
             fetch("/adjudication_system/api/presenter/competition/" + this.props.competition.id + "/rounds", { method: "GET", credentials: 'same-origin', signal: this.signal }).then(function (response) {
                 return response.json();
             }).then(function (result) {
+                _this4.setState({ noRounds: result.length === 0 });
                 if (changeRound) {
                     var selectedRound = result.reduce(function (p, c) {
                         return p.id > c.id ? p : c;
@@ -348,6 +636,12 @@ var PresenterWindow = function (_React$Component2) {
             return React.createElement(
                 React.Fragment,
                 null,
+                this.state.noRounds && React.createElement(
+                    "h3",
+                    { className: "text-center" },
+                    "There are no rounds yet for ",
+                    this.props.competition.name
+                ),
                 selectedRound !== null && React.createElement(
                     "div",
                     { className: "card" },
@@ -362,6 +656,11 @@ var PresenterWindow = function (_React$Component2) {
                         React.createElement(
                             "div",
                             { className: "form-group" },
+                            React.createElement(
+                                "label",
+                                { htmlFor: "round-" + this.props.competition.id },
+                                "Select round"
+                            ),
                             React.createElement(
                                 "select",
                                 { className: "form-control", id: "round-" + this.props.competition.id, value: selectedRound.id, onChange: this.changeRound },
@@ -390,10 +689,62 @@ var PresenterWindow = function (_React$Component2) {
                         selectedRound !== null && React.createElement(
                             "div",
                             { className: "accordion", id: "accordion-" + selectedRound.id },
+                            selectedRound.type === FINAL && this.state.selectedRound.completed && React.createElement(
+                                PresenterAccordionCard,
+                                { accordion: "accordion-" + selectedRound.id, cardTitle: "Final results", loading: this.state.loadingFinalResult },
+                                finalResult !== null && (!finalResult.separate ? React.createElement(
+                                    React.Fragment,
+                                    null,
+                                    React.createElement(FinalPlacingsCouples, { couples: finalResult.couples }),
+                                    React.createElement(SkatingSummary, { finalResult: finalResult }),
+                                    finalResult.show_rules && React.createElement(
+                                        React.Fragment,
+                                        null,
+                                        React.createElement(SkatingRule, { ruleText: "Rule 10", places: finalResult.couples, rule: finalResult.rule10 }),
+                                        React.createElement(SkatingRule, { ruleText: "Rule 11", places: finalResult.couples, rule: finalResult.rule11 })
+                                    )
+                                ) : React.createElement(
+                                    "div",
+                                    { className: "d-grid grid-column-gap-3 grid-row-gap-4 grid-template-columns-" + (this.props.windows < 3 ? "2" : "1") },
+                                    React.createElement(
+                                        "div",
+                                        null,
+                                        React.createElement(
+                                            "h3",
+                                            { className: "text-center" },
+                                            "Leads"
+                                        ),
+                                        React.createElement(FinalPlacingsDancers, { dancers: finalResult.leads.dancers }),
+                                        React.createElement(SkatingSummary, { finalResult: finalResult.leads }),
+                                        finalResult.leads.show_rules && React.createElement(
+                                            React.Fragment,
+                                            null,
+                                            React.createElement(SkatingRule, { ruleText: "Rule 10", places: finalResult.leads.dancers, rule: finalResult.leads.rule10 }),
+                                            React.createElement(SkatingRule, { ruleText: "Rule 11", places: finalResult.leads.dancers, rule: finalResult.leads.rule11 })
+                                        )
+                                    ),
+                                    React.createElement(
+                                        "div",
+                                        null,
+                                        React.createElement(
+                                            "h3",
+                                            { className: "text-center" },
+                                            "Follows"
+                                        ),
+                                        React.createElement(FinalPlacingsDancers, { dancers: finalResult.follows.dancers }),
+                                        React.createElement(SkatingSummary, { finalResult: finalResult.follows }),
+                                        finalResult.follows.show_rules && React.createElement(
+                                            React.Fragment,
+                                            null,
+                                            React.createElement(SkatingRule, { ruleText: "Rule 10", places: finalResult.follows.dancers, rule: finalResult.follows.rule10 }),
+                                            React.createElement(SkatingRule, { ruleText: "Rule 11", places: finalResult.follows.dancers, rule: finalResult.follows.rule11 })
+                                        )
+                                    )
+                                ))
+                            ),
                             React.createElement(
                                 PresenterAccordionCard,
-                                { accordion: "accordion-" + selectedRound.id, cardTitle: "Adjudicators", loading: this.state.loadingAdjudicators,
-                                    counter: adjudicators !== null ? { "x": adjudicators.filter(function (a) {
+                                { accordion: "accordion-" + selectedRound.id, cardTitle: "Adjudicators", loading: this.state.loadingAdjudicators, counter: adjudicators !== null ? { "x": adjudicators.filter(function (a) {
                                             return a.present === true;
                                         }).length, "total": adjudicators.length } : adjudicators },
                                 React.createElement(

@@ -131,7 +131,7 @@ def event():
             if default_form.open_class.data:
                 create_default_competition(BALLROOM, OPEN_CLASS, start_time)
                 create_default_competition(LATIN, OPEN_CLASS, start_time)
-            flash(f"Created base dances, disciplines, classes, and the chosen default competitions.")
+            flash("Created base dances, disciplines, classes, and the chosen default competitions.")
             return redirect(url_for('adjudication_system.event'))
     form = request.args
     if 'reset' in form:
@@ -432,7 +432,7 @@ def delete_adjudicator(adjudicator_id):
         db.session.delete(adjudicator)
         db.session.commit()
     else:
-        flash(f"Invalid id.", "alert-warning")
+        flash("Invalid id.", "alert-warning")
     return redirect(url_for("adjudication_system.available_adjudicators"))
 
 
@@ -447,8 +447,8 @@ def adjudicator_assignments():
             if 'save_assignments' in form:
                 for comp in g.event.competitions:
                     if comp.is_configurable():
-                        checks = [a for a in [f"{comp.competition_id}-{adj.adjudicator_id}" for adj in all_adjudicators]
-                                  if a in form]
+                        checks = [a for a in [f"{comp.competition_id}-{adj.adjudicator_id}"
+                                              for adj in all_adjudicators] if a in form]
                         adjudicators = [int(a) for a in [a.split('-')[1] for a in checks]]
                         comp.adjudicators = Adjudicator.query.filter(Adjudicator.adjudicator_id.in_(adjudicators)).all()
                 db.session.commit()
@@ -482,7 +482,8 @@ def available_dancers():
                     db.session.commit()
                     flash(f"Created {dancer.name} ({dancer.number}) as a {dancer.role}", "alert-success")
                 else:
-                    flash(f"{check_dancer.name} as a {form.role.data} is already in the system.")
+                    flash(f"{check_dancer.name} ({check_dancer.number}) as a {form.role.data} is already in "
+                          f"the system.")
                 return redirect(url_for("adjudication_system.available_dancers"))
     if request.method == GET:
         if "import_dancers" in request.args:
@@ -667,7 +668,7 @@ def delete_couple(couple_id):
         else:
             flash("Cannot delete couple.")
     else:
-        flash(f"Invalid id.", "alert-warning")
+        flash("Invalid id.", "alert-warning")
     return redirect(url_for("adjudication_system.available_couples"))
 
 
@@ -735,7 +736,7 @@ def progress():
     if dancing_round is None:
         return redirect(url_for("adjudication_system.event"))
     if not dancing_round.has_adjudicators():
-        flash(f"Please assign adjudicators first.", "alert-warning")
+        flash("Please assign adjudicators first.", "alert-warning")
         return redirect(url_for("adjudication_system.competition",
                                 competition_id=dancing_round.competition.competition_id))
     if dancing_round.first_round_after_qualification_split():
@@ -1151,7 +1152,9 @@ def starting_lists():
         if c.is_single_partner():
             competitions[c] = [couple for couple in c.couples]
         else:
-            competitions[c] = [lead for lead in c.leads].extend([follow for follow in c.follows])
+            dancers = [lead for lead in c.leads]
+            dancers.extend([follow for follow in c.follows])
+            competitions[c] = dancers
     competitions = {c: competitions[c] for c in competitions if c.dancing_class.name != TEST
                     and len(competitions[c]) != 0}
     competition_id = request.args.get('competition', 0, int)

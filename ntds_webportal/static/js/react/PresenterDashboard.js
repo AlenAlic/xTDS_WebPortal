@@ -121,7 +121,7 @@ var PresenterDashboard = function (_React$Component) {
                     windows.map(function (c) {
                         return React.createElement(
                             PresenterWindow,
-                            { key: "competition-title-" + c.id, competition: c },
+                            { key: "competition-title-" + c.id, competition: c, windows: windows.length },
                             c.name
                         );
                     })

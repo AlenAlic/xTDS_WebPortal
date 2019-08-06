@@ -80,6 +80,113 @@ const DancersList = ({list, selectedRound}) => {
     )
 };
 
+const FinalPlacingsCouples = ({couples}) => {
+    return (
+        <div className="d-flex justify-content-around mb-3">
+            <table className="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Place</th>
+                        <th>#</th>
+                        <th>Lead</th>
+                        <th>Follow</th>
+                        <th>Team(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {couples.map(c => (
+                        <tr key={`place-${c.place}`}>
+                            <td>{c.place}</td>
+                            <td>{c.number}</td>
+                            <td>{c.lead}</td>
+                            <td>{c.follow}</td>
+                            <td>{c.team}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    )
+};
+const FinalPlacingsDancers = ({dancers}) => {
+    return (
+        <div className="d-flex justify-content-around mb-3">
+            <table className="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Place</th>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {dancers.map(d => (
+                        <tr key={`place-${d.place}`}>
+                            <td>{d.place}</td>
+                            <td>{d.number}</td>
+                            <td>{d.name}</td>
+                            <td>{d.team}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    )
+};
+const SkatingSummary = ({finalResult}) => {
+    return (
+        <table className="table-sm table-skating print-friendly text-center mb-4">
+            <thead>
+                <tr>
+                    <th colSpan={finalResult.dances.length + 3}>Final Summary</th>
+                </tr>
+                <tr>
+                    <th rowSpan="2" className="align-bottom">No.</th>
+                    <th colSpan={finalResult.dances.length}>Dances</th>
+                    <th rowSpan="2" className="align-bottom">Tot.</th>
+                    <th rowSpan="2" className="align-bottom">Res.</th>
+                </tr>
+                <tr>
+                    {finalResult.dances.map(d => (<th key={`dance-${d}`}>{d}</th>))}
+                </tr>
+            </thead>
+            <tbody>
+                {finalResult.rows.map((r, i) => (
+                    <tr key={`row-${i}`}>
+                        {r.map((c, j) => (<td key={`column-${j}`}>{c}</td>))}
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    )
+};
+const SkatingRule = ({rule, ruleText, places}) => {
+    return (
+        <table className="table-sm table-skating text-center mb-2">
+            <thead>
+                <tr>
+                    <th rowSpan="2" className="align-bottom">No.</th>
+                    <th colSpan={places.length}>{ruleText}</th>
+                    <th rowSpan="2" className="align-bottom">Res.</th>
+                </tr>
+                <tr>
+                    {places.map((c, i) => (
+                        <th key={`column-${i}`}>{1}{i > 0 ? `-${i+1}` : ""}</th>
+                    ))}
+                </tr>
+            </thead>
+            <tbody>
+                {rule.rows.map((r, i) => (
+                    <tr key={`row-${i}`}>
+                        {r.map((c, j) => (<td key={`column-${j}`}>{c}</td>))}
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    )
+};
+
 
 const UPDATE_INTERVAL = 3000;
 
@@ -90,6 +197,7 @@ class PresenterWindow extends React.Component {
         this.state = {
             rounds: [],
             selectedRound: null,
+            noRounds: false,
 
             adjudicators: null,
             loadingAdjudicators: false,
@@ -136,6 +244,7 @@ class PresenterWindow extends React.Component {
         fetch("/adjudication_system/api/presenter/competition/"+ this.props.competition.id + "/rounds", {method: "GET", credentials: 'same-origin', signal: this.signal})
             .then(response => response.json())
             .then(result => {
+                this.setState({noRounds: result.length === 0});
                 if (changeRound) {
                     let selectedRound = result.reduce((p, c) => {return p.id > c.id ? p : c});
                     this.setState({rounds: result, selectedRound: selectedRound});
@@ -224,12 +333,13 @@ class PresenterWindow extends React.Component {
 
         return (
             <React.Fragment>
+                {this.state.noRounds && <h3 className="text-center">There are no rounds yet for {this.props.competition.name}</h3>}
                 {selectedRound !== null &&
                     <div className="card">
                         <div className="px-2 py-2">
                             <h4 className="card-title">{this.props.competition.name}</h4>
                             <div className="form-group">
-                                {/*<label htmlFor={`round-${this.props.competition.id}`}>Round</label>*/}
+                                <label htmlFor={`round-${this.props.competition.id}`}>Select round</label>
                                 <select className="form-control" id={`round-${this.props.competition.id}`} value={selectedRound.id} onChange={this.changeRound}>
                                     {rounds.map(r => (
                                         <option value={r.id} key={`round-option-${r.id}`}>{r.name}</option>
@@ -244,13 +354,47 @@ class PresenterWindow extends React.Component {
                             {selectedRound !== null &&
                                 <div className="accordion" id={`accordion-${selectedRound.id}`}>
 
-                                    {/*{selectedRound.type === FINAL &&*/}
-                                    {/*    <PresenterAccordionCard accordion={`accordion-${selectedRound.id}`} cardTitle="Final results" loading={this.state.loadingFinalResult}>*/}
-                                    {/*        Final result*/}
-                                    {/*    </PresenterAccordionCard>}*/}
+                                    {selectedRound.type === FINAL && this.state.selectedRound.completed &&
+                                        <PresenterAccordionCard accordion={`accordion-${selectedRound.id}`} cardTitle="Final results" loading={this.state.loadingFinalResult}>
+                                            {finalResult !== null &&
+                                                (!finalResult.separate ?
+                                                    <React.Fragment>
+                                                        <FinalPlacingsCouples couples={finalResult.couples} />
+                                                        <SkatingSummary finalResult={finalResult} />
+                                                        {finalResult.show_rules &&
+                                                            <React.Fragment>
+                                                                <SkatingRule ruleText="Rule 10" places={finalResult.couples} rule={finalResult.rule10} />
+                                                                <SkatingRule ruleText="Rule 11" places={finalResult.couples} rule={finalResult.rule11} />
+                                                            </React.Fragment>}
+                                                    </React.Fragment>
+                                                    :
+                                                    <div className={`d-grid grid-column-gap-3 grid-row-gap-4 grid-template-columns-${this.props.windows < 3 ? "2" : "1"}`}>
+                                                        <div>
+                                                            <h3 className="text-center">Leads</h3>
+                                                            <FinalPlacingsDancers dancers={finalResult.leads.dancers} />
+                                                            <SkatingSummary finalResult={finalResult.leads} />
+                                                            {finalResult.leads.show_rules &&
+                                                                <React.Fragment>
+                                                                    <SkatingRule ruleText="Rule 10" places={finalResult.leads.dancers} rule={finalResult.leads.rule10} />
+                                                                    <SkatingRule ruleText="Rule 11" places={finalResult.leads.dancers} rule={finalResult.leads.rule11} />
+                                                                </React.Fragment>}
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-center">Follows</h3>
+                                                            <FinalPlacingsDancers dancers={finalResult.follows.dancers} />
+                                                            <SkatingSummary finalResult={finalResult.follows} />
+                                                            {finalResult.follows.show_rules &&
+                                                                <React.Fragment>
+                                                                    <SkatingRule ruleText="Rule 10" places={finalResult.follows.dancers} rule={finalResult.follows.rule10} />
+                                                                    <SkatingRule ruleText="Rule 11" places={finalResult.follows.dancers} rule={finalResult.follows.rule11} />
+                                                                </React.Fragment>}
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
+                                        </PresenterAccordionCard>}
 
-                                    <PresenterAccordionCard accordion={`accordion-${selectedRound.id}`} cardTitle="Adjudicators" loading={this.state.loadingAdjudicators}
-                                                            counter={adjudicators !== null ? {"x": adjudicators.filter(a => {return a.present === true}).length, "total": adjudicators.length} : adjudicators}>
+                                    <PresenterAccordionCard accordion={`accordion-${selectedRound.id}`} cardTitle="Adjudicators" loading={this.state.loadingAdjudicators} counter={adjudicators !== null ? {"x": adjudicators.filter(a => {return a.present === true}).length, "total": adjudicators.length} : adjudicators}>
                                         <div>
                                             {adjudicators !== null && adjudicators.map(a => (
                                                 <div key={`adjudicator-${a.id}`}>
@@ -279,9 +423,11 @@ class PresenterWindow extends React.Component {
                                                             {d.heats.map(h => (
                                                                 <React.Fragment key={`heat-${h.id}`}>
                                                                     <h6>Heat {h.number}</h6>
-                                                                    <div>{h.couples.map(c =>
-                                                                        <b key={`couple-${c.number}`} className={`px-3 d-inline-block text-nowrap ${c.present ? "text-success" : "text-danger"}`}>{c.number}</b>
-                                                                    )}</div>
+                                                                    <div>
+                                                                        {h.couples.map(c =>
+                                                                            <b key={`couple-${c.number}`} className={`px-3 d-inline-block text-nowrap ${c.present ? "text-success" : "text-danger"}`}>{c.number}</b>
+                                                                        )}
+                                                                    </div>
                                                                 </React.Fragment>
                                                             ))}
                                                         </div>

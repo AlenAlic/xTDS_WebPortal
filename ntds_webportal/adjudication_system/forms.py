@@ -191,8 +191,7 @@ class CompetitionForm(FlaskForm):
                 self.competition_leads.data = [d.dancer_id for d in comp.leads]
                 self.competition_follows.data = [d.dancer_id for d in comp.follows]
 
-    dancing_class = QuerySelectField('Class', validators=[DataRequired()], allow_blank=True,
-                                     blank_text="",
+    dancing_class = QuerySelectField('Class', validators=[DataRequired()], allow_blank=True, blank_text="",
                                      description=f"{BREITENSPORT_QUALIFICATION}, {AMATEURS}, {OPEN_CLASS}, etc.")
     discipline = QuerySelectField('Discipline', validators=[DataRequired()], allow_blank=True, blank_text="",
                                   description="Usually Ballroom or Latin")

@@ -2640,11 +2640,12 @@ class Round(db.Model):
             return list(sorted([{"number": c.number, "name": c.names(), "team": c.teams()} for c in couples],
                                key=lambda x: x["number"]))
         if leads is not None and follows is not None:
-            return {"leads": list(sorted([{"number": d.number, "name": d.name, "teams": d.team}
-                                          for d in leads], key=lambda x: x["number"])),
-                    "follows": list(sorted([{"number": d.number, "name": d.name, "teams": d.team}
-                                            for d in follows], key=lambda x: x["number"]))
-                    }
+            return {
+                "leads": list(sorted([{"number": d.number, "name": d.name, "team": d.team}
+                                      for d in leads], key=lambda x: x["number"])),
+                "follows": list(sorted([{"number": d.number, "name": d.name, "team": d.team}
+                                        for d in follows], key=lambda x: x["number"]))
+            }
 
     def starting_list(self):
         if self.competition.mode in CHANGE_MODES:
@@ -2669,10 +2670,72 @@ class Round(db.Model):
             couples[h.dance]["heats"].append({
                 "number": h.number,
                 "id": h.heat_id,
-                "couples": list(sorted([{"number": c.couple_number(), "present": c.present} for c in h.couples_present],
-                                       key=lambda x: x["number"]))
+                "couples": list(sorted([{
+                    "number": c.presenter_couple_number(),
+                    "sort_number": c.couple.number,
+                    "name": c.couple_name(),
+                    "present": c.present
+                } for c in h.couples_present], key=lambda x: x["sort_number"]))
             })
         return list(couples.values())
+
+    def presenter_final_results(self):
+        if self.competition.mode != CompetitionMode.change_per_dance:
+            skating_couples = self.skating_summary()
+            placings = {r.Index: r.Result for r in skating_couples.summary.itertuples()}
+            couples = list(sorted([{
+                "number": c.number,
+                "name": c.names(),
+                "lead": c.lead.name,
+                "follow": c.follow.name,
+                "team": c.teams(),
+                "place": placings[c.number]
+            } for c in self.couples], key=lambda x: x["place"]))
+            return {
+                "separate": False,
+                "columns": list(skating_couples.summary.columns),
+                "rows": [[c for c in r] for r in skating_couples.summary.itertuples()],
+                "show_rules": skating_couples.show_rules,
+                "dances": [d.tag for d in self.dances],
+                "couples": couples,
+                "rule10": {"rows": [[str(c) for c in r] for r in skating_couples.summary_rule_10.skating.itertuples()]},
+                "rule11": {"rows": [[str(c) for c in r] for r in skating_couples.summary_rule_11.skating.itertuples()]}
+            }
+        leads = self.skating_summary()
+        placings = {r.Index: r.Result for r in leads.summary.itertuples()}
+        dancers = list(sorted([{
+            "number": c.lead.number,
+            "name": c.lead.name,
+            "team": c.lead.team,
+            "place": placings[c.lead.number]
+        } for c in self.couples], key=lambda x: x["place"]))
+        leads_data = {
+            "columns": list(leads.summary.columns),
+            "rows": [[c for c in r] for r in leads.summary.itertuples()],
+            "show_rules": leads.show_rules,
+            "dances": [d.tag for d in self.dances],
+            "dancers": dancers,
+            "rule10": {"rows": [[str(c) for c in r] for r in leads.summary_rule_10.skating.itertuples()]},
+            "rule11": {"rows": [[str(c) for c in r] for r in leads.summary_rule_11.skating.itertuples()]}
+        }
+        follows = self.skating_summary(follows=True)
+        placings = {r.Index: r.Result for r in follows.summary.itertuples()}
+        dancers = list(sorted([{
+            "number": c.follow.number,
+            "name": c.follow.name,
+            "team": c.follow.team,
+            "place": placings[c.follow.number]
+        } for c in self.couples], key=lambda x: x["place"]))
+        follows_data = {
+            "columns": list(follows.summary.columns),
+            "rows": [[c for c in r] for r in follows.summary.itertuples()],
+            "show_rules": follows.show_rules,
+            "dances": [d.tag for d in self.dances],
+            "dancers": dancers,
+            "rule10": {"rows": [[str(c) for c in r] for r in follows.summary_rule_10.skating.itertuples()]},
+            "rule11": {"rows": [[str(c) for c in r] for r in follows.summary_rule_11.skating.itertuples()]}
+        }
+        return {"separate": True, "leads": leads_data, "follows": follows_data}
 
 
 class DanceActive(db.Model):
@@ -2774,13 +2837,15 @@ class CouplePresent(db.Model):
     heat = db.relationship("Heat", back_populates="couples_present")
 
     def __repr__(self):
-        return '{round} - {dance} - {couple}'\
-            .format(couple=self.couple, dance=self.heat.dance, round=self.heat.round)
+        return f"{self.heat.round} - {self.heat.dance} - {self.couple}"
 
-    def couple_number(self):
+    def presenter_couple_number(self):
         if self.heat.round.competition.mode in CHANGE_MODES:
             return f"{self.couple.lead.number} / {self.couple.follow.number}"
         return self.couple.number
+
+    def couple_name(self):
+        return f"{self.couple.lead.name} / {self.couple.follow.name}"
 
 
 class RoundResult(db.Model):

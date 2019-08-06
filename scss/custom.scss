@@ -61,3 +61,14 @@ input[type="checkbox"] {
     cursor:not-allowed;
   }
 }
+
+.table-skating {
+  table-layout: fixed;
+  width: 100%;
+  page-break-inside: avoid;
+  td,
+  th {
+    border:1px solid $dark;
+  }
+}
+

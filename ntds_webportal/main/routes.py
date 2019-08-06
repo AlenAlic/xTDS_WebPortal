@@ -89,6 +89,13 @@ def todo():
     # TODO - Fix give refund button in organizer finances tab, button show up when refunds are off.
     # TODO - Add increased chances for second big raffle
     # TODO - Maak csv downloadable for Badges
+    # TODO - Look at starting lists
+    # TODO - Lion points integration
+
+    # ADJUDICATION SYSTEM
+    # TODO - Rework "Publish heat list to app" and add option to presenter
+    # TODO - Automatically cross couple if they are on the floor for the next heat (non-change-partner-per-dance)
+    # PRIORITY - Fix split competitions with change partner per competion
 
     # ADMIN
     # WISH - Make "Tournament" section in system setup throw warnings when doing something stupid

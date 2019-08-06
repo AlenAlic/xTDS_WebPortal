@@ -116,9 +116,6 @@ class Anonymous(AnonymousUserMixin):
 
 
 def create_app():
-    """
-    Create instance of website.
-    """
     from ntds_webportal.models import User, Team, Contestant, ContestantInfo, DancingInfo, StatusInfo, PaymentInfo, \
         Refund, VolunteerInfo, AdditionalInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, \
         TournamentState, SystemConfiguration, RaffleConfiguration, AttendedPreviousTournamentContestant, \

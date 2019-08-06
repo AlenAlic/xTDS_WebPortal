@@ -86,6 +86,5 @@ def presenter_round_no_final_results(round_id):
     r = Round.query.get_or_404(round_id)
     if r is not None:
         if r.competition.dancing_class.name != TEST and r.is_final():
-            x = r.skating_summary()
-            return jsonify(None)
+            return jsonify(r.presenter_final_results())
     return Response(status=204)

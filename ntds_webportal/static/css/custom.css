@@ -41,3 +41,11 @@ input[type="checkbox"] {
   input[type="submit"]:disabled,
   input[type="checkbox"]:disabled {
     cursor: not-allowed; }
+
+.table-skating {
+  table-layout: fixed;
+  width: 100%;
+  page-break-inside: avoid; }
+  .table-skating td,
+  .table-skating th {
+    border: 1px solid #343a40; }
