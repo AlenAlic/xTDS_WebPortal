@@ -17,8 +17,7 @@ def index():
         return redirect(url_for('main.dashboard'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter(or_(User.username == form.username.data,
-                                     func.lower(User.email) == form.username.data.lower())).first()
+        user = User.query.filter(or_(User.username == form.username.data, User.email.ilike(form.username.data))).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'alert-danger')
             flash("If you copied your credentials from an e-mail, please make sure that you did not "
