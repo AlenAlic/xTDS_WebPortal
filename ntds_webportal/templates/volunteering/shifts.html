@@ -31,7 +31,7 @@
     <tbody>
     {% for shift in shifts %}
     {% for slot in shift.available_slots(current_user.team) %}
-    <tr class="{% if slot.organization_shift() %}table-disabled{% else %}clickable-row{% endif %}"
+    <tr class="{% if slot.organization_shift() %}table-disabled{% elif slot.team == current_user.team and slot.user is none %}table-info clickable-row{% elif slot.team == current_user.team and slot.user is not none %}table-success clickable-row{% else %}clickable-row{% endif %}"
         data-href="{% if not slot.organization_shift() %}{{ url_for('volunteering.shift_slot', slot_id=slot.slot_id, task_id=0) }}{% endif %}">
         {% if loop.index == 1 %}
         <td>{{slot.shift.start()}}-{{slot.shift.stop()}}</td>
@@ -126,6 +126,7 @@
     {% if task_list|length > 0 %}
     <div class="no-print">
         <h4>Hours filled: {{hours.filled}} / {{hours.total}}{% if hours.freelance != '00:00' %}<span class="pl-3" style="font-size:large;"> (Plus {{hours.freelance}} additional hours, arranged individually with the organization)</span>{% endif %}</h4>
+        <div class="my-3">Shifts marked light blue have been claimed by your team, but have no-one assigned to that shift yet.</div>
         <nav>
             <div class="nav nav-tabs" role="tablist">
                 <a class="nav-item nav-link" id="nav-task-volunteers-tab" data-toggle="tab" href="#nav-task-volunteers" role="tab" aria-controls="nav-task-volunteers" aria-selected="true">Volunteers</a>

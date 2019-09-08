@@ -109,7 +109,7 @@ class User(UserMixin, Anonymous, db.Model):
     adjudicator_id = db.Column(db.Integer, db.ForeignKey('adjudicator.adjudicator_id'))
     adjudicator = db.relationship('Adjudicator', backref=db.backref("user", uselist=False), single_parent=True,
                                   cascade='all, delete-orphan')
-    slots = db.relationship('ShiftSlot', back_populates='user', cascade='all, delete, delete-orphan')
+    slots = db.relationship('ShiftSlot', back_populates='user')
 
     def __repr__(self):
         if self.is_dancer():
@@ -1530,7 +1530,7 @@ class ShiftInfo(db.Model):
 class Shift(db.Model):
     __tablename__ = 'shift'
     shift_id = db.Column(db.Integer, primary_key=True)
-    info_id = db.Column(db.Integer, db.ForeignKey('shift_info.shift_info_id', onupdate="CASCADE", ondelete="CASCADE"))
+    info_id = db.Column(db.Integer, db.ForeignKey('shift_info.shift_info_id'))
     info = db.relationship("ShiftInfo", back_populates="shifts", uselist=False)
     slots = db.relationship("ShiftSlot", cascade='all, delete-orphan')
     start_time = db.Column(db.DateTime)
@@ -1587,7 +1587,7 @@ class Shift(db.Model):
         slots = [s for s in self.slots if s.team == team or s.team is None and s.user is None and not s.mandatory]
         mandatory_slots = [s for s in self.slots if s.team is None and s.user is not None and s.mandatory]
         mandatory_slots = [s for s in mandatory_slots if s.user.team == team]
-        return list(set(slots + mandatory_slots))
+        return list(sorted(set(slots + mandatory_slots), key=lambda x: x.slot_id))
 
     def has_slots_available(self, team=None):
         return len(self.available_slots(team)) > 0
@@ -1596,12 +1596,12 @@ class Shift(db.Model):
 class ShiftSlot(db.Model):
     __tablename__ = 'shift_slots'
     slot_id = db.Column(db.Integer, primary_key=True)
-    shift_id = db.Column(db.Integer, db.ForeignKey('shift.shift_id', onupdate="CASCADE", ondelete="CASCADE"))
+    shift_id = db.Column(db.Integer, db.ForeignKey('shift.shift_id'))
     shift = db.relationship("Shift", back_populates="slots")
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
     team = db.relationship("Team")
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', onupdate="CASCADE", ondelete="CASCADE"))
-    user = db.relationship("User", back_populates="slots", cascade='all, delete-orphan', single_parent=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    user = db.relationship("User", back_populates="slots", single_parent=True)
     mandatory = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
