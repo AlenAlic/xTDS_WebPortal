@@ -122,7 +122,7 @@ def volunteering_management():
     form = request.args
     if 'open_volunteering_system' in form:
         g.ts.volunteering_system_open = True
-        users = User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER], User.team.is_(None)).all()
+        users = User.query.filter(User.access == ACCESS[SUPER_VOLUNTEER], User.team_id.is_(None)).all()
         super_volunteer_team = Team.query.filter(Team.name == TEAM_SUPER_VOLUNTEER).first()
         for user in users:
             user.team = super_volunteer_team
