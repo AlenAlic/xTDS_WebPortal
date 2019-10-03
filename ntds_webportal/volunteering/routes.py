@@ -450,13 +450,25 @@ def team_hours():
     all_teams = Team.query.order_by(Team.name).all()
     all_teams = sorted([t for t in all_teams if t.is_active()], reverse=True,
                        key=lambda x: (x.name == TEAM_ORGANIZATION, x.name == TEAM_SUPER_VOLUNTEER))
-    hours = {t: {'total': hours_delta(sum([s.duration() for s in ShiftSlot.query
-                                          .filter(ShiftSlot.team == t, ShiftSlot.mandatory.is_(True)).all()],
-                                          timedelta(0, 0))),
-                 'assigned': hours_delta(sum([s.duration() for s in [slot for slot in ShiftSlot.query
-                                             .filter(ShiftSlot.team == t, ShiftSlot.mandatory.is_(True)).all()
-                                                                     if slot.user is not None]],
-                                             timedelta(0, 0)))} for t in all_teams}
+    hours = \
+        {t: {'mandatory_total': hours_delta(sum([s.duration() for s in ShiftSlot.query
+                                                .filter(ShiftSlot.team == t, ShiftSlot.mandatory.is_(True)).all()],
+                                                timedelta(0, 0))),
+             'mandatory_assigned': hours_delta(sum([s.duration() for s in [slot for slot in ShiftSlot.query
+                                                   .filter(ShiftSlot.team == t, ShiftSlot.mandatory.is_(True)).all()
+                                                                           if slot.user is not None]],
+                                                   timedelta(0, 0))),
+             'voluntary_total': hours_delta(sum([s.duration() for s in ShiftSlot.query
+                                                .filter(ShiftSlot.team == t, ShiftSlot.mandatory.is_(False)).all()],
+                                                timedelta(0, 0))),
+             'voluntary_assigned': hours_delta(sum([s.duration() for s in [slot for slot in ShiftSlot.query
+                                                   .filter(ShiftSlot.team == t, ShiftSlot.mandatory.is_(False)).all()
+                                                                           if slot.user is not None]],
+                                                   timedelta(0, 0))),
+             'hours_per_dancer': hours_delta(sum([s.duration() for s in ShiftSlot.query
+                                                 .filter(ShiftSlot.team == t, ShiftSlot.mandatory.is_(False)).all()],
+                                                 timedelta(0, 0)) / max(len(t.confirmed_dancers()), 1)),
+             } for t in all_teams}
     return render_template('volunteering/team_hours.html', hours=hours)
 
 

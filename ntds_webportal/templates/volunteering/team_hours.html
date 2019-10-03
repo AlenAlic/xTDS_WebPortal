@@ -4,18 +4,31 @@
 {% include 'volunteering/volunteering_nav.html' %}
 <table class="table-sm ">
     <thead>
+        <tr style="font-size:x-large;">
+            <th colspan="2"></th>
+            <th colspan="2" class="text-center">Mandatory hours</th>
+            <th colspan="3" class="text-center">Voluntary hours</th>
+        </tr>
         <tr style="font-size:large;">
-            <th style="text-align:right;">Team</th>
+            <th style="text-align:right;" class="pr-4">Team</th>
+            <th class="pl-4 pr-4"># dancers</th>
             <th class="pl-4">Assigned</th>
-            <th class="pl-4">Filled hours</th>
+            <th class="pl-4 pr-4">Filled hours</th>
+            <th class="pl-4">Claimed</th>
+            <th class="pl-4 pr-4">Filled hours</th>
+            <th class="pl-4">Hours/dancer</th>
         </tr>
     </thead>
     <tbody>
     {% for t in hours %}
-    <tr>
-        <th style="text-align:right;">{{t}}</th>
-        <td class="pl-4">{{hours[t].total}}</td>
-        <td class="pl-4">{{hours[t].assigned}} / {{hours[t].total}}</td>
+    <tr class="border-bottom">
+        <th style="text-align:right;" class="pr-4">{{t}}</th>
+        <td class="pl-4 pr-4 text-center">{{t.confirmed_dancers()|length}}</td>
+        <td class="pl-4">{{hours[t].mandatory_total}}</td>
+        <td class="pl-4 pr-4">{{hours[t].mandatory_assigned}} / {{hours[t].mandatory_total}}</td>
+        <td class="pl-4">{{hours[t].voluntary_total}}</td>
+        <td class="pl-4 pr-4">{{hours[t].voluntary_assigned}} / {{hours[t].voluntary_total}}</td>
+        <td class="pl-4">{{hours[t].hours_per_dancer}}</td>
     </tr>
     {% endfor %}
     </tbody>
