@@ -159,7 +159,7 @@ def system_configuration():
         form.merchandise_link.data = g.sc.merchandise_link
 
         form.number_of_teamcaptains.data = g.sc.number_of_teamcaptains
-        form.additional_teamcaptain_large_teams.data = g.sc.additional_teamcaptain_large_teams
+        form.additional_teamcaptain_large_teams.data = str(g.sc.additional_teamcaptain_large_teams)
         form.additional_teamcaptain_large_teams_cutoff.data = g.sc.additional_teamcaptain_large_teams_cutoff
 
         form.beginners_level.data = str(g.sc.beginners_level)
@@ -196,7 +196,7 @@ def system_configuration():
             form.tournament_starting_date.data = datetime.date(tsd.year, tsd.month, tsd.day)
             if g.ts.main_raffle_result_visible:
                 form.number_of_teamcaptains.data = g.sc.number_of_teamcaptains
-                form.additional_teamcaptain_large_teams.data = g.sc.additional_teamcaptain_large_teams
+                form.additional_teamcaptain_large_teams.data = str(g.sc.additional_teamcaptain_large_teams)
                 form.additional_teamcaptain_large_teams_cutoff.data = g.sc.additional_teamcaptain_large_teams_cutoff
             if g.ts.registration_period_started:
                 form.beginners_level.data = str(g.sc.beginners_level)
