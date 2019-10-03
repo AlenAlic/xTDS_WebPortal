@@ -1,0 +1,12 @@
+{% extends "volunteering/register_edit_volunteer_base.html" %}
+
+{% block app_content %}
+{% if g.ts.external_adjudicator_registration_open or current_user.is_organizer() %}
+{% with mode='register', title='Registration for external Adjudicators' %}
+    {% include 'volunteering/_volunteer_form.html' %}
+{% endwith %}
+{% else %}
+<h2>Registration for external Adjudicators</h2>
+<p>The registration for external Adjudicators for the {{g.sc.tournament}} {{g.sc.year}} in {{g.sc.city}} is currently closed.</p>
+{% endif %}
+{% endblock %}

@@ -114,7 +114,7 @@ class User(UserMixin, Anonymous, db.Model):
     def __repr__(self):
         if self.is_dancer():
             return f'{self.dancer}'
-        if self.is_super_volunteer() or self.is_team_organization():
+        if self.is_super_volunteer() or self.is_team_organization() or self.is_external_adjudicator():
             return f'{self.super_volunteer}'
         return f'{self.username}'
 
@@ -160,6 +160,9 @@ class User(UserMixin, Anonymous, db.Model):
 
     def is_team_organization(self):
         return self.access == ACCESS[SUPER_VOLUNTEER] and self.team.name == TEAM_ORGANIZATION
+
+    def is_external_adjudicator(self):
+        return self.access == ACCESS[SUPER_VOLUNTEER] and self.team.name == TEAM_ADJUDICATOR
 
     def is_tournament_office_manager(self):
         return self.access == ACCESS[TOURNAMENT_OFFICE_MANAGER]
@@ -1211,6 +1214,7 @@ class TournamentState(db.Model):
     raffle_completed_message_sent = db.Column(db.Boolean, nullable=False, default=False)
     merchandise_finalized = db.Column(db.Boolean, nullable=False, default=False)
     super_volunteer_registration_open = db.Column(db.Boolean, nullable=False, default=False)
+    external_adjudicator_registration_open = db.Column(db.Boolean, nullable=False, default=False)
     volunteering_system_open = db.Column(db.Boolean, nullable=False, default=False)
     dancers_imported = db.Column(db.Boolean, nullable=False, default=False)
     couples_imported = db.Column(db.Boolean, nullable=False, default=False)

@@ -1,6 +1,6 @@
 <h2>{{title}}</h2>
 <h5>{{subtitle}}</h5>
-{% if current_user.is_organizer() and mode == 'register' %}
+{% if current_user.is_organizer() and mode == 'register' and request.path == '/volunteering/register' %}
 <h3>Note for the organization:</h3>
 <p>You can register yourself here, you will be added to a separate team called "{{g.data.TEAM_ORGANIZATION}}."</p>
 <p>This will allow you to place members of the organization into the volunteering system, if you choose to do so.</p>
@@ -32,26 +32,28 @@
         {% endif %}
     </div>
 
-    {% if g.sc.ask_first_aid or g.sc.ask_emergency_response_officer %}
-        <h3>Volunteering</h3>
-        <div class="form-row">
-            {% if g.sc.ask_first_aid and g.sc.ask_emergency_response_officer %}
-                <div class="col-12 col-xxl-6">
-                    {{ wtf.form_field(form.first_aid) }}
-                </div>
-                <div class="col-12 col-xxl-6">
-                    {{ wtf.form_field(form.emergency_response_officer) }}
-                </div>
-            {% elif g.sc.ask_first_aid %}
-                <div class="col-12">
-                    {{ wtf.form_field(form.first_aid) }}
-                </div>
-            {% elif g.sc.ask_emergency_response_officer %}
-                <div class="col-12">
-                    {{ wtf.form_field(form.emergency_response_officer) }}
-                </div>
-            {% endif %}
-        </div>
+    {%  if request.path == '/volunteering/register' %}
+        {% if g.sc.ask_first_aid or g.sc.ask_emergency_response_officer %}
+            <h3>Volunteering</h3>
+            <div class="form-row">
+                {% if g.sc.ask_first_aid and g.sc.ask_emergency_response_officer %}
+                    <div class="col-12 col-xxl-6">
+                        {{ wtf.form_field(form.first_aid) }}
+                    </div>
+                    <div class="col-12 col-xxl-6">
+                        {{ wtf.form_field(form.emergency_response_officer) }}
+                    </div>
+                {% elif g.sc.ask_first_aid %}
+                    <div class="col-12">
+                        {{ wtf.form_field(form.first_aid) }}
+                    </div>
+                {% elif g.sc.ask_emergency_response_officer %}
+                    <div class="col-12">
+                        {{ wtf.form_field(form.emergency_response_officer) }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
     {% endif %}
 
     <h3>Adjudication</h3>
@@ -85,7 +87,11 @@
     </div>
 
     <h2>Final remarks</h2>
-    {{ wtf.form_field(form.remark, placeholder='What kind of volunteering shifts would you like, and any addition relevant information.') }}
+    {%  if request.path == '/volunteering/register' %}
+        {{ wtf.form_field(form.remark, placeholder='What kind of volunteering shifts would you like, and any additional relevant information.') }}
+    {% else %}
+        {{ wtf.form_field(form.remark, placeholder='Any additional relevant information.') }}
+    {% endif %}
 
     {% if mode == 'register' %}
         {% include 'privacy/checkbox.html' %}

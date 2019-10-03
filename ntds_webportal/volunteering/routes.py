@@ -13,7 +13,7 @@ from datetime import timedelta, datetime
 from ntds_webportal.functions import str2bool, hours_delta
 
 
-def create_super_volunteer_user_account(form, super_volunteer):
+def create_super_volunteer_user_account(form, super_volunteer, external_adjudicator=False):
     super_volunteer_account = User()
     super_volunteer_account.username = form.email.data
     super_volunteer_account.email = form.email.data
@@ -25,6 +25,8 @@ def create_super_volunteer_user_account(form, super_volunteer):
     super_volunteer_account.super_volunteer = super_volunteer
     if current_user.is_organizer():
         super_volunteer_account.team = Team.query.filter(Team.name == TEAM_ORGANIZATION).first()
+    elif external_adjudicator:
+        super_volunteer_account.team = Team.query.filter(Team.name == TEAM_ADJUDICATOR).first()
     else:
         super_volunteer_account.team = Team.query.filter(Team.name == TEAM_SUPER_VOLUNTEER).first()
     db.session.add(super_volunteer_account)
@@ -40,9 +42,9 @@ def register():
         if request.method == 'POST':
             form.custom_validate()
             all_users = User.query.all()
-            emails = [u.email for u in all_users if u.email is not None]
+            emails = [u.email.lower() for u in all_users if u.email is not None]
             form_email = form.email.data
-            if form_email in emails and form_email is not None:
+            if form_email.lower() in emails and form_email is not None:
                 flash(f'There is already a dancer registered with the e-mail address {form.email.data}.<br/>'
                       f'You cannot register as both a dancer in the tournament, and a Super Volunteer.<br/>'
                       f'If you are already registered as a dancer, and wish to be a Super Volunteer instead, '
@@ -112,6 +114,59 @@ def super_volunteers_management():
         db.session.commit()
         return redirect(url_for('main.dashboard'))
     return render_template('volunteering/super_volunteers_management.html')
+
+
+@bp.route('/external_adjudicator_register', methods=['GET', 'POST'])
+def external_adjudicator_register():
+    form = SuperVolunteerForm()
+    if g.ts.external_adjudicator_registration_open:
+        if request.method == 'POST':
+            if not current_user.is_organizer():
+                form.custom_validate()
+                all_users = User.query.all()
+                emails = [u.email.lower() for u in all_users if u.email is not None]
+                form_email = form.email.data
+                if form_email.lower() in emails and form_email is not None:
+                    flash(f'There is already someone registered with the e-mail address {form.email.data}.',
+                          "alert-warning")
+                else:
+                    form.emergency_response_officer.data = NO
+                    form.first_aid.data = NO
+                    if form.validate_on_submit():
+                        if 'privacy_checkbox' in request.values:
+                            super_volunteer = SuperVolunteer()
+                            super_volunteer.update_data(form)
+                            db.session.add(super_volunteer)
+                            db.session.commit()
+                            flash(f'<b>Registration complete:</b> {super_volunteer.get_full_name()}, '
+                                  f'you have been successfully registered as an external Adjudicator.', 'alert-success')
+                            # noinspection PyTypeChecker
+                            create_super_volunteer_user_account(form, super_volunteer, external_adjudicator=True)
+                            return redirect(url_for('main.index'))
+                        else:
+                            flash('You can not register without accepting the privacy statement.', 'alert-danger')
+            else:
+                flash('You can not register as an external Adjudicator while logged in to the organizer account.',
+                      'alert-warning')
+    return render_template('volunteering/register_external_adjudicator.html', form=form)
+
+
+@bp.route('/external_adjudicator_management', methods=['GET'])
+@login_required
+@requires_access_level([ACCESS[ORGANIZER]])
+@requires_tournament_state(TEAM_CAPTAINS_HAVE_ACCESS)
+def external_adjudicator_management():
+    form = request.args
+    if 'close_registration' in form:
+        g.ts.external_adjudicator_registration_open = False
+        flash(f"External Adjudicator registration for the {g.sc.tournament} has been closed.", "alert-info")
+    if 'open_registration' in form:
+        g.ts.external_adjudicator_registration_open = True
+        flash(f"External Adjudicator registration for the {g.sc.tournament} has been opened.", "alert-info")
+    if len(form) > 0:
+        db.session.commit()
+        return redirect(url_for('main.dashboard'))
+    return render_template('volunteering/external_adjudicator_management.html')
 
 
 @bp.route('/volunteering_management', methods=['GET'])

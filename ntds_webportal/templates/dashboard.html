@@ -265,6 +265,27 @@
             text='Create and manage volunteering shifts',
             accessible=g.ts.main_raffle_result_visible
             ) }}
+    {% if g.ts.external_adjudicator_registration_open %}
+        {% set external_adjudicator_registration_management_text = 'Manage when the registration for external Adjudicators is active. New registrations are currently accepted.' %}
+        {% set external_adjudicator_registration_image = 'registration_open.png' %}
+    {% else %}
+        {% set external_adjudicator_registration_management_text = 'Manage when the registration for external Adjudicators is active. New registrations are currently not possible.' %}
+        {% set external_adjudicator_registration_image = 'registration_closed.png' %}
+    {% endif %}
+    {{ dashboard_page(
+            url='volunteering.external_adjudicator_management',
+            image=external_adjudicator_registration_image,
+            title='Super Volunteer registration management',
+            text=external_adjudicator_registration_management_text,
+            accessible=g.ts.website_accessible_to_teamcaptains
+            ) }}
+    {{ dashboard_page(
+            url='volunteering.external_adjudicator_register',
+            image='register_contestant.png',
+            title='Registration for external Adjudicators',
+            text='Share this page for external Adjudicators to register through.',
+            accessible=g.ts.system_configured
+            ) }}
 </div>
 {#<h2>BAD exports</h2>#}
 {#<div class="{{ dashboard_grid }}">#}
@@ -524,7 +545,7 @@
 </div>
 {% endif %}
 
-{% if current_user.is_super_volunteer() %}
+{% if current_user.is_super_volunteer() or current_user.is_team_organization() or current_user.is_external_adjudicator() %}
 <div class="{{ dashboard_grid }}">
     {% if current_user.is_adjudicator() %}
         {% if current_user.adjudicator.has_assignments() %}
@@ -543,15 +564,17 @@
             title='My signup information',
             text='View your signup information.'
             ) }}
-    {{ dashboard_page(
-            url='volunteering.user_volunteering_shifts',
-            image='volunteering.png',
-            title='My volunteer shifts',
-            text='View the volunteering shifts that you have been assigned to.',
-            accessible=g.ts.volunteering_system_open,
-            count=current_user.assigned_shifts()|length,
-            show_zero=g.ts.volunteering_system_open
-            ) }}
+    {% if current_user.is_super_volunteer() or current_user.is_team_organization() %}
+        {{ dashboard_page(
+                url='volunteering.user_volunteering_shifts',
+                image='volunteering.png',
+                title='My volunteer shifts',
+                text='View the volunteering shifts that you have been assigned to.',
+                accessible=g.ts.volunteering_system_open,
+                count=current_user.assigned_shifts()|length,
+                show_zero=g.ts.volunteering_system_open
+                ) }}
+    {% endif %}
 </div>
 {% endif %}
 
