@@ -829,32 +829,72 @@ def progress():
 def split_breitensport(dancing_round, chosen_split):
     competitions = [c for c in dancing_round.competition.qualifications]
     competitions.sort(key=lambda comp: comp.when)
-    for idx, dc in enumerate(chosen_split):
-        competitions[idx].couples.extend(chosen_split[idx])
-        db.session.commit()
+    if dancing_round.competition.mode == CompetitionMode.change_per_dance:
+        for idx, dc in enumerate(chosen_split):
+            competitions[idx].leads.extend([d["dancer"] for d in chosen_split[idx] if d["lead"]])
+            competitions[idx].follows.extend([d["dancer"] for d in chosen_split[idx] if d["follow"]])
+            db.session.commit()
+    else:
+        for idx, dc in enumerate(chosen_split):
+            competitions[idx].couples.extend(chosen_split[idx])
+            db.session.commit()
 
 
 # noinspection PyTypeChecker
 def split_couples_into_competitions(dancing_round):
     num_comps = len(dancing_round.competition.qualifications)
-    round_result_list = [r.marks for r in dancing_round.round_results]
-    unique_results = list(set(round_result_list))
-    unique_results.sort()
-    combs = []
-    for c in combinations(range(1, len(unique_results)), num_comps - 1):
-        combs.append(split_list(unique_results, list(c)))
-    splittings = [[[] for _ in range(num_comps)] for _ in combs]
-    for i in range(len(combs)):
-        for j in range(num_comps):
-            for r in dancing_round.round_results:
-                if r.marks in combs[i][j]:
-                    splittings[i][j].append(r.couple)
-    splittings.sort(key=lambda x: statistics.stdev([len(s) for s in x]))
-    splitting_strings = [' / '.join([str(st) for st in s]) for s in [[len(l) for l in sp] for sp in splittings]]
-    splitting_results = {}
-    for i in range(len(combs)):
-        splitting_results.update({splitting_strings[i]: splittings[i]})
-    return splitting_results
+    if dancing_round.competition.mode == CompetitionMode.change_per_dance:
+        dancers = dancing_round.change_per_dance_dancers_rows()
+        round_result_list = [r["crosses"] for r in dancers]
+        unique_results = list(set(round_result_list))
+        unique_results.sort()
+        possible_results = []
+        for res in unique_results:
+            temp_dancers = [d for d in dancers if d["crosses"] <= res]
+            leads = [d for d in temp_dancers if d["lead"]]
+            follows = [d for d in temp_dancers if d["follow"]]
+            if len(leads) == len(follows):
+                possible_results.append(res)
+        possible_results.sort()
+        combs = []
+        for c in combinations(range(1, len(unique_results)), num_comps - 1):
+            combs.append(split_list(unique_results, list(c)))
+        possible_combs = []
+        for c in combs:
+            splits = [max(l) for l in c]
+            if all([l in possible_results for l in splits]):
+                possible_combs.append(c)
+        splittings = [[[] for _ in range(num_comps)] for _ in possible_combs]
+        for i in range(len(possible_combs)):
+            for j in range(num_comps):
+                for d in dancers:
+                    if d["crosses"] in possible_combs[i][j]:
+                        splittings[i][j].append(d)
+        splittings.sort(key=lambda x: statistics.stdev([len(s) for s in x]))
+        splitting_strings = [' / '.join([str(st) for st in s]) for s in [[len(l) for l in sp] for sp in splittings]]
+        splitting_results = {}
+        for i in range(len(possible_combs)):
+            splitting_results.update({splitting_strings[i]: splittings[i]})
+        return splitting_results
+    else:
+        round_result_list = [r.marks for r in dancing_round.round_results]
+        unique_results = list(set(round_result_list))
+        unique_results.sort()
+        combs = []
+        for c in combinations(range(1, len(unique_results)), num_comps - 1):
+            combs.append(split_list(unique_results, list(c)))
+        splittings = [[[] for _ in range(num_comps)] for _ in combs]
+        for i in range(len(combs)):
+            for j in range(num_comps):
+                for r in dancing_round.round_results:
+                    if r.marks in combs[i][j]:
+                        splittings[i][j].append(r.couple)
+        splittings.sort(key=lambda x: statistics.stdev([len(s) for s in x]))
+        splitting_strings = [' / '.join([str(st) for st in s]) for s in [[len(l) for l in sp] for sp in splittings]]
+        splitting_results = {}
+        for i in range(len(combs)):
+            splitting_results.update({splitting_strings[i]: splittings[i]})
+        return splitting_results
 
 
 def split_list(l, indices):
