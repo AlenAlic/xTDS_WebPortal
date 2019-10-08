@@ -1903,6 +1903,19 @@ class Competition(db.Model):
                  "mode": r.competition.mode.name
                  } for r in self.rounds]
 
+    def last_round_with_heat_list_published(self):
+        rounds = [r for r in self.rounds if r.heat_list_published and r.type != RoundType.final]
+        if len(rounds) > 0:
+            return max(rounds, key=lambda x: x.round_id)
+        return None
+
+    def has_completed_final(self):
+        rounds = [r for r in self.rounds if r.type == RoundType.final]
+        if len(rounds) > 0:
+            for r in rounds:
+                return r.final_completed()
+        return False
+
 
 def create_couples_list(couples=None, leads=None, follows=None):
     if couples is not None:
@@ -2170,6 +2183,7 @@ class Round(db.Model):
     min_marks = db.Column(db.Integer, default=1)
     max_marks = db.Column(db.Integer, default=1)
     is_active = db.Column(db.Boolean, default=False)
+    heat_list_published = db.Column(db.Boolean, default=False)
     competition_id = db.Column(db.Integer, db.ForeignKey('competition.competition_id',
                                                          onupdate="CASCADE", ondelete="CASCADE"))
     competition = db.relationship("Competition", back_populates="rounds")

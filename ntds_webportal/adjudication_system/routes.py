@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 import statistics
 from sqlalchemy import or_
 from adjudication_system.skating import generate_placings
+from werkzeug.exceptions import BadRequestKeyError
 
 
 def reset():
@@ -1102,6 +1103,54 @@ def final_result():
     return render_template('adjudication_system/final_result.html', dancing_round=dancing_round, skating=skating)
 
 
+@bp.route('/publish_heat_list', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
+def publish_heat_list():
+    dancing_round_id = request.args.get('round_id', 0, type=int)
+    dancing_round = Round.query.filter(Round.round_id == dancing_round_id).first()
+    if dancing_round is None:
+        return redirect(url_for("adjudication_system.event"))
+    if request.method == "POST":
+        form = request.form["list"]
+        if form == "publish":
+            dancing_round.heat_list_published = True
+            flash('Published heat list.')
+        if form == "hide":
+            dancing_round.heat_list_published = False
+            flash('Hidden heat list from outside world.')
+        db.session.commit()
+        return redirect(url_for("adjudication_system.publish_heat_list", round_id=dancing_round.round_id))
+    return render_template('adjudication_system/publish_heat_list.html', dancing_round=dancing_round)
+
+
+@bp.route('/publish_final_results', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
+def publish_final_results():
+    competitions = Competition.query.order_by(Competition.when).all()
+    competitions = [c for c in competitions if c.dancing_class.name != TEST]
+    if len(competitions) == 0:
+        flash('There are no competitions yet.')
+        return redirect(url_for("adjudication_system.event"))
+    if request.method == "POST":
+        form = request.form
+        if 'save_assignments' in form:
+            for comp in competitions:
+                try:
+                    x = form[str(comp.competition_id)]
+                    if comp.has_completed_final():
+                        comp.results_published = True
+                    else:
+                        comp.results_published = False
+                except BadRequestKeyError:
+                    comp.results_published = False
+            db.session.commit()
+            flash("Changes saved (for those competitions whose results could be published).")
+        return redirect(url_for("adjudication_system.publish_final_results"))
+    return render_template('adjudication_system/publish_final_results.html', competitions=competitions)
+
+
 @bp.route('/adjudicator_dashboard', methods=['GET'])
 @login_required
 @requires_adjudicator_access_level
@@ -1205,6 +1254,20 @@ def starting_lists():
         if competition_id > 0:
             flash('Competition not found.')
         return render_template('adjudication_system/starting_lists.html', competitions=competitions)
+
+
+@bp.route('/heat_lists', methods=['GET'])
+def heat_lists():
+    competitions = Competition.query.all()
+    competitions = [c for c in competitions if len(c.rounds) > 0 and c.dancing_class.name != TEST]
+    competition_id = request.args.get('competition', 0, int)
+    if competition_id in [c.competition_id for c in competitions]:
+        comp = Competition.query.get(competition_id)
+        return render_template('adjudication_system/competition_heat_lists.html', comp=comp)
+    else:
+        if competition_id > 0:
+            flash('Competition not found.')
+        return render_template('adjudication_system/heat_lists.html', competitions=competitions)
 
 
 @bp.route('/results', methods=['GET'])

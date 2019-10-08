@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+
+{% block app_content %}
+{% if competitions|length == 0 %}
+<h2>There are no heat lists published yet</h2>
+{% endif %}
+{% for competition in competitions %}
+<a class="btn btn-primary d-block my-2" href="{{ url_for('adjudication_system.heat_lists', competition=competition.competition_id) }}">{{competition}}</a>
+{% endfor %}
+{% endblock %}

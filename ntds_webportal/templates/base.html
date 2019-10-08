@@ -97,6 +97,16 @@ checkbox                        {cursor:pointer}
                     {% endif %}
                 </ul>
             {% endif %}
+            {% if g.sc.check_in_accessible() %}
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item mx-0 mx-md-2 my-1 my-md-0">
+                        <a class="nav-link" href="{{ url_for('adjudication_system.heat_lists') }}">Heat lists</a>
+                    </li>
+                    <li class="nav-item mx-0 mx-md-2 my-1 my-md-0">
+                        <a class="nav-link" href="{{ url_for('adjudication_system.results') }}">Results</a>
+                    </li>
+                </ul>
+            {% endif %}
             {% if current_user.is_anonymous %}
                 {% if login_form %}
                     <form class="form-inline ml-auto form-width-fix" method="POST" enctype="multipart/form-data">

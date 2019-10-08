@@ -1,0 +1,19 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+<h2>{{dancing_round.competition.event}} / {{dancing_round.competition}} / {{dancing_round.type.value}}</h2>
+<form class="form text-center my-5" method="POST" enctype="multipart/form-data" novalidate>
+    <div class="form-group">
+        {% if not dancing_round.heat_list_published %}
+            <button class="btn btn-success" name="list" value="publish">Publish heat list</button>
+        {% else %}
+            <button class="btn btn-warning" name="list" value="hide">Hide heat list</button>
+        {% endif %}
+    </div>
+</form>
+<h5 class="mt-4 text-center">
+    {% if dancing_round.heat_list_published %}
+        Heat list is published and visible to the outside world.
+    {% endif %}
+</h5>
+{% endblock %}

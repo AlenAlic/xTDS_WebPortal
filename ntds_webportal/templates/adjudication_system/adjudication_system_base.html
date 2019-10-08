@@ -18,6 +18,7 @@
     or request.path == '/adjudication_system/available_adjudicators' or request.path == '/adjudication_system/adjudicator_assignments'
     or request.path == '/adjudication_system/available_dancers' or request.path[:32] == '/adjudication_system/edit_dancer'
     or request.path == '/adjudication_system/available_couples' or request.path[:32] == '/adjudication_system/edit_couple'
+    or request.path == '/adjudication_system/publish_final_results'
 %}
 
 {% block content %}
@@ -105,6 +106,13 @@
                     <a class="nav-link {% if request.path == '/adjudication_system/available_couples' or request.path[:32] == '/adjudication_system/edit_couple' %}active{% endif %} {% if g.event is none or not g.event.has_competitions() %}disabled{% endif %}"
                        href="{% if g.event is not none and g.event.has_competitions() %}{{url_for('adjudication_system.available_couples')}}{% else %}javascript:void(0);{% endif %}">Couples</a>
                 </li>
+                <li class="nav-item">
+                    <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Publication</b>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/adjudication_system/publish_final_results'%}active{% endif %} {% if not current_user.is_tournament_office_manager() %}disabled{% endif %}"
+                       href="{{url_for('adjudication_system.publish_final_results')}}">Final results</a>
+                </li>
             </ul>
         {% endif %}
         {% if dancing_round %}
@@ -126,7 +134,7 @@
             {% endif %}
             {% endif %}
             <li class="nav-item">
-                <b class="nav-link disabled" style="font-size:large; text-decoration:underline;">Dance</b>
+                <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Dance</b>
             </li>
             {% if not dancing_round.is_final() %}
             <li class="nav-item">
@@ -136,6 +144,14 @@
             <li class="nav-item">
                 <a class="nav-link {% if request.args.get('round_id') is none or dancing_round.dances|length == 0 %}disabled{% endif %} {% if request.path == '/adjudication_system/adjudication'%}active{% endif %}" href="{% if dancing_round.dances|length > 0 %}{{url_for('adjudication_system.adjudication', round_id=request.args.get('round_id'), dance_id=request.args.get('dance_id'))}}{% else %}javascript:void(0);{% endif %}">Adjudication</a>
             </li>
+            {% if not dancing_round.is_final() %}
+                <li class="nav-item">
+                    <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Publication</b>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/adjudication_system/publish_heat_list'%}active{% endif %}" href="{{url_for('adjudication_system.publish_heat_list', round_id=request.args.get('round_id'))}}">Heat lists</a>
+                </li>
+            {% endif %}
         </ul>
         {% endif %}
     </div>

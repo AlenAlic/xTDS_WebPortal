@@ -1,0 +1,33 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block styles %}
+{{ super() }}
+<style>
+input[type=checkbox]    {transform:scale(2);}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<h2>{{ g.event }} - Publication of final results</h2>
+<form class="form" method="POST" enctype="multipart/form-data" novalidate>
+    <button class="btn btn-primary my-4" type="submit" name="save_assignments">Save changes</button>
+    <table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Competition</th>
+            <th class="text-center">Published</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for comp in competitions %}
+        <tr>
+            <td>{{ comp }}</td>
+            <td align="center" style="vertical-align:middle;">
+                <input type="checkbox" name="{{comp.competition_id}}" id="{{comp.competition_id}}" {% if comp.results_published %}checked{% endif %}>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+</form>
+{% endblock %}
