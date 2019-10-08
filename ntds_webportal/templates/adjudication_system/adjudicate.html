@@ -178,7 +178,7 @@ apiPending = elem => {
         <div data-toggle="buttons">
         {% for placing in dancing_round.final_placings|sort(attribute='couple.number') %}
             {% if placing.dance == dance and placing.adjudicator == current_user.adjudicator %}
-            <label class="btn btn-{% if placing.final_placing > 0 %}primary{% else %}outline-primary{% endif %} final-placing-block" for="{{placing.final_placing_id}}">
+            <label class="btn btn-outline-primary final-placing-block" for="{{placing.final_placing_id}}">
                 <input {% if not dancing_round.is_dance_active(dance) %}disabled{% endif %} type="radio" name="placings" style="display:none;" id="{{placing.final_placing_id}}">{{placing.couple.number}}
             </label>
             {% endif %}
@@ -200,7 +200,7 @@ apiPending = elem => {
     <div class="final-column-side">
         <span style="margin-left:auto;">
             {% for i in range(dancing_round.couples|length) %}
-            <button class="btn btn-secondary mb-2 final-placing-block" {% if dancing_round.is_place_given(current_user.adjudicator, dance, loop.index) or not dancing_round.is_dance_active(dance) %}disabled{% endif %} value="{{loop.index}}" onclick="updatePlacingAPI(this)">{{loop.index}}</button>
+            <button class="btn btn-secondary mb-2 final-placing-block" {% if not dancing_round.is_dance_active(dance) %}disabled{% endif %} value="{{loop.index}}" onclick="updatePlacingAPI(this)">{{loop.index}}</button>
             {% endfor %}
             <button class="btn btn-outline-danger mb-2 final-placing-block" {% if not dancing_round.is_dance_active(dance) %}disabled{% endif %} value="0" onclick="updatePlacingAPI(this)">X</button>
         </span>
