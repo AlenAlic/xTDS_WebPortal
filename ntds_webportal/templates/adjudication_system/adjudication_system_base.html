@@ -146,6 +146,11 @@
             </li>
             {% if not dancing_round.is_final() %}
                 <li class="nav-item">
+                    <a class="nav-link {% if request.args.get('round_id') is none or dancing_round.dances|length == 0 %}disabled{% endif %} {% if request.path[:39] == '/adjudication_system/change_heat_couple' %}active{% endif %}" href="{% if dancing_round.dances|length > 0 %}{{url_for('adjudication_system.change_heat_couple', round_id=request.args.get('round_id'), dance_id=request.args.get('dance_id'))}}{% else %}javascript:void(0);{% endif %}">Couple management</a>
+                </li>
+            {% endif %}
+            {% if not dancing_round.is_final() %}
+                <li class="nav-item">
                     <b class="nav-link disabled" style="font-size:x-large; text-decoration:underline;">Publication</b>
                 </li>
                 <li class="nav-item">

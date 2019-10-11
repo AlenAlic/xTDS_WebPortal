@@ -5,10 +5,10 @@ from ntds_webportal.adjudication_system import bp
 from ntds_webportal.adjudication_system.forms import SplitForm, EventForm, CompetitionForm, \
     CreateFirstRoundForm, DefaultCompetitionForm, ConfigureNextRoundForm, DanceForm, DisciplineForm, DancingClassForm, \
     PrintReportsForm, CoupleForm, DancerForm, EditDancerForm, EditCoupleForm, CreateAdjudicatorFromContestantForm, \
-    CreateAdjudicatorFromSuperVolunteerForm
+    CreateAdjudicatorFromSuperVolunteerForm, ChooseHeatForm, ChooseCoupleForm, MoveHeatForm
 from ntds_webportal.models import requires_access_level, requires_adjudicator_access_level, Event, Competition, \
     DancingClass, Discipline, Dance, Round, RoundType, Adjudicator, Couple, CouplePresent, RoundResult, DanceActive, \
-    Dancer, CompetitionMode, create_couples_list, ADJUDICATOR_SYSTEM_TABLES, DancingInfo, StatusInfo
+    Dancer, CompetitionMode, create_couples_list, ADJUDICATOR_SYSTEM_TABLES, DancingInfo, StatusInfo, Heat, Mark
 from itertools import combinations
 from ntds_webportal.data import *
 from datetime import datetime, timedelta
@@ -1089,6 +1089,64 @@ def adjudication():
             return redirect(url_for("adjudication_system.adjudication", round_id=request.args.get('round_id', type=int),
                                     dance_id=dance.dance_id))
     return render_template('adjudication_system/adjudication.html', dancing_round=dancing_round, dance=dance)
+
+
+@bp.route('/change_heat_couple', methods=['GET', 'POST'], defaults={'heat_id': None, 'couple_id': None})
+@bp.route('/change_heat_couple/<int:heat_id>', methods=['GET', 'POST'], defaults={'couple_id': None})
+@bp.route('/change_heat_couple/<int:heat_id>/<int:couple_id>', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
+def change_heat_couple(heat_id, couple_id):
+    dancing_round_id = request.args.get('round_id', 0, type=int)
+    dancing_round = Round.query.filter(Round.round_id == dancing_round_id).first()
+    if dancing_round is None:
+        return redirect(url_for("adjudication_system.event"))
+    dance_id = request.args.get('dance_id', 0, type=int)
+    if dance_id == 0:
+        if dancing_round.has_dances():
+            return redirect(url_for('adjudication_system.change_heat_couple', round_id=dancing_round.round_id,
+                                    dance_id=dancing_round.first_dance().dance_id))
+        else:
+            flash('Please configure the dancing round first.', "alert-warning")
+            return redirect(url_for('adjudication_system.progress', round_id=dancing_round.round_id))
+    elif not dancing_round.has_dance(dance_id):
+        return redirect(url_for('adjudication_system.change_heat_couple', round_id=dancing_round.round_id,
+                                dance_id=dancing_round.first_dance().dance_id))
+    dance = Dance.query.get(dance_id)
+    heat_form = ChooseHeatForm(dancing_round, dance)
+    heat = Heat.query.filter(Heat.heat_id == heat_id).first() if heat_id is not None else None
+    couple_form = ChooseCoupleForm(heat)
+    couple = Couple.query.filter(Couple.couple_id == couple_id).first() if couple_id is not None else None
+    move_heat_form = MoveHeatForm(dancing_round, dance, heat)
+    if request.method == "POST":
+        if heat_form.heat_submit.name in request.form:
+            if heat_form.validate_on_submit():
+                heat = heat_form.heat.data
+                return redirect(url_for('adjudication_system.change_heat_couple', round_id=dancing_round.round_id,
+                                        dance_id=dance.dance_id, heat_id=heat.heat_id))
+        if couple_form.couple_submit.name in request.form:
+            if couple_form.validate_on_submit():
+                couple = couple_form.couple.data
+                return redirect(url_for('adjudication_system.change_heat_couple', round_id=dancing_round.round_id,
+                                        dance_id=dance.dance_id, heat_id=heat.heat_id,
+                                        couple_id=couple.couple_id))
+        if move_heat_form.move_heat_submit.name in request.form:
+            if move_heat_form.validate_on_submit():
+                move_to_heat = move_heat_form.heat.data
+                marks = Mark.query.filter(Mark.couple == couple, Mark.heat == heat).all()
+                for mark in marks:
+                    mark.heat = move_to_heat
+                present = CouplePresent.query.filter(CouplePresent.couple == couple, CouplePresent.heat == heat).first()
+                present.heat = move_to_heat
+                heat.couples.remove(couple)
+                move_to_heat.couples.append(couple)
+                db.session.commit()
+                flash(f"Moved {couple} from {heat} to {move_to_heat}.")
+                return redirect(url_for('adjudication_system.change_heat_couple', round_id=dancing_round.round_id,
+                                        dance_id=dance.dance_id))
+    return render_template('adjudication_system/change_heat_couple.html', dancing_round=dancing_round, dance=dance,
+                           heat_form=heat_form, heat=heat, couple_form=couple_form, couple=couple,
+                           move_heat_form=move_heat_form)
 
 
 @bp.route('/final_result', methods=['GET'])

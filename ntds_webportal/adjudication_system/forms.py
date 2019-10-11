@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, NumberRange
 from wtforms_sqlalchemy.fields import QuerySelectField
 import wtforms_sqlalchemy.fields as f
 from ntds_webportal.models import DancingClass, Discipline, Competition, RoundType, Couple, Adjudicator, \
-    Dance, Dancer, CompetitionMode, Contestant, StatusInfo, SuperVolunteer
+    Dance, Dancer, CompetitionMode, Contestant, StatusInfo, SuperVolunteer, Heat
 import datetime as dt
 from ntds_webportal.data import *
 from contextlib import suppress
@@ -351,3 +351,40 @@ class PrintReportsForm(FlaskForm):
                or self.no_re_dance.data or self.adjudication_sheets.data or self.placings_after_round.data \
                or self.final_evaluation.data or self.tournament_result.data or self.ranking_report.data \
                or self.adjudicators.data
+
+
+class ChooseHeatForm(FlaskForm):
+    def __init__(self, dancing_round, dance, **kwargs):
+        super().__init__(**kwargs)
+        self.heat.query = Heat.query.filter(Heat.round == dancing_round, Heat.dance == dance)
+
+    heat = QuerySelectField('Heat', validators=[DataRequired()], render_kw={'data-role': 'select2'},
+                            allow_blank=True, blank_text='Please select a Heat.')
+    heat_submit = SubmitField('Select Heat')
+
+
+class ChooseCoupleForm(FlaskForm):
+    def __init__(self, heat=None, **kwargs):
+        super().__init__(**kwargs)
+        if heat is not None:
+            self.couple.query = Couple.query.filter(Couple.heats.contains(heat))
+        else:
+            self.couple.query = Couple.query.filter(Couple.couple_id == 0)
+
+    couple = QuerySelectField('Couple', validators=[DataRequired()], render_kw={'data-role': 'select2'},
+                              allow_blank=True, blank_text='Please select a Couple.')
+    couple_submit = SubmitField('Select Couple')
+
+
+class MoveHeatForm(FlaskForm):
+    def __init__(self, dancing_round, dance, heat, **kwargs):
+        super().__init__(**kwargs)
+        if heat is not None:
+            self.heat.query = Heat.query.filter(Heat.round == dancing_round, Heat.dance == dance,
+                                                Heat.heat_id != heat.heat_id)
+        else:
+            self.heat.query = Heat.query.filter(Heat.heat_id == 0)
+
+    heat = QuerySelectField('', validators=[DataRequired()], render_kw={'data-role': 'select2'},
+                            allow_blank=True, blank_text='Please select a Heat.')
+    move_heat_submit = SubmitField('Move couple')

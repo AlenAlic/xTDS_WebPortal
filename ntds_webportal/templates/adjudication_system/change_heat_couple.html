@@ -1,0 +1,40 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+    <h2>{{ g.event }} - Move couples between heats</h2>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            {% for dance in dancing_round.dances %}
+                <a class="nav-item nav-link {% if request.args.get('dance_id')|int == dance.dance_id|int %}active{% endif %}" href="{{url_for('adjudication_system.change_heat_couple', round_id=dancing_round.round_id, dance_id=dance.dance_id)}}">{{dance}}</a>
+            {% endfor %}
+        </div>
+    </nav>
+    <div class="text-center">
+        {% if heat is none %}
+        <form class="form mt-5" method="POST" enctype="multipart/form-data" novalidate>
+            {{ heat_form.hidden_tag() }}
+            {{ wtf.form_field(heat_form.heat) }}
+            {{ wtf.form_field(heat_form.heat_submit) }}
+        </form>
+        {% else %}
+            <h4 class="mt-5">Selected Heat</h4>
+            <h6>{{ heat }}</h6>
+            {% if couple is none %}
+                <form class="form mt-5" method="POST" enctype="multipart/form-data" novalidate>
+                    {{ couple_form.hidden_tag() }}
+                    {{ wtf.form_field(couple_form.couple) }}
+                    {{ wtf.form_field(couple_form.couple_submit) }}
+                </form>
+            {% else %}
+                <h4 class="mt-5">Selected Couple</h4>
+                <h6>{{ couple }}</h6>
+                <h6 class="mt-5">Move Couple to Heat</h6>
+                <form class="form" method="POST" enctype="multipart/form-data" novalidate>
+                    {{ move_heat_form.hidden_tag() }}
+                    {{ wtf.form_field(move_heat_form.heat) }}
+                    {{ wtf.form_field(move_heat_form.move_heat_submit) }}
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
