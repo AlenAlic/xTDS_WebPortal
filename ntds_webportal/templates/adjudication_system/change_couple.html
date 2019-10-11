@@ -1,0 +1,23 @@
+{% extends 'adjudication_system/adjudication_system_base.html' %}
+
+{% block app_content %}
+    <h2>{{ g.event }} - Add/Remove couples from competitions</h2>
+    <h5>Works only if the competitions has one round.</h5>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); grid-column-gap: 2rem">
+        <div class="text-center">
+            <form class="form mt-5" method="POST" enctype="multipart/form-data" novalidate>
+                {{ add_form.hidden_tag() }}
+                {{ wtf.form_field(add_form.couple) }}
+                {{ wtf.form_field(add_form.add_couple_submit) }}
+            </form>
+        </div>
+        <div class="text-center">
+            <form class="form mt-5" method="POST" enctype="multipart/form-data" novalidate>
+                {{ remove_form.hidden_tag() }}
+                {{ wtf.form_field(remove_form.couple) }}
+                {{ wtf.form_field(remove_form.remove_couple_submit) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

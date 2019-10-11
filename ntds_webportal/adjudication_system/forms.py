@@ -388,3 +388,23 @@ class MoveHeatForm(FlaskForm):
     heat = QuerySelectField('', validators=[DataRequired()], render_kw={'data-role': 'select2'},
                             allow_blank=True, blank_text='Please select a Heat.')
     move_heat_submit = SubmitField('Move couple')
+
+
+class AddCoupleForm(FlaskForm):
+    def __init__(self, competition, **kwargs):
+        super().__init__(**kwargs)
+        self.couple.query = Couple.query.filter(~Couple.competitions.contains(competition)).order_by(Couple.number)
+
+    couple = QuerySelectField('Couple', validators=[DataRequired()], render_kw={'data-role': 'select2'},
+                              allow_blank=True, blank_text='Please select a Couple.')
+    add_couple_submit = SubmitField('Add Couple')
+
+
+class RemoveCoupleForm(FlaskForm):
+    def __init__(self, competition, **kwargs):
+        super().__init__(**kwargs)
+        self.couple.query = Couple.query.filter(Couple.competitions.contains(competition)).order_by(Couple.number)
+
+    couple = QuerySelectField('Couple', validators=[DataRequired()], render_kw={'data-role': 'select2'},
+                              allow_blank=True, blank_text='Please select a Couple.')
+    remove_couple_submit = SubmitField('Remove Couple')

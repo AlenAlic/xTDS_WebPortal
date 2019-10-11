@@ -5,7 +5,8 @@ from ntds_webportal.adjudication_system import bp
 from ntds_webportal.adjudication_system.forms import SplitForm, EventForm, CompetitionForm, \
     CreateFirstRoundForm, DefaultCompetitionForm, ConfigureNextRoundForm, DanceForm, DisciplineForm, DancingClassForm, \
     PrintReportsForm, CoupleForm, DancerForm, EditDancerForm, EditCoupleForm, CreateAdjudicatorFromContestantForm, \
-    CreateAdjudicatorFromSuperVolunteerForm, ChooseHeatForm, ChooseCoupleForm, MoveHeatForm
+    CreateAdjudicatorFromSuperVolunteerForm, ChooseHeatForm, ChooseCoupleForm, MoveHeatForm, AddCoupleForm, \
+    RemoveCoupleForm
 from ntds_webportal.models import requires_access_level, requires_adjudicator_access_level, Event, Competition, \
     DancingClass, Discipline, Dance, Round, RoundType, Adjudicator, Couple, CouplePresent, RoundResult, DanceActive, \
     Dancer, CompetitionMode, create_couples_list, ADJUDICATOR_SYSTEM_TABLES, DancingInfo, StatusInfo, Heat, Mark
@@ -1147,6 +1148,71 @@ def change_heat_couple(heat_id, couple_id):
     return render_template('adjudication_system/change_heat_couple.html', dancing_round=dancing_round, dance=dance,
                            heat_form=heat_form, heat=heat, couple_form=couple_form, couple=couple,
                            move_heat_form=move_heat_form)
+
+
+@bp.route('/change_couple', methods=['GET', 'POST'])
+@login_required
+@requires_access_level([ACCESS[TOURNAMENT_OFFICE_MANAGER]])
+def change_couple():
+    dancing_round_id = request.args.get('round_id', 0, type=int)
+    dancing_round = Round.query.filter(Round.round_id == dancing_round_id).first()
+    if dancing_round is None:
+        return redirect(url_for("adjudication_system.event"))
+    dance_id = request.args.get('dance_id', 0, type=int)
+    if dance_id == 0:
+        if dancing_round.has_dances():
+            return redirect(url_for('adjudication_system.change_couple', round_id=dancing_round.round_id,
+                                    dance_id=dancing_round.first_dance().dance_id))
+        else:
+            flash('Please configure the dancing round first.', "alert-warning")
+            return redirect(url_for('adjudication_system.progress', round_id=dancing_round.round_id))
+    elif not dancing_round.has_dance(dance_id):
+        return redirect(url_for('adjudication_system.change_couple', round_id=dancing_round.round_id,
+                                dance_id=dancing_round.first_dance().dance_id))
+    if not dancing_round.competition.mode == CompetitionMode.single_partner:
+        flash(f'Can only edit couples from {CompetitionMode.single_partner.value}.', "alert-warning")
+        return redirect(url_for('adjudication_system.progress', round_id=dancing_round.round_id))
+    add_form = AddCoupleForm(dancing_round.competition)
+    remove_form = RemoveCoupleForm(dancing_round.competition)
+    if request.method == "POST":
+        if add_form.add_couple_submit.name in request.form:
+            if add_form.validate_on_submit():
+                couple = add_form.couple.data
+                dancing_round.competition.couples.append(couple)
+                dancing_round.couples.append(couple)
+                for dance in dancing_round.dances:
+                    heats = sorted([h for h in dancing_round.heats if h.dance == dance], key=lambda x: len(x.couples))
+                    heat = heats[0]
+                    cp = CouplePresent()
+                    cp.couple = couple
+                    cp.heat = heat
+                    heat.couples.append(couple)
+                    for adj in dancing_round.competition.adjudicators:
+                        m = Mark()
+                        m.adjudicator = adj
+                        m.couple = couple
+                        m.heat = heat
+                db.session.commit()
+                flash(f"Added {couple} to {dancing_round.competition}.")
+                return redirect(url_for('adjudication_system.progress', round_id=dancing_round.round_id))
+        if remove_form.remove_couple_submit.name in request.form:
+            if remove_form.validate_on_submit():
+                couple = remove_form.couple.data
+                dancing_round.competition.couples.remove(couple)
+                dancing_round.couples.remove(couple)
+                cp = CouplePresent.query.filter(CouplePresent.heat_id.in_([h.heat_id for h in dancing_round.heats]),
+                                                CouplePresent.couple == couple).all()
+                for c in cp:
+                    db.session.delete(c)
+                marks = Mark.query.filter(Mark.heat_id.in_([h.heat_id for h in dancing_round.heats]),
+                                          Mark.couple == couple).all()
+                for m in marks:
+                    db.session.delete(m)
+                db.session.commit()
+                flash(f"Removed {couple} from {dancing_round.competition}.")
+                return redirect(url_for('adjudication_system.progress', round_id=dancing_round.round_id))
+    return render_template('adjudication_system/change_couple.html', dancing_round=dancing_round,
+                           add_form=add_form, remove_form=remove_form)
 
 
 @bp.route('/final_result', methods=['GET'])
