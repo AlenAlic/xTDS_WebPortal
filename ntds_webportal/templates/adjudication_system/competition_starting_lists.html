@@ -4,7 +4,7 @@
 {% include "adjudication_system/_report_styling.html" %}
 <div class="container">
     {% with dancing_round = comp.last_round_with_heat_list_published() %}
-        {% if not dancing_round.is_final() %}
+        {% if dancing_round is not none %}
             {% include "adjudication_system/_report_qualified_starts.html" %}
         {% else %}
             <h4>Starting lists of the final are not available.</h4>
