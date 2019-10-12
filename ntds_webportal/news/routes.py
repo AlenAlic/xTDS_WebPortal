@@ -2,12 +2,13 @@ from flask import render_template, url_for, redirect
 from flask_login import login_required
 from ntds_webportal.news import bp
 from ntds_webportal.models import News
+from sqlalchemy import desc
 
 
 @bp.route('/news_items', methods=['GET'])
 @login_required
 def news_items():
-    items = News.query.order_by(News.timestamp).all()
+    items = News.query.order_by(desc(News.timestamp)).all()
     return render_template('news/news_items.html', items=items)
 
 
