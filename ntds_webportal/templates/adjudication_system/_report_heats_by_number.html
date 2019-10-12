@@ -40,7 +40,7 @@
         <tr>
             <td class="first-col">{{couple.follow.number}}</td>
             {% for dance in dancing_round.dances %}
-            <td class="heat-by-start-no-col"><b>{{dance_heat_list[dance.tag][couple.number]}}</b>{% if dancing_round.competition.is_change_per_dance() %}: {{dance_lead_follow_list[dance.tag][couple.follow.number]}}{% endif %}</td>
+            <td class="heat-by-start-no-col"><b>{{dance_heat_list[dance.tag][dance_lead_follow_list[dance.tag][couple.follow.number]]}}</b>{% if dancing_round.competition.is_change_per_dance() %}: {{dance_lead_follow_list[dance.tag][couple.follow.number]}}{% endif %}</td>
             {% endfor %}
         </tr>
         {% endfor %}
