@@ -1644,6 +1644,14 @@ class ShiftSlot(db.Model):
         return self.shift.published and self.team == team or self.team is None and not self.mandatory
 
 
+class News(db.Model):
+    __tablename__ = 'news'
+    news_id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, index=True, default=dt.utcnow)
+    title = db.Column(db.String(256))
+    text = db.Column(db.Text())
+
+
 TABLE_EVENT = 'event'
 TABLE_COMPETITION = 'competition'
 TABLE_DANCING_CLASS = 'dancing_class'

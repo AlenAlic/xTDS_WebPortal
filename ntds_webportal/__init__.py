@@ -120,7 +120,7 @@ def create_app():
         Refund, VolunteerInfo, AdditionalInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, \
         TournamentState, SystemConfiguration, RaffleConfiguration, AttendedPreviousTournamentContestant, \
         NotSelectedContestant, SuperVolunteer, ShiftInfo, Shift, ShiftSlot, MerchandiseItem, MerchandiseItemVariant, \
-        MerchandisePurchase
+        MerchandisePurchase, News
     from ntds_webportal.models import Event, Competition, DancingClass, Discipline, Dance, Round, \
         Heat, Couple, Adjudicator, Mark, CouplePresent, RoundResult, FinalPlacing, DanceActive, CompetitionMode, Dancer
 
@@ -181,6 +181,7 @@ def create_app():
     admin.add_view(AdjudicatorSystemView(FinalPlacing, db.session))
     admin.add_view(AdjudicatorSystemView(CouplePresent, db.session))
     admin.add_view(AdjudicatorSystemView(RoundResult, db.session))
+    admin.add_view(AdjudicatorSystemView(News, db.session))
     toolbar.init_app(app)
 
     @app.before_request
@@ -315,6 +316,9 @@ def create_app():
 
     from ntds_webportal.presenter import bp as pres_bp
     app.register_blueprint(pres_bp, url_prefix='/presenter')
+
+    from ntds_webportal.news import bp as news_bp
+    app.register_blueprint(news_bp, url_prefix='/news')
 
     # from ntds_webportal.companion_app import bp as app_bp
     # app.register_blueprint(app_bp, url_prefix='/app')

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h2 class="text-center mb-4">News items</h2>
+{% for item in items %}
+    <div class="card my-3">
+        <div class="card-body">
+        {% if item.title is not none and item.title != "" %}
+            <h5 class="card-title text-center mb-3">{{ item.title }}</h5>
+        {% endif %}
+        <p class="card-text" style="white-space: pre-line;">{{ item.text }}</p>
+        <div class="text-right">
+            <small class="muted">{{moment(item.timestamp).fromNow()}}</small>
+        </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
