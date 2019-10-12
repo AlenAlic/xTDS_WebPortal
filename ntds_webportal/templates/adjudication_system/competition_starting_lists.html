@@ -4,7 +4,10 @@
 {% include "adjudication_system/_report_styling.html" %}
 <div class="container">
     {% with dancing_round = comp.rounds[-1] %}
-        {% include "adjudication_system/_report_qualified_starts.html" %}
+        {% if not dancing_round.is_final() %}
+            {% include "adjudication_system/_report_qualified_starts.html" %}
+        {% else %}
+        <h4>Starting lists of the final are not available.</h4>
     {% endwith %}
 </div>
 
