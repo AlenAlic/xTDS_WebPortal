@@ -1924,6 +1924,12 @@ class Competition(db.Model):
                 return r.final_completed()
         return False
 
+    def is_quali_competition(self):
+        rounds = [r for r in self.rounds if r.type == RoundType.qualification]
+        if len(rounds) == 1:
+            return True
+        return False
+
 
 def create_couples_list(couples=None, leads=None, follows=None):
     if couples is not None:

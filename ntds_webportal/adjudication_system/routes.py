@@ -1263,7 +1263,7 @@ def publish_final_results():
             for comp in competitions:
                 try:
                     x = form[str(comp.competition_id)]
-                    if comp.has_completed_final():
+                    if comp.has_completed_final() or comp.is_quali_competition():
                         comp.results_published = True
                     else:
                         comp.results_published = False
