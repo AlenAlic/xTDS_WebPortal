@@ -1,17 +1,11 @@
 {% extends "base.html" %}
 
-{% block navbar %}
-<nav class="navbar sticky-top navbar-expand-md navbar-light bg-light no-print navbar-default">
-    <div class="container">
-        <a class="navbar-brand" href="{{ url_for('adjudication_system.results') }}">Results</a>
-    </div>
-</nav>
-{% endblock %}
-
-{% block content %}
+{% block app_content %}
 {% include "adjudication_system/_report_styling.html" %}
-{% with dancing_round = comp.rounds[-1] %}
-    {% include "adjudication_system/_report_qualified_starts.html" %}
-{% endwith %}
+<div class="container">
+    {% with dancing_round = comp.rounds[-1] %}
+        {% include "adjudication_system/_report_qualified_starts.html" %}
+    {% endwith %}
+</div>
 
 {% endblock %}
