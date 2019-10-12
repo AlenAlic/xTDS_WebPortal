@@ -297,6 +297,7 @@ CHA_CHA_CHA = "Cha Cha Cha"
 RUMBA = "Rumba"
 PASO_DOBLE = "Paso Doble"
 JIVE = "Jive"
+# TODO VERY UGLY FIX, redo
 DANCES = [
     {"name": SLOW_WALTZ, "tag": "SW"},
     {"name": TANGO, "tag": "TG"},
@@ -308,14 +309,27 @@ DANCES = [
     {"name": RUMBA, "tag": "RB"},
     {"name": PASO_DOBLE, "tag": "PD"},
     {"name": JIVE, "tag": "JV"},
+    {"name": SLOW_WALTZ + " 2", "tag": "SW2"},
+    {"name": TANGO + " 2", "tag": "TG2"},
+    {"name": VIENNESE_WALTZ + " 2", "tag": "VW2"},
+    {"name": SLOW_FOXTROT + " 2", "tag": "SF2"},
+    {"name": QUICKSTEP + " 2", "tag": "QS2"},
+    {"name": SAMBA + " 2", "tag": "SB2"},
+    {"name": CHA_CHA_CHA + " 2", "tag": "CC2"},
+    {"name": RUMBA + " 2", "tag": "RB2"},
+    {"name": PASO_DOBLE + " 2", "tag": "PD2"},
+    {"name": JIVE + " 2", "tag": "JV2"},
 ]
 # Basic dances and order
 BALLROOM_DANCES = [SLOW_WALTZ, TANGO, VIENNESE_WALTZ, SLOW_FOXTROT, QUICKSTEP]
 BALLROOM_BASIC_DANCES = [SLOW_WALTZ, TANGO, QUICKSTEP]
-BALLROOM_DANCE_ORDER = {SLOW_WALTZ: 0, TANGO: 1, VIENNESE_WALTZ: 2, SLOW_FOXTROT: 3, QUICKSTEP: 4}
+BALLROOM_DANCE_ORDER = {SLOW_WALTZ: 0, TANGO: 1, VIENNESE_WALTZ: 2, SLOW_FOXTROT: 3, QUICKSTEP: 4,
+                        SLOW_WALTZ + " 2": 5, TANGO + " 2": 6, VIENNESE_WALTZ + " 2": 7, SLOW_FOXTROT + " 2": 8,
+                        QUICKSTEP + " 2": 9}
 LATIN_DANCES = [SAMBA, CHA_CHA_CHA, RUMBA, PASO_DOBLE, JIVE]
 LATIN_BASIC_DANCES = [CHA_CHA_CHA, RUMBA, JIVE]
-LATIN_DANCE_ORDER = {SAMBA: 0, CHA_CHA_CHA: 1, RUMBA: 2, PASO_DOBLE: 3, JIVE: 4}
+LATIN_DANCE_ORDER = {SAMBA: 0, CHA_CHA_CHA: 1, RUMBA: 2, PASO_DOBLE: 3, JIVE: 4,
+                     SAMBA + " 2": 5, CHA_CHA_CHA + " 2": 6, RUMBA + " 2": 7, PASO_DOBLE + " 2": 8, JIVE + " 2": 9}
 BASIC_DANCES = {BALLROOM: BALLROOM_BASIC_DANCES, LATIN: LATIN_BASIC_DANCES}
 DANCE_ORDER = {BALLROOM: BALLROOM_DANCE_ORDER, LATIN: LATIN_DANCE_ORDER}
 
