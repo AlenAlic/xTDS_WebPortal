@@ -504,14 +504,26 @@ class RankingReport:
                                                                    'number': res['couple'].follow.number}
                             self.added_couples.append(res['couple'].follow.number)
                 else:
-                    placings_map = generate_placings([res.marks for res in r.round_results if res.couple.follow.number
-                                                      not in self.added_couples], counter=len(self.placings)+1)
-                    for res in sorted([res for res in r.round_results], key=lambda x: x.marks, reverse=True):
-                        if res.couple.follow.number not in self.added_couples:
-                            self.placings[len(self.placings) + 1] = {'couple': res.couple.follow.number,
-                                                                     'placing': placings_map[res.marks],
-                                                                     'number': res.couple.follow.number}
-                            self.added_couples.append(res.couple.follow.number)
+                    if not r.competition.is_change_per_dance():
+                        placings_map = generate_placings([res.marks for res in r.round_results
+                                                          if res.couple.follow.number
+                                                          not in self.added_couples], counter=len(self.placings)+1)
+                        for res in sorted([res for res in r.round_results], key=lambda x: x.marks, reverse=True):
+                            if res.couple.follow.number not in self.added_couples:
+                                self.placings[len(self.placings) + 1] = {'couple': res.couple.follow.number,
+                                                                         'placing': placings_map[res.marks],
+                                                                         'number': res.couple.follow.number}
+                                self.added_couples.append(res.couple.follow.number)
+                    else:
+                        dancers_list = [d for d in r.change_per_dance_dancers_rows() if d["follow"]
+                                        and d["dancer"].number not in self.added_couples]
+                        placings_map = generate_placings([d["crosses"] for d in dancers_list],
+                                                         counter=len(self.placings) + 1)
+                        for res in sorted([res for res in dancers_list], key=lambda x: x["crosses"], reverse=True):
+                            self.placings[len(self.placings) + 1] = \
+                                {'couple': res["dancer"].number, 'placing': placings_map[res["crosses"]],
+                                 'number': res["dancer"].number}
+                            self.added_couples.append(res["dancer"].number)
             self.results = {rc: {r: {d: {a: None for a in r.competition.adjudicators} for d in r.dances}
                                  for r in self.rounds if rc in [c.follow.number for c in r.couples]}
                             for rc in self.reference_couples}
@@ -548,14 +560,25 @@ class RankingReport:
                                  'number': res['couple'].number}
                             self.added_couples.append(res['couple'].number)
                 else:
-                    placings_map = generate_placings([res.marks for res in r.round_results if res.couple.number
-                                                      not in self.added_couples], counter=len(self.placings)+1)
-                    for res in sorted([res for res in r.round_results], key=lambda x: x.marks, reverse=True):
-                        if res.couple.number not in self.added_couples:
+                    if not r.competition.is_change_per_dance():
+                        placings_map = generate_placings([res.marks for res in r.round_results if res.couple.number
+                                                          not in self.added_couples], counter=len(self.placings)+1)
+                        for res in sorted([res for res in r.round_results], key=lambda x: x.marks, reverse=True):
+                            if res.couple.number not in self.added_couples:
+                                self.placings[len(self.placings) + 1] = \
+                                    {'couple': res.couple.number, 'placing': placings_map[res.marks],
+                                     'number': res.couple.number}
+                                self.added_couples.append(res.couple.number)
+                    else:
+                        dancers_list = [d for d in r.change_per_dance_dancers_rows() if d["lead"]
+                                        and d["dancer"].number not in self.added_couples]
+                        placings_map = generate_placings([d["crosses"] for d in dancers_list],
+                                                         counter=len(self.placings) + 1)
+                        for res in sorted([res for res in dancers_list], key=lambda x: x["crosses"], reverse=True):
                             self.placings[len(self.placings) + 1] = \
-                                {'couple': res.couple.number, 'placing': placings_map[res.marks],
-                                 'number': res.couple.number}
-                            self.added_couples.append(res.couple.number)
+                                {'couple': res["dancer"].number, 'placing': placings_map[res["crosses"]],
+                                 'number': res["dancer"].number}
+                            self.added_couples.append(res["dancer"].number)
             self.results = {rc: {r: {d: {a: None for a in r.competition.adjudicators} for d in r.dances}
                                  for r in self.rounds if rc in [c.number for c in r.couples]}
                             for rc in self.reference_couples}
