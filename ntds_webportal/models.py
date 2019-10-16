@@ -2130,9 +2130,9 @@ class Dancer(db.Model):
 
     def set_competitions(self, comps):
         if self.role == LEAD:
-            self.competitions_lead = comps
+            self.competitions_lead = [c for c in self.competitions_lead if c.has_rounds()] + comps
         else:
-            self.competitions_follow = comps
+            self.competitions_follow = [c for c in self.competitions_follow if c.has_rounds()] + comps
 
 
 class Couple(db.Model):
