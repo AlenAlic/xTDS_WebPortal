@@ -6,7 +6,6 @@ from sqlalchemy import desc
 
 
 @bp.route('/news_items', methods=['GET'])
-@login_required
 def news_items():
     items = News.query.order_by(desc(News.timestamp)).all()
     return render_template('news/news_items.html', items=items)
