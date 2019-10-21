@@ -8,6 +8,7 @@ from flask_mail import Mail
 from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_caching import Cache
 from wtforms import PasswordField
 import ntds_webportal.data as data
 from datetime import datetime
@@ -31,6 +32,7 @@ moment = Moment()
 mail = Mail()
 admin = Admin(template_mode='bootstrap3', index_view=MyAdminIndexView())
 toolbar = DebugToolbarExtension()
+cache = Cache()
 
 
 class BaseView(ModelView):
@@ -183,6 +185,7 @@ def create_app():
     admin.add_view(AdjudicatorSystemView(RoundResult, db.session))
     admin.add_view(AdjudicatorSystemView(News, db.session))
     toolbar.init_app(app)
+    cache.init_app(app)
 
     @app.before_request
     def before_request_callback():

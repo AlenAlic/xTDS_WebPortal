@@ -1929,6 +1929,9 @@ class Competition(db.Model):
         if len(rounds) == 1:
             return True
         return False
+    
+    def cache(self):
+        return RESULTS_CACHE.format(self.competition_id)
 
 
 def create_couples_list(couples=None, leads=None, follows=None):

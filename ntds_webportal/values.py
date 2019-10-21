@@ -286,6 +286,9 @@ REGISTRATION_NOT_STARTED_TEXT = "Cannot enter page. " \
 REGISTRATION_NOT_OPEN_TEXT = "Registration is currently closed."
 RAFFLE_NOT_CONFIRMED_TEXT = "Cannot enter page. This page will be accessible after the raffle has taken place."
 
+# Caching
+RESULTS_CACHE = "results_{}"
+
 # Dances
 SLOW_WALTZ = "Slow Waltz"
 TANGO = "Tango"

@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, flash, request, g, Markup
 from flask_login import login_required, current_user
-from ntds_webportal import db
+from ntds_webportal import db, cache
 from ntds_webportal.adjudication_system import bp
 from ntds_webportal.adjudication_system.forms import SplitForm, EventForm, CompetitionForm, \
     CreateFirstRoundForm, DefaultCompetitionForm, ConfigureNextRoundForm, DanceForm, DisciplineForm, DancingClassForm, \
@@ -1269,6 +1269,8 @@ def publish_final_results():
                         comp.results_published = False
                 except BadRequestKeyError:
                     comp.results_published = False
+                # Cache cleared separately instead of cache.clear() in case cache is used again in the future
+                cache.delete(comp.cache())
             db.session.commit()
             flash("Changes saved (for those competitions whose results could be published).")
         return redirect(url_for("adjudication_system.publish_final_results"))
@@ -1380,11 +1382,12 @@ def starting_lists():
         return render_template('adjudication_system/starting_lists.html', competitions=competitions)
 
 
-@bp.route('/heat_lists', methods=['GET'])
-def heat_lists():
+@bp.route('/heat_lists', methods=['GET'], defaults={'competition_id': 0})
+@bp.route('/heat_lists/<int:competition_id>', methods=['GET'])
+def heat_lists(competition_id):
     competitions = Competition.query.all()
-    competitions = [c for c in competitions if len(c.rounds) > 0 and c.dancing_class.name != TEST]
-    competition_id = request.args.get('competition', 0, int)
+    competitions = [c for c in competitions if len(c.rounds) > 0 and c.dancing_class.name != TEST
+                    and c.when.date().isoformat() >= datetime.now().date().isoformat()]
     if competition_id in [c.competition_id for c in competitions]:
         comp = Competition.query.get(competition_id)
         return render_template('adjudication_system/competition_heat_lists.html', comp=comp)
@@ -1394,15 +1397,27 @@ def heat_lists():
         return render_template('adjudication_system/heat_lists.html', competitions=competitions)
 
 
-@bp.route('/results', methods=['GET'])
-def results():
+@bp.route('/results', methods=['GET'], defaults={'competition_id': 0})
+def results(competition_id):
     competitions = Competition.query.order_by(Competition.when).all()
     competitions = [c for c in competitions if c.results_published and c.dancing_class.name != TEST]
-    competition_id = request.args.get('competition', 0, int)
     if competition_id in [c.competition_id for c in competitions]:
-        comp = Competition.query.get(competition_id)
-        return render_template('adjudication_system/competition_results.html', comp=comp)
+        return redirect(url_for('adjudication_system.competition_results', competition_id=competition_id))
     else:
         if competition_id > 0:
             flash('Competition not found.')
         return render_template('adjudication_system/results.html', competitions=competitions)
+
+
+def cache_results():
+    return RESULTS_CACHE.format(request.view_args["competition_id"])
+
+
+@bp.route('/results/<int:competition_id>', methods=['GET'])
+@cache.cached(timeout=86400, key_prefix=cache_results)
+def competition_results(competition_id):
+    comp = Competition.query.get(competition_id)
+    if comp.results_published:
+        return render_template('adjudication_system/competition_results.html', comp=comp)
+    else:
+        return redirect(url_for('adjudication_system.results'))
