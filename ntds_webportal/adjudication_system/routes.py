@@ -1371,7 +1371,7 @@ def starting_lists():
             dancers.extend([follow for follow in c.follows])
             competitions[c] = dancers
     competitions = {c: competitions[c] for c in competitions if c.dancing_class.name != TEST
-                    and len(competitions[c]) != 0}
+                    and len(competitions[c]) != 0 and c.when.date().isoformat() >= datetime.now().date().isoformat()}
     competition_id = request.args.get('competition', 0, int)
     if competition_id in [c.competition_id for c in competitions]:
         comp = Competition.query.get(competition_id)
