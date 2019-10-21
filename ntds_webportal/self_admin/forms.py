@@ -91,7 +91,7 @@ class SystemSetupForm(SystemSetupTournamentForm):
                                                      choices=[(k, v) for k, v in YN.items()])
     additional_teamcaptain_large_teams_cutoff = IntegerField("How many dancers does a team need at least to get an "
                                                              "additional teamcaptain?",
-                                                             validators=[NumberRange(1)], default=20)
+                                                             validators=[NumberRange(0)], default=20)
 
     beginners_level = SelectField(ASK_LEVEL.format(level=BEGINNERS), choices=[(k, v) for k, v in YN.items()])
     closed_level = SelectField(ASK_LEVEL.format(level=CLOSED), choices=[(k, v) for k, v in YN.items()])
