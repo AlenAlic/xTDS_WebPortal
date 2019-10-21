@@ -251,6 +251,7 @@ def system_configuration():
 
             db.session.commit()
             flash("Configuration saved.", "alert-success")
+            g.ts.system_configured = True
             db.session.commit()
             if current_user.is_organizer():
                 return redirect(url_for('main.dashboard'))
