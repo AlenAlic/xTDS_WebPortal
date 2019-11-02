@@ -108,6 +108,7 @@ def event():
             start_time = datetime(default_form.when.data.year, default_form.when.data.month,
                                   default_form.when.data.day, 9, 0, 0)
             create_default_competition(BALLROOM, TEST, start_time)
+            create_default_competition(LATIN, TEST, start_time)
             if default_form.beginners.data:
                 create_default_competition(BALLROOM, BEGINNERS, start_time)
                 create_default_competition(LATIN, BEGINNERS, start_time)
