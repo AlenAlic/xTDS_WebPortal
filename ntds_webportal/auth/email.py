@@ -17,7 +17,7 @@ def send_treasurer_activation_email(email, username, password, message):
                                          username=username, password=password, message=message),
                html_body=render_template('email/activate_treasurer.html',
                                          username=username, password=password, message=message),
-               bcc=[current_app.config['ADMINS'][0]])
+               bcc=current_app.config['ADMINS'])
 
 
 def send_organizer_activation_email(email, username, password, tournament, year, city):
@@ -26,7 +26,7 @@ def send_organizer_activation_email(email, username, password, tournament, year,
                                          tournament=tournament, year=year, city=city),
                html_body=render_template('email/reset_organizer.html', username=username, password=password,
                                          tournament=tournament, year=year, city=city),
-               bcc=[current_app.config['ADMINS'][0]])
+               bcc=current_app.config['ADMINS'])
 
 
 def send_team_captain_activation_email(email, user, password, tournament, year, city):
@@ -35,4 +35,4 @@ def send_team_captain_activation_email(email, user, password, tournament, year, 
                                          user=user, tournament=tournament, year=year, city=city),
                html_body=render_template('email/activate_team_captain.html', username=user.username, password=password,
                                          user=user, tournament=tournament, year=year, city=city),
-               bcc=[current_app.config['ADMINS'][0]])
+               bcc=current_app.config['ADMINS'])

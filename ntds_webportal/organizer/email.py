@@ -15,7 +15,7 @@ def send_registration_open_email(email):
                                          tournament=g.sc.tournament, year=g.sc.year, city=g.sc.city),
                html_body=render_template('email/registration_open.html',
                                          tournament=g.sc.tournament, year=g.sc.year, city=g.sc.city),
-               bcc=[current_app.config['ADMINS'][0]])
+               bcc=current_app.config['ADMINS'])
 
 
 def send_super_volunteer_user_account_email(super_volunteer, full_name, super_volunteer_password):
