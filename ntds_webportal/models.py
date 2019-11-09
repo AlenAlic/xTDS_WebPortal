@@ -98,6 +98,7 @@ class User(UserMixin, Anonymous, db.Model):
     is_active = db.Column(db.Boolean, index=True, nullable=False, default=False)
     send_new_messages_email = db.Column(db.Boolean, nullable=False, default=True)
     activate = db.Column(db.Boolean, nullable=False, default=False)
+    auth_code = db.Column(db.String(128), nullable=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'))
     team = db.relationship('Team')
     contestant_id = db.Column(db.Integer, db.ForeignKey('contestants.contestant_id'))
@@ -189,6 +190,19 @@ class User(UserMixin, Anonymous, db.Model):
         # noinspection PyUnresolvedReferences
         return jwt.encode({'reset_password': self.user_id, 'exp': time() + expires_in},
                           current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    def get_auth_code(self):
+        return jwt.encode({'auth_code': self.user_id}, current_app.config['SECRET_KEY'], algorithm='HS256')\
+            .decode('utf-8')
+
+    # noinspection PyUnresolvedReferences
+    @staticmethod
+    def verify_auth_code_token(token):
+        try:
+            user_id = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])['auth_code']
+        except jwt.exceptions.InvalidTokenError:
+            return None
+        return User.query.get(user_id)
 
     def unread_notifications(self):
         return Notification.query.filter_by(user=self, unread=True).count()
