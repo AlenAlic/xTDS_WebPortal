@@ -13,6 +13,7 @@ from wtforms import PasswordField
 import ntds_webportal.data as data
 from datetime import datetime
 from ntds_webportal.util import BooleanConverter, random_password
+from config import Config
 
 
 class MyAdminIndexView(AdminIndexView):
@@ -117,7 +118,7 @@ class Anonymous(AnonymousUserMixin):
         return False
 
 
-def create_app():
+def create_app(config_class=Config):
     from ntds_webportal.models import User, Team, Contestant, ContestantInfo, DancingInfo, StatusInfo, PaymentInfo, \
         Refund, VolunteerInfo, AdditionalInfo, MerchandiseInfo, Notification, PartnerRequest, NameChangeRequest, \
         TournamentState, SystemConfiguration, RaffleConfiguration, AttendedPreviousTournamentContestant, \
@@ -126,9 +127,8 @@ def create_app():
     from ntds_webportal.models import Event, Competition, DancingClass, Discipline, Dance, Round, \
         Heat, Couple, Adjudicator, Mark, CouplePresent, RoundResult, FinalPlacing, DanceActive, CompetitionMode, Dancer
 
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object('config')
-    app.config.from_pyfile('config.py')
+    app = Flask(__name__)
+    app.config.from_object(config_class)
     app.url_map.strict_slashes = False
 
     app.url_map.converters['bool'] = BooleanConverter
