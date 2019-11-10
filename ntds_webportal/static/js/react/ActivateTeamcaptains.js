@@ -38,7 +38,7 @@ var ActivateTeamcaptains = function (_React$Component) {
         value: function setEmail(u) {
             var _this2 = this;
 
-            if (validateEmail(u.old_email) || u.email === "") {
+            if (validateEmail(u.email) || u.email === "") {
                 this.setPending(u);
                 var newState = this.state.users;
                 fetch("/api/users/" + u.user_id + "/set_email", { method: "PATCH", credentials: 'same-origin', body: JSON.stringify(u) }).then(function (response) {

@@ -15,7 +15,7 @@ class ActivateTeamcaptains extends React.Component {
         this.setState({user: newState});
     };
     setEmail(u) {
-        if (validateEmail(u.old_email) || u.email === "") {
+        if (validateEmail(u.email) || u.email === "") {
             this.setPending(u);
             let newState = this.state.users;
             fetch("/api/users/" + u.user_id + "/set_email", {method: "PATCH", credentials: 'same-origin', body: JSON.stringify(u)})
