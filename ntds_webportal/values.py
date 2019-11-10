@@ -100,6 +100,7 @@ COUNTRIES = [
 ]
 
 # Cities
+WIERDEN = 'Wierden'
 ENSCHEDE = 'Enschede'
 AMSTERDAM = 'Amsterdam'
 DELFT = 'Delft'

@@ -124,7 +124,7 @@ Then run the installation script:
     source scripts/install_TEST
 Finally, copy the `TEST_DB_PASSWORD` and run the following command to create a login path for cronjobs to run backups:
 
-    sudo mysql_config_editor set --login-path=test_xtds --host=localhost --user=test_xtds --password
+    sudo mysql_config_editor set --login-path=xtds_test --host=localhost --user=xtds_test --password
 When prompted, paste the password and press Enter.
 
 
@@ -140,7 +140,7 @@ Then run the installation script:
     source scripts/install_DEV
 Finally, copy the `DEV_DB_PASSWORD` and run the following command to create a login path for cronjobs to run backups:
 
-    sudo mysql_config_editor set --login-path=dev_xtds --host=localhost --user=dev_xtds --password
+    sudo mysql_config_editor set --login-path=xtds_dev --host=localhost --user=xtds_dev --password
 When prompted, paste the password and press Enter.
 
 
@@ -155,6 +155,7 @@ Create the admin account, all configuration files and exit the shell:
     create_admin("email", "password")
     create_configuration()
     create_teams("xTDS")
+    create_teamcaptains()
     exit()
 
 Remember to deactivate the venv:
@@ -165,6 +166,7 @@ Remember to deactivate the venv:
 The cronjobs scripts have been generated in the `FOLDER/xTDS_WebPortal/cron/` folder.
 
 To set the automatic backups, open the cronab:
+
     crontab -e
 
 Append the following to the file, and uncomment the backups that you wish to use:

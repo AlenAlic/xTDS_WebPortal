@@ -248,13 +248,13 @@ def create_app(config_class=Config):
                 db.session.add(assistant)
         db.session.commit()
         if len(Team.query.filter(Team.name == data.TEAM_ORGANIZATION).all()) == 0:
-            db.session.add(Team(name=data.TEAM_ORGANIZATION, country=data.NETHERLANDS,  city=data.ENSCHEDE))
+            db.session.add(Team(name=data.TEAM_ORGANIZATION, country=data.NETHERLANDS,  city=data.WIERDEN))
             db.session.commit()
         if len(Team.query.filter(Team.name == data.TEAM_SUPER_VOLUNTEER).all()) == 0:
-            db.session.add(Team(name=data.TEAM_SUPER_VOLUNTEER, country=data.NETHERLANDS, city=data.ENSCHEDE))
+            db.session.add(Team(name=data.TEAM_SUPER_VOLUNTEER, country=data.NETHERLANDS, city=data.WIERDEN))
             db.session.commit()
         if len(Team.query.filter(Team.name == data.TEAM_ADJUDICATOR).all()) == 0:
-            db.session.add(Team(name=data.TEAM_ADJUDICATOR, country=data.NETHERLANDS, city=data.ENSCHEDE))
+            db.session.add(Team(name=data.TEAM_ADJUDICATOR, country=data.NETHERLANDS, city=data.WIERDEN))
             db.session.commit()
         if len(TournamentState.query.all()) == 0:
             db.session.add(TournamentState())
