@@ -27,7 +27,8 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or ''
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or ''
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') or 'local@example.com'
-    ADMINS = ['local@example.com']
+    admins = os.environ.get("ADMINS")
+    ADMINS = json.loads(admins) if admins else ['local@example.com']
 
     CACHE_TYPE = "filesystem"
     CACHE_DEFAULT_TIMEOUT = 300
