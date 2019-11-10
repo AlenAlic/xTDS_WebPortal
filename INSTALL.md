@@ -144,6 +144,18 @@ Finally, copy the `DEV_DB_PASSWORD` and run the following command to create a lo
 When prompted, paste the password and press Enter.
 
 
+#### All environments
+Go to the `ENV/xTDS_WebPortal` folder, activate the venv, and open up a flask shell:
+
+    source venv/bin/activate
+    flask shell
+    
+Create the admin account, all configuration files and exit the shell:
+
+    create_admin("email", "password")
+    create_configuration()
+    create_teams("xTDS")
+    exit()
 
 ### Backups
 The cronjobs scripts have been generated in the `FOLDER/xTDS_WebPortal/cron/` folder.

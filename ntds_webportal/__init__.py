@@ -210,7 +210,11 @@ def create_app(config_class=Config):
 
     @app.shell_context_processor
     def make_shell_context():
-        return {'create_admin': create_admin, 'create_configuration': create_configuration}
+        return {
+            'create_admin': create_admin,
+            'create_configuration': create_configuration,
+            'create_teams': create_teams
+        }
 
     def create_admin(email, password):
         if len(User.query.filter(User.access == data.ACCESS[data.ADMIN]).all()) == 0:
@@ -243,16 +247,13 @@ def create_app(config_class=Config):
                 db.session.add(assistant)
         db.session.commit()
         if len(Team.query.filter(Team.name == data.TEAM_ORGANIZATION).all()) == 0:
-            db.session.add(Team(name=data.TEAM_ORGANIZATION, country=data.TEAM_ORGANIZATION,
-                                city=data.TEAM_ORGANIZATION))
+            db.session.add(Team(name=data.TEAM_ORGANIZATION, country=data.NETHERLANDS,  city=data.ENSCHEDE))
             db.session.commit()
         if len(Team.query.filter(Team.name == data.TEAM_SUPER_VOLUNTEER).all()) == 0:
-            db.session.add(Team(name=data.TEAM_SUPER_VOLUNTEER, country=data.TEAM_SUPER_VOLUNTEER,
-                                city=data.TEAM_SUPER_VOLUNTEER))
+            db.session.add(Team(name=data.TEAM_SUPER_VOLUNTEER, country=data.NETHERLANDS, city=data.ENSCHEDE))
             db.session.commit()
         if len(Team.query.filter(Team.name == data.TEAM_ADJUDICATOR).all()) == 0:
-            db.session.add(Team(name=data.TEAM_ADJUDICATOR, country=data.TEAM_ADJUDICATOR,
-                                city=data.TEAM_ADJUDICATOR))
+            db.session.add(Team(name=data.TEAM_ADJUDICATOR, country=data.NETHERLANDS, city=data.ENSCHEDE))
             db.session.commit()
         if len(TournamentState.query.all()) == 0:
             db.session.add(TournamentState())
@@ -262,18 +263,15 @@ def create_app(config_class=Config):
             db.session.add(RaffleConfiguration())
         db.session.commit()
 
-    with app.app_context():
-        from sqlalchemy.exc import InternalError, ProgrammingError
-        try:
-            if len(TournamentState.query.all()) == 0:
-                db.session.add(TournamentState())
-            if len(SystemConfiguration.query.all()) == 0:
-                db.session.add(SystemConfiguration())
-            if len(RaffleConfiguration.query.all()) == 0:
-                db.session.add(RaffleConfiguration())
+    def create_teams(tournament):
+        if tournament == data.ETDS or tournament == data.NTDS:
+            teams = [t for t in data.TEAMS if t["country"] == data.NETHERLANDS] if tournament == data.NTDS \
+                else data.TEAMS
+            for team in teams:
+                if Team.query.filter(Team.name == team["name"], Team.city == team["city"],
+                                     Team.country == team["country"]).first is None:
+                    db.session.add(Team(name=team["name"], country=team["country"], city=team["city"]))
             db.session.commit()
-        except (InternalError, ProgrammingError):
-            pass
 
     from ntds_webportal.main import bp as main_bp
     app.register_blueprint(main_bp)
