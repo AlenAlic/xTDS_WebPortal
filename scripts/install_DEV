@@ -2,25 +2,24 @@
 
 
 
-
 clear
 echo "Settings:"
+echo "========="
 echo "========="
 echo "xTDS domain:"
 echo $XTDS_DOMAIN
 echo "========="
-echo "NTDS domain:"
-echo $NTDS_DOMAIN
+echo "DEV domain:"
+echo $DEV_DOMAIN
 echo "db password:"
-echo $NTDS_DB_PASSWORD
+echo $DEV_DB_PASSWORD
 echo "secret key:"
-echo $NTDS_SECRET_KEY
+echo $DEV_SECRET_KEY
 echo "folder:"
-echo $NTDS_FOLDER
-echo "email password:"
-echo $NTDS_EMAIL_PASSWORD
+echo $DEV_FOLDER
 echo ""
-echo "install NTDS? (y/n)"
+
+echo "install DEV? (y/n)"
 read continue
 if [[ $continue = "y" ]]
 then
@@ -28,13 +27,14 @@ then
 
 echo "Create directory=============================="
 cd
-mkdir $NTDS_FOLDER
-cd $NTDS_FOLDER
+mkdir $DEV_FOLDER
+cd $DEV_FOLDER
 echo "Created directory============================="
 
 
 echo "Installing git repository====================="
 git clone https://github.com/AlenAlic/xTDS_WebPortal
+#git checkout development
 cd xTDS_WebPortal
 echo "Installing git repository complete============"
 
@@ -50,30 +50,22 @@ echo "Installing venv complete======================"
 
 
 echo "Setting environment variables================="
-bash -c  'cat > .env' << EOL
-SECRET_KEY = $NTDS_SECRET_KEY
+bash -c 'cat > .env' << EOL
+SECRET_KEY = $DEV_SECRET_KEY
 
-DATABASE_URI = "mysql+pymysql://ntds:$NTDS_DB_PASSWORD@localhost:3306/ntds?charset=utf8mb4"
+DATABASE_URI = "mysql+pymysql://xtds_dev:$DEV_DB_PASSWORD@localhost:3306/xtds_dev?charset=utf8mb4"
 
-MAIL_SERVER = "$XTDS_DOMAIN"
-MAIL_PORT = 587
-MAIL_USE_TLS = 1
-MAIL_USERNAME = "ntds@$XTDS_DOMAIN"
-MAIL_PASSWORD = "$NTDS_EMAIL_PASSWORD"
-MAIL_DEFAULT_SENDER = "ntds@$XTDS_DOMAIN"
-ADMINS = ['admin@$XTDS_DOMAIN']
-
-PRETTY_URL = "$NTDS_DOMAIN"
-ALLOWED_URLS = ["https://$NTDS_DOMAIN"]
+PRETTY_URL = "$DEV_DOMAIN"
+ALLOWED_URLS = ["https://$DEV_DOMAIN"]
 EOL
 echo "Setting environment variables done============"
 
 
 echo "Create database and user======================"
 sudo mysql<<EOF
-CREATE DATABASE ntds CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'ntds'@'localhost' IDENTIFIED BY '$NTDS_DB_PASSWORD';
-GRANT ALL PRIVILEGES ON ntds.* TO 'ntds'@'localhost';
+CREATE DATABASE xtds_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'xtds_dev'@'localhost' IDENTIFIED BY '$DEV_DB_PASSWORD';
+GRANT ALL PRIVILEGES ON xtds_dev.* TO 'xtds_dev'@'localhost';
 FLUSH PRIVILEGES;
 EOF
 echo "Created database and user====================="
@@ -86,10 +78,10 @@ echo "Database migration complete==================="
 
 
 echo "Setting up supervisor========================="
-sudo bash -c 'cat > /etc/supervisor/conf.d/ntds.conf' << EOL
-[program:ntds]
-command=/home/$USER/$NTDS_FOLDER/xTDS_WebPortal/venv/bin/gunicorn -b 127.0.0.1:8101 -w 3 run:app
-directory=/home/$USER/$NTDS_FOLDER/xTDS_WebPortal
+sudo bash -c 'cat > /etc/supervisor/conf.d/xtds_dev.conf' << EOL
+[program:xtds_dev]
+command=/home/$USER/$DEV_FOLDER/xTDS_WebPortal/venv/bin/gunicorn -b 127.0.0.1:8000 -w 2 run:app
+directory=/home/$USER/$DEV_FOLDER/xTDS_WebPortal
 user=$USER
 autostart=true
 autorestart=true
@@ -101,31 +93,31 @@ echo "Setting up supervisor complete================"
 
 
 echo "Setting up nginx=============================="
-sudo -E bash -c 'cat > /etc/nginx/conf.d/$NTDS_DOMAIN.conf' << EOL
+sudo -E bash -c 'sudo cat > /etc/nginx/conf.d/$DEV_DOMAIN.conf' << EOL
 server {
     listen 443 ssl http2;
-    server_name $NTDS_DOMAIN;
+    server_name $DEV_DOMAIN;
 
     location / {
-        proxy_pass http://127.0.0.1:8101;
+        proxy_pass http://127.0.0.1:8000;
         proxy_redirect off;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     }
 
-    access_log /var/log/$NTDS_DOMAIN.access.log;
-    error_log /var/log/$NTDS_DOMAIN.error.log;
+    access_log /var/log/$DEV_DOMAIN.access.log;
+    error_log /var/log/$DEV_DOMAIN.error.log;
 
-    ssl_certificate /etc/letsencrypt/live/$NTDS_DOMAIN/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/$NTDS_DOMAIN/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/$XTDS_DOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/$XTDS_DOMAIN/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
     ssl_ecdh_curve secp521r1:secp384r1:prime256v1;
 
 }
 server {
-    server_name $NTDS_DOMAIN;
+    server_name $DEV_DOMAIN;
     return 301 https://\$host\$request_uri;
 }
 EOL
@@ -150,10 +142,6 @@ source venv/bin/activate
 pip install -r requirements.txt
 echo "========================Done"
 
-echo "Stopping Gunicorn supervisor"
-sudo supervisorctl stop ntds
-echo "========================Done"
-
 echo "Migrating Database=========="
 export FLASK_APP=run.py
 flask db upgrade
@@ -161,7 +149,7 @@ deactivate
 echo "========================Done"
 
 echo "Restarting Services========="
-sudo supervisorctl restart ntds
+sudo supervisorctl restart xtds_dev
 sudo systemctl reload nginx
 echo "========================Done"
 
@@ -173,7 +161,7 @@ echo "Created update script========================="
 echo "Creating backup folder========================"
 mkdir backups
 cd backups
-mkdir hourly weekly tournament
+mkdir hourly weekly
 cd ..
 echo "Created backup folder========================="
 
@@ -185,34 +173,25 @@ bash -c 'cat > hourly' << EOL
 #! /bin/bash
 
 
-mysqldump --login-path=ntds ntds | xz -z > "$NTDS_FOLDER/xTDS_WebPortal/backups/hourly/backup-\$(date +%Y%m%d-%H%M).db.xz";
-find ./$NTDS_FOLDER/xTDS_WebPortal/backups/hourly -mtime +10 -type f -delete
+mysqldump --login-path=xtds_dev xtds_dev | xz -z > "$DEV_FOLDER/xTDS_WebPortal/backups/hourly/backup-\$(date +%Y%m%d-%H%M).db.xz";
+find ./$DEV_FOLDER/xTDS_WebPortal/backups/hourly -mtime +10 -type f -delete
 EOL
 bash -c 'cat > weekly' << EOL
 #! /bin/bash
 
 
-mysqldump --login-path=ntds ntds | xz -z > "$NTDS_FOLDER/xTDS_WebPortal/backups/weekly/backup-\$(date +%Y%m%d-%H%M).db.xz";
-EOL
-bash -c 'cat > tournament' << EOL
-#! /bin/bash
-
-
-FILENAME=backup-\$(date +%Y%m%d-%H%M%S).db.xz
-mysqldump --login-path=ntds ntds | xz -z > "$NTDS_FOLDER/xTDS_WebPortal/backups/tournament/$FILENAME"
-sendemail -f admin@xtds.nl -t admin@xtds.nl -m "Tournament Backup - $NTDS_FOLDER" -a "$NTDS_FOLDER/xTDS_WebPortal/backups/tournament/$FILENAME"
-
+mysqldump --login-path=xtds_dev xtds_dev | xz -z > "$DEV_FOLDER/xTDS_WebPortal/backups/weekly/backup-\$(date +%Y%m%d-%H%M).db.xz";
 EOL
 sudo chmod 774 hourly
 sudo chmod 774 weekly
-sudo chmod 774 tournament
 cd ..
 echo "Created cronjob files========================="
 
 
 
 
+
 else
-echo "Skipping NTDS installation."
+echo "Skipping DEV installation."
 fi
 cd
