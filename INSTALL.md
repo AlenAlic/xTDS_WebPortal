@@ -171,6 +171,9 @@ To set the automatic backups, open the cronab:
 
 Append the following to the file, and uncomment the backups that you wish to use:
 
+    MAILTO=""
+    
+    
     # ETDS
     #0 * * * * ~/ETDS/xTDS_WebPortal/cron/hourly
     #@weekly ~/ETDS/xTDS_WebPortal/cron/weekly
