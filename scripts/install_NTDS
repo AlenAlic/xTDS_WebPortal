@@ -184,20 +184,20 @@ cd cron
 bash -c 'cat > hourly' << EOL
 #! /bin/bash
 
-
+cd
 mysqldump --login-path=ntds ntds | xz -z > "$NTDS_FOLDER/xTDS_WebPortal/backups/hourly/backup-\$(date +%Y%m%d-%H%M).db.xz";
 find ./$NTDS_FOLDER/xTDS_WebPortal/backups/hourly -mtime +10 -type f -delete
 EOL
 bash -c 'cat > weekly' << EOL
 #! /bin/bash
 
-
+cd
 mysqldump --login-path=ntds ntds | xz -z > "$NTDS_FOLDER/xTDS_WebPortal/backups/weekly/backup-\$(date +%Y%m%d-%H%M).db.xz";
 EOL
 bash -c 'cat > tournament' << EOL
 #! /bin/bash
 
-
+cd
 FILENAME=backup-\$(date +%Y%m%d-%H%M%S).db.xz
 mysqldump --login-path=ntds ntds | xz -z > "$NTDS_FOLDER/xTDS_WebPortal/backups/tournament/$FILENAME"
 sendemail -f admin@xtds.nl -t admin@xtds.nl -m "Tournament Backup - $NTDS_FOLDER" -a "$NTDS_FOLDER/xTDS_WebPortal/backups/tournament/$FILENAME"

@@ -172,14 +172,14 @@ cd cron
 bash -c 'cat > hourly' << EOL
 #! /bin/bash
 
-
+cd
 mysqldump --login-path=xtds_dev xtds_dev | xz -z > "$DEV_FOLDER/xTDS_WebPortal/backups/hourly/backup-\$(date +%Y%m%d-%H%M).db.xz";
 find ./$DEV_FOLDER/xTDS_WebPortal/backups/hourly -mtime +10 -type f -delete
 EOL
 bash -c 'cat > weekly' << EOL
 #! /bin/bash
 
-
+cd
 mysqldump --login-path=xtds_dev xtds_dev | xz -z > "$DEV_FOLDER/xTDS_WebPortal/backups/weekly/backup-\$(date +%Y%m%d-%H%M).db.xz";
 EOL
 sudo chmod 774 hourly
