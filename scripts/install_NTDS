@@ -161,7 +161,7 @@ deactivate
 echo "========================Done"
 
 echo "Restarting Services========="
-sudo supervisorctl start ntds
+sudo supervisorctl restart ntds
 sudo systemctl reload nginx
 echo "========================Done"
 

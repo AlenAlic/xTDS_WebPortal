@@ -213,7 +213,8 @@ def create_app(config_class=Config):
         return {
             'create_admin': create_admin,
             'create_configuration': create_configuration,
-            'create_teams': create_teams
+            'create_teams': create_teams,
+            'create_teamcaptains': create_teamcaptains
         }
 
     def create_admin(email, password):
@@ -272,6 +273,22 @@ def create_app(config_class=Config):
                                      Team.country == team["country"]).first() is None:
                     db.session.add(Team(name=team["name"], country=team["country"], city=team["city"]))
             db.session.commit()
+
+    def create_teamcaptains():
+        for t in data.TEAMS:
+            team = Team.query.filter_by(city=t['city']).first()
+            if team is not None:
+                tc = User()
+                tc.username = f"Teamcaptain{t['city']}"
+                tc.access = data.ACCESS[data.TEAM_CAPTAIN]
+                tc.team = team
+                db.session.add(tc)
+                treasurer = User()
+                treasurer.username = f"Treasurer{t['city']}"
+                treasurer.access = data.ACCESS[data.TREASURER]
+                treasurer.team = team
+                db.session.add(treasurer)
+        db.session.commit()
 
     from ntds_webportal.main import bp as main_bp
     app.register_blueprint(main_bp)
