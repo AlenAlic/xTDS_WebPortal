@@ -157,6 +157,10 @@ Create the admin account, all configuration files and exit the shell:
     create_teams("xTDS")
     exit()
 
+Remember to deactivate the venv:
+
+    deactivate
+
 ### Backups
 The cronjobs scripts have been generated in the `FOLDER/xTDS_WebPortal/cron/` folder.
 

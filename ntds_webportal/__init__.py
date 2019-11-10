@@ -269,7 +269,7 @@ def create_app(config_class=Config):
                 else data.TEAMS
             for team in teams:
                 if Team.query.filter(Team.name == team["name"], Team.city == team["city"],
-                                     Team.country == team["country"]).first is None:
+                                     Team.country == team["country"]).first() is None:
                     db.session.add(Team(name=team["name"], country=team["country"], city=team["city"]))
             db.session.commit()
 
