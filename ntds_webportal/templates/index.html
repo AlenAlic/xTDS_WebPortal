@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h1>Welcome to the xTDS WebPortal</h1>
-<p>It is currently active for the {{g.sc.tournament}} {{g.sc.year}} in {{g.sc.city}}.</p>
-<p>You can log in at the top right with the credentials that have been provided.</p>
+<div class="text-center">
+    <h1>{{g.sc.tournament}} {{g.sc.year}} {{g.sc.city}}</h1>
+    <h5>Welcome to the xTDS WebPortal</h5>
+    <p>You can log in at the top right with the credentials that have been provided.</p>
+</div>
 {% endblock %}
