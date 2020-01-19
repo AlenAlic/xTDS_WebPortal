@@ -18,7 +18,7 @@ def index():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter(or_(User.username == form.username.data, User.email.ilike(form.username.data))).first()
-        if user is None or not user.check_password(form.password.data):
+        if user is None or (user is not None and not user.check_password(form.password.data)):
             flash('Invalid username or password', 'alert-danger')
             flash("If you copied your credentials from an e-mail, please make sure that you did not "
                   "accidentally copy an extra space before or after the username or password.<br/>"
