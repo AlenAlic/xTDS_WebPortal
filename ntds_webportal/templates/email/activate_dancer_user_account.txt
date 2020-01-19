@@ -1,7 +1,10 @@
 Dear {{name}},
 
 
-Your teamcaptain has registered you for the the {{g.sc.year}} {{g.sc.tournament}} in {{g.sc.city}}.
+Your teamcaptain has signed you up you for the the {{g.sc.year}} {{g.sc.tournament}} in {{g.sc.city}}.
+
+You still need to complete your registration yourself.
+
 An account at the xTDS WebPortal has been created for you.
 
 
@@ -10,6 +13,8 @@ Username: {{ dancer.email }}
 Password: {{ password }}
 
 Please log in, and accept the GDPR policy to complete your registration.
+
+If you have not accepted the GDPR by the time of the raffle, you will not partake in the raffle, and will be split up from your partner(s) (if any).
 
 
 You can click the link below to visit the site.

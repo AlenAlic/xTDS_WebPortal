@@ -3,7 +3,7 @@ from ntds_webportal.email import send_email
 
 
 def send_dancer_user_account_email(dancer, full_name, dancer_password):
-    send_email(f"Registered for {g.sc.year} {g.sc.tournament} in {g.sc.city}",
+    send_email(f"Complete your registration for the {g.sc.year} {g.sc.tournament} in {g.sc.city}",
                recipients=[dancer.email],
                text_body=render_template('email/activate_dancer_user_account.txt',
                                          dancer=dancer, name=full_name, password=dancer_password),

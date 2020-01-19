@@ -614,7 +614,7 @@ class DancingInfo(db.Model):
 
     def get_partner_name(self):
         if self.partner is None:
-            return "No partner"
+            return "No partner registered"
         partner = DancingInfo.query.filter(DancingInfo.competition == self.competition,
                                            DancingInfo.contestant_id == self.partner).first()
         return partner.contestant.get_full_name()
