@@ -7,7 +7,7 @@
 </style>
 {% endblock %}
 
-{% macro day_shifts(day, shifts) %}
+{% macro day_shifts(day, shifts, team=none) %}
 <table class="table table-sm table-hover">
     <colgroup>
         <col span="1" style="width: 10%;">
@@ -30,21 +30,23 @@
     </thead>
     <tbody>
     {% for shift in shifts %}
-    {% for slot in shift.available_slots(current_user.team) %}
-    <tr class="{% if slot.organization_shift() %}table-disabled{% elif slot.team == current_user.team and slot.user is none %}table-info clickable-row{% elif slot.team == current_user.team and slot.user is not none %}table-success clickable-row{% else %}clickable-row{% endif %}"
-        data-href="{% if not slot.organization_shift() %}{{ url_for('volunteering.shift_slot', slot_id=slot.slot_id, task_id=0) }}{% endif %}">
-        {% if loop.index == 1 %}
-        <td>{{slot.shift.start()}}-{{slot.shift.stop()}}</td>
-        <td>{{slot.shift.info}}</td>
-        <td>{{slot.shift.info.location}}</td>
-        <td>{{slot.shift.claimed_slots()}}/{{slot.shift.max_slots()}}</td>
-        {% else %}
-        <td class="border-top-0" colspan="4"></td>
+        {% if shift.team_has_slots(team)  %}
+            {% for slot in shift.available_slots(current_user.team) %}
+            <tr class="{% if slot.organization_shift() %}table-disabled{% elif slot.team == current_user.team and slot.user is none %}table-info clickable-row{% elif slot.team == current_user.team and slot.user is not none %}table-success clickable-row{% else %}clickable-row{% endif %}"
+                data-href="{% if not slot.organization_shift() %}{% if team is not none %}{{ url_for('volunteering.shift_slot', slot_id=slot.slot_id, task_id=-1) }}{% else %}{{ url_for('volunteering.shift_slot', slot_id=slot.slot_id, task_id=0) }}{% endif %}{% endif %}">
+                {% if loop.index == 1 %}
+                <td>{{slot.shift.start()}}-{{slot.shift.stop()}}</td>
+                <td>{{slot.shift.info}}</td>
+                <td>{{slot.shift.info.location}}</td>
+                <td>{{slot.shift.claimed_slots()}}/{{slot.shift.max_slots()}}</td>
+                {% else %}
+                <td class="border-top-0" colspan="4"></td>
+                {% endif %}
+                <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{slot.name()}}</td>
+                <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{% if slot.organization_shift() %}-{% else %}{{ g.data.TF[slot.mandatory] }}{% endif %}</td>
+            </tr>
+            {% endfor %}
         {% endif %}
-        <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{{slot.name()}}</td>
-        <td class="{% if loop.index > 1 %}border-top-0{% endif %}">{% if slot.organization_shift() %}-{% else %}{{ g.data.TF[slot.mandatory] }}{% endif %}</td>
-    </tr>
-    {% endfor %}
     {% endfor %}
     </tbody>
 </table>
@@ -130,7 +132,10 @@
         <nav>
             <div class="nav nav-tabs" role="tablist">
                 <a class="nav-item nav-link" id="nav-task-volunteers-tab" data-toggle="tab" href="#nav-task-volunteers" role="tab" aria-controls="nav-task-volunteers" aria-selected="true">Volunteers</a>
-                <a class="nav-item nav-link {% if not request.args.get('task_id')|int > 0 %}active{% endif %}" id="nav-task-overview-tab" data-toggle="tab" href="#nav-task-overview" role="tab" aria-controls="nav-task-overview" aria-selected="true">All shifts</a>
+                <a class="nav-item nav-link {% if request.args.get('task_id')|int == 0 or request.args.get('task_id') is none %}active{% endif %}" id="nav-task-overview-tab" data-toggle="tab" href="#nav-task-overview" role="tab" aria-controls="nav-task-overview" aria-selected="true">All shifts</a>
+                {% if current_user.is_tc() %}
+                    <a class="nav-item nav-link {% if request.args.get('task_id')|int == -1 %}active{% endif %}" id="nav-task-overview-team-tab" data-toggle="tab" href="#nav-task-overview-team" role="tab" aria-controls="nav-task-overview-team" aria-selected="true">All team shifts</a>
+                {% endif %}
                 {% for task in task_list %}
                 <a class="nav-item nav-link {% if request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-tab-2" data-toggle="tab" href="#nav-task-{{task.shift_info_id}}-2" role="tab" aria-controls="nav-task-{{task.shift_info_id}}-2" aria-selected="true">
                     {{task}}<span class="badge badge-pill badge-dark"></span>
@@ -203,10 +208,20 @@
             <button class="btn btn-outline-primary no-print mx-1 my-1" onclick="window.print();">Print</button>
             <div style="page-break-inside:avoid;">
             {% for day in sorted_shifts %}
-            {{ day_shifts(day, sorted_shifts[day]) }}
+                {{ day_shifts(day, sorted_shifts[day]) }}
             {% endfor %}
             </div>
         </div>
+        {% if current_user.is_tc() %}
+            <div class="tab-pane fade show {% if request.args.get('task_id')|int == -1 %}active{% endif %}" id="nav-task-overview-team" role="tabpanel" aria-labelledby="nav-task-overview-team-tab">
+                <button class="btn btn-outline-primary no-print mx-1 my-1" onclick="window.print();">Print</button>
+                <div style="page-break-inside:avoid;">
+                {% for day in sorted_shifts %}
+                    {{ day_shifts(day, sorted_shifts[day], current_user.team) }}
+                {% endfor %}
+                </div>
+            </div>
+        {% endif %}
         {% for task in task_list %}
         <div class="tab-pane fade show {% if request.args.get('task_id')|int == task.shift_info_id %}active{% endif %}" id="nav-task-{{task.shift_info_id}}-2" role="tabpanel" aria-labelledby="nav-task-{{task.shift_info_id}}-tab-2">
             {% if task_list[task]|length > 0 %}

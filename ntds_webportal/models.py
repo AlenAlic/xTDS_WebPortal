@@ -1610,6 +1610,11 @@ class Shift(db.Model):
     def has_slots_available(self, team=None):
         return len(self.available_slots(team)) > 0
 
+    def team_has_slots(self, team=None):
+        if team is not None:
+            return len([s for s in self.slots if s.team == team]) > 0
+        return True
+
 
 class ShiftSlot(db.Model):
     __tablename__ = 'shift_slots'
