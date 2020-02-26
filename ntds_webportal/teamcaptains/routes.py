@@ -423,6 +423,7 @@ def partner_request():
         di1 = DancingInfo.query.filter_by(contestant_id=form.dancer.data.contestant_id,
                                           competition=form.competition.data).first()
         if len(PartnerRequest.query.filter(PartnerRequest.dancer_id == form.dancer.data.contestant_id,
+                                           PartnerRequest.competition == form.competition.data,
                                            PartnerRequest.state == PartnerRequest.STATE['Open']).all()) > 0:
             flash(f"There is already an active request out for {di1.contestant} in {form.competition.data}. "
                   f"Please cancel that request first, before sending out another one.", 'alert-danger')
