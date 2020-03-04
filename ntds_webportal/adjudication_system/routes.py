@@ -1418,7 +1418,10 @@ def cache_results():
 @cache.cached(timeout=86400, key_prefix=cache_results)
 def competition_results(competition_id):
     comp = Competition.query.get(competition_id)
-    if comp.results_published:
-        return render_template('adjudication_system/competition_results.html', comp=comp)
-    else:
-        return redirect(url_for('adjudication_system.results'))
+    if comp is not None:
+        if comp.results_published:
+            return render_template('adjudication_system/competition_results.html', comp=comp)
+        else:
+            return redirect(url_for('adjudication_system.results'))
+    flash('Competition not found.')
+    return redirect(url_for('main.index'))
