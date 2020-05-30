@@ -86,10 +86,13 @@ def manage_merchandise():
                 var = MerchandiseItemVariant.query\
                     .filter(MerchandiseItemVariant.merchandise_item_variant_id == request.form["delete"]).first()
                 if len(var.merchandise_item.variants) > 1:
-                    flash(f"Deleted {var.variant_name()} variant of {var.merchandise_item}.", 'alert-success')
-                    db.session.delete(var)
-                    db.session.commit()
-                    return redirect(url_for('organizer.manage_merchandise'))
+                    if var.deletable():
+                        flash(f"Deleted {var.variant_name()} variant of {var.merchandise_item}.", 'alert-success')
+                        db.session.delete(var)
+                        db.session.commit()
+                        return redirect(url_for('organizer.manage_merchandise'))
+                    else:
+                        flash(f"Cannot delete {var}", 'alert-warning')
                 else:
                     flash(f"Cannot delete the last variant of {var.merchandise_item}.", 'alert-warning')
             if "add" in request.form:
@@ -105,7 +108,7 @@ def manage_merchandise():
                 else:
                     flash(f"Cannot add a variant without a name.", 'alert-warning')
             if "merchandise_item" in request.form:
-                merchandise_item = MerchandiseItem.query\
+                merchandise_item = MerchandiseItem.query \
                     .filter(MerchandiseItem.merchandise_item_id == request.form["merchandise_item"]).first()
                 merchandise_item.description = request.form[form.item.name]
                 merchandise_item.price = int(request.form[form.price.name])
@@ -113,8 +116,18 @@ def manage_merchandise():
                     for var in merchandise_item.variants:
                         var.variant = request.form[str(var.merchandise_item_variant_id)]
                 db.session.commit()
-                flash(f"{merchandise_item} updated,", 'alert-success')
+                flash(f"{merchandise_item} updated.", 'alert-success')
                 return redirect(url_for('organizer.manage_merchandise'))
+            if "merchandise_item_delete" in request.form:
+                merchandise_item = MerchandiseItem.query \
+                    .filter(MerchandiseItem.merchandise_item_id == request.form["merchandise_item_delete"]).first()
+                if merchandise_item.deletable():
+                    flash(f"{merchandise_item} deleted.", 'alert-success')
+                    db.session.delete(merchandise_item)
+                    db.session.commit()
+                    return redirect(url_for('organizer.manage_merchandise'))
+                else:
+                    flash(f"Cannot delete {merchandise_item}", 'alert-warning')
     return render_template('organizer/manage_merchandise.html', form=form, all_merchandise=all_merchandise,
                            merchandise_date_form=merchandise_date_form, purchases=purchases)
 #
